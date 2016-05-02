@@ -7,7 +7,8 @@ import akka.actor._
 import akka.actor.Actor.Receive
 import com.znl.base.BaseDbPojo
 import com.znl.define.ActorDefine
-import com.znl.msg.GameMsg._
+import com.znl.msg.GameMsg
+import com.znl.msg.GameMsg.{FixedTimeNotice, _}
 import com.znl.pojo.db.Player
 import com.znl.service._
 import com.znl.utils.GameUtils
@@ -93,6 +94,9 @@ class AreaServer(logicAreaId : Int, areaKey : String, p: Properties) extends Act
       playerService ! replacePlayerSession
     case msg : AutoSaveOffPlayerData =>
       playerService ! msg
+    case msg:FixedTimeNotice=>
+       //定时器
+      triggerService! msg
     case _ =>
   }
 

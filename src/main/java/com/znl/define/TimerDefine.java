@@ -93,4 +93,7 @@ public class  TimerDefine {
  /******重置定时类型*******/
  public static final int CHANGE_TIMER_INIT_TYPE_LOGIN = 0;
  public static final int CHANGE_TIMER_INIT_TYPE_BUY_TIME = 3;
+
+ /*********下午4点触发*********/
+ public static final int TIMER_16 = 16;
 }

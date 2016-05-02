@@ -10,7 +10,7 @@ import com.znl.utils.GameUtils
  * triggerType 触发类型
  * Created by Administrator on 2015/11/14.
  */
-class TriggerEvent(actor : ActorRef, msg : AnyRef, triggerType: TriggerType, remainTime : Int = 0) {
+class TriggerEvent(actor : ActorRef, msg : AnyRef, triggerType: TriggerType, remainTime : Int = 0,timeDefine:Int ){
 
   val addTime : Int = GameUtils.getServerTime
 
@@ -25,6 +25,9 @@ class TriggerEvent(actor : ActorRef, msg : AnyRef, triggerType: TriggerType, rem
     triggerType
   }
 
+  def getTimDefine()={
+    timeDefine
+  }
   def trigger = {
     actor ! msg
   }

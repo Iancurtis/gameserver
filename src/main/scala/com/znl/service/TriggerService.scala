@@ -1,12 +1,13 @@
 package com.znl.service
 
 import java.util
-import java.util.{Date, Calendar}
+import java.util.Arrays.ArrayList
+import java.util.{Calendar, Date}
 
 import akka.actor.Actor.Receive
-import akka.actor.{ActorLogging, Actor}
-import com.znl.msg.GameMsg.{RemoveTriggerEvent, AddTriggerEvent, OnServerTrigger}
-import com.znl.service.trigger.{TriggerType, TriggerEvent}
+import akka.actor.{Actor, ActorLogging}
+import com.znl.msg.GameMsg.{AddTriggerEvent, FixedTimeNotice, OnServerTrigger, RemoveTriggerEvent}
+import com.znl.service.trigger.{TriggerEvent, TriggerType}
 import com.znl.utils.GameUtils
 
 import scala.concurrent.duration._
@@ -24,12 +25,17 @@ class TriggerService  extends Actor with ActorLogging{
 
   val triggerEventMap : java.util.Map[String, TriggerEvent] = new java.util.concurrent.ConcurrentHashMap[String, TriggerEvent]()
 
+  val triggerMap: java.util.Map[Int, java.util.List[TriggerEvent]] = new java.util.concurrent.ConcurrentHashMap[Int,java.util.List[TriggerEvent]]()
+
   override def receive: Receive = {
     case msg : OnServerTrigger =>
       onServerTrigger()
     case AddTriggerEvent(triggerEvent) =>
       onAddTriggerEvent(triggerEvent)
     case RemoveTriggerEvent(triggerEvent) =>
+    case FixedTimeNotice(timeFlag)=>
+         //TODO
+         FixedTimeNotice(timeFlag)
     case _  =>
   }
 
@@ -40,6 +46,16 @@ class TriggerService  extends Actor with ActorLogging{
       triggerEventMap.replace(eventKey, triggerEvent)
     }else{
       triggerEventMap.put(eventKey, triggerEvent)
+    }
+
+    //新版增加定时器
+    var eventList:java.util.List[TriggerEvent]=triggerMap.get(triggerEvent.getTimDefine())
+    if(eventList==null){
+      eventList=new java.util.ArrayList[TriggerEvent]()
+      eventList.add(triggerEvent)
+      triggerMap.put(triggerEvent.getTimDefine(),eventList)
+    }else{
+      eventList.add(triggerEvent)
     }
   }
 
@@ -84,4 +100,15 @@ class TriggerService  extends Actor with ActorLogging{
     })
   }
 
+  /**
+    * 定时器触发
+    * @param cmd
+    */
+  def FixedTimeNotice(cmd:Int):Unit={
+    val eventList:java.util.List[TriggerEvent]=triggerMap.get(cmd)
+    if(eventList==null) return
+    for(event:TriggerEvent<-eventList){
+      event.trigger
+    }
+  }
 }

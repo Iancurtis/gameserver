@@ -5,9 +5,10 @@ import java.util.concurrent.ConcurrentHashMap
 
 import akka.actor.Actor.Receive
 import akka.actor.SupervisorStrategy.Resume
-import akka.actor.{ActorLogging, OneForOneStrategy, Actor, Props}
+import akka.actor.{Actor, ActorLogging, OneForOneStrategy, Props}
 import com.znl.GameMainServer
 import com.znl.define.ActorDefine
+import com.znl.event.TimeEventHandler
 import com.znl.log.CustomerLogger
 import com.znl.msg.GameMsg.StopGame
 import com.znl.utils.GameUtils
@@ -90,6 +91,9 @@ class RootGameSystem(p: Properties) extends Actor with ActorLogging{
 
   def startAreaServer(logicAreaId : Int, p: Properties) ={
     context.watch(context.actorOf(AreaServer.props(logicAreaId, GameMainServer.getAreaKeyByLogicAreaId(logicAreaId), p), ActorDefine.AREA_SERVER_PRE_NAME + logicAreaId))
+    val actor=context.actorOf(AreaServer.props(logicAreaId, GameMainServer.getAreaKeyByLogicAreaId(logicAreaId), p), ActorDefine.AREA_SERVER_PRE_NAME + logicAreaId))
+    TimeEventHandler.addAreaServerAtor(actor)
+
   }
 
   def startAdminServer() ={

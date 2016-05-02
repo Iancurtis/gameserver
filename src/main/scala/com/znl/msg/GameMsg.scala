@@ -87,6 +87,7 @@ object GameMsg {
   final case class EachHourNotice()//每小时定时
   final case class EachMinuteNotice()//每分钟定时
   final case class EachSecondNotice()//每分钟定时
+  final case class FixedTimeNotice(timeFlag:Int)//定时器
   final case class ActivityRankTrigger()
 
   final case class Reload()
