@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,14 +32,14 @@ import java.util.regex.Pattern;
  * Created by Administrator on 2015/10/27.
  */
 public class PlayerProxy extends BasicProxy {
-    private final  Player player;
+    private final AtomicReference<Player>  player;
     public Map<Integer, Integer> rankmap = new ConcurrentHashMap<>();
     private  long reduceEnergytime;
 
     @Override
     public void shutDownProxy() {
-        String name = player.getName();
-        player.finalize();
+        String name = getPlayer().getName();
+        player.get().finalize();
     }
 
     @Override
@@ -47,7 +48,7 @@ public class PlayerProxy extends BasicProxy {
 
     private  SimplePlayer simplePlayer=new SimplePlayer();
 
-    public void setSimplePlayer(SimplePlayer value) {
+    public synchronized void setSimplePlayer(SimplePlayer value) {
         this.simplePlayer = value;
     }
 
@@ -63,7 +64,7 @@ public class PlayerProxy extends BasicProxy {
     public void setPlayerCache(PlayerCache playerCache) {
         pushChannelId = playerCache.getPushChanelId();
         this.playerCache = playerCache;
-        this.player.setPushId(pushChannelId);
+        this.getPlayer().setPushId(pushChannelId);
     }
 
     private String pushChannelId;
@@ -77,8 +78,8 @@ public class PlayerProxy extends BasicProxy {
         this.areaKey = areaKey;
     }
 
-    public void savePlayer() {
-        player.save();
+    public synchronized void savePlayer() {
+        getPlayer().save();
         //更新角色信息日志
         // tbllog_player
         playerLog();
@@ -87,17 +88,17 @@ public class PlayerProxy extends BasicProxy {
     //只处理INT 值的 power值
     //string Long字段较少，直接传单独字段
     public Long getPlayerPowerValue(String powerName) {
-        Object value = player.getter(powerName);
+        Object value = getPlayer().getter(powerName);
         if (value instanceof Integer) {
             return (int) value + 0l;
         }
-        return (long) player.getter(powerName);
+        return (long) getPlayer().getter(powerName);
     }
 
 
     public List<Long> getlaterlist() {
         List<Long> list = new ArrayList<Long>();
-        String str[] = player.getLaterPeople().split("_");
+        String str[] = getPlayer().getLaterPeople().split("_");
         for (String strid : str) {
             if (!strid.equals("")) {
                 list.add(Long.parseLong(strid));
@@ -106,38 +107,38 @@ public class PlayerProxy extends BasicProxy {
         return list;
     }
 
-    public void setLaterPlayer(long playerid) {
-        String str = player.getLaterPeople();
+    public synchronized void setLaterPlayer(long playerid) {
+        String str = getPlayer().getLaterPeople();
         str = playerid + "_" + str;
-        player.setLaterPeople(str);
+        getPlayer().setLaterPeople(str);
     }
 
-    public void setLaterPlayer(String str) {
-        player.setLaterPeople(str);
+    public synchronized void setLaterPlayer(String str) {
+        getPlayer().setLaterPeople(str);
     }
 
-    public String getPlayerName() {
-        return player.getName();
+    public synchronized String getPlayerName() {
+        return getPlayer().getName();
     }
 
     public int getPlayerIcon() {
-        return player.getIcon();
+        return getPlayer().getIcon();
     }
 
 
     public String getAccountName() {
-        return player.getAccountName();
+        return getPlayer().getAccountName();
     }
 
     public Integer getLevel() {
-        return player.getLevel();
+        return getPlayer().getLevel();
     }
 
     public long getReduceEnergytime() {
         return reduceEnergytime;
     }
 
-    public void setReduceEnergytime(long reduceEnergytime) {
+    public synchronized void setReduceEnergytime(long reduceEnergytime) {
         this.reduceEnergytime = reduceEnergytime;
     }
 
@@ -163,12 +164,12 @@ public class PlayerProxy extends BasicProxy {
     //是否被禁号了
     public boolean isBanAct() {
         boolean flag = false;
-        if (player.getBanAct() == 1) {
-            if (player.getBanActDate() >= GameUtils.getServerTime()) {
+        if (getPlayer().getBanAct() == 1) {
+            if (getPlayer().getBanActDate() >= GameUtils.getServerTime()) {
                 flag = true;
             } else {
-                player.setBanAct(0);
-                player.setBanActDate(0);
+                getPlayer().setBanAct(0);
+                getPlayer().setBanActDate(0);
             }
         }
 
@@ -176,383 +177,383 @@ public class PlayerProxy extends BasicProxy {
     }
 
     public Long getPlayerArena() {
-        return player.getArena();
+        return getPlayer().getArena();
     }
 
     public Long getArmGrouId() {
-        return player.getArmygroupId();
+        return getPlayer().getArmygroupId();
     }
 
-    public void setApplylist(Set<Long> list) {
-        player.setApplyArmylist(list);
-    }
-
-
-    public void setArmgroupId(Long armgroupId) {
-        player.setArmygroupId(armgroupId);
+    public synchronized void setApplylist(Set<Long> list) {
+        getPlayer().setApplyArmylist(list);
     }
 
 
-    public void setLegionName(String name) {
-        player.setLegionName(name);
+    public synchronized void setArmgroupId(Long armgroupId) {
+        getPlayer().setArmygroupId(armgroupId);
+    }
+
+
+    public synchronized void setLegionName(String name) {
+        getPlayer().setLegionName(name);
     }
 
     public String getLegionName() {
-        return player.getLegionName();
+        return getPlayer().getLegionName();
     }
 
 
     public Set<Long> getColSets() {
-        return player.getColsets();
+        return getPlayer().getColsets();
     }
 
     public void addColllecttoPlayer(long id) {
-        Set<Long> sets = player.getColsets();
+        Set<Long> sets = getPlayer().getColsets();
         sets.add(id);
-        player.setColsets(sets);
+        getPlayer().setColsets(sets);
     }
 
-    public void setPost(int post) {
-        player.setPost(post);
+    public synchronized  void setPost(int post) {
+        getPlayer().setPost(post);
     }
 
     public int getPost() {
-        return player.getPost();
+        return getPlayer().getPost();
     }
 
     public Long getPlayerArm() {
-        return player.getArmygroupId();
+        return getPlayer().getArmygroupId();
     }
 
     public Set<Long> getPlayerApplylist() {
-        return player.getApplyArmylist();
+        return getPlayer().getApplyArmylist();
     }
 
     public void setPlayerArena(long arenId) {
-        player.setArena(arenId);
+        getPlayer().setArena(arenId);
     }
 
     //免战保护过期时间
     public void setProtectOverDate(long protectOverDate) {
-        player.setProtectOverDate(protectOverDate);
+        getPlayer().setProtectOverDate(protectOverDate);
     }
 
     public Long getProtectOverDate() {
-        return player.getProtectOverDate();
+        return getPlayer().getProtectOverDate();
     }
 
     public int getCreatePlayerTime() {
-        return player.getRegTime();
+        return getPlayer().getRegTime();
     }
 
     //30登录领取奖励
     public void setLoginDayNum(int loginDayNum) {
-        player.setLoginDayNum(loginDayNum);
+        getPlayer().setLoginDayNum(loginDayNum);
     }
 
     public int getLoginDayNum() {
-        return player.getLoginDayNum();
+        return getPlayer().getLoginDayNum();
     }
 
     public List<Integer> getRewardNum() {
         initRewardNum();
-        return player.getRewardNum();
+        return getPlayer().getRewardNum();
     }
 
     public void initRewardNum() {
-        List<Integer> list = player.getRewardNum();
+        List<Integer> list = getPlayer().getRewardNum();
         List<Integer> newlist = new ArrayList<Integer>();
         for (int day : list) {
             if (day <= 30) {
                 newlist.add(day);
             }
         }
-        player.setRewardNum(newlist);
+        getPlayer().setRewardNum(newlist);
     }
 
     public void addRewardNum(Integer day) {
-        player.getRewardNum().add(day);
+        getPlayer().getRewardNum().add(day);
     }
 
     public void removeRewardNum(Integer day) {
-        player.getRewardNum().remove(day);
+        getPlayer().getRewardNum().remove(day);
     }
 
     public int getHigestDungId() {
-        return player.getDungeoId();
+        return getPlayer().getDungeoId();
     }
 
     public void setHigestDungId(int dungonId) {
-        int olddungonId = player.getDungeoId();
+        int olddungonId = getPlayer().getDungeoId();
         if (dungonId > olddungonId) {
-            player.setDungeoId(dungonId);
+            getPlayer().setDungeoId(dungonId);
         }
     }
 
     public int getWorldResourceLevel() {
-        return player.getWorldResouceLevel();
+        return getPlayer().getWorldResouceLevel();
     }
 
     public Set<Long> getClientCacheIds() {
-        return player.getClientCacheSet();
+        return getPlayer().getClientCacheSet();
     }
 
     public void addClientCacheId(Long id) {
-        player.getClientCacheSet().add(id);
+        getPlayer().getClientCacheSet().add(id);
     }
 
     public void setWorldResourceLevel(int level) {
-        int oldlevel = player.getWorldResouceLevel();
-        player.setWorldResouceLevel(level);
+        int oldlevel = getPlayer().getWorldResouceLevel();
+        getPlayer().setWorldResouceLevel(level);
     }
 
 
     public void setWorldResourceLevellist(Set<Long> setlist) {
-        player.setResouceLeve(setlist);
+        getPlayer().setResouceLeve(setlist);
     }
 
     public Set<Long> getWorldResourLevellist() {
-        return player.getResouceLeve();
+        return getPlayer().getResouceLeve();
     }
 
     public void addSoldierToPlayer(long soldierId) {
-        player.addSoldierId(soldierId);
+        getPlayer().addSoldierId(soldierId);
     }
 
     public void removeSoldierToPlayer(long soldierId) {
-        player.reduceSoldierId(soldierId);
+        getPlayer().reduceSoldierId(soldierId);
     }
 
     public void addOrdnancePieceToPlayer(long opdId) {
-        player.addOdpId(opdId);
+        getPlayer().addOdpId(opdId);
     }
 
     public void reduceOrdnancePieceToPlayer(long opdId) {
-        player.reduceOdpId(opdId);
+        getPlayer().reduceOdpId(opdId);
     }
 
     public void addOrdnanceToPlayer(long opId) {
-        player.addodId(opId);
+        getPlayer().addodId(opId);
     }
 
     public void reduceOrdnanceToPlayer(long opdId) {
-        player.removedId(opdId);
+        getPlayer().removedId(opdId);
     }
 
     public void addItemToPlayer(long itemId) {
-        player.addItemId(itemId);
+        getPlayer().addItemId(itemId);
     }
 
     public void addSkillToPlayer(long skillId) {
-        player.addSkillId(skillId);
+        getPlayer().addSkillId(skillId);
     }
 
     public void reduceItemfromPlayer(long itemId) {
-        player.reduceitemId(itemId);
+        getPlayer().reduceitemId(itemId);
     }
 
     public void addItemBuff(long itemBuffId) {
-        player.addItemBuffId(itemBuffId);
+        getPlayer().addItemBuffId(itemBuffId);
     }
 
     public void reduceItemBuffFormPlayer(long itemBuffId) {
-        player.reduceItemBuffId(itemBuffId);
+        getPlayer().reduceItemBuffId(itemBuffId);
     }
 
     public void reducePerformTaskfromPlayer(long performTaskId) {
-        player.reducePerformTaskId(performTaskId);
+        getPlayer().reducePerformTaskId(performTaskId);
     }
 
     public void addPerformTaskfromPlayer(long performTaskId) {
-        player.addPerformTaskId(performTaskId);
+        getPlayer().addPerformTaskId(performTaskId);
     }
 
     public void addEquipToPlayer(long itemId) {
-        player.addEquipId(itemId);
+        getPlayer().addEquipId(itemId);
     }
 
     public void reduceEquipfromPlayer(long itemId) {
-        player.reduceEquipId(itemId);
+        getPlayer().reduceEquipId(itemId);
     }
 
     public void addResFunBuildToPlayer(long resFuId) {
-        player.addResFuId(resFuId);
+        getPlayer().addResFuId(resFuId);
     }
 
     public void addTechnologyToPlayer(long techId) {
-        player.addTechnologyId(techId);
+        getPlayer().addTechnologyId(techId);
     }
 
     public void addTimeIdToPlayer(long timeId) {
-        player.addTimeId(timeId);
+        getPlayer().addTimeId(timeId);
     }
 
     public void removeTimeIdToPlayer(long timeId) {
-        player.reduceTimeId(timeId);
+        getPlayer().reduceTimeId(timeId);
     }
 
     public void addAdviseIdToPlayer(long id) {
-        player.addAdviseId(id);
+        getPlayer().addAdviseId(id);
     }
-    public void setArenaId(long arenaId) {player.setArenaId(arenaId);}
+    public void setArenaId(long arenaId) {getPlayer().setArenaId(arenaId);}
     public void removeAdviseIdToPlayer(long id) {
-        player.removeAdviseId(id);
+        getPlayer().removeAdviseId(id);
     }
 
     public void addDungeoToPlayer(long dungeoId) {
-        player.addDungeo(dungeoId);
+        getPlayer().addDungeo(dungeoId);
     }
 
     public void addMailToPlayer(long mailId) {
-        player.addMail(mailId);
+        getPlayer().addMail(mailId);
     }
 
     public void removeMailToPlayer(List<Long> ids) {
         for (Long id : ids) {
-            player.removeMail(id);
+            getPlayer().removeMail(id);
         }
     }
 
 
     public int getLimitChangeMaxId() {
-        return player.getLimitChangeMaxId();
+        return getPlayer().getLimitChangeMaxId();
     }
 
     public void setLimitChangeMaxId(int id) {
-        player.setLimitChangeMaxId(id);
+        getPlayer().setLimitChangeMaxId(id);
     }
 
     public int getLimitChangeNowId() {
-        return player.getGetLimitChangeId();
+        return getPlayer().getGetLimitChangeId();
     }
 
     public void setLimitChangeNowId(int id) {
-        player.setGetLimitChangeId(id);
+        getPlayer().setGetLimitChangeId(id);
     }
 
     public Player getPlayer() {
-        return player;
+        return getPlayer().get();
     }
 
     public void addTaskIdToPlayer(long taskId) {
-        player.addTaskId(taskId);
+        getPlayer().addTaskId(taskId);
     }
 
     public void removeTaskIdFormPlayer(long taskId) {
-        player.reducTaskId(taskId);
+        getPlayer().reducTaskId(taskId);
     }
 
     public Set<Long> getFriendSet() {
-        return player.getFriendSet();
+        return getPlayer().getFriendSet();
     }
 
     //添加好友
     public void addFriend(Long playerId) {
-        player.addFriend(playerId);
+        getPlayer().addFriend(playerId);
     }
 
     public void removeFriend(Long playerId) {
-        player.getFriendSet().remove(playerId);
+        getPlayer().getFriendSet().remove(playerId);
     }
 
     //是否有好友
     public boolean isFriend(Long playerId) {
-        return player.getFriendSet().contains(playerId);
+        return getPlayer().getFriendSet().contains(playerId);
     }
 
     //好友数
     public int friendNum() {
-        return player.getFriendSet().size();
+        return getPlayer().getFriendSet().size();
     }
 
     //清除掉祝福池
     public void clearBlessSet() {
-        player.getBlessSet().clear();
+        getPlayer().getBlessSet().clear();
     }
 
     //添加祝福的玩家 4点过后需要清空
     public void addBlessPlayerId(Long playerId) {
-        player.getBlessSet().add(playerId);
+        getPlayer().getBlessSet().add(playerId);
     }
 
     //是否祝福过了
     public boolean isBlessed(Long playerId) {
-        return player.getBlessSet().contains(playerId);
+        return getPlayer().getBlessSet().contains(playerId);
     }
 
     //接受祝福
     public void acceptBless(Long blesser) {
-        player.getBeBlessSet().add(blesser);  //添加到被祝福池
+        getPlayer().getBeBlessSet().add(blesser);  //添加到被祝福池
     }
 
     //获取被祝福的数量，大于上限则不添加推送
     public int getBeBlessNum() {
-        return player.getBeBlessSet().size();
+        return getPlayer().getBeBlessSet().size();
     }
 
     //设置祝福id
     public void setBlessTimerId(Long id) {
-        player.setFriendbleestimeId(id);  //添加到被祝福池
+        getPlayer().setFriendbleestimeId(id);  //添加到被祝福池
     }
 
     //获取祝福定时器id
     public void getBlessTimerId() {
-        player.getFriendbleestimeId();
+        getPlayer().getFriendbleestimeId();
     }
 
     //获取被祝福（祝福我）的玩家集合，用来初始化查看数据
     public Set<Long> getBeBlessSet() {
-        return player.getBeBlessSet();
+        return getPlayer().getBeBlessSet();
     }
 
     //是否有接受过这个玩家的祝福
     public boolean isAcceptBless(Long blesser) {
-        return player.getBeBlessSet().contains(blesser);
+        return getPlayer().getBeBlessSet().contains(blesser);
     }
 
     //是否已经领取祝福了
     public boolean isGetBless(Long playerId) {
-        return player.getGetBlessSet().contains(playerId);
+        return getPlayer().getGetBlessSet().contains(playerId);
     }
 
     //这个玩家已经领取过了  4点过后需要清空
     public void addGetBless(Long playerId) {
-        player.getGetBlessSet().add(playerId);
+        getPlayer().getGetBlessSet().add(playerId);
     }
 
     public void clearGetBless() {
-        player.getGetBlessSet().clear();
+        getPlayer().getGetBlessSet().clear();
     }
 
     public void setAutoBuildState(int state) {
-        player.setAutoBuild(state);
+        getPlayer().setAutoBuild(state);
     }
 
     public int getAutoBuildState() {
-        return player.getAutoBuild();
+        return getPlayer().getAutoBuild();
     }
 
     public long getAutoBuildStateendtime() {
-        return player.getAutoBuildendTime();
+        return getPlayer().getAutoBuildendTime();
     }
 
     public void setAutoBuildStateendtime(long time) {
-        player.setAutoBuildendTime(time);
+        getPlayer().setAutoBuildendTime(time);
     }
 
     public void setRemainList(Set<Integer> setlist) {
-        player.setRemianset(setlist);
+        getPlayer().setRemianset(setlist);
     }
 
     public Set<Integer> getRemainList() {
-        return player.getRemianset();
+        return getPlayer().getRemianset();
     }
 
     //4点清空
     public void clearBeBlessByGet() {
         List<Long> removeList = new ArrayList<>();
-        Set<Long> beBlessSet = player.getBeBlessSet();
-        Set<Long> getBlessSet = player.getGetBlessSet();
+        Set<Long> beBlessSet = getPlayer().getBeBlessSet();
+        Set<Long> getBlessSet = getPlayer().getGetBlessSet();
         beBlessSet.forEach(id -> {
             if (getBlessSet.contains(id)) {
                 removeList.add(id);
@@ -570,26 +571,26 @@ public class PlayerProxy extends BasicProxy {
     public void addFormationToPlayer(Set<Long> formation, int type) {
         switch (type) {
             case SoldierDefine.FORMATION_DUNGEO: {
-                player.setFormationMember1Set(formation);
+                getPlayer().setFormationMember1Set(formation);
                 break;
             }
             case SoldierDefine.FORMATION_DEFEND: {
-                player.setFormationMember2Set(formation);
+                getPlayer().setFormationMember2Set(formation);
                 break;
             }
             case SoldierDefine.FORMATION_ARENA: {
-                player.setFormationMember3Set(formation);
+                getPlayer().setFormationMember3Set(formation);
                 break;
             }
         }
     }
 
     public void setbuildLevelTime(Set<Long> list) {
-        player.setOutLevelTime(list);
+        getPlayer().setOutLevelTime(list);
     }
 
     public Set<Long> getbuildLevelTime() {
-        return player.getOutLevelTime();
+        return getPlayer().getOutLevelTime();
     }
 
     public long getPowerValue(int power) {
@@ -618,12 +619,12 @@ public class PlayerProxy extends BasicProxy {
         if (power == 110) {
             System.err.println("出现0值");
         }
-        player.setter(powerName, value.toString());
+        getPlayer().setter(powerName, value.toString());
     }
 
     public void addOffLinePowerValue(HashMap<Integer, Integer> rewardMap) {
         PlayerCache cache = new PlayerCache();
-        cache.setAreId(player.getAreaId());
+        cache.setAreId(getPlayer().getAreaId());
         this.setPlayerCache(cache);
         for (Integer key : rewardMap.keySet()) {
             //TODO 需要增加日志处理
@@ -635,7 +636,7 @@ public class PlayerProxy extends BasicProxy {
 
     public void reduceOffLinePowerValue(HashMap<Integer, Integer> rewardMap) {
         PlayerCache cache = new PlayerCache();
-        cache.setAreId(player.getAreaId());
+        cache.setAreId(getPlayer().getAreaId());
         this.setPlayerCache(cache);
         for (Integer key : rewardMap.keySet()) {
             //TODO 需要增加日志处理
@@ -755,17 +756,17 @@ public class PlayerProxy extends BasicProxy {
 
 
     public void addActivity(long id) {
-        player.addActivity(id);
+        getPlayer().addActivity(id);
     }
 
     public void removeActivity(long id) {
-        player.removeActivity(id);
+        getPlayer().removeActivity(id);
     }
 
     public void setFacade(int itemId, long time, int icon) {
-        player.setFacade(itemId);
-        player.setFacadeendTime(time);
-        player.setFaceIcon(icon);
+        getPlayer().setFacade(itemId);
+        getPlayer().setFacadeendTime(time);
+        getPlayer().setFaceIcon(icon);
     }
 
     private void refreshValue(int power, long value, int opt, int dict_action, int amount) {
@@ -853,24 +854,24 @@ public class PlayerProxy extends BasicProxy {
     }
 
     public long getPlayerId() {
-        return player.getId();
+        return getPlayer().getId();
     }
 
     public int getAreaId() {
-        return player.getAreaId();
+        return getPlayer().getAreaId();
     }
 
     public String getAreaKey() {
-        return GameMainServer.getAreaKeyByAreaId(player.getAreaId());
+        return GameMainServer.getAreaKeyByAreaId(getPlayer().getAreaId());
     }
 
     public void createRole(String name, int sex) {
-        this.player.setName(name);
-        this.player.setSex(sex);
+        this.getPlayer().setName(name);
+        this.getPlayer().setSex(sex);
         if (sex == 1) {
-            this.player.setIcon(101);
+            this.getPlayer().setIcon(101);
         } else {
-            this.player.setIcon(201);
+            this.getPlayer().setIcon(201);
         }
         this.savePlayer();  //关键数据，操作不频繁，直接保存
 
@@ -983,7 +984,7 @@ public class PlayerProxy extends BasicProxy {
     }
 
     public void setCapacity(long capacity) {
-        player.setCapacity(capacity);
+        getPlayer().setCapacity(capacity);
     }
 
 
@@ -1124,8 +1125,8 @@ public class PlayerProxy extends BasicProxy {
                 state = ActorDefine.DEFINE_BOOM_NORMAL;
             }
         }
-        if (state != player.getBoomState()) {
-            player.setBoomState(state);
+        if (state != getPlayer().getBoomState()) {
+            getPlayer().setBoomState(state);
             simplePlayer.setBoomState(state);
         }
         return state;
@@ -1363,10 +1364,10 @@ public class PlayerProxy extends BasicProxy {
         }
     //获得在线礼包剩余时间
    /* public int getOnlineTime(){
-        if(player.getLoginOutTime()==0){
+        if(getPlayer().getLoginOutTime()==0){
             JSONObject commandInfo = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.ACTIVE_EFFECT, "commandlv", commandLv);
         }
-       player.setOnlinetime(player.getOnlinetime()+(int)(player.getLoginOutTime()-player.getLoginTime());
+       getPlayer().setOnlinetime(getPlayer().getOnlinetime()+(int)(getPlayer().getLoginOutTime()-getPlayer().getLoginTime());
         return 0;
     }*/
 
@@ -1613,16 +1614,16 @@ public class PlayerProxy extends BasicProxy {
             billOrderSetDb.addKeyValue(OrderId, getPlayerId());
 
             addPowerValue(PlayerPowerDefine.POWER_vipExp, chargeValue * 10, LogDefine.GET_CHARGE);
-            if (player.getFirstChargeTime() == 0) {
-                player.setFirstChargeTime(GameUtils.getServerDate().getTime());
+            if (getPlayer().getFirstChargeTime() == 0) {
+                getPlayer().setFirstChargeTime(GameUtils.getServerDate().getTime());
                 // 首冲处理
                 activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_CHARGE, chargeValue * 10, this, -1);
             }
             activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_EVERY_CHARGE_FIRST, chargeValue * 10, this, 0);
-            player.setTotalCharge(player.getTotalCharge() + chargeValue * 10);
-            long lastchargetime = player.getLastChargeTime();
+            getPlayer().setTotalCharge(getPlayer().getTotalCharge() + chargeValue * 10);
+            long lastchargetime = getPlayer().getLastChargeTime();
             long nowchargetime = GameUtils.getServerDate().getTime();
-            player.setLastChargeTime(GameUtils.getServerDate().getTime());
+            getPlayer().setLastChargeTime(GameUtils.getServerDate().getTime());
             // 活动相关处理
             activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_CHARGE_EVERYDAY_ATWILL, chargeValue * 10, this, 0);
             activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_CHARGE_ATWILL, chargeValue * 10, this, 0);
@@ -1658,11 +1659,11 @@ public class PlayerProxy extends BasicProxy {
     }
 
     public void removeTeamNotice(long id) {
-        player.removeTeamNotice(id);
+        getPlayer().removeTeamNotice(id);
     }
 
     public void addTeamNotice(long id) {
-        player.addTeamNotice(id);
+        getPlayer().addTeamNotice(id);
     }
 
     /***
@@ -1703,43 +1704,43 @@ public class PlayerProxy extends BasicProxy {
 
     public Set<Long> getShieldsByType(int type) {
         if (type == ChatAndMailDefine.SHIELD_TYPE_MAIL) {
-            return player.getShieldMailSet();
+            return getPlayer().getShieldMailSet();
         } else {
-            return player.getShieldChatSet();
+            return getPlayer().getShieldChatSet();
         }
     }
 
     public int addShieldPlayer(long id, int type) {
         if (type == ChatAndMailDefine.SHIELD_TYPE_MAIL) {
-            if (player.getShieldMailSet().contains(id)) {
+            if (getPlayer().getShieldMailSet().contains(id)) {
                 return ErrorCodeDefine.M140005_1;
             }
-            player.addShieldMai(id);
+            getPlayer().addShieldMai(id);
         } else {
-            if (player.getShieldChatSet().contains(id)) {
+            if (getPlayer().getShieldChatSet().contains(id)) {
                 return ErrorCodeDefine.M140005_1;
             }
-            player.addShieldChat(id);
+            getPlayer().addShieldChat(id);
         }
         return 0;
     }
 
     public int removeShield(int type, long playerId) {
         if (type == ChatAndMailDefine.SHIELD_TYPE_MAIL) {
-            player.removeShieldMail(playerId);
+            getPlayer().removeShieldMail(playerId);
         } else {
-            player.removeShieldChat(playerId);
+            getPlayer().removeShieldChat(playerId);
         }
         return 0;
     }
 
     public boolean isShield(long id, int type) {
         if (type == ChatAndMailDefine.SHIELD_TYPE_MAIL) {
-            if (player.getShieldMailSet().contains(id)) {
+            if (getPlayer().getShieldMailSet().contains(id)) {
                 return true;
             }
         } else {
-            if (player.getShieldChatSet().contains(id)) {
+            if (getPlayer().getShieldChatSet().contains(id)) {
                 return true;
             }
         }
@@ -1750,8 +1751,8 @@ public class PlayerProxy extends BasicProxy {
      * 头像,挂件设置
      **/
     public int setPlayerHeadPendant(int iconId, int pendantId) {
-        int icon = player.getIcon();
-        int pendt = player.getPendant();
+        int icon = getPlayer().getIcon();
+        int pendt = getPlayer().getPendant();
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
         long vipLv = vipProxy.getVipLevel();
         //头像
@@ -1768,20 +1769,20 @@ public class PlayerProxy extends BasicProxy {
                 if (vipheadNeed.length() > 0) {
                     return ErrorCodeDefine.M20012_1;//vip等级不足
                 } else {
-                    player.setIcon(iconId);
-                    player.setSex(headInfo.getInt("gender"));
+                    getPlayer().setIcon(iconId);
+                    getPlayer().setSex(headInfo.getInt("gender"));
                 }
             } else {//VIP玩家
                 if (vipheadNeed.length() > 0) {
                     if (vipLv < vipheadNeed.getInt(1)) {
                         return ErrorCodeDefine.M20012_1;//vip等级不足
                     } else {
-                        player.setIcon(iconId);
-                        player.setSex(headInfo.getInt("gender"));
+                        getPlayer().setIcon(iconId);
+                        getPlayer().setSex(headInfo.getInt("gender"));
                     }
                 } else {
-                    player.setIcon(iconId);
-                    player.setSex(headInfo.getInt("gender"));
+                    getPlayer().setIcon(iconId);
+                    getPlayer().setSex(headInfo.getInt("gender"));
                 }
             }
         }
@@ -1801,40 +1802,40 @@ public class PlayerProxy extends BasicProxy {
                 if (vippendantneed.length() > 0) {
                     return ErrorCodeDefine.M20012_1;
                 } else {
-                    player.setPendant(pendantId);
+                    getPlayer().setPendant(pendantId);
                 }
             } else {//VIP玩家
                 if (vippendantneed.length() > 0) {
                     if (vipLv < vippendantneed.getInt(1)) {
                         return ErrorCodeDefine.M20012_1;
                     } else {
-                        player.setPendant(pendantId);
+                        getPlayer().setPendant(pendantId);
                     }
                 } else {
-                    player.setPendant(pendantId);
+                    getPlayer().setPendant(pendantId);
                 }
             }
         }
         if (icon != iconId || pendt != pendantId) {
-            player.save();
+            getPlayer().save();
         }
         return 0;
     }
 
     public int getIconId() {
-        return player.getIcon();
+        return getPlayer().getIcon();
     }
 
     public int getPendt() {
-        return player.getPendant();
+        return getPlayer().getPendant();
     }
 
     public void addReport(Report report) {
-        player.addReport(report.getId());
+        getPlayer().addReport(report.getId());
     }
 
     public void removeReport(long id) {
-        player.removeReport(id);
+        getPlayer().removeReport(id);
     }
 
 
@@ -1845,15 +1846,15 @@ public class PlayerProxy extends BasicProxy {
         PlayerCache cache = getPlayerCache();
         int level = (int) getPowerValue(PlayerPowerDefine.POWER_level);
         int nowTime = GameUtils.getServerTime();
-        int time_duration = nowTime - player.getLoginTime();
+        int time_duration = nowTime - getPlayer().getLoginTime();
         tbllog_quit quitlog = new tbllog_quit();
         quitlog.setPlatform(cache.getPlat_name());
-        quitlog.setRole_id(player.getId());
-        quitlog.setAccount_name(player.getAccountName());
-        quitlog.setLogin_level(player.getLoginLevel());
+        quitlog.setRole_id(getPlayer().getId());
+        quitlog.setAccount_name(getPlayer().getAccountName());
+        quitlog.setLogin_level(getPlayer().getLoginLevel());
         quitlog.setLogout_level(level);
         quitlog.setLogout_ip(cache.getUser_ip());
-        quitlog.setLogin_time(player.getLoginTime());
+        quitlog.setLogin_time(getPlayer().getLoginTime());
         quitlog.setLogout_time(nowTime);
         quitlog.setTime_duration(time_duration);
         quitlog.setLogout_map_id(0);
@@ -1874,9 +1875,9 @@ public class PlayerProxy extends BasicProxy {
         PlayerCache cache = getPlayerCache();
         tbllog_gold goldlog = new tbllog_gold();
         goldlog.setPlatform(cache.getPlat_name());
-        goldlog.setRole_id(player.getId());
-        goldlog.setAccount_name(player.getAccountName());
-        goldlog.setDim_level(player.getLevel());
+        goldlog.setRole_id(getPlayer().getId());
+        goldlog.setAccount_name(getPlayer().getAccountName());
+        goldlog.setDim_level(getPlayer().getLevel());
         goldlog.setDim_prof(0);
         goldlog.setAction_1(dict_action);
         goldlog.setAmount((long) amount);
@@ -1888,7 +1889,7 @@ public class PlayerProxy extends BasicProxy {
     }
 
     public void setDepotprotect(long value) {
-        player.setDepotprotect(value);
+        getPlayer().setDepotprotect(value);
     }
 
     /**
@@ -1898,26 +1899,26 @@ public class PlayerProxy extends BasicProxy {
         PlayerCache cache = getPlayerCache();
         tbllog_player playerlog = new tbllog_player();
         playerlog.setPlatform(cache.getPlat_name());
-        playerlog.setRole_id(player.getId());
-        playerlog.setRole_name(player.getName());
-        playerlog.setAccount_name(player.getAccountName());
-        playerlog.setUser_name(player.getName());
-        playerlog.setDim_sex(player.getSex());
+        playerlog.setRole_id(getPlayer().getId());
+        playerlog.setRole_name(getPlayer().getName());
+        playerlog.setAccount_name(getPlayer().getAccountName());
+        playerlog.setUser_name(getPlayer().getName());
+        playerlog.setDim_sex(getPlayer().getSex());
         playerlog.setDid(cache.getImei());
-        playerlog.setDim_level(player.getLevel());
-        playerlog.setDim_vip_level(player.getVipLevel());
-        playerlog.setDim_exp(player.getExp());
-        playerlog.setDim_power(player.getCapacity());
-        playerlog.setDim_iron(player.getIron());
-        playerlog.setDim_tael(player.getTael());
-        playerlog.setDim_wood(player.getWood());
-        playerlog.setDim_stones(player.getStones());
-        playerlog.setDim_food(player.getFood());
-        playerlog.setGold_number((player.getVipExp()));
-        playerlog.setCoin_number((player.getGold()));
-        playerlog.setPay_money((player.getVipExp()));
-        playerlog.setFirst_pay_time((player.getFirstChargeTime() / 1000));
-        playerlog.setLast_pay_time((player.getLastChargeTime() / 1000));
+        playerlog.setDim_level(getPlayer().getLevel());
+        playerlog.setDim_vip_level(getPlayer().getVipLevel());
+        playerlog.setDim_exp(getPlayer().getExp());
+        playerlog.setDim_power(getPlayer().getCapacity());
+        playerlog.setDim_iron(getPlayer().getIron());
+        playerlog.setDim_tael(getPlayer().getTael());
+        playerlog.setDim_wood(getPlayer().getWood());
+        playerlog.setDim_stones(getPlayer().getStones());
+        playerlog.setDim_food(getPlayer().getFood());
+        playerlog.setGold_number((getPlayer().getVipExp()));
+        playerlog.setCoin_number((getPlayer().getGold()));
+        playerlog.setPay_money((getPlayer().getVipExp()));
+        playerlog.setFirst_pay_time((getPlayer().getFirstChargeTime() / 1000));
+        playerlog.setLast_pay_time((getPlayer().getLastChargeTime() / 1000));
         playerlog.setHappend_time(GameUtils.getServerTime());
         sendUpdateLog(playerlog);
     }
@@ -1929,10 +1930,10 @@ public class PlayerProxy extends BasicProxy {
         PlayerCache cache = getPlayerCache();
         tbllog_pay paylog = new tbllog_pay();
         paylog.setPlatform(cache.getPlat_name());
-        paylog.setRole_id(player.getId());
-        paylog.setAccount_name(player.getAccountName());
+        paylog.setRole_id(getPlayer().getId());
+        paylog.setAccount_name(getPlayer().getAccountName());
         paylog.setUser_ip(cache.getUser_ip());
-        paylog.setDim_level(player.getLevel());
+        paylog.setDim_level(getPlayer().getLevel());
         paylog.setPay_type(chargeType);
         paylog.setOrder_id(OrderId);
         paylog.setPay_money(chargeValue);
@@ -1951,8 +1952,8 @@ public class PlayerProxy extends BasicProxy {
         PlayerCache cache = getPlayerCache();
         tbllog_level_up levelUplog = new tbllog_level_up();
         levelUplog.setPlatform(cache.getPlat_name());
-        levelUplog.setRole_id(player.getId());
-        levelUplog.setAccount_name(player.getAccountName());
+        levelUplog.setRole_id(getPlayer().getId());
+        levelUplog.setAccount_name(getPlayer().getAccountName());
         levelUplog.setLast_level(lastLevel);
         levelUplog.setCurrent_level(newLevel);
         levelUplog.setLast_exp(lastExp);
@@ -1966,12 +1967,12 @@ public class PlayerProxy extends BasicProxy {
      */
     public void roleLog(String name, int sex) {
         PlayerProxy player = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        PlayerCache cache = player.getPlayerCache();
+        PlayerCache cache = getPlayer().getPlayerCache();
         tbllog_role rolelog = new tbllog_role();
         rolelog.setPlatform(cache.getPlat_name());
-        rolelog.setRole_id(player.getPlayerId());
+        rolelog.setRole_id(getPlayer().getPlayerId());
         rolelog.setRole_name(name);
-        rolelog.setAccount_name(player.getAccountName());
+        rolelog.setAccount_name(getPlayer().getAccountName());
         rolelog.setUser_ip(cache.getUser_ip());
         rolelog.setDim_prof(0);
         rolelog.setDim_sex(sex);
@@ -2035,9 +2036,9 @@ public class PlayerProxy extends BasicProxy {
         PlayerCache cache = getPlayerCache();
         tbllog_checkin checkinlog = new tbllog_checkin();
         checkinlog.setPlatform(cache.getPlat_name());
-        checkinlog.setAccount_name(player.getAccountName());
-        checkinlog.setDim_level(player.getLevel());
-        checkinlog.setRole_id(player.getId());
+        checkinlog.setAccount_name(getPlayer().getAccountName());
+        checkinlog.setDim_level(getPlayer().getLevel());
+        checkinlog.setRole_id(getPlayer().getId());
         checkinlog.setHappend_time(GameUtils.getServerTime());
         checkinlog.setLog_time(GameUtils.getServerTime());
         sendPorxyLog(checkinlog);
@@ -2137,7 +2138,7 @@ public class PlayerProxy extends BasicProxy {
 
     //是否设置了自动补充防守队列
     public int getSettingAutoAddDefendList() {
-        return player.getSettingAutoAddDefendlist();
+        return getPlayer().getSettingAutoAddDefendlist();
     }
 
     //30天登陆记录第几天
@@ -2159,7 +2160,7 @@ public class PlayerProxy extends BasicProxy {
                 addRewardNum(getLoginDayNum());
                 System.err.println("今天是登录第：" + getLoginDayNum() + "天");
             //    timerProxy.setLastOperatinTime(TimerDefine.LOGIN_DAY_NUM, 0, 0, dayTime);
-                player.setFirthlogin(UtilDefine.REWARD_STATE_HAS_GET);
+                getPlayer().setFirthlogin(UtilDefine.REWARD_STATE_HAS_GET);
                 return true;
             }
         }
@@ -2243,38 +2244,38 @@ public class PlayerProxy extends BasicProxy {
 
 
     public void setBoomRefTime(long time) {
-        player.setBoomRefTime(time);
+        getPlayer().setBoomRefTime(time);
         if(simplePlayer!=null) {
             simplePlayer.setBoomRefTime(time);
         }
-        player.save();
+        getPlayer().save();
     }
 
     public void setEnergyRefTime(long time) {
-        player.setEnergyaddtime(time);
-        player.save();
+        getPlayer().setEnergyaddtime(time);
+        getPlayer().save();
     }
 
 
     public long getBoomRefTime() {
-        return    player.getBoomRefTime();
+        return    getPlayer().getBoomRefTime();
     }
 
     public long getEnergyRefTimes() {
-        return    player.getEnergyaddtime();
+        return    getPlayer().getEnergyaddtime();
     }
 
     public void setWorldTilePoint(int x, int y) {
-        player.setWorldTileX(x);
-        player.setWorldTileY(y);
+        getPlayer().setWorldTileX(x);
+        getPlayer().setWorldTileY(y);
         simplePlayer.setX(x);
         simplePlayer.setY(y);
         //修改了位置保存一下
-        player.save();
+        getPlayer().save();
     }
 
     public int getCdKeyTimes(int type) {
-        String cdkeyStr = player.getCdkeyStr();
+        String cdkeyStr = getPlayer().getCdkeyStr();
         if (cdkeyStr.length() == 0) {
             return 0;
         }
@@ -2292,10 +2293,10 @@ public class PlayerProxy extends BasicProxy {
     }
 
     public void addCdKeyTimes(int type) {
-        String cdkeyStr = player.getCdkeyStr();
+        String cdkeyStr = getPlayer().getCdkeyStr();
         if (cdkeyStr.length() == 0) {
             cdkeyStr = type + "," + 1 + "&";
-            player.setCdkeyStr(cdkeyStr);
+            getPlayer().setCdkeyStr(cdkeyStr);
             return;
         }
         HashMap<Integer, Integer> nums = new HashMap<>();
@@ -2317,7 +2318,7 @@ public class PlayerProxy extends BasicProxy {
             sb.append(nums.get(key));
             sb.append("&");
         }
-        player.setCdkeyStr(sb.toString());
+        getPlayer().setCdkeyStr(sb.toString());
     }
 
     //判断角色等级是否符合活动开启等级
@@ -2336,13 +2337,13 @@ public class PlayerProxy extends BasicProxy {
 
 
     public void onBanPlayerChat(int time, int status) {
-        player.setBanChatAct(status);
-        player.setBanChatActDate(time);
-        player.save();
+        getPlayer().setBanChatAct(status);
+        getPlayer().setBanChatActDate(time);
+        getPlayer().save();
     }
 
     public boolean isBanChat() {
-        return player.getBanChatAct() == ActorDefine.BAN_STATUS_BAN && player.getBanChatActDate() > GameUtils.getServerTime();
+        return getPlayer().getBanChatAct() == ActorDefine.BAN_STATUS_BAN && getPlayer().getBanChatActDate() > GameUtils.getServerTime();
     }
 
     //打包系统公告(不替换任何值)
@@ -2375,7 +2376,7 @@ public class PlayerProxy extends BasicProxy {
         JSONObject notice = ConfigDataProxy.getConfigInfoFindByThreeKey(DataDefine.SYSTEM_NOTICE, "type", type, "condition1", condition, "condition2", condition2);
         M25.M250000.S2C.Builder builder = M25.M250000.S2C.newBuilder();
         if (notice != null) {
-            String rolename = player.getName();
+            String rolename = getPlayer().getName();
             String notices = notice.getString("notice");
             String newnotices = notices.replaceAll("NAME", rolename);
             chat.type = ActorDefine.CHAT_TYPE;
@@ -2401,7 +2402,7 @@ public class PlayerProxy extends BasicProxy {
         JSONObject notice = ConfigDataProxy.getConfigInfoFindByThreeKey(DataDefine.SYSTEM_NOTICE, "type", type, "condition1", condition, "condition2", condition2);
         M25.M250000.S2C.Builder builder = M25.M250000.S2C.newBuilder();
         if (notice != null) {
-            String rolename = player.getName();
+            String rolename = getPlayer().getName();
             chat.playerName = "系统公告";
             String notices = notice.getString("notice");
             String newnotices = notices.replaceAll("NAME", rolename);
@@ -2432,7 +2433,7 @@ public class PlayerProxy extends BasicProxy {
         JSONObject notice = ConfigDataProxy.getConfigInfoFindByThreeKey(DataDefine.SYSTEM_NOTICE, "type", type, "condition1", condition, "condition2", condition2);
         M25.M250000.S2C.Builder builder = M25.M250000.S2C.newBuilder();
         if (notice != null) {
-            String rolename = player.getName();
+            String rolename = getPlayer().getName();
             chat.playerName = "系统公告";
             String notices = notice.getString("notice");
             String newnotices = notices.replaceAll("NAME", rolename);
@@ -2461,7 +2462,7 @@ public class PlayerProxy extends BasicProxy {
         JSONObject notice = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.SYSTEM_NOTICE, "type", type, "condition1", condition);
         M25.M250000.S2C.Builder builder = M25.M250000.S2C.newBuilder();
         if (notice != null) {
-            String rolename = player.getName();
+            String rolename = getPlayer().getName();
             String notices = notice.getString("notice");
             String newnotices = notices.replaceAll("NAME", rolename);
             String nownotice1 = newnotices.replaceFirst("XXX", string);
@@ -2490,7 +2491,7 @@ public class PlayerProxy extends BasicProxy {
         JSONObject notice = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.SYSTEM_NOTICE, "type", type, "condition2", condition2);
         M25.M250000.S2C.Builder builder = M25.M250000.S2C.newBuilder();
         if (notice != null) {
-            String rolename = player.getName();
+            String rolename = getPlayer().getName();
             String notices = notice.getString("notice");
             String newnotices = notices.replaceAll("NAME", rolename);
             String nownotice3 = newnotices.replaceAll("XXX", string);
@@ -2548,16 +2549,16 @@ public class PlayerProxy extends BasicProxy {
     public int getPlayerType() {
         int type = 0;
         int now = GameUtils.getServerTime();
-        if (now >= player.getTypeBeginTime() && now <= player.getTypeEndTime()) {
-            type = player.getPlayerType();
+        if (now >= getPlayer().getTypeBeginTime() && now <= getPlayer().getTypeEndTime()) {
+            type = getPlayer().getPlayerType();
         }
         return type;
     }
 
     public void setPlayerType(int type, int beginTime, int endTime) {
-        player.setPlayerType(type);
-        player.setTypeBeginTime(beginTime);
-        player.setTypeEndTime(endTime);
+        getPlayer().setPlayerType(type);
+        getPlayer().setTypeBeginTime(beginTime);
+        getPlayer().setTypeEndTime(endTime);
     }
 
 
@@ -2569,7 +2570,7 @@ public class PlayerProxy extends BasicProxy {
         int type = 0;
         int rs = 0;
         //TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-       int num = player.getEverylottery();//timerdbProxy.getTimerNum(TimerDefine.LOGIN_LOTTERY, 0, 0);
+       int num = getPlayer().getEverylottery();//timerdbProxy.getTimerNum(TimerDefine.LOGIN_LOTTERY, 0, 0);
         try {
             if (dayNum == 0) {//请求可不可领
                 if (playerProxy.getRewardNum().size() <= 0 && playerProxy.getLoginDayNum() >= ActorDefine.LOGIN_DAY_NUM) {
@@ -2662,12 +2663,12 @@ public class PlayerProxy extends BasicProxy {
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
         rewardProxy.getPlayerReward(ActorDefine.NEW_PLAYER_REWARD_ID, reward);
         rewardProxy.getRewardToPlayer(reward, LogDefine.GET_NEW_PLAYER);
-        player.setHaveGetNewGift(1);
+        getPlayer().setHaveGetNewGift(1);
         return 0;
     }
 
     public int getHaveNewGift() {
-        return player.getHaveGetNewGift();
+        return getPlayer().getHaveGetNewGift();
     }
 
 
@@ -2741,11 +2742,11 @@ public class PlayerProxy extends BasicProxy {
 
     //获得拉吧免费过次数
     public int getLabafreetimes(){
-        return player.getLabafree();
+        return getPlayer().getLabafree();
     }
     //增加拉吧免费抽过次数
     public void addlabafreetimes(int add){
-        player.setLabafree(player.getLabafree()+1);
+        getPlayer().setLabafree(getPlayer().getLabafree()+1);
     }
 
 
@@ -2755,23 +2756,23 @@ public class PlayerProxy extends BasicProxy {
     @Override
 
     public void zeroTimerEventHandler() {
-        player.setZeroTime(GameUtils.getTodayTimeForHourInt(0));
+        getPlayer().setZeroTime(GameUtils.getTodayTimeForHourInt(0));
     }
 
     public void addjunshigoldTimes(int times){
-        player.setJunshigoldtimes(player.getJunshigoldtimes() + times);
+        getPlayer().setJunshigoldtimes(getPlayer().getJunshigoldtimes() + times);
     }
 
     public int getjunshigoldTimes(){
-        return player.getJunshigoldtimes();
+        return getPlayer().getJunshigoldtimes();
     }
 
     public void addjunshiresouceTimes(int times){
-        player.setJunshiresoucetimes(player.getJunshiresoucetimes()+times);
+        getPlayer().setJunshiresoucetimes(getPlayer().getJunshiresoucetimes()+times);
     }
 
     public int getjunshiresouceTimes(){
-        return player.getJunshiresoucetimes();
+        return getPlayer().getJunshiresoucetimes();
     }
 
     public M2.M20500.S2C getBommTimeInfo(){
@@ -2783,43 +2784,43 @@ public class PlayerProxy extends BasicProxy {
     }
     @Override
     public void fixedTimeEventHandler() {
-        player.setResetDataTime(GameUtils.getTodayTimeForHourInt(4));
+        getPlayer().setResetDataTime(GameUtils.getTodayTimeForHourInt(4));
         //军师抽奖重置
-        player.setJunshigoldtimes(0);
-        player.setJunshiresoucetimes(0);
+        getPlayer().setJunshigoldtimes(0);
+        getPlayer().setJunshiresoucetimes(0);
         //西域远征
-        player.setDungeolimitrest(0);
-        player.setDungeolimitchange(0);
+        getPlayer().setDungeolimitrest(0);
+        getPlayer().setDungeolimitchange(0);
        //每日自动声望刷新
         getPlayer().setPrestaeReward(0);
         getPlayer().setPrestaeshouxun(0);
        //每日抽奖 30天开服
         getPlayer().setEverylottery(0);
-        player.setFirthlogin(0);
+        getPlayer().setFirthlogin(0);
         loginDayNum();
       //每日体力购买次数刷新
-        player.setBuyenergytimes(0);
+        getPlayer().setBuyenergytimes(0);
       //普通武将每日刷新免费次数
-        player.setLottertime1(0);
+        getPlayer().setLottertime1(0);
        //拉霸免费次数
-        player.setLabafree(0);
+        getPlayer().setLabafree(0);
       //刷新每日的祝福可获取奖励的次数
-        player.setDaybless(0);
+        getPlayer().setDaybless(0);
        //刷新每日可领取祝福奖励的次数
-        player.setGetbless(0);
+        getPlayer().setGetbless(0);
         Set<Long> blessSet = new HashSet<>();
         //刷新已祝福玩家列表
-        player.setBlessSet(blessSet);
+        getPlayer().setBlessSet(blessSet);
         //刷新已领祝福玩家列表
         Set<Long> blessSet1 = new HashSet<>();
-        player.setGetBlessSet(blessSet1);
+        getPlayer().setGetBlessSet(blessSet1);
         //刷新祝福自己的玩家列表
         Set<Long> blessSet2 = new HashSet<>();
-        player.setBeBlessSet(blessSet2);
+        getPlayer().setBeBlessSet(blessSet2);
         //掏宝刷新
-        player.setTaobaofree(0);
+        getPlayer().setTaobaofree(0);
         //每日重置在线总时长
-        player.setOnlinetime(0);
+        getPlayer().setOnlinetime(0);
     }
 
     public int getRistChangeTimes(){
