@@ -7,11 +7,11 @@ import com.znl.base.BaseDbPojo;
  * 阵型成员
  */
 public class FormationMember extends BaseDbPojo {
-    private long playerId;
-    private int typeId;
-    private int num;
-    private int baseNum;
-    private int post;
+    private long playerId = 0l;
+    private int typeId = 0;
+    private int num = 0;
+    private int baseNum = 0;
+    private int post = 0;
 
     public long getPlayerId() {
         return playerId;

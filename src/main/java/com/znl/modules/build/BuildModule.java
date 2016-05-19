@@ -111,7 +111,7 @@ public class BuildModule extends BasicModule {
                 }
                 pushNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100000, builder.build());
             }
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(0);
         } else if (object instanceof GameMsg.ReshBuildings) {
             OnTriggerNet100000Event(null);
         } else if (object instanceof GameMsg.BuyBuildSite) {
@@ -129,8 +129,8 @@ public class BuildModule extends BasicModule {
             sendNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100000, builder.build());
         } else {
             pushNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100000, builder.build());
-            sendPushNetMsgToClient();
         }
+        sendPushNetMsgToClient(0);
     }
 
     private void OnTriggerNet100001Event(Request request) {
@@ -353,7 +353,7 @@ public class BuildModule extends BasicModule {
             sendNoticeToPushService(TipDefine.NOTICE_TYPE_CREATESOLDIER);
             sendNoticeToPushService(TipDefine.NOTICE_TYPE_SCIENCELEVEL);
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M10_C100007);
     }
 
 
@@ -377,7 +377,7 @@ public class BuildModule extends BasicModule {
                 shopLog(itemId, reward.addItemMap.get(itemId), id);
             }
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M10_C100008);
     }
 
 
@@ -474,17 +474,16 @@ public class BuildModule extends BasicModule {
     }
 
     //通过某个类型发送通知
-    public void sendNoticeToPushService(int type) {
-        //TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-     //   List<Notice> notices = timerdbProxy.getNoticeByType(type);
-      //  sendServiceMsg(ActorDefine.PUSH_SERVICE_NAME, new GameMsg.addNoticelist(notices, type));
+    public void  sendNoticeToPushService(int type){
+    //    List<Notice> notices =
+     //   sendServiceMsg(ActorDefine.PUSH_SERVICE_NAME, new GameMsg.addNoticelist(notices, type));
     }
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

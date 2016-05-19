@@ -6,7 +6,7 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2015/11/16.
  */
 public class OrdnancePiece extends BaseDbPojo {
-    private Long playerId;
+    private Long playerId = 0l;
     private int typeId = 0;
     private int num = 0;
 

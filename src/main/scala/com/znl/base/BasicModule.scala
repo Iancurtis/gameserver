@@ -28,11 +28,22 @@ abstract class BasicModule extends Actor with ActorLogging {
   //
   var moduleId = 0
 
+  //rs错误码访问缓存[协议号，错误码]
+  var rsMap:util.HashMap[Int,Long]=new util.HashMap[Int,Long]()
+
   //协议访问缓存<cmd,time>
   var protocalRequestMap: ConcurrentHashMap[Integer, Integer] = new ConcurrentHashMap[Integer, Integer]
 
   //虚拟协议缓存
   var ptmap: util.Map[Integer, Object] = new util.HashMap[Integer, Object]()
+
+  def setRsMap(rsMap:util.HashMap[Int,Long]): Unit ={
+    this.rsMap=rsMap;
+  }
+
+  def getRsMap(): util.HashMap[Int,Long] ={
+    return rsMap;
+  }
 
   def setModuleId(moduleId: Int) = {
     this.moduleId = moduleId
@@ -100,13 +111,13 @@ abstract class BasicModule extends Actor with ActorLogging {
   }
 
   override def preStart() = {
-    log.info("----模块启动--------:" + this.toString())
+//    log.info("----模块启动--------:" + this.toString())
     //    registerAllNetEvent()
   }
 
   //模块异常重启
   override def postRestart(reason: scala.Throwable) = {
-    sendPushNetMsgToClient() //尝试发送协议给客户端
+    sendPushNetMsgToClient(0) //尝试发送协议给客户端
   }
 
   //  def registerAllNetEvent();
@@ -249,29 +260,29 @@ abstract class BasicModule extends Actor with ActorLogging {
      }*/
   }
 
-  def sendDifferent(powerList: util.List[Integer]): M2.M20002.S2C = {
-    val builder: M2.M20002.S2C.Builder = M2.M20002.S2C.newBuilder()
-    val playerProxy: PlayerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME)
-    for (power <- powerList) {
-      val value: Long = playerProxy.getPowerValue(power)
-      val diff: AttrDifInfo.Builder = AttrDifInfo.newBuilder()
-      if (diff.getTypeid == PlayerPowerDefine.POWER_level) {
-        val groupmsg: GameMsg.changeMenberLevel = new GameMsg.changeMenberLevel(playerProxy.getPlayerId, playerProxy.getLevel)
-        tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId)
-      }
-      diff.setTypeid(power)
-      diff.setValue(value)
-      builder.addDiffs(diff.build())
-    }
-    //    sendNetMsg(ActorDefine.ROLE_MODULE_ID,ProtocolModuleDefine.NET_M2_C20002,builder.build())
-    builder.build()
-  }
+//  def sendDifferent(powerList: util.List[Integer]): M2.M20002.S2C = {
+//    val builder: M2.M20002.S2C.Builder = M2.M20002.S2C.newBuilder()
+//    val playerProxy: PlayerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME)
+//    for (power <- powerList) {
+//      val value: Long = playerProxy.getPowerValue(power)
+//      val diff: AttrDifInfo.Builder = AttrDifInfo.newBuilder()
+//      if (diff.getTypeid == PlayerPowerDefine.POWER_level) {
+//        val groupmsg: GameMsg.changeMenberLevel = new GameMsg.changeMenberLevel(playerProxy.getPlayerId, playerProxy.getLevel)
+//        tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId)
+//      }
+//      diff.setTypeid(power)
+//      diff.setValue(value)
+//      builder.addDiffs(diff.build())
+//    }
+//    //    sendNetMsg(ActorDefine.ROLE_MODULE_ID,ProtocolModuleDefine.NET_M2_C20002,builder.build())
+//    builder.build()
+//  }
 
-  //  def sendPowerDiff (list: util.List[Integer]) {
-  //    val different: M2.M20002.S2C = sendDifferent(list)
-  //    pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, different)
-  //    sendPushNetMsgToClient
-  //  }
+//    def sendPowerDiff (list: util.List[Integer]) {
+//      val different: M2.M20002.S2C = sendDifferent(list)
+//      pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, different)
+//      sendPushNetMsgToClient
+//    }
 
 
   def onTriggerNetEvent(cmd: Int, request: Request) = {
@@ -281,7 +292,6 @@ abstract class BasicModule extends Actor with ActorLogging {
       val powerMap: util.Map[java.lang.Integer, java.lang.Long] = getPlayerPowerValues()
       request.setPowerMap(powerMap)
       val method = this.getClass.getDeclaredMethod("OnTriggerNet" + cmd + "Event", request.getClass)
-      CustomerLogger.info("OnTriggerNet" + cmd + "Event")
       method.setAccessible(true)
       method.invoke(this, request) //反射，性能很大的消耗
 
@@ -331,7 +341,8 @@ abstract class BasicModule extends Actor with ActorLogging {
     val cmd = request.getCmd()
     //判断协议重复请求
     if (checkIsRepeatedProtocal(cmd, request.getReqTime)) {
-      repeatedProtocalHandler(cmd)
+      repeatedProtocalHandler(request)
+      context.parent ! RepeatedProtocalHandler(cmd)
       return null
     }
     if (cmd == 230001) {
@@ -357,19 +368,19 @@ abstract class BasicModule extends Actor with ActorLogging {
     //    println("==========服务器推送协议"+cmd)
   }
 
-  def sendMsg(): Unit = {
-    context.parent ! PushtNetMsgToClient()
+  def sendMsg(cmd:Int): Unit = {
+    context.parent ! PushtNetMsgToClient(cmd)
   }
 
   //所有的协议接收后都要走这里面才能发送到客户端，顺便会执行所有的检验要发送的附带协议逻辑
-  def sendPushNetMsgToClient(): Unit = {
+  def sendPushNetMsgToClient(cmd:Int): Unit = {
     // 检查有没有任务要推送
     checkSendTask()
     // 检查有没有活动要推送
     checkSendActivity()
     //检查有没有属性要推送
     checkSendPowerValue()
-    sendMsg()
+    sendMsg(cmd)
   }
 
   // 检查有没有任务要推送
@@ -411,7 +422,7 @@ abstract class BasicModule extends Actor with ActorLogging {
         val build20007 = rewardProxy.getRewardClientInfo(reward)
         sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, build20007)
       }
-      sendPushNetMsgToClient()
+      sendPushNetMsgToClient(0)
     }
   }
 
@@ -528,7 +539,7 @@ abstract class BasicModule extends Actor with ActorLogging {
   /**
     * 协议重复请求处理
     */
-  def repeatedProtocalHandler(cmd: Int);
+  def repeatedProtocalHandler(request: Request);
 
   /**
     * tbllog_error 出错日志

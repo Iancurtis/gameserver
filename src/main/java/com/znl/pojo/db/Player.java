@@ -14,8 +14,8 @@ import java.util.Set;
  */
 public class Player extends BaseDbPojo implements Serializable {
 
-    private String accountName;
-    private Integer areaId;
+    private String accountName = "";
+    private Integer areaId = 0;
     private Integer level = 0;
     private String name = "";
     private Integer sex = 0;
@@ -47,19 +47,19 @@ public class Player extends BaseDbPojo implements Serializable {
     private Long giftgold = 0l;
     private Integer equipsize = 0;
     private Long buildingId = -1L;
-    private Integer dungeoId;//当前最高副本id
+    private Integer dungeoId = 0;//当前最高副本id
     private Integer buildsize = 0;
-    private Integer worldResouceLevel;//攻打最高世界资源等级
-    private Long arena = 0L;
-    private Integer loginTime;//登录时间
-    private Integer loginLevel;//登录等级
+    private Integer worldResouceLevel = 0;//攻打最高世界资源等级
+    private Long arena = 0l;
+    private Integer loginTime = 0;//登录时间
+    private Integer loginLevel = 0;//登录等级
     private Integer totalCharge = 0;//累计充值
     private long firstChargeTime = 0l;//首次充值时间
     private long lastChargeTime = 0l;//最后一次充值时间
     private Long depotprotect = 0l;//仓库保护量
     private Integer settingAutoAddDefendlist = 1;//自动补充防守阵型
     private Long armygroupId = 0l;//军团id
-    private Set<Long> applyArmylist;
+    private Set<Long> applyArmylist = new HashSet<Long>();
     private Integer post = 0;//职位
     private Integer atklv = 0; //攻击装备最高等级
     private Integer critlv = 0;//暴击装备最高等级
@@ -78,8 +78,8 @@ public class Player extends BaseDbPojo implements Serializable {
     private Integer banChatActDate = 0; //禁言时间
     private Integer limitChangeMaxId = 1;//极限挑战 Id
     private Integer getLimitChangeId = 1;//当前Id
-    private int regTime; //创角时间
-    private Integer lastLoginTime; //最后登录时间
+    private int regTime = 0; //创角时间
+    private Integer lastLoginTime = 0; //最后登录时间
     private String legionName = "";//军团名字
     private int facade = 0;//外观道具Id
     private long facadeendTime = 0l;//外观道具结束时间
@@ -93,61 +93,88 @@ public class Player extends BaseDbPojo implements Serializable {
     private String cdkeyStr = "";
     private Set<Long> helpteams = new HashSet<Long>();
     private Set<Long> outhelpteams = new HashSet<Long>();
-    private long usedefine;
+    private long usedefine = 0l;
     private Set<Integer> remianset = new HashSet<Integer>();
     private String pushId = "";
-    private int gardNum;//驻军数量
+    private int gardNum = 0;//驻军数量
     private int playerType = 0;//0:正常玩家，1新手指导员
     private int typeBeginTime = 0;
     private int typeEndTime = 0;
     private int haveGetNewGift = 0;
     private String laterPeople = "";//_隔开
     private Set<Long> resouceLeve = new HashSet<>();
-    private int activitycontributerank;//活动贡献排名
+    private int activitycontributerank = 0;//活动贡献排名
     private long friendbleestimeId = 0l;//好友被祝福的定时器
     private Set<Long> advids = new HashSet<Long>();
+
     private Set<Long> productions = new HashSet<>();
-    private int resetDataTime=0;//重置时间(4点)
-    private long resourereftime=GameUtils.getServerDate().getTime();
-    private int junshigoldtimes=0;//军师金币抽奖次数  四点耍刷新
-    private int junshiresoucetimes=0;//军师金币抽奖次数   四点耍刷新
-    private long arenaId=0;//竞技场id
-    private int zeroTime=0;//零点重置时间
+    private int resetDataTime = 0;//重置时间(4点)
+    private long resourereftime = GameUtils.getServerDate().getTime();
+    private int junshigoldtimes = 0;//军师金币抽奖次数  四点耍刷新
+    private int junshiresoucetimes = 0;//军师金币抽奖次数   四点耍刷新
+    private long arenaId = 0l;//竞技场id
+    private int zeroTime = 0;//零点重置时间
 
-    public int getZeroTime() {return zeroTime;}
+    public int getZeroTime() {
+        return zeroTime;
+    }
 
-    public void setZeroTime(int zeroTime) {this.zeroTime = zeroTime;}
+    public void setZeroTime(int zeroTime) {
+        this.zeroTime = zeroTime;
+    }
 
-    public long getArenaId() {return arenaId;}
+    public long getArenaId() {
+        return arenaId;
+    }
 
-    public void setArenaId(long arenaId) {this.arenaId = arenaId;}
+    public void setArenaId(long arenaId) {
+        this.arenaId = arenaId;
+    }
 
-    private int dungeolimitrest=0;//极限副本重置次数  四点耍刷新
-    private int dungeolimitchange=0;//极限副本挑战次数  四点耍刷新
-    private int dungeolimitmoptimes=0;//极限副本扫荡
+    private int dungeolimitrest = 0;//极限副本重置次数  四点耍刷新
+    private int dungeolimitchange = 0;//极限副本挑战次数  四点耍刷新
+    private int dungeolimitmoptimes = 0;//极限副本扫荡
     private long energyaddtime = 0;//体力恢复定时器
     private long equipLottertime3 = 0;//顶级武将抽奖时间
     private long equipLottertime2 = 0;//高级武将抽奖时间
     private long equipLottertime1 = 0;//普通武将抽奖时间
-    private long dungeolimitmop=GameUtils.getServerDate().getTime();//极限副本扫荡
-    private int lottertime1 =0;//普通武将已抽次数
-    private int lottertime2 =0;//高级武将已抽次数
-    private int lottertime3 =0;//顶级武将已抽次数
-    private int firstlotter =1;//第一次抽必出紫将
-    private int prestaeReward=0;//登陆自动领取声望 0为未领取 1为领取  四点耍刷新
-    private int prestaeshouxun=0;//授勋声望 0为未领取 1为领取  四点耍刷新
-    private long taskTimerId=0;//任务定时器id
-    private long legionTimerId=0;//军团定时器id
-    private List<Integer> getbox= new ArrayList<Integer>();//每日已领军团副本宝箱
-    private int armygroupdungeotimes =5;//军团副本剩余攻打次数
-    private int everylottery=0;//每日抽奖   四点耍刷新
-    private int firthlogin=0;//每日登录 四点耍刷新
-    private int buyenergytimes =0 ;//购买体力次数
-    private int labafree =0 ;//拉霸免费次数  四点耍刷新
+    private long dungeolimitmop = GameUtils.getServerDate().getTime();//极限副本扫荡
+    private int lottertime1 = 0;//普通武将已抽次数
+    private int lottertime2 = 0;//高级武将已抽次数
+    private int lottertime3 = 0;//顶级武将已抽次数
+    private int firstlotter = 1;//第一次抽必出紫将
+    private int prestaeReward = 0;//登陆自动领取声望 0为未领取 1为领取  四点耍刷新
+    private int prestaeshouxun = 0;//授勋声望 0为未领取 1为领取  四点耍刷新
+    private long taskTimerId = 0;//任务定时器id
+    private long legionTimerId = 0;//军团定时器id
+    private List<Integer> getbox = new ArrayList<Integer>();//每日已领军团副本宝箱
+    private int armygroupdungeotimes = 5;//军团副本剩余攻打次数
+    private int everylottery = 0;//每日抽奖   四点耍刷新
+    private int firthlogin = 0;//每日登录 四点耍刷新
+    private int buyenergytimes = 0;//购买体力次数
+    private int labafree = 0;//拉霸免费次数  四点耍刷新
     private int daybless;//每日的祝福可获取奖励的次数
     private int getbless;//每日可领取祝福奖励的次数
     private int taobaofree;//探宝免费
     private int onlinetime;//在线累计时长
+    private Set<Long> worldResPoint = new HashSet<>();//野外占领的据点id 以x*1000+y的形式
+
+    public Set<Long> getWorldResPoint() {
+        return worldResPoint;
+    }
+
+    public void setWorldResPoint(Set<Long> worldResPoint) {
+        this.worldResPoint = worldResPoint;
+    }
+
+    public void addtWorldResPoint(Long pointKey) {
+        this.worldResPoint.add(pointKey);
+    }
+
+    public void removeWorldResPoint(Long pointKey) {
+        this.worldResPoint.remove(pointKey);
+    }
+
     public int getTaobaofree() {
         return taobaofree;
     }
@@ -163,18 +190,24 @@ public class Player extends BaseDbPojo implements Serializable {
     public void setTaobaofree(int taobaofree) {
         this.taobaofree = taobaofree;
     }
+
     public int getOnlinetime() {
         return onlinetime;
     }
+
     public void setOnlinetime(int onlinetime) {
         this.onlinetime = onlinetime;
-    }    public int getLabafree() {
+    }
+
+    public int getLabafree() {
         return labafree;
     }
 
     public void setLabafree(int labafree) {
         this.labafree = labafree;
-    }      public int getDaybless() {
+    }
+
+    public int getDaybless() {
         return daybless;
     }
 
@@ -189,6 +222,7 @@ public class Player extends BaseDbPojo implements Serializable {
     public void setGetbless(int getbless) {
         this.getbless = getbless;
     }
+
     public int getFirthlogin() {
         return firthlogin;
     }
@@ -198,21 +232,23 @@ public class Player extends BaseDbPojo implements Serializable {
     }
 
 
-
     public int getEverylottery() {
         return everylottery;
     }
 
     public void setEverylottery(int everylottery) {
         this.everylottery = everylottery;
-    }    public int getBuyenergytimes() {
+    }
+
+    public int getBuyenergytimes() {
         return buyenergytimes;
     }
 
     public void setBuyenergytimes(int buyenergytimes) {
         this.buyenergytimes = buyenergytimes;
-    } 
-   public List<Integer> getGetbox() {
+    }
+
+    public List<Integer> getGetbox() {
         return getbox;
     }
 
@@ -243,6 +279,7 @@ public class Player extends BaseDbPojo implements Serializable {
     public void setTaskTimerId(long taskTimerId) {
         this.taskTimerId = taskTimerId;
     }
+
     public int getPrestaeshouxun() {
         return prestaeshouxun;
     }
@@ -258,7 +295,9 @@ public class Player extends BaseDbPojo implements Serializable {
     public void setPrestaeReward(int prestaeReward) {
         this.prestaeReward = prestaeReward;
     }
+
     private int lottereedtime3 = 0;//顶级武将已抽次数（再抽几次出紫）
+
     public int getLottereedtime3() {
         return lottereedtime3;
     }
@@ -266,6 +305,7 @@ public class Player extends BaseDbPojo implements Serializable {
     public void setLottereedtime3(int lottereedtime3) {
         this.lottereedtime3 = lottereedtime3;
     }
+
     public int getLottertime1() {
         return lottertime1;
     }
@@ -322,8 +362,13 @@ public class Player extends BaseDbPojo implements Serializable {
         this.dungeolimitchange = dungeolimitchange;
     }
 
-    public int getResetDataTime() {return resetDataTime;}
-    public void setResetDataTime(int resetDataTime) {this.resetDataTime = resetDataTime;}
+    public int getResetDataTime() {
+        return resetDataTime;
+    }
+
+    public void setResetDataTime(int resetDataTime) {
+        this.resetDataTime = resetDataTime;
+    }
 
     public long getEquipLottertime1() {
         return equipLottertime1;
@@ -357,7 +402,9 @@ public class Player extends BaseDbPojo implements Serializable {
         this.junshigoldtimes = junshigoldtimes;
     }
 
-    public int getJunshiresoucetimes() {return junshiresoucetimes;}
+    public int getJunshiresoucetimes() {
+        return junshiresoucetimes;
+    }
 
     public void setJunshiresoucetimes(int junshiresoucetimes) {
         this.junshiresoucetimes = junshiresoucetimes;
@@ -370,6 +417,7 @@ public class Player extends BaseDbPojo implements Serializable {
     public void setResourereftime(long resourereftime) {
         this.resourereftime = resourereftime;
     }
+
     public long getEnergyaddtime() {
         return energyaddtime;
     }
@@ -377,6 +425,7 @@ public class Player extends BaseDbPojo implements Serializable {
     public void setEnergyaddtime(long energyaddtime) {
         this.energyaddtime = energyaddtime;
     }
+
     public void setRegTime(int regTime) {
         this.regTime = regTime;
     }
@@ -888,7 +937,9 @@ public class Player extends BaseDbPojo implements Serializable {
         return name;
     }
 
-    public void setName(String name) {this.name = name;}
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getSex() {
         return sex;
@@ -920,6 +971,9 @@ public class Player extends BaseDbPojo implements Serializable {
 
     public void setAreaId(Integer areaId) {
         this.areaId = areaId;
+        if(this.areaId>0&&areaId==0){
+            System.err.println("3333333bbbbb");
+        }
     }
 
     public Integer getLevel() {
@@ -927,8 +981,11 @@ public class Player extends BaseDbPojo implements Serializable {
     }
 
     public void setLevel(Integer level) {
-        if (level == 0) {
-            System.out.print("等级要被设置为0了");
+        if (level==0){
+            System.out.println("！！！玩家"+getId()+"等级要被设置为0了");
+        }
+        if(getId()==20691&&level==0){
+            System.err.println("4444444444444444444444444444444444");
         }
         this.level = level;
     }
@@ -1202,7 +1259,7 @@ public class Player extends BaseDbPojo implements Serializable {
     }
 
     public void removeAdviseId(long id) {
-       advids.remove(id);
+        advids.remove(id);
     }
 
     public int getLegionLevel() {
@@ -1537,10 +1594,11 @@ public class Player extends BaseDbPojo implements Serializable {
         this.productions = productions;
     }
 
-    public void addProduction(long id){
+    public void addProduction(long id) {
         this.productions.add(id);
     }
-    public void removeProduction(long id){
+
+    public void removeProduction(long id) {
         this.productions.remove(id);
     }
 }

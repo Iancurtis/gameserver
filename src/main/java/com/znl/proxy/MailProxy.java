@@ -486,7 +486,7 @@ public class MailProxy  extends BasicProxy {
             builder.setCityPanel(getCityInfo(report));
             resourceInfo.setMostGet(report.getResourceGet());
         }else {
-            targetInfo.setPosSoldier(report.getDefendName());
+           // targetInfo.setPosSoldier(report.getDefendName());
             targetInfo.setProsper(report.getDefentCurrBoom());
             targetInfo.setTotalprosper(report.getDefentTotalBoom());
 

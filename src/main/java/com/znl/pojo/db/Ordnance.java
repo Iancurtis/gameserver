@@ -6,14 +6,14 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2015/11/16.
  */
 public class Ordnance extends BaseDbPojo {
-    private Long playerId;
+    private Long playerId = 0l;
     private int typeId = 0;
-    private int type;
-    private int part;
-    private int quality;
-    private int strengthLevel;//强化等级
-    private int remouldLv;//改造等级
-    private  int position;//位置0仓库1装上去了
+    private int type = 0;
+    private int part = 0;
+    private int quality = 0;
+    private int strengthLevel = 0;//强化等级
+    private int remouldLv = 0;//改造等级
+    private int position = 0;//位置0仓库1装上去了
 
     public Long getPlayerId() {
         return playerId;

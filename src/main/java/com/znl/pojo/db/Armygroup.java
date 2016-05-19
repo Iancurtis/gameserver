@@ -9,33 +9,33 @@ import java.util.*;
  * Created by Administrator on 2015/11/16.
  */
 public class Armygroup extends BaseDbPojo {
-    private String name;//名字
-    private String commander;//军团长
-    private Long commandid;//军团长id
-    private long capity ;//战力
-    private int rank ;//排名
-    private int level; //等级
-    private int build;//建设度
-    private int joinWay;//申请加入方式
-    private int conditonlevel;//等级要求
-    private long conditoncapity;//战力要求
-    private Set<Long>  menbers = new HashSet<>();//成员 玩家id
+    private String name = "";//名字
+    private String commander = "";//军团长
+    private Long commandid = 0l;//军团长id
+    private long capity = 0l;//战力
+    private int rank = 0;//排名
+    private int level = 0; //等级
+    private int build = 0;//建设度
+    private int joinWay = 0;//申请加入方式
+    private int conditonlevel = 0;//等级要求
+    private long conditoncapity = 0l;//战力要求
+    private Set<Long> menbers = new HashSet<>();//成员 玩家id
     private Set<Long> armmenbers = new HashSet<>();//成员 玩家军团成员id
-    private Set<Long>  applymenbers = new HashSet<>();//申请成员
-    private String notice;//宣言
-    private int sciencelevel=1; //科技馆等级
-    private int welfarelevel=1;//福利院等级
-    private String getlist;//id_次数;id_次数
+    private Set<Long> applymenbers = new HashSet<>();//申请成员
+    private String notice = "";//宣言
+    private int sciencelevel = 1; //科技馆等级
+    private int welfarelevel = 1;//福利院等级
+    private String getlist = "";//id_次数;id_次数
     private List<Integer> randomShops = new ArrayList<>();// 随机商店
-    private String playerrandomBuytimes;//long_id_次数;long_id_次数
-    private String selfname1;//自定义职位
-    private String selfname2;//自定义职位
-    private String selfname3;//自定义职位
-    private String selfname4;//自定义职位
+    private String playerrandomBuytimes = "";//long_id_次数;long_id_次数
+    private String selfname1 = "";//自定义职位
+    private String selfname2 = "";//自定义职位
+    private String selfname3 = "";//自定义职位
+    private String selfname4 = "";//自定义职位
     private Set<Long> techs = new HashSet<>();//军团科技
-    private String fiche="" ;//军团公告
-    private long nextenlistiem;//下次招募时间
-    private Integer maxLegionDungeoid =0;//最高军团副本
+    private String fiche = "";//军团公告
+    private long nextenlistiem = 0l;//下次招募时间
+    private Integer maxLegionDungeoid = 0;//最高军团副本
     private List<Integer> LegionDungeoidbox = new ArrayList<>();//每天可领宝箱
 
     public List<Integer> getLegionDungeoidbox() {
@@ -59,14 +59,14 @@ public class Armygroup extends BaseDbPojo {
     private int wood = 0;
     private int stones = 0;
     private int food = 0;
-    private int vitality; //活跃度
-    private int mession1;
-    private int mession2;
-    private int mession3;
-    private int mession4;
-    private int mession5;
+    private int vitality = 0; //活跃度
+    private int mession1 = 0;
+    private int mession2 = 0;
+    private int mession3 = 0;
+    private int mession4 = 0;
+    private int mession5 = 0;
 
-    private int levelrank;//军团等级排行
+    private int levelrank = 0;//军团等级排行
 
     public int getLevelrank() {
         return levelrank;
@@ -320,7 +320,6 @@ public class Armygroup extends BaseDbPojo {
     public void setWelfarelevel(int welfarelevel) {
         this.welfarelevel = welfarelevel;
     }
-
 
 
     public List<Integer> getRandomShops() {

@@ -6,10 +6,10 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2016/1/13.
  */
 public class ArmyGroupTech extends BaseDbPojo {
-    private Long armyGroupId;//军团Id
-    private int typeId;//类型ID
-    private int techExp;//科技经验
-    private int techLv;//科技等级
+    private Long armyGroupId = 0l;//军团Id
+    private int typeId = 0;//类型ID
+    private int techExp = 0;//科技经验
+    private int techLv = 0;//科技等级
 
     public int getTypeId() {
         return typeId;

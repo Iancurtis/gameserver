@@ -2,6 +2,7 @@ package com.znl.service.actor
 
 import java.util
 import java.util.Calendar
+import java.util.concurrent.ConcurrentHashMap
 
 import akka.actor.{Actor, ActorLogging, Props}
 import com.znl.base.BaseLog
@@ -139,8 +140,8 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
       onReceiveNetMsg(netMsg)
     case sendMsg : SendNetMsgToClient =>
       onSendNetMsgToClient(sendMsg.response)
-    case pushMsg : PushtNetMsgToClient =>
-      pushNetMsgToClient()
+    case PushtNetMsgToClient(cmd:Int) =>
+      pushNetMsgToClient(cmd)
     case sendNetMsg : SendNetMsg =>
       onSendNetMsg(sendNetMsg.response)
     case m : MulticastNetToClient =>
@@ -170,6 +171,8 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
       eachMiuteNotice()
     case Reload() =>
       reloadNotice()
+    case RepeatedProtocalHandler(cmd :Int)=>
+      onRepeatedProtocalHandler(cmd)
     case _ =>
   }
 
@@ -182,7 +185,6 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
     player.setLoginOutTime(GameUtils.getServerDate().getTime)
     val time: Int= ((player.getLoginOutTime)/1000).toInt-player.getLoginTime
     player.setOnlinetime(player.getOnlinetime() + time)
-
     if (player.getArmygroupId > 0) {
       val mess: changeMenberlogOuttime = new changeMenberlogOuttime(player.getId)
       context.actorSelection("../../" + ActorDefine.ARMYGROUP_SERVICE_NAME + "/" + ActorDefine.ARMYGROUPNODE + player.getArmygroupId).tell(mess, self)
@@ -263,7 +265,7 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
       val detaTime = curTime - lastHeartbeat
       if(detaTime > 180 * 1000){
         val accoutName = ioSession.getAttribute(ActorDefine.PLAYER_ACTOR_NAME_KEY)
-        log.warning("！！！警告！！！已经超过2分钟没有 心跳了 " + accoutName)
+//        log.warning("！！！警告！！！已经超过3分钟没有 心跳了 " + accoutName)
         ioSession.close(true)
       }
 //      heartIndex = 0
@@ -278,12 +280,13 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
     val module = netMsg.request.getModule()
     val cmd = netMsg.request.getCmd()
 
-    if(module == ProtocolModuleDefine.NET_M1 && cmd == ProtocolModuleDefine.NET_M1_C8888){
+    if(module == ProtocolModuleDefine.NET_M28 && cmd == ProtocolModuleDefine.NET_M28_C280015){
       lastHeartbeat = System.currentTimeMillis()  //心跳时间
-      val response = Response.valueOf(ProtocolModuleDefine.NET_M1, ProtocolModuleDefine.NET_M1_C8888, M1.M8888.S2C.newBuilder().setServerTime(GameUtils.getServerTime).build())
-      onSendNetMsgToClient(response)
-      pushNetMsgToClient()
-    }else{
+//      val response = Response.valueOf(ProtocolModuleDefine.NET_M1, ProtocolModuleDefine.NET_M1_C8888, M1.M8888.S2C.newBuilder().setServerTime(GameUtils.getServerTime).build())
+//      onSendNetMsgToClient(response)
+//      pushNetMsgToClient(0)
+    }
+//    else{
       val moduleName = moduleMap.get(module)
       if(!moduleName.equals(None)){
         val moduleActor = context.actorSelection(moduleName.get)
@@ -291,7 +294,7 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
       }else{
         log.warning("模块未注册：" + module)
       }
-    }
+//    }
   }
 
   def onLoginSuccess(player : Player,gameProxy : GameProxy) ={
@@ -323,7 +326,7 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
   def onKickPlayerOffline(rs : Int,reason:String) ={
     val response = Response.valueOf(ProtocolModuleDefine.NET_M1, ProtocolModuleDefine.NET_M1_C9998, M1.M9998.S2C.newBuilder().setRs(rs).setReason(reason).build())
     onSendNetMsgToClient(response)
-    pushNetMsgToClient()
+    pushNetMsgToClient(0)
     ioSession.close(true)
   }
 
@@ -407,7 +410,15 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
     }
   }
 
-  def pushNetMsgToClient()={
+  val pushMap = new ConcurrentHashMap[Int,util.List[Response]]()
+  def onRepeatedProtocalHandler(cmd :Int): Unit ={
+    val pushList = pushMap.get(cmd)
+    if (pushList != null){
+      ioSession.write(pushList)
+    }
+  }
+
+  def pushNetMsgToClient(cmd :Int)={
     var _pushList : java.util.List[Response]  = null
     pushList.synchronized{
       if(pushList.size() > 0){
@@ -417,6 +428,13 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
     }
     if (_pushList != null){
       ioSession.write(_pushList)
+      if(cmd > 0){
+        pushMap.put(cmd,_pushList)
+      }
+//      import scala.collection.JavaConversions._
+//      for (response:Response <- _pushList){
+//        println("服务器发送协议到客户端"+response.getCmd)
+//      }
     }
   }
 

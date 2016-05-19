@@ -69,7 +69,7 @@ public class ShareModule extends BasicModule {
         if (anyRef instanceof ShareMsg) {
             M25.M250000.S2C msg = ((ShareMsg) anyRef).msg();
             pushNetMsg(ProtocolModuleDefine.NET_M25, ProtocolModuleDefine.NET_M25_C250000, msg);
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M25_C250000);
         }
         if (anyRef instanceof SendSystemChatToPlayerService) {
             M25.M250000.S2C msg = ((SendSystemChatToPlayerService) anyRef).msg();
@@ -101,7 +101,7 @@ public class ShareModule extends BasicModule {
             M22.M220400.S2C.Builder builder = M22.M220400.S2C.newBuilder();
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220400, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220400);
         } else if (anyRef instanceof PushShareMsg) {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             long legionId = playerProxy.getArmGrouId();
@@ -115,7 +115,7 @@ public class ShareModule extends BasicModule {
                     pushNetMsg(ProtocolModuleDefine.NET_M25, ProtocolModuleDefine.NET_M25_C250000, S2CMsg);
                 }
             }
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M25_C250000);
         }
     }
 
@@ -330,16 +330,17 @@ public class ShareModule extends BasicModule {
 
 
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M25_C250000);
     }
 
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
+//       int cmd=request.getCmd();
 
     }
 }

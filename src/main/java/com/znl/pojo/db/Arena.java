@@ -10,32 +10,32 @@ public class Arena extends BaseDbPojo {
     /**
      * 玩家id
      */
-    private long playerId;
+    private long playerId = 0l;
 
     /**
      * 挑战次数
      */
-    private int challengetimes;
+    private int challengetimes = 0;
 
     /**
      * 上期排名
      */
-    private int lastOrder;
+    private int lastOrder = 0;
 
     /**
      * 购买次数
      */
-    private int buytimes;
+    private int buytimes = 0;
 
     /**
      * 上期排名奖励 0不可领取 1可领取
      */
-    private int lastReward;
+    private int lastReward = 0;
 
     /**
      * 上次操作时间
      */
-    private long lastOperateTime;
+    private long lastOperateTime = 0l;
 
 
     public long getPlayerId() {
@@ -86,7 +86,7 @@ public class Arena extends BaseDbPojo {
         this.lastOperateTime = lastOperateTime;
     }
 
-    public Arena(){
+    public Arena() {
 
     }
 

@@ -8,7 +8,7 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2015/11/10.
  */
 public class WorldBuilding extends BaseDbPojo {
-    private Long playerId;
+    private Long playerId = 0l;
 
     private Integer worldTileX = -1; //世界X坐标
     private Integer worldTileY = -1; //世界Y坐标

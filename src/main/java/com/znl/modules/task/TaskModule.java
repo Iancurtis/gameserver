@@ -50,6 +50,8 @@ public class TaskModule extends BasicModule {
         TaskProxy taskProxy=getProxy(ActorDefine.TASK_PROXY_NAME);
         M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_WINRESOURCE_LV, 0, reward);
         sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));*/
+        TaskProxy taskProxy=getProxy(ActorDefine.TASK_PROXY_NAME);
+        taskProxy.getNeedPushTasks();
     }
 
     @Override
@@ -68,11 +70,8 @@ public class TaskModule extends BasicModule {
             builder.setDayActivityId(dayactivity + 1);
             builder.setDayliynum(dayilNum);
             builder.setRs(0);
-            List<Integer> list=new ArrayList<Integer>();
-            list.add(PlayerPowerDefine.POWER_active);
-            pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002,sendDifferent(list));
             pushNetMsg(ProtocolModuleDefine.NET_M19, ProtocolModuleDefine.NET_M19_C190000, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M19_C190000);
         }
         if (object instanceof GameMsg.RefeshTaskUpdate) {
             M19.M190000.S2C.Builder builder = ((GameMsg.RefeshTaskUpdate) object).build();
@@ -86,13 +85,13 @@ public class TaskModule extends BasicModule {
                 builder.setDayActivityId(taskProxy.getActivityId());
                 builder.setDayliynum(dayilNum);
                 pushNetMsg(ProtocolModuleDefine.NET_M19, ProtocolModuleDefine.NET_M19_C190000, builder.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(0);
             }
             if (reward.addItemMap.size() > 0 || reward.counsellorMap.size() > 0 || reward.generalList.size() > 0 || reward.generalMap.size() > 0 && reward.ordanceFragmentMap.size() > 0 || reward.ordanceList.size() > 0 || reward.ordanceMap.size() > 0 || reward.soldierMap.size() > 0) {
                 RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
                 M2.M20007.S2C builder27 = rewardProxy.getRewardClientInfo(reward);
                 pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, builder27);
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(0);
             }
             if(reward.addPowerMap.size()>0) {
 //                checkPlayerPowerValues(getPlayerPowerValues());
@@ -112,7 +111,7 @@ public class TaskModule extends BasicModule {
         TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
         taskProxy.initTaskAll();
         sendNetMsg(ProtocolModuleDefine.NET_M19, ProtocolModuleDefine.NET_M19_C190000, taskProxy.getTaskInfoToClient().build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M19_C190000);
     }
 
     private void OnTriggerNet190001Event(Request request) {
@@ -146,7 +145,7 @@ public class TaskModule extends BasicModule {
                 sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
             }
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M19_C190001);
     }
 
 
@@ -195,7 +194,7 @@ public class TaskModule extends BasicModule {
             tasklog.setHappend_time(GameUtils.getServerTime());
             sendLog(tasklog);
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M19_C190002);
     }
 
     private void OnTriggerNet190003Event(Request request) {
@@ -216,7 +215,7 @@ public class TaskModule extends BasicModule {
             sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, message);
             sendLog(baseLog);
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M19_C190003);
     }
 
     /**
@@ -239,10 +238,10 @@ public class TaskModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

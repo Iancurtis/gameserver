@@ -6,16 +6,16 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2016/1/28.
  */
 public class TeamNotice extends BaseDbPojo {
-    private int type;
-    private long playerId;
-    private String name;
-    private int iconId;
-    private int level;
-    private int x;
-    private int y;
-    private int targetId;
-    private long arriveTime;//到达时间
-    private long helpId;
+    private int type = 0;
+    private long playerId = 0l;
+    private String name = "";
+    private int iconId = 0;
+    private int level = 0;
+    private int x = -1;
+    private int y = -1;
+    private int targetId = 0;
+    private long arriveTime = 0l;//到达时间
+    private long helpId = 0l;
 
     public long getHelpId() {
         return helpId;

@@ -110,7 +110,7 @@ public class TroopModule extends BasicModule {
         PlayerTroop troop = formationProxy.refurceDefendTeam(teams,playerProxy.getPlayerId());
         playerProxy.setSimplePlayerTroop(SoldierDefine.FORMATION_DEFEND,troop);
         pushNetMsg(ActorDefine.TROOP_MODULE_ID, ProtocolModuleDefine.NET_M7_C70000, getFormationListMess());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
         //2016/04/05 推送到playerService刷新
         GameMsg.UpdateSimplePlayerDefendTroop mess = new GameMsg.UpdateSimplePlayerDefendTroop(playerProxy.getPlayerId(),troop);
         sendServiceMsg(ActorDefine.PLAYER_SERVICE_NAME,mess);
@@ -127,7 +127,7 @@ public class TroopModule extends BasicModule {
 
     private void OnTriggerNet70000Event(Request request) {
         sendNetMsg(ActorDefine.TROOP_MODULE_ID, ProtocolModuleDefine.NET_M7_C70000, getFormationListMess());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M7_C70000);
     }
 
     private void OnTriggerNet70001Event(Request request) {
@@ -147,7 +147,7 @@ public class TroopModule extends BasicModule {
             GameMsg.RestArena msg = new GameMsg.RestArena(formationInfo, 1, playerProxy.getPlayerId(), playerProxy.getAreaKey());
             sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME, msg);
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M7_C70001);
         if (formationInfo.getType() == SoldierDefine.FORMATION_DEFEND && rs >= 0){
             List<PlayerTeam> defendTeams = formationProxy.createFormationTeam(formationInfo.getType());
             //把队伍设置到怪物那边去
@@ -184,10 +184,10 @@ public class TroopModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 

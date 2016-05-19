@@ -6,10 +6,11 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2016/1/20.
  */
 public class LimitDungeoReport extends BaseDbPojo {
-    private long playerId;
-    private int dungeoId;
-    private long battleId;
-    private long time;
+    private long playerId = 0l;
+    private int dungeoId = 0;
+    private long battleId = 0l;
+    private long time = 0l;
+
     public long getPlayerId() {
         return playerId;
     }

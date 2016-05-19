@@ -57,9 +57,6 @@ public class BaseDbPojo {
         try {
             updateFieldList.add(att);
             att = toUpperCaseFirstOne(att);
-            if(att=="Name"){
-                System.err.println(value);
-            }
             Method[] methods = this.getClass().getDeclaredMethods();
             String methodName = "set" + att;
             for(Method method : methods){

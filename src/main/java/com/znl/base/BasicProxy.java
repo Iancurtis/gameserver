@@ -213,7 +213,7 @@ abstract public class BasicProxy{
   protected void sendArmygroupNodeMsg(Object msg,Long id){
     PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
     String path = ActorDefine.AREA_SERVER_PRE_PATH+GameMainServer.getLogicAreaIdByAreaId(playerProxy.getAreaId())+"/"+ActorDefine.ARMYGROUP_SERVICE_NAME+ "/" + ActorDefine.ARMYGROUPNODE+id;
-    ActorSelection armyGroupNode = GameMainServer.system().actorSelection(path);
+   ActorSelection armyGroupNode = GameMainServer.system().actorSelection(path);
     armyGroupNode.tell(msg, ActorRef.noSender());
   }
 

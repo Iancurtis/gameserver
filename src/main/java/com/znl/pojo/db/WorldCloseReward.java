@@ -6,8 +6,8 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2016/4/14.
  */
 public class WorldCloseReward extends BaseDbPojo {
-    private long playerId;
-    private String reward;
+    private long playerId=0l;
+    private String reward="";
 
     public long getPlayerId() {
         return playerId;

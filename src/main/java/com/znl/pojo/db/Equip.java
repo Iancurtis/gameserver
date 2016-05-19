@@ -6,12 +6,13 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2015/11/16.
  */
 public class Equip extends BaseDbPojo {
-    private Long playerId;
+    private Long playerId = 0l;
     private int typeId = 0;
     private int level = 0;
-    private int position=0; //0背包上 ，123456位置
-    private int exp=0;
+    private int position = 0; //0背包上 ，123456位置
+    private int exp = 0;
     private int partId = 0;
+
     public Long getPlayerId() {
         return playerId;
     }

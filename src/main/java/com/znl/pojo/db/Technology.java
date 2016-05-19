@@ -8,11 +8,11 @@ import java.util.Date;
  * Created by Administrator on 2015/11/24.
  */
 public class Technology extends BaseDbPojo {
-    private long playerId;
+    private long playerId = 0l;
     private int type = 0;
     private int level = 0;
-    private long nextLevelTime;//下一级升级完成时间
-    private long lastblanceTime;//上次结算时间
+    private long nextLevelTime = 0l;//下一级升级完成时间
+    private long lastblanceTime = 0l;//上次结算时间
 
     public long getNextLevelTime() {
         return nextLevelTime;
@@ -30,7 +30,7 @@ public class Technology extends BaseDbPojo {
         this.lastblanceTime = lastblanceTime;
     }
 
-    private int state;//功能0未开启，1开启
+    private int state=0;//功能0未开启，1开启
 
     public long getPlayerId() {
         return playerId;

@@ -23,8 +23,6 @@ class WorldTile {
 
   private[this] var _playerName : String = ""  //玩家名称
   private[this] var _playerLevel : Int = 0  //玩家等级
-  private[this] var _defendPlayerId : Long = 0l;//当时资源点的时候作为占领者id使用
-  private[this] var _defendTeams : util.List[PlayerTeam] = null
   private[this] var _pendant: Int=0 // 挂件
   private[this] var _degree: Int=0 //繁荣度
   private[this] var _degreemax: Int=0 //繁荣度上限
@@ -64,17 +62,6 @@ class WorldTile {
     _pendant = value
   }
 
-  def defendTeams: util.List[PlayerTeam] = _defendTeams
-
-  def defendTeams_(value: util.List[PlayerTeam]): Unit = {
-    _defendTeams = value
-  }
-
-  def defendPlayerId: Long = _defendPlayerId
-
-  def defendPlayerId_(value: Long): Unit = {
-    _defendPlayerId = value
-  }
 
   def playerName = _playerName
   def playerName_(value : String) : Unit ={

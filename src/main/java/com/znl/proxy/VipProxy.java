@@ -117,6 +117,11 @@ public class VipProxy extends BasicProxy {
         return list;
     }
 
+    public int getMaxTaskTeamSize(){
+        JSONObject vipInfo = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.VIPDATA,"level",getVipLevel());
+        return vipInfo.getInt("troopCount");
+    }
+
     /**
      * 返回VIP最大等级
      */

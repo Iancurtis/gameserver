@@ -8,7 +8,8 @@ import akka.actor.Actor.Receive
 import akka.actor.SupervisorStrategy.Resume
 import akka.actor._
 import com.znl.base.{BaseDbPojo, BaseSetDbPojo}
-import com.znl.core.{PlayerTroop, PlayerTeam, SimplePlayer}
+import com.znl.core._
+import com.znl.define.PlayerPowerDefine._
 import com.znl.define._
 import com.znl.log.CustomerLogger
 import com.znl.msg.GameMsg
@@ -18,8 +19,7 @@ import com.znl.pojo.db.set._
 import com.znl.pojo.db._
 import com.znl.proto.M8
 import com.znl.proxy._
-import com.znl.service.actor.WorldBlockActor
-import com.znl.service.functionNode.{Team, BattleNode}
+import com.znl.service.actor.{WorldNodeActor, WorldBlockActor}
 import com.znl.service.map._
 import com.znl.service.trigger.{TriggerType, TriggerEvent}
 import com.znl.template.ReportTemplate
@@ -29,10 +29,129 @@ import scala.collection.JavaConversions._
 
 object WorldService {
   def props(areaKey: String) = Props(classOf[WorldService], areaKey)
+  private[this] val worldNodeDataMap = new ConcurrentHashMap[String,ConcurrentHashMap[String,WorldNodeData]]()//[areaKey,[x_y,WorldNodeData]]
+  private[this] val teamDataMap = new ConcurrentHashMap[Long,WorldTeamData]//队伍[id，队伍数据]
+  private[this] val playerTeamMap = new ConcurrentHashMap[Long,util.ArrayList[java.lang.Long]]//玩家身上的队伍列表[playerId,teamId列表]
+  private[this] val worldBlockMap: ConcurrentHashMap[String,ConcurrentHashMap[Int, WorldBlock]] = new ConcurrentHashMap[String,ConcurrentHashMap[Int, WorldBlock]]
+
+  def updateWorldBlock(worldBlock: WorldBlock,areaKey:String) = {
+    if(worldBlockMap.containsKey(areaKey)){
+      worldBlockMap.get(areaKey).put(worldBlock.sortId, worldBlock)
+    }else{
+      val map = new ConcurrentHashMap[Int, WorldBlock]
+      map.put(worldBlock.sortId, worldBlock)
+      worldBlockMap.put(areaKey,map)
+    }
+  }
+
+  def findBlockInfoByPos(x: Int, y: Int,areakey:String) = {
+    val map = worldBlockMap.get(areakey)
+    val value = map.find(v => {
+      val block = v._2
+      if (x >= block.xOrigin && x <= block.xEnd && y >= block.yOrigin && y <= block.yEnd) {
+        true
+      } else {
+        false
+      }
+    })
+    value
+  }
+
+  def getPointSortId(x: Int, y: Int,areaKey:String): Int = {
+    val block = findBlockInfoByPos(x, y,areaKey)
+    var sortId: Int = 0
+    if (block == None) {
+      CustomerLogger.error("该坐标上没有对应的世界块" + x + " " + y)
+    } else {
+      sortId = block.get._2.sortId
+    }
+    sortId
+  }
+
+  def getAllWorldBlockKey(areaKey:String) ={
+     val keys = worldBlockMap.get(areaKey).keys()
+    keys
+  }
+
+  def getBuildingTileKey(x: Int, y: Int) = {
+    "buildTile" + x + "_" + y
+  }
+
+  def getWorldTitleByPoint(x: Int, y: Int,areaKey:String) = {
+    val block = findBlockInfoByPos(x, y,areaKey)
+    var worldTile: WorldTile = null
+    if (block == None) {
+      CustomerLogger.error("该坐标上没有对应的世界块" + x + " " + y)
+    } else {
+      val sortId = block.get._2.sortId
+      val key = getBuildingTileKey(x, y)
+      val tile: WorldTile = block.get._2.worldTileMap.get(key)
+      //      val tile: Option[WorldTile] = askWorldBlockActor(sortId, WatchBuildingTileInfo(x, y))
+      if (tile != null) {
+        worldTile = tile
+      }
+    }
+    worldTile
+  }
+
+  def getWorldBlock(areaKey:String,sortId:Int): WorldBlock ={
+    worldBlockMap.get(areaKey).get(sortId)
+  }
+
+  def addTeamData(areaKey:String,teamData : WorldTeamData): Unit ={
+    teamDataMap.put(teamData.getId,teamData)
+    if(playerTeamMap.containsKey(teamData.getPlayerId)){
+      playerTeamMap.get(teamData.getPlayerId).add(teamData.getId)
+    }else{
+      val teamList = new util.ArrayList[java.lang.Long]
+      teamList.add(teamData.getId)
+      playerTeamMap.put(teamData.getPlayerId,teamList)
+    }
+  }
+
+  def deleteTeamData(teamId : Long): Unit ={
+    val team = teamDataMap.get(teamId)
+    playerTeamMap.get(team.getPlayerId).remove(teamId)
+    teamDataMap.remove(teamId)
+    team.del()
+  }
+
+  def getTeamData(teamId : Long): WorldTeamData ={
+    teamDataMap.get(teamId)
+  }
+
+  def getPlayerTeamIds(playerId : Long): util.ArrayList[java.lang.Long] ={
+    playerTeamMap.get(playerId)
+  }
+
+  def getWorldNode(areaKey : String,x:Int,y:Int): WorldNodeData ={
+    val nodeData = worldNodeDataMap.get(areaKey).get(x+"_"+y)
+//    if(nodeData == null){
+//      nodeData = WorldNodeData.createWorldNodeData()
+//      nodeData.setX(x)
+//      nodeData.setY(y)
+//    }
+    nodeData
+  }
+
+  def addWorldNodeData(node : WorldNodeData,areaKey : String): Unit ={
+    worldNodeDataMap.get(areaKey).put(node.getX+"_"+node.getY,node)
+  }
+
+  def initWorldNodeData(areaKey : String): Unit ={
+    worldNodeDataMap.put(areaKey,new ConcurrentHashMap[String,WorldNodeData])
+  }
+
+  def getTheWayTime(startX:Int,startY:Int,targetX:Int,targetY:Int,seppdRate:Int): Int ={
+    var time: Double = Math.sqrt(Math.pow(startX - targetX, 2) + Math.pow(startY - targetY, 2)) * TaskDefine.WORLD_TASK_TIME_EACH + TaskDefine.WORLD_TASK_TIME_LIMIT
+    val rduce = (1 + seppdRate / UtilDefine.RUN_UNDER)
+    time = time / rduce
+    val fightTime: Int = GameUtils.getServerTime() + (time.toInt)
+    fightTime
+  }
+
+
   private[this] val worldCloseReward = new ConcurrentHashMap[String,util.HashMap[Long,String]]()
-//  def getWorldCloseReward(areaKey: String): util.HashMap[Long,String] ={
-//    worldCloseReward.get(areaKey)
-//  }
 
   def initRewardMap(areaKeyMap : ConcurrentHashMap[Int, String]): Unit ={
     areaKeyMap.foreach( f => {
@@ -182,156 +301,36 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
 
   override def preStart() = {
     BaseSetDbPojo.getSetDbPojo(classOf[WorldTileSetDb], areaKey)
+    WorldService.initWorldNodeData(areaKey)
     initWorld()
     WorldService.initWorldCloseReward(areaKey)
   }
 
   //记录地图块上的玩家数，用来分配玩家具体情况 当为负数或大于上限时 则不能再进入 TODO
-  val worldBlockMap: java.util.concurrent.ConcurrentHashMap[Int, WorldBlock] = new java.util.concurrent.ConcurrentHashMap[Int, WorldBlock]()
+
 
   var maxBlockNum = 0
   var curInitBlockNum = 0
   val titleNodeTimeMap: java.util.Map[String, Long] = new java.util.concurrent.ConcurrentHashMap[String, Long]() //节点的时间缓存，用于定时删除很久没用的点释放内存
 
-  def onFightBuild(x: Int, y: Int, attackTeams: util.List[PlayerTeam], attackX: Int, attackY: Int, attIcon: Int, attLevel: Int, attName: String, legionId: Long, powerMap: util.Map[Integer, java.lang.Long]): Unit = {
-    val defendTile = getWorldTitleByPoint(x, y)
-    val attackTile = getWorldTitleByPoint(attackX, attackY)
-    if (defendTile == null || defendTile.tileType == TileType.Empty) {
-      sendErrorFightMsgBak(ErrorCodeDefine.M80001_7, attackTeams)
-      return
-    }
-    if (attackTile == null) {
-      sendErrorFightMsgBak(ErrorCodeDefine.M80001_8, attackTeams)
-      return
-    }
-    if (defendTile.defendPlayerId == attackTile.building.getPlayerId) {
-      sendErrorFightMsgBak(ErrorCodeDefine.M80001_12, attackTeams)
-      return
+  def onFightBuild(teamData:WorldTeamData, powerMap: util.Map[Integer, Integer]): Unit = {
+    val startKey = teamData.getStartX + "_" + teamData.getStartY
+    if (context.child(startKey) == None) {
+      createBuildNode(WorldService.getWorldTitleByPoint(teamData.getStartX,teamData.getStartY,areaKey), startKey)
     }
 
-    //获取防守玩家的属性
-    var name = ""
-    var level = 0
-    var id = 0
-    var defendPlayer: SimplePlayer = null
-    if (defendTile.tileType == TileType.Building) {
-      val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(defendTile.building.getPlayerId, areaKey)
-      name = simplePlayer.getName
-      level = simplePlayer.getLevel
-      defendPlayer = simplePlayer
-      if (defendPlayer.getProtectOverDate > GameUtils.getServerDate().getTime) {
-        sendErrorFightMsgBak(ErrorCodeDefine.M80001_11, attackTeams)
-        return
-      }
-      if (defendPlayer.getArmygrouid == legionId && legionId > 0) {
-        sendErrorFightMsgBak(ErrorCodeDefine.M80001_14, attackTeams)
-        return
-      }
-    } else if (defendTile.tileType == TileType.Resource) {
-      if (defendTile.defendPlayerId > 0) {
-        val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(defendTile.defendPlayerId, areaKey)
-        if (simplePlayer.getArmygrouid == legionId && legionId > 0) {
-          sendErrorFightMsgBak(ErrorCodeDefine.M80001_14, attackTeams)
-          return
-        }
-      }
+    val targetKey = teamData.getTargetX + "_" + teamData.getTargetY
+    if (context.child(targetKey) == None) {
+      createBuildNode(WorldService.getWorldTitleByPoint(teamData.getTargetX,teamData.getTargetY,areaKey), targetKey)
     }
-
-    val attackSort: Int = getPointSortId(x, y)
-    val defendSort: Int = getPointSortId(attackX, attackY)
-
-
-    val key = x + "_" + y
-    if (context.child(key) == None) {
-      createBuildNode(defendTile, defendSort, key)
-    }
-
-    var time: Double = Math.sqrt(Math.pow(x - attackX, 2) + Math.pow(y - attackY, 2)) * TaskDefine.WORLD_TASK_TIME_EACH + TaskDefine.WORLD_TASK_TIME_LIMIT
-    val rduce = (1 + (powerMap.get(PlayerPowerDefine.NOR_POWER_speedRate) / UtilDefine.RUN_UNDER))
-    time = time / rduce
-    val fightTime: Long = GameUtils.getServerDate().getTime + (time.toInt) * 1000
-    context.actorSelection(key) ! PushWorldFightToNode(attackTeams, attackX, attackY, fightTime, attackSort, powerMap)
-    titleNodeTimeMap.put(key, GameUtils.getServerDate().getTime)
-
-    //发送通知回模块产生任务列表
-
-
-    if (defendTile.tileType == TileType.Resource) {
-      val pointConfig = ConfigDataProxy.getConfigInfoFindById(DataDefine.RESOURCE_POINT, defendTile.resPointId)
-      name = pointConfig.getString("name")
-     // level = pointConfig.getInt("level")
-      level = -1
-      if (defendTile.defendPlayerId > 0) {
-        defendPlayer = PlayerService.getSimplePlayer(defendTile.defendPlayerId, areaKey)
-      }
-      id = defendTile.resPointId
-    }
-    sender() ! CreateAttackTask(x, y, attackTeams, fightTime, name, level, defendTile.tileType, attackX, attackY)
-    //通知防守玩家有人进攻了
-    if (defendPlayer != null) {
-      val notice: TeamNotice = BaseDbPojo.create(classOf[TeamNotice], areaKey)
-      notice.setArriveTime(fightTime)
-      notice.setIconId(attIcon)
-      notice.setLevel(attLevel)
-      notice.setName(attName)
-      notice.setPlayerId(defendPlayer.getId)
-      notice.setTargetId(id)
-      notice.setX(x)
-      notice.setY(y)
-      notice.setType(TaskDefine.NOTICE_TASK_ATTACK)
-      notice.save()
-      if (defendPlayer.online == true) {
-        sendMsgPlayerModule(context, defendPlayer.getAccountName, ActorDefine.MAP_MODULE_NAME, BeAttackedNotify(notice))
-      } else {
-        val player: Player = BaseDbPojo.getOfflineDbPojo(defendPlayer.getId, classOf[Player], areaKey)
-        player.addTeamNotice(notice.getId)
-        player.save()
-//        player.finalize()
-      }
-    }
-
+    titleNodeTimeMap.put(startKey, GameUtils.getServerDate().getTime)
+    titleNodeTimeMap.put(targetKey, GameUtils.getServerDate().getTime)
   }
 
-
-  def battleResultHandle(result: TileBattleResult) = {
-    if (result.winner == 1) {
-      //防守赢了
-
-    } else {
-      //进攻赢了
-      if (result.defendTileType == TileType.Building) {
-        //通知对应节点产生返回队列
-        sendFightTeamBackToNode(result)
-      }
-    }
-
-  }
-
-  def sendFightTeamBackToNode(result: TileBattleResult): Unit = {
-    //产生返回队列
-    val key = result.attackX + "_" + result.attackY
-    if (context.child(key) == None) {
-      val attackTile = getWorldTitleByPoint(result.attackX, result.attackY)
-      createBuildNode(attackTile, result.attackSortId, key)
-    }
-    var time: Double = Math.sqrt(Math.pow(result.defendX - result.attackX, 2) + Math.pow(result.defendY - result.attackY, 2)) * TaskDefine.WORLD_TASK_TIME_EACH + TaskDefine.WORLD_TASK_TIME_LIMIT
-    val rduce = (1 + (result.powerMap.get(PlayerPowerDefine.NOR_POWER_speedRate) / UtilDefine.RUN_UNDER))
-    time = time / rduce
-    val backTime: Long = GameUtils.getServerDate().getTime + (time.toInt) * 1000
-    context.actorSelection(key) ! FightTeamBack(result.attackTeam, backTime, result.defendX, result.defendY, result.defendSortId, result)
-  }
-
-
-  def sendErrorFightMsgBak(rs: Int, attackTeams: util.List[PlayerTeam]): Unit = {
-    sender() ! FightBuildErrorBack(0, attackTeams, rs)
-  }
-
-
-  def createBuildNode(defendTile: WorldTile, defendSort: Int, key: String): Unit = {
-    val x: Integer = defendTile.x
-    val y: Integer = defendTile.y
-    val sort: Integer = defendSort
-    context.watch(context.actorOf(BattleNode.props(x, y, sort, defendTile.tileType, defendTile, areaKey), key))
+  def createBuildNode(tile: WorldTile, key: String): Unit = {
+    val x: Integer = tile.x
+    val y: Integer = tile.y
+    context.watch(context.actorOf(WorldNodeActor.props(tile, areaKey), key))
   }
 
 
@@ -353,7 +352,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     //    case e: CompleteInitWorldBlock =>
     //      completeInitWorldBlock(e.worldBlock)
     case UpdateWorldBlock(worldBlock) =>
-      updateWorldBlock(worldBlock)
+      WorldService.updateWorldBlock(worldBlock,areaKey)
     case AutoAddBuilding(playerId, accountName) =>
       onAutoAddBuilding(playerId, accountName)
     case msg: AddWorldBuildingSuccess =>
@@ -362,14 +361,10 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       onWatchmagnifying(x, y, playerId)
     case WatchBuildingTileInfo(x, y) =>
       onWatchBuildingTileInfo(x, y)
-    case FightBuild(x: Int, y: Int, attackTeams: util.List[PlayerTeam], attackX: Int, attackY: Int, attIcon: Int, attLevel: Int, attName: String, legionId: Long, powerMap: util.Map[Integer, java.lang.Long]) =>
-      onFightBuild(x, y, attackTeams, attackX, attackY, attIcon, attLevel, attName, legionId, powerMap)
+    case FightBuild(teamData:WorldTeamData, powerMap: util.Map[Integer, Integer]) =>
+      onFightBuild(teamData, powerMap)
     case AskBuildTitle(x: Int, y: Int, sortId: Int) =>
       onAskBuildTitle(x, y, sortId)
-    case BuildBattleResult(result: TileBattleResult) =>
-      battleResultHandle(result)
-    case DigTeamBackNotice(result: TileBattleResult) =>
-      sendFightTeamBackToNode(result)
     case DetectBuild(targetX: Int, targetY: Int, detectType: Int, playerId: Long) =>
       onDetectBuild(targetX, targetY, detectType, playerId)
     case StopAllNode() =>
@@ -384,10 +379,8 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       onRandomMove(playerId, myX, myY)
     case getOrePoint(simple: SimplePlayer, myaccontName: String) =>
       ongetOrePoint(simple, myaccontName)
-    case GetHelpDefendTime(myX: Int, myY: Int, targetX: Int, targetY: Int, legionId: Long, powerMap: util.Map[Integer, java.lang.Long]) =>
-      onGetHelpDefendTime(myX, myY, targetX, targetY, legionId, powerMap)
-    case Tohelp(myX: Int, myY: Int, targetX: Int, targetY: Int, legionId: Long, fightteam: util.List[PlayerTeam], myId: Long, powerMap: util.Map[Integer, java.lang.Long]) =>
-      onTohelp(myX, myY, targetX, targetY, legionId, fightteam, myId, powerMap)
+    case Tohelp(teamData:WorldTeamData,powerMap: util.Map[Integer, java.lang.Integer]) =>
+      onTohelp(teamData, powerMap)
     case GiveMeAPill(x: Int, y: Int) =>
       pillBuilNode(x, y)
     case SaveCloseNodeResource(playerId:Long,rewardMap : util.HashMap[Integer,Integer]) =>
@@ -404,87 +397,21 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     }
   }
 
-  def onGetHelpDefendTime(myX: Int, myY: Int, targetX: Int, targetY: Int, legionId: Long, powerMap: util.Map[Integer, java.lang.Long]): Unit = {
-    val targetTile = getWorldTitleByPoint(targetX, targetY)
-    if (targetTile.tileType != TileType.Building) {
-      sender() ! HelpDefendError(ErrorCodeDefine.M80012_3)
-      return
-    }
-    val targetSimple: SimplePlayer = PlayerService.getSimplePlayer(targetTile.building.getPlayerId, areaKey)
-    if (targetSimple.getArmygrouid != legionId) {
-      sender() ! HelpDefendError(ErrorCodeDefine.M80012_4)
-      return
-    }
-    var time: Double = Math.sqrt(Math.pow(targetX - myX, 2) + Math.pow(targetY - myY, 2)) * TaskDefine.WORLD_TASK_TIME_EACH + TaskDefine.WORLD_TASK_TIME_LIMIT
-    val rduce = (1 + (powerMap.get(PlayerPowerDefine.NOR_POWER_speedRate) / UtilDefine.RUN_UNDER))
-    time = time / rduce
-    val backTime: Long = GameUtils.getServerDate().getTime + (time.toInt) * 1000
-    sender() ! HelpDefendback(myX, myY, targetX, targetY, backTime)
-  }
 
 
-  def onTohelp(myX: Int, myY: Int, targetX: Int, targetY: Int, legionId: Long, fightteam: util.List[PlayerTeam], myId: Long, powerMap: util.Map[Integer, java.lang.Long]): Unit = {
-    val targetTile = getWorldTitleByPoint(targetX, targetY)
-    if (targetTile.tileType != TileType.Building) {
-      sender() ! tohelpError(ErrorCodeDefine.M80013_3)
-      return
+  def onTohelp(teamData:WorldTeamData,powerMap: util.Map[Integer, java.lang.Integer]): Unit = {
+    val startKey = teamData.getStartX + "_" + teamData.getStartY
+    val targetKey = teamData.getTargetX + "_" + teamData.getTargetY
+    if (context.child(startKey) == None) {
+      val startTile = WorldService.getWorldTitleByPoint(teamData.getStartX,teamData.getStartY,areaKey)
+      createBuildNode(startTile,startKey)
     }
-    val targetSimple: SimplePlayer = PlayerService.getSimplePlayer(targetTile.building.getPlayerId, areaKey)
-    if (targetSimple.getArmygrouid != legionId) {
-      sender() ! tohelpError(ErrorCodeDefine.M80013_4)
-      return
+    if(context.child(targetKey) == None){
+      val targeTile = WorldService.getWorldTitleByPoint(teamData.getTargetX,teamData.getTargetY,areaKey)
+      createBuildNode(targeTile,targetKey)
     }
-    if (targetSimple.getGardNum >= 5) {
-      sender() ! tohelpError(ErrorCodeDefine.M80013_6)
-      return
-    }
-    val troop: PlayerTroop = new PlayerTroop()
-   // val teamId: Long = BaseSetDbPojo.getSetDbPojo(classOf[HelpTeamDateSetDb], areaKey).addTeamDate(troop)
-    var time: Double = Math.sqrt(Math.pow(targetX - myX, 2) + Math.pow(targetY - myY, 2)) * TaskDefine.WORLD_TASK_TIME_EACH + TaskDefine.WORLD_TASK_TIME_LIMIT
-    val rduce = (1 + (powerMap.get(PlayerPowerDefine.NOR_POWER_speedRate) / UtilDefine.RUN_UNDER))
-    time = time / rduce
-    val backTime: Long = GameUtils.getServerDate().getTime + (time.toInt) * 1000
-    val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(myId, areaKey)
-    if (targetSimple.online) {
-      val accountName = targetSimple.getAccountName
-      sendMsgToPlayerMapModule(targetSimple.getAccountName, tellforhelp(myX, myY, fightteam, backTime, simplePlayer.getName, simplePlayer.getLevel, 0, simplePlayer.getIconId, targetX, targetY,powerMap))
-    } else {
-      val player: Player = BaseDbPojo.getOfflineDbPojo(targetSimple.getId, classOf[Player], areaKey)
-      val list: util.Set[java.lang.Long] = player.getHelpteams
-      list.add(0l)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
-      val dungeoProxy: DungeoProxy = new DungeoProxy(new util.HashSet[lang.Long](), areaKey)
-      val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
-      player.setGardNum(performTasksProxy.getguardNum())
-      performTasksProxy.addPerformTaskForOffLine(TaskDefine.PERFORM_TASK_OTHERHELPBACK, simplePlayer.getName,
-        simplePlayer.getLevel, myX, myY, backTime, fightteam, dungeoProxy, 0, simplePlayer.getId, playerProxy,
-        simplePlayer.getIconId, targetX, targetY,powerMap)
-      player.save()
-    }
-    val defendTile = getWorldTitleByPoint(targetX, targetY)
-    val attackTile = getWorldTitleByPoint(myX, myY)
-    //获取防守玩家的属性
-    var name = ""
-    var level = 0
-    var id = 0
-    var defendPlayer: SimplePlayer = null
-    if (defendTile.tileType == TileType.Building) {
-      val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(defendTile.building.getPlayerId, areaKey)
-      name = simplePlayer.getName
-      level = simplePlayer.getLevel
-      defendPlayer = simplePlayer
-    }
-    val defendSort: Int = getPointSortId(targetX, targetY)
-    val attackSort: Int = getPointSortId(myX, myY)
-
-    val key = targetX + "_" + targetY
-
-    if (context.child(key) == None) {
-      createBuildNode(defendTile, defendSort, key)
-    }
-    context.actorSelection(key) ! PushHelpToNode(fightteam, myX, myY, backTime, attackSort, powerMap)
-    titleNodeTimeMap.put(key, GameUtils.getServerDate().getTime)
-    sender() ! GameMsg.tohelpbackSucess(targetX, targetY, fightteam, backTime, defendPlayer.getName, defendPlayer.getLevel, 0, myX, myY)
+    titleNodeTimeMap.put(startKey, GameUtils.getServerDate().getTime)
+    titleNodeTimeMap.put(targetKey, GameUtils.getServerDate().getTime)
   }
 
   def ongetOrePoint(simple: SimplePlayer, myaccontName: String): Unit = {
@@ -504,7 +431,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     var ower: Int = 1
     var x: Int = collinfo.getX
     var y: Int = collinfo.getY
-    val title: WorldTile = getWorldTitleByPoint(x, y)
+    val title: WorldTile = WorldService.getWorldTitleByPoint(x, y,areaKey)
     if (title == null) {
       rs = ErrorCodeDefine.M80008_1
     } else {
@@ -522,13 +449,13 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
   }
 
   def onMoveWorldBuild(targetX: Int, targetY: Int, myX: Int, myY: Int): Unit = {
-    val targetTile = getWorldTitleByPoint(targetX, targetY)
+    val targetTile = WorldService.getWorldTitleByPoint(targetX, targetY,areaKey)
     var rs = 0
     var id = 0l
     if (targetTile.tileType != TileType.Empty) {
       rs = ErrorCodeDefine.M80005_2
     } else {
-      val myTile = getWorldTitleByPoint(myX, myY)
+      val myTile = WorldService.getWorldTitleByPoint(myX, myY,areaKey)
       val building: WorldBuilding = myTile.building
       building.setWorldTileX(targetX)
       building.setWorldTileY(targetY)
@@ -537,38 +464,42 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       myTile.building_(null)
       myTile.tileType_(TileType.Empty)
       targetTile.tileType_(TileType.Building)
+      val myNodeData = WorldService.getWorldNode(areaKey,myX,myY)
+      val targetNodeData = WorldService.getWorldNode(areaKey,targetX,targetY)
+      targetNodeData.setOccupyPlayerId(myNodeData.getOccupyPlayerId)
+      myNodeData.setOccupyPlayerId(0)
       val worldTileSetDb = BaseSetDbPojo.getSetDbPojo(classOf[WorldTileSetDb], areaKey)
-      worldTileSetDb.replaceKeyValue(getBuildingTileKey(myX, myY), getBuildingTileKey(targetX, targetY), building.getId)
+      worldTileSetDb.replaceKeyValue(WorldService.getBuildingTileKey(myX, myY), WorldService.getBuildingTileKey(targetX, targetY), building.getId)
     }
     sender() ! MoveWorldBuildBack(targetX, targetY, rs)
   }
 
-  def getBuildingTileKey(x: Int, y: Int) = {
-    "buildTile" + x + "_" + y
-  }
+
 
   //创建侦查报告
   def createSpyReport(targetX: Int, targetY: Int, detectType: Int, playerId: Long): Unit = {
-    val tile = getWorldTitleByPoint(targetX, targetY)
+    val tile = WorldService.getWorldTitleByPoint(targetX, targetY,areaKey)
     var targetName = ""
     var defendId = 0l
     var defendName = ""
     var level = 0
     var defendTypeIdList = new util.ArrayList[Integer]
     var defendNumList = new util.ArrayList[Integer]
+    val nodeData = WorldService.getWorldNode(areaKey ,targetX,targetY)
     val dungeoProxy: DungeoProxy = new DungeoProxy(new util.HashSet[lang.Long](), areaKey)
     val report: ReportTemplate = new ReportTemplate(playerId, "", defendId, defendName, ReportDefine.REPORT_TYPE_SPY, null)
-    var sendToNode = false
     if (tile.tileType == TileType.Resource) {
       val pointConfig = ConfigDataProxy.getConfigInfoFindById(DataDefine.RESOURCE_POINT, tile.resPointId)
       targetName = pointConfig.getString("name")
-      defendId = tile.defendPlayerId
+      defendId = nodeData.getOccupyPlayerId
       if (defendId > 0) {
         //有人防守的资源点
         val sp: SimplePlayer = PlayerService.getSimplePlayer(defendId, areaKey)
         defendName = sp.getName
-        defendTypeIdList = dungeoProxy.getSoldierTypeIdListFormPlayerTeam(tile.defendTeams)
-        defendNumList = dungeoProxy.getSoldierNumListFormPlayerTeam(tile.defendTeams)
+        val teamData = WorldService.getTeamData(nodeData.getDigingTeamId)
+        val defendList = GameUtils.decodePlayerTeam(teamData.getBasePowerMap,teamData.getPowerMap,defendId)
+        defendTypeIdList = dungeoProxy.getSoldierTypeIdListFormPlayerTeam(defendList)
+        defendNumList = dungeoProxy.getSoldierNumListFormPlayerTeam(defendList)
         report.setDefendLegion(sp.getLegionName)
         report.setAim(sp.getName)
         report.setDefendVip(sp.getVipLevel)
@@ -585,9 +516,22 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       if (context.child(targetX + "_" + targetY) == None) {
         report.setResourceGet(0)
       } else {
-        sendToNode = true
-//        val resGet: Int = askNode(targetX + "_" + targetY, AskNodeResourceGet())
-//        report.setResourceGet(resGet)
+        val teamData = WorldService.getTeamData(nodeData.getDigingTeamId)
+        if(teamData != null){
+          val digTime = GameUtils.getServerDate().getTime - nodeData.getOccupyTime
+          val pointConfig = ConfigDataProxy.getConfigInfoFindById(DataDefine.RESOURCE_POINT, tile.resPointId)
+          var alreadyGet = pointConfig.getInt("product") * digTime / 1000
+          val powerMap = GameUtils.decodeStringToIntegerMap(teamData.getAddMap)
+          var add = 0.0
+          if(powerMap.containsKey(NOR_POWER_rescollectrate)){
+            add = 1 + (powerMap.get(NOR_POWER_rescollectrate) / 100)
+          }
+          alreadyGet = (alreadyGet * add).toInt
+          if(alreadyGet>=nodeData.getOccupyLoads()){
+            alreadyGet=nodeData.getOccupyLoads
+          }
+          report.setResourceGet(alreadyGet.toInt)
+        }
       }
     } else {
       //获取玩家的防守属性
@@ -610,15 +554,17 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       if (context.child(targetX + "_" + targetY) == None) {
         temas = new util.ArrayList[PlayerTeam]()
       } else {
-        sendToNode = true
-//        temas = askNode(targetX + "_" + targetY, AskNodeDefendGet())
+        if(sp.getHelpId > 0){
+          val helpTeam = WorldService.getTeamData(sp.getHelpId)
+          if(helpTeam != null){
+            val helpsimple:SimplePlayer=PlayerService.getSimplePlayer(helpTeam.getPlayerId,areaKey)
+            report.setGarrisonName(helpsimple.getName)
+            val list = GameUtils.decodePlayerTeam(helpTeam.getBasePowerMap,helpTeam.getPowerMap,helpTeam.getPlayerId)
+            defendTypeIdList = dungeoProxy.getSoldierTypeIdListFormPlayerTeam(list)
+            defendNumList = dungeoProxy.getSoldierNumListFormPlayerTeam(list)
+          }
+        }
       }
-      /*if (temas.size() > 0) {
-        val groupsp: SimplePlayer = PlayerService.getSimplePlayer(temas.get(0).playerId, areaKey)
-        defendName = groupsp.getName
-        defendTypeIdList = dungeoProxy.getSoldierTypeIdListFormPlayerTeam(temas)
-        defendNumList = dungeoProxy.getSoldierNumListFormPlayerTeam(temas)
-      }*/
       val list = getRewardList(sp)
       report.setResourceGet(list.get(0))
       list.remove(0)
@@ -635,11 +581,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     report.setY(targetY)
     report.setDefendSoldierTypeIds(defendTypeIdList)
     report.setDefendSoldierNums(defendNumList)
-    if (sendToNode){
-      context.actorSelection(targetX + "_" + targetY) ! GetReportInfo(report)
-    }else{
-      tellService(context, ActorDefine.MAIL_SERVICE_NAME, SendReport(report, 0))
-    }
+    tellService(context, ActorDefine.MAIL_SERVICE_NAME, SendReport(report, 0))
   }
 
   def getRewardList(simplePlayer: SimplePlayer): util.List[Integer] = {
@@ -684,7 +626,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
   def onDetectBuild(targetX: Int, targetY: Int, detectType: Int, playerId: Long): Unit = {
 
     if (detectType == ActorDefine.DETECT_TYPE_PRICE) {
-      val tile = getWorldTitleByPoint(targetX, targetY)
+      val tile = WorldService.getWorldTitleByPoint(targetX, targetY,areaKey)
       var price: Int = 0
       var id = 0l
       if (tile == null || tile.tileType == TileType.Empty) {
@@ -724,42 +666,15 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     getTriggerService(context) ! AddTriggerEvent(event)
   }
 
-  def updateWorldBlock(worldBlock: WorldBlock) = {
-    worldBlockMap.replace(worldBlock.sortId, worldBlock)
-  }
 
-  def getPointSortId(x: Int, y: Int): Int = {
-    val block = findBlockInfoByPos(x, y)
-    var sortId: Int = 0
-    if (block == None) {
-      log.warning("该坐标上没有对应的世界块" + x + " " + y)
-    } else {
-      sortId = block.get._2.sortId
-    }
-    sortId
-  }
+
 
   def onAskBuildTitle(x: Int, y: Int, sortId: Int): Unit = {
-    val title: WorldTile = getWorldTitleByPoint(x, y)
+    val title: WorldTile = WorldService.getWorldTitleByPoint(x, y,areaKey)
     sender() ! Some(title)
   }
 
-  def getWorldTitleByPoint(x: Int, y: Int) = {
-    val block = findBlockInfoByPos(x, y)
-    var worldTile: WorldTile = null
-    if (block == None) {
-      log.warning("该坐标上没有对应的世界块" + x + " " + y)
-    } else {
-      val sortId = block.get._2.sortId
-      val key = getBuildingTileKey(x, y)
-      val tile: WorldTile = block.get._2.worldTileMap.get(key)
-      //      val tile: Option[WorldTile] = askWorldBlockActor(sortId, WatchBuildingTileInfo(x, y))
-      if (tile != null) {
-        worldTile = tile
-      }
-    }
-    worldTile
-  }
+
 
   def onWatchmagnifying(x: Int, y: Int, playerId: Long) = {
     var maxX: Int = x + ChatAndMailDefine.WORLD_MAGNIFY
@@ -791,7 +706,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
             var ty: Int = minY
             while (ty <= maxY) {
               {
-                val title: WorldTile = getWorldTitleByPoint(tx, ty)
+                val title: WorldTile = WorldService.getWorldTitleByPoint(tx, ty,areaKey)
                 if (title.building != null) {
                   if (title.building.getPlayerId != playerId) {
                     worldtitlelistaddll.add(title)
@@ -901,7 +816,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
         while (l1 <= linemaxX) {
           {
             if (lineminY <= y - add) {
-              val title1: WorldTile = getWorldTitleByPoint(l1, lineminY)
+              val title1: WorldTile = WorldService.getWorldTitleByPoint(l1, lineminY,areaKey)
               if (lineminY <= y - add && title1.building == null && title1.resLv == level) {
                 worldtitlelist.add(title1)
                 setlist.add(title1.resType)
@@ -909,7 +824,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
             }
 
             if (linemaxY >= y + add) {
-              val title2: WorldTile = getWorldTitleByPoint(l1, linemaxY)
+              val title2: WorldTile = WorldService.getWorldTitleByPoint(l1, linemaxY,areaKey)
               if (title2.building == null && title2.resLv == level) {
                 worldtitlelist.add(title2)
                 setlist.add(title2.resType)
@@ -927,7 +842,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
         while (l2 <= linemaxY) {
           {
             if (lineminX <= x - add) {
-              val title1: WorldTile = getWorldTitleByPoint(lineminX, l2)
+              val title1: WorldTile = WorldService.getWorldTitleByPoint(lineminX, l2,areaKey)
               if (title1.building == null && title1.resLv == level) {
                 worldtitlelist.add(title1)
                 setlist.add(title1.resType)
@@ -935,7 +850,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
             }
 
             if (linemaxX >= x + add) {
-              val title2: WorldTile = getWorldTitleByPoint(linemaxX, l2)
+              val title2: WorldTile = WorldService.getWorldTitleByPoint(linemaxX, l2,areaKey)
               if (title2.building == null && title2.resLv == level) {
                 worldtitlelist.add(title2)
                 setlist.add(title2.resType)
@@ -991,12 +906,12 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     val dt: Int = 4
     for (i <- x - dt until x + dt + 1) {
       for (j <- y - dt until y + dt + 1) {
-        val block = findBlockInfoByPos(i, j)
+        val block = WorldService.findBlockInfoByPos(i, j,areaKey)
         if (block == None) {
           log.warning("该坐标上没有对应的世界块" + i + " " + j)
         } else {
           //          val sortId = block.get._2.sortId
-          val key = getBuildingTileKey(i, j)
+          val key = WorldService.getBuildingTileKey(i, j)
           val tile: WorldTile = block.get._2.worldTileMap.get(key)
           //          val tile: Option[WorldTile] = askWorldBlockActor(sortId, WatchBuildingTileInfo(i, j)) //可优化，按组请求相关数据
           if (tile != null) {
@@ -1005,8 +920,9 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
             if (worldTile.building != null) {
               buildingPlayerList.add(worldTile.building.getPlayerId)
             } else {
-              if (worldTile.defendPlayerId > 0) {
-                buildingPlayerList.add(worldTile.defendPlayerId)
+              val nodeData = WorldService.getWorldNode(areaKey,i,j)
+              if (nodeData.getOccupyPlayerId > 0) {
+                buildingPlayerList.add(nodeData.getOccupyPlayerId)
               }
             }
           }
@@ -1018,9 +934,12 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       //去查看数据
       val simplePlayerList: util.List[SimplePlayer] = PlayerService.onGetPlayerSimpleInfoList(buildingPlayerList, areaKey)
       worldTileList.foreach(worldTile => {
+        val nodeData = WorldService.getWorldNode(areaKey,worldTile.x,worldTile.y)
         if (worldTile.building != null) {
           simplePlayerList.foreach(simplePlayer => {
-            if (simplePlayer.getId == worldTile.building.getPlayerId) {
+            if(simplePlayer == null){
+              println("simplePlayer出现空")
+            }else if (simplePlayer.getId == worldTile.building.getPlayerId) {
               worldTile.playerName_(simplePlayer.getName)
               worldTile.playerLevel_(simplePlayer.getLevel)
               worldTile.boomState_(simplePlayer.getBoomState)
@@ -1046,7 +965,9 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
         } else {
           var falg: Boolean = true
           simplePlayerList.foreach(simplePlayer => {
-            if (simplePlayer.getId == worldTile.defendPlayerId) {
+            if(simplePlayer == null){
+              println("simplePlayer出现空")
+            }else if (simplePlayer.getId == nodeData.getOccupyPlayerId) {
               worldTile.legionName_(simplePlayer.getLegionName)
               falg = false
             }
@@ -1063,23 +984,12 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
 
   }
 
-  def findBlockInfoByPos(x: Int, y: Int) = {
-    val value = worldBlockMap.find(v => {
-      val block = v._2
-      if (x >= block.xOrigin && x <= block.xEnd && y >= block.yOrigin && y <= block.yEnd) {
-        true
-      } else {
-        false
-      }
-    })
 
-    value
-  }
 
   //使用随机迁城令
   def onRandomMove(playerId: Long, myX: Int, myY: Int): Unit = {
     val keyList = new util.ArrayList[Integer]()
-    val keySet = worldBlockMap.keySet()
+    val keySet = WorldService.getAllWorldBlockKey(areaKey)
     keySet.foreach(key => {
       keyList.add(key)
     })
@@ -1087,7 +997,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     var key: Int = -1
     while (key == -1) {
       val ran = GameUtils.getRandomValueByRange(keyList.size())
-      val worldBlock = worldBlockMap.get(ran)
+      val worldBlock = WorldService.getWorldBlock(areaKey,ran)
       if (worldBlock != null && worldBlock.curEmptyTileNum > 0 && worldBlock.curPlayerNum < worldBlock.maxPlayerNum) {
         key = ran
       }
@@ -1104,14 +1014,18 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     if (key == -1) {
       log.warning("!!!!!!!!竟然找不出可以入住的建筑了!!!!!!!!进行迁移逻辑!!!")
     } else {
-      val worldBlock = worldBlockMap.get(key)
+      val worldBlock = WorldService.getWorldBlock(areaKey,key)
       //发送具体的块进行添加建筑，系统的不需要推送
       val sortId = worldBlock.sortId
       val actor = getWorldBlockActor(sortId)
       val targetTile: WorldTile = askWorldBlockActor(actor, GetRandomEmpty())
       if (targetTile != null) {
         //执行迁城逻辑
-        val myTile = getWorldTitleByPoint(myX, myY)
+        val myNodeData = WorldService.getWorldNode(areaKey,myX,myY)
+        val targetNodeData = WorldService.getWorldNode(areaKey,targetTile.x,targetTile.y)
+        targetNodeData.setOccupyPlayerId(myNodeData.getOccupyPlayerId)
+        myNodeData.setOccupyPlayerId(0)
+        val myTile = WorldService.getWorldTitleByPoint(myX, myY,areaKey)
         val building: WorldBuilding = myTile.building
         building.setWorldTileX(targetTile.x)
         building.setWorldTileY(targetTile.y)
@@ -1121,7 +1035,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
         myTile.tileType_(TileType.Empty)
         targetTile.tileType_(TileType.Building)
         val worldTileSetDb = BaseSetDbPojo.getSetDbPojo(classOf[WorldTileSetDb], areaKey)
-        worldTileSetDb.replaceKeyValue(getBuildingTileKey(myX, myY), getBuildingTileKey(targetTile.x, targetTile.y), building.getId)
+        worldTileSetDb.replaceKeyValue(WorldService.getBuildingTileKey(myX, myY), WorldService.getBuildingTileKey(targetTile.x, targetTile.y), building.getId)
         sender() ! MoveRandomWorldBuildBack(targetTile.x, targetTile.y)
       }
     }
@@ -1136,14 +1050,14 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
   //系统自动添加建筑
   def onAutoAddBuilding(playerId: Long, accountName: String) = {
     val keyList = new util.ArrayList[Integer]()
-    val keySet = worldBlockMap.keySet()
+    val keySet = WorldService.getAllWorldBlockKey(areaKey)
     keySet.foreach(key => {
       keyList.add(key)
     })
     util.Collections.sort(keyList)
 
     val key = keyList.find(key => {
-      val worldBlock = worldBlockMap.get(key)
+      val worldBlock = WorldService.getWorldBlock(areaKey,key)
       if (worldBlock.curEmptyTileNum > 0 && worldBlock.curPlayerNum < worldBlock.maxPlayerNum) {
         true
       } else {
@@ -1153,7 +1067,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     if (key == None) {
       log.warning("!!!!!!!!竟然找不出可以入住的建筑了!!!!!!!!进行迁移逻辑!!!")
     } else {
-      val worldBlock = worldBlockMap.get(key.get)
+      val worldBlock = WorldService.getWorldBlock(areaKey,key.get)
       //发送具体的块进行添加建筑，系统的不需要推送
       val sortId = worldBlock.sortId
       val actor = getWorldBlockActor(sortId)
@@ -1175,7 +1089,8 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       val sortId = info.getInt("sort")
       maxBlockNum = maxBlockNum + 1
       val worldBlock = initWorldBlock(info, keySet)
-      worldBlockMap.put(worldBlock.sortId, worldBlock)
+      WorldService.updateWorldBlock(worldBlock,areaKey)
+//      worldBlockMap.put(worldBlock.sortId, worldBlock)
       context.watch(context.actorOf(WorldBlockActor.props(worldBlock, areaKey), name + sortId))
     })
   }
@@ -1210,10 +1125,13 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     for (x <- xOrigin until xEnd + 1) {
       for (y <- yOrigin until yEnd + 1) {
         val worldTile = new WorldTile()
+        val nodeData = WorldNodeData.createWorldNodeData()
         worldTile.x_(x)
         worldTile.y_(y)
+        nodeData.setX(x)
+        nodeData.setY(y)
 
-        val key = getBuildingTileKey(x, y)
+        val key = WorldService.getBuildingTileKey(x, y)
         if (keySet.contains(key) == true) {
           //这个坐标已经有人了
           worldTile.tileType_(TileType.Building) //需要去缓存DB拿到具体的building数据 拿ID，再拿数据
@@ -1228,6 +1146,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
           }
         }
         worldTileMap += (key -> worldTile)
+        WorldService.addWorldNodeData(nodeData,areaKey)
       }
     }
 
@@ -1243,8 +1162,22 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
           val tile = worldTileMap(key)
           val worldBuilding = BaseDbPojo.get(id.toLong, classOf[WorldBuilding], areaKey)
           tile.building_(worldBuilding)
+          var nodeData = WorldService.getWorldNode(areaKey,tile.x,tile.y)
+          //做个容错，判空，没有要加上
+          if(nodeData == null){
+            nodeData = WorldNodeData.createWorldNodeData()
+            nodeData.setX(tile.x)
+            nodeData.setY(tile.y)
+          }
+          if(worldBuilding != null){
+            nodeData.setOccupyPlayerId(worldBuilding.getPlayerId)
+            if(tile.x==221&&tile.y==432){
+              println("特殊"+worldBuilding.getPlayerId)
+            }
+          }else{
+            println("worldBuilding == nulll  "+tile.x+"_"+tile.y)
+          }
         }
-
       }) //拿各个玩家建筑数据  玩家密集时可能会执行比较久 TODO
     }
 

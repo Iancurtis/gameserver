@@ -8,6 +8,7 @@ import com.znl.GameMainServer;
 import com.znl.base.BasicModule;
 import com.znl.core.PlayerReward;
 import com.znl.define.*;
+import com.znl.framework.socket.Request;
 import com.znl.msg.GameMsg;
 import com.znl.proto.*;
 import com.znl.proxy.*;
@@ -35,12 +36,6 @@ public class CapacityModule extends BasicModule {
             long capacity = soldierProxy.getHighestCapacity();
             long _capacity = soldierProxy.initHighestCapacity();
             if (capacity != _capacity) {
-                M2.M20002.S2C.Builder builder = M2.M20002.S2C.newBuilder();
-                Common.AttrDifInfo.Builder diff = Common.AttrDifInfo.newBuilder();
-                diff.setTypeid(PlayerPowerDefine.NOR_POWER_highestCapacity);
-                diff.setValue(_capacity);
-                builder.addDiffs(diff.build());
-                pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, builder.build());
                 PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
                 GameMsg.AddPlayerToRank msg = new GameMsg.AddPlayerToRank(playerProxy.getPlayerId(), soldierProxy.getHighestCapacity(), PowerRanksDefine.POWERRANK_TYPE_CAPACITY);
                 sendServiceMsg(ActorDefine.POWERRANKS_SERVICE_NAME, msg);
@@ -50,7 +45,7 @@ public class CapacityModule extends BasicModule {
                 }
                 PlayerReward reward = new PlayerReward();
                 taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_CREATESODIER_NUM, 0);
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(0);
             }
         }else if(anyRef instanceof GameMsg.LoginInitCapacity){
             SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
@@ -60,21 +55,21 @@ public class CapacityModule extends BasicModule {
                 if (soldierInfos.size() > 0){
                     HashMap<Integer,Integer> map = WorldService.getWorldCloseReward(playerProxy.getPlayerId(), playerProxy.getAreaKey());
                     if(map != null){
-                        List<Integer> powerList = new ArrayList<>();
+//                        List<Integer> powerList = new ArrayList<>();
                         for (Integer power : map.keySet()){
                             playerProxy.addPowerValue(power,map.get(power),LogDefine.GET_CLOSE_WORLD);
-                            powerList.add(power);
+//                            powerList.add(power);
                         }
-                        pushNetMsg(ProtocolModuleDefine.NET_M2,ProtocolModuleDefine.NET_M2_C20002,sendDifferent(powerList));
+//                        pushNetMsg(ProtocolModuleDefine.NET_M2,ProtocolModuleDefine.NET_M2_C20002,sendDifferent(powerList));
                     }
                     M2.M20007.S2C.Builder builder = M2.M20007.S2C.newBuilder().addAllSoldierList(soldierInfos);
                     pushNetMsg(ProtocolModuleDefine.NET_M2,ProtocolModuleDefine.NET_M2_C20007,builder.build());
                     PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
                     performTasksProxy.clearPerformTasks();
                     performTasksProxy.clearTeamNotice();
-                    sendPushNetMsgToClient();
+                    playerProxy.getPlayer().getWorldResPoint().clear();
+                    sendPushNetMsgToClient(0);
                 }
-                sendModuleMsg(ActorDefine.MAP_MODULE_NAME,new GameMsg.SendTeamTaskInfo());
             }
             soldierProxy.loginInitPowerValue();
             self().tell(new GameMsg.CountCapacity(), ActorRef.noSender());
@@ -102,10 +97,10 @@ public class CapacityModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

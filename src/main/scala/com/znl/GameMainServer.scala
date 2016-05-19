@@ -52,6 +52,7 @@ object GameMainServer extends App{
     GameUtils.test=p.getProperty("test").toBoolean
     GameUtils.redisExpireTime=p.getProperty("redisExpireTime").toInt
     GameUtils.mysqlDbName=p.getProperty("mysql_db")
+    GameUtils.areaServer3=p.getProperty("areaServer3").split(",")
     val http_port : Int = p.getProperty("http_port").toInt
     protectTime = p.getProperty("protect_time").toInt
     p.propertyNames().foreach(v => {
@@ -337,10 +338,10 @@ object GameMainServer extends App{
     CustomerLogger.error("第6步：第1次检测redis是否全部入库完毕")
 
     val dbServer = system.actorSelection(ActorDefine.DB_SERVER_PATH)
-    var count : Int = GameUtils.futureAsk(dbServer, IsDbQueueEmpty(), 20)
+    var count : Int = DbServer.isDbQueueEmpty()
     while (count > 0){
       Thread.sleep(3000)
-      count = GameUtils.futureAsk(dbServer, IsDbQueueEmpty(), 20)
+      count = DbServer.isDbQueueEmpty()
       index = index + 1
       CustomerLogger.error("第6步：第%d次检测redis是否全部入库完毕:剩余数：%d".format(index, count))
     }
@@ -453,7 +454,7 @@ object GameMainServer extends App{
         reload()
       }else if(str.equals("stop")){
         system.actorSelection(ActorDefine.ROOT_GAME_PATH) ! StopGame()
-//        this.stopServer()
+       // this.stopServer()
       }else if(str.equals("serverTime")){
         val dateStr = GameUtils.getServerDateStr()
         println(dateStr)
@@ -462,7 +463,7 @@ object GameMainServer extends App{
         val test = java.lang.Boolean.parseBoolean(ary(1))
         GameUtils.test = test
         println("当前的作弊指令是"+GameUtils.test)
-      }else if(str.indexOf("setServerDate") >= 0){//setServerDate=2016-04-21 03:59:30
+      }else if(str.indexOf("setServerDate") >= 0){//setServerDate=2016-05-14 03:59:30
         val ary : Array[String] = str.split("=")
         GameUtils.setServerDate(ary(1))
         println("设置时间成功当前时间为："+GameUtils.getServerDate())
@@ -472,7 +473,7 @@ object GameMainServer extends App{
         reloadGameProperties()
         println("重新读取服务器配置表完毕："+GameUtils.getServerDate())
       }else if(str.startsWith("hotReplace")){//hotReplace=com.znl.modules.friend=hotReplace/FriendModule.class
-        //hotReplace=com.znl.proxy=hotReplace/OrdnanceProxy.class
+        //hotReplace=com.znl.proxy=hotReplace/GameProxy.class
         val ary : Array[String] = str.split("=")
         val path = ary(1)
         val classFile = System.getProperty("user.dir")+File.separator+ary(2)

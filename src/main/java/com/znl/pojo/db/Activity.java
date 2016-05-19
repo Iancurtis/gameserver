@@ -9,22 +9,22 @@ import java.util.List;
  * Created by Administrator on 2016/1/15.
  */
 public class Activity extends BaseDbPojo {
-    private int activityId;
-    private long playerId;
-    private int activityType;
-    private long refurceTime;
-    private long conditionValue ;
-    private int state;//是否已经领取
+    private int activityId = 0;
+    private long playerId = 0l;
+    private int activityType = 0;
+    private long refurceTime = 0l;
+    private long conditionValue = 0l;
+    private int state = 0;//是否已经领取
     private int expand = 0;//存放一些扩展参数
     private int buyInv = 0;//是否已经购买了投资计划
-    private Long lastCheckTime=0l;
+    private Long lastCheckTime = 0l;
     private List<Integer> canGetList = new ArrayList<>();
     private List<Integer> alreadyGetList = new ArrayList<>();
     private List<Integer> valuelist = new ArrayList<Integer>();//完成度sort为底
 
     private List<Integer> buyTimesList = new ArrayList<>();//用于限购次数存储
 
-    private String legionShare="";//用于限时活动-有福同享 领奖礼箱的存储:格式：礼包id_分享人id_分享时间
+    private String legionShare = "";//用于限时活动-有福同享 领奖礼箱的存储:格式：礼包id_分享人id_分享时间
 
 
     public List<Integer> getValuelist() {
@@ -118,9 +118,11 @@ public class Activity extends BaseDbPojo {
     public void clearCanGetList() {
         this.canGetList.clear();
     }
+
     public void clearBuyTimesList() {
         this.buyTimesList.clear();
     }
+
     public List<Integer> getAlreadyGetList() {
         return alreadyGetList;
     }
@@ -161,7 +163,11 @@ public class Activity extends BaseDbPojo {
         this.state = state;
     }
 
-    public String getLegionShare() {return legionShare;}
+    public String getLegionShare() {
+        return legionShare;
+    }
 
-    public void setLegionShare(String legionShare) { this.legionShare = legionShare;}
+    public void setLegionShare(String legionShare) {
+        this.legionShare = legionShare;
+    }
 }

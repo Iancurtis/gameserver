@@ -5623,6 +5623,24 @@ public final class M23 {
      * </pre>
      */
     int getEndjudge();
+
+    // optional int32 lestime = 20;
+    /**
+     * <code>optional int32 lestime = 20;</code>
+     *
+     * <pre>
+     * 关闭剩余倒计时，小于等于0不管
+     * </pre>
+     */
+    boolean hasLestime();
+    /**
+     * <code>optional int32 lestime = 20;</code>
+     *
+     * <pre>
+     * 关闭剩余倒计时，小于等于0不管
+     * </pre>
+     */
+    int getLestime();
   }
   /**
    * Protobuf type {@code M23.ActivityInfo}
@@ -5773,6 +5791,11 @@ public final class M23 {
             case 152: {
               bitField0_ |= 0x00008000;
               endjudge_ = input.readInt32();
+              break;
+            }
+            case 160: {
+              bitField0_ |= 0x00010000;
+              lestime_ = input.readInt32();
               break;
             }
           }
@@ -6393,6 +6416,30 @@ public final class M23 {
       return endjudge_;
     }
 
+    // optional int32 lestime = 20;
+    public static final int LESTIME_FIELD_NUMBER = 20;
+    private int lestime_;
+    /**
+     * <code>optional int32 lestime = 20;</code>
+     *
+     * <pre>
+     * 关闭剩余倒计时，小于等于0不管
+     * </pre>
+     */
+    public boolean hasLestime() {
+      return ((bitField0_ & 0x00010000) == 0x00010000);
+    }
+    /**
+     * <code>optional int32 lestime = 20;</code>
+     *
+     * <pre>
+     * 关闭剩余倒计时，小于等于0不管
+     * </pre>
+     */
+    public int getLestime() {
+      return lestime_;
+    }
+
     private void initFields() {
       activityId_ = 0;
       name_ = "";
@@ -6412,6 +6459,7 @@ public final class M23 {
       show_ = 0;
       text_ = "";
       endjudge_ = 0;
+      lestime_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -6523,6 +6571,9 @@ public final class M23 {
       if (((bitField0_ & 0x00008000) == 0x00008000)) {
         output.writeInt32(19, endjudge_);
       }
+      if (((bitField0_ & 0x00010000) == 0x00010000)) {
+        output.writeInt32(20, lestime_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -6603,6 +6654,10 @@ public final class M23 {
       if (((bitField0_ & 0x00008000) == 0x00008000)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(19, endjudge_);
+      }
+      if (((bitField0_ & 0x00010000) == 0x00010000)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(20, lestime_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -6770,6 +6825,8 @@ public final class M23 {
         bitField0_ = (bitField0_ & ~0x00010000);
         endjudge_ = 0;
         bitField0_ = (bitField0_ & ~0x00020000);
+        lestime_ = 0;
+        bitField0_ = (bitField0_ & ~0x00040000);
         return this;
       }
 
@@ -6880,6 +6937,10 @@ public final class M23 {
           to_bitField0_ |= 0x00008000;
         }
         result.endjudge_ = endjudge_;
+        if (((from_bitField0_ & 0x00040000) == 0x00040000)) {
+          to_bitField0_ |= 0x00010000;
+        }
+        result.lestime_ = lestime_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -7003,6 +7064,9 @@ public final class M23 {
         }
         if (other.hasEndjudge()) {
           setEndjudge(other.getEndjudge());
+        }
+        if (other.hasLestime()) {
+          setLestime(other.getLestime());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -8551,6 +8615,55 @@ public final class M23 {
         return this;
       }
 
+      // optional int32 lestime = 20;
+      private int lestime_ ;
+      /**
+       * <code>optional int32 lestime = 20;</code>
+       *
+       * <pre>
+       * 关闭剩余倒计时，小于等于0不管
+       * </pre>
+       */
+      public boolean hasLestime() {
+        return ((bitField0_ & 0x00040000) == 0x00040000);
+      }
+      /**
+       * <code>optional int32 lestime = 20;</code>
+       *
+       * <pre>
+       * 关闭剩余倒计时，小于等于0不管
+       * </pre>
+       */
+      public int getLestime() {
+        return lestime_;
+      }
+      /**
+       * <code>optional int32 lestime = 20;</code>
+       *
+       * <pre>
+       * 关闭剩余倒计时，小于等于0不管
+       * </pre>
+       */
+      public Builder setLestime(int value) {
+        bitField0_ |= 0x00040000;
+        lestime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 lestime = 20;</code>
+       *
+       * <pre>
+       * 关闭剩余倒计时，小于等于0不管
+       * </pre>
+       */
+      public Builder clearLestime() {
+        bitField0_ = (bitField0_ & ~0x00040000);
+        lestime_ = 0;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:M23.ActivityInfo)
     }
 
@@ -8652,6 +8765,24 @@ public final class M23 {
      */
     com.znl.proto.M23.ActivityEffectInfoOrBuilder getEffectInfosOrBuilder(
         int index);
+
+    // optional int32 already = 4;
+    /**
+     * <code>optional int32 already = 4;</code>
+     *
+     * <pre>
+     *活动排名
+     * </pre>
+     */
+    boolean hasAlready();
+    /**
+     * <code>optional int32 already = 4;</code>
+     *
+     * <pre>
+     *活动排名
+     * </pre>
+     */
+    int getAlready();
   }
   /**
    * Protobuf type {@code M23.ActivityShowInfo}
@@ -8727,6 +8858,11 @@ public final class M23 {
                 mutable_bitField0_ |= 0x00000004;
               }
               effectInfos_.add(input.readMessage(com.znl.proto.M23.ActivityEffectInfo.PARSER, extensionRegistry));
+              break;
+            }
+            case 32: {
+              bitField0_ |= 0x00000002;
+              already_ = input.readInt32();
               break;
             }
           }
@@ -8891,10 +9027,35 @@ public final class M23 {
       return effectInfos_.get(index);
     }
 
+    // optional int32 already = 4;
+    public static final int ALREADY_FIELD_NUMBER = 4;
+    private int already_;
+    /**
+     * <code>optional int32 already = 4;</code>
+     *
+     * <pre>
+     *活动排名
+     * </pre>
+     */
+    public boolean hasAlready() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int32 already = 4;</code>
+     *
+     * <pre>
+     *活动排名
+     * </pre>
+     */
+    public int getAlready() {
+      return already_;
+    }
+
     private void initFields() {
       activityId_ = 0;
       buttons_ = java.util.Collections.emptyList();
       effectInfos_ = java.util.Collections.emptyList();
+      already_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -8933,6 +9094,9 @@ public final class M23 {
       for (int i = 0; i < effectInfos_.size(); i++) {
         output.writeMessage(3, effectInfos_.get(i));
       }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(4, already_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -8953,6 +9117,10 @@ public final class M23 {
       for (int i = 0; i < effectInfos_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, effectInfos_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, already_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -9090,6 +9258,8 @@ public final class M23 {
         } else {
           effectInfosBuilder_.clear();
         }
+        already_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -9140,6 +9310,10 @@ public final class M23 {
         } else {
           result.effectInfos_ = effectInfosBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.already_ = already_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -9210,6 +9384,9 @@ public final class M23 {
               effectInfosBuilder_.addAllMessages(other.effectInfos_);
             }
           }
+        }
+        if (other.hasAlready()) {
+          setAlready(other.getAlready());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -9855,6 +10032,55 @@ public final class M23 {
         return effectInfosBuilder_;
       }
 
+      // optional int32 already = 4;
+      private int already_ ;
+      /**
+       * <code>optional int32 already = 4;</code>
+       *
+       * <pre>
+       *活动排名
+       * </pre>
+       */
+      public boolean hasAlready() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional int32 already = 4;</code>
+       *
+       * <pre>
+       *活动排名
+       * </pre>
+       */
+      public int getAlready() {
+        return already_;
+      }
+      /**
+       * <code>optional int32 already = 4;</code>
+       *
+       * <pre>
+       *活动排名
+       * </pre>
+       */
+      public Builder setAlready(int value) {
+        bitField0_ |= 0x00000008;
+        already_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 already = 4;</code>
+       *
+       * <pre>
+       *活动排名
+       * </pre>
+       */
+      public Builder clearAlready() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        already_ = 0;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:M23.ActivityShowInfo)
     }
 
@@ -10030,6 +10256,24 @@ public final class M23 {
      */
     com.google.protobuf.ByteString
         getInfoBytes();
+
+    // optional int32 lestime = 9;
+    /**
+     * <code>optional int32 lestime = 9;</code>
+     *
+     * <pre>
+     * 关闭剩余倒计时，小于等于0不管
+     * </pre>
+     */
+    boolean hasLestime();
+    /**
+     * <code>optional int32 lestime = 9;</code>
+     *
+     * <pre>
+     * 关闭剩余倒计时，小于等于0不管
+     * </pre>
+     */
+    int getLestime();
   }
   /**
    * Protobuf type {@code M23.LimitActivityInfo}
@@ -10120,6 +10364,11 @@ public final class M23 {
             case 66: {
               bitField0_ |= 0x00000080;
               info_ = input.readBytes();
+              break;
+            }
+            case 72: {
+              bitField0_ |= 0x00000100;
+              lestime_ = input.readInt32();
               break;
             }
           }
@@ -10416,6 +10665,30 @@ public final class M23 {
       }
     }
 
+    // optional int32 lestime = 9;
+    public static final int LESTIME_FIELD_NUMBER = 9;
+    private int lestime_;
+    /**
+     * <code>optional int32 lestime = 9;</code>
+     *
+     * <pre>
+     * 关闭剩余倒计时，小于等于0不管
+     * </pre>
+     */
+    public boolean hasLestime() {
+      return ((bitField0_ & 0x00000100) == 0x00000100);
+    }
+    /**
+     * <code>optional int32 lestime = 9;</code>
+     *
+     * <pre>
+     * 关闭剩余倒计时，小于等于0不管
+     * </pre>
+     */
+    public int getLestime() {
+      return lestime_;
+    }
+
     private void initFields() {
       uitype_ = 0;
       activityId_ = 0;
@@ -10425,6 +10698,7 @@ public final class M23 {
       endTime_ = 0;
       bgIcon_ = 0;
       info_ = "";
+      lestime_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -10494,6 +10768,9 @@ public final class M23 {
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         output.writeBytes(8, getInfoBytes());
       }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        output.writeInt32(9, lestime_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -10534,6 +10811,10 @@ public final class M23 {
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(8, getInfoBytes());
+      }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(9, lestime_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -10667,6 +10948,8 @@ public final class M23 {
         bitField0_ = (bitField0_ & ~0x00000040);
         info_ = "";
         bitField0_ = (bitField0_ & ~0x00000080);
+        lestime_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
 
@@ -10727,6 +11010,10 @@ public final class M23 {
           to_bitField0_ |= 0x00000080;
         }
         result.info_ = info_;
+        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+          to_bitField0_ |= 0x00000100;
+        }
+        result.lestime_ = lestime_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -10770,6 +11057,9 @@ public final class M23 {
           bitField0_ |= 0x00000080;
           info_ = other.info_;
           onChanged();
+        }
+        if (other.hasLestime()) {
+          setLestime(other.getLestime());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -11316,6 +11606,55 @@ public final class M23 {
   }
   bitField0_ |= 0x00000080;
         info_ = value;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 lestime = 9;
+      private int lestime_ ;
+      /**
+       * <code>optional int32 lestime = 9;</code>
+       *
+       * <pre>
+       * 关闭剩余倒计时，小于等于0不管
+       * </pre>
+       */
+      public boolean hasLestime() {
+        return ((bitField0_ & 0x00000100) == 0x00000100);
+      }
+      /**
+       * <code>optional int32 lestime = 9;</code>
+       *
+       * <pre>
+       * 关闭剩余倒计时，小于等于0不管
+       * </pre>
+       */
+      public int getLestime() {
+        return lestime_;
+      }
+      /**
+       * <code>optional int32 lestime = 9;</code>
+       *
+       * <pre>
+       * 关闭剩余倒计时，小于等于0不管
+       * </pre>
+       */
+      public Builder setLestime(int value) {
+        bitField0_ |= 0x00000100;
+        lestime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 lestime = 9;</code>
+       *
+       * <pre>
+       * 关闭剩余倒计时，小于等于0不管
+       * </pre>
+       */
+      public Builder clearLestime() {
+        bitField0_ = (bitField0_ & ~0x00000100);
+        lestime_ = 0;
         onChanged();
         return this;
       }
@@ -13440,6 +13779,523 @@ public final class M23 {
     // @@protoc_insertion_point(class_scope:M23.LegionShareInfo)
   }
 
+  public interface ActivityRankInfoOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // optional int32 activityid = 1;
+    /**
+     * <code>optional int32 activityid = 1;</code>
+     */
+    boolean hasActivityid();
+    /**
+     * <code>optional int32 activityid = 1;</code>
+     */
+    int getActivityid();
+
+    // optional int32 rank = 2;
+    /**
+     * <code>optional int32 rank = 2;</code>
+     *
+     * <pre>
+     *排名
+     * </pre>
+     */
+    boolean hasRank();
+    /**
+     * <code>optional int32 rank = 2;</code>
+     *
+     * <pre>
+     *排名
+     * </pre>
+     */
+    int getRank();
+  }
+  /**
+   * Protobuf type {@code M23.ActivityRankInfo}
+   *
+   * <pre>
+   *活动排名信息
+   * </pre>
+   */
+  public static final class ActivityRankInfo extends
+      com.google.protobuf.GeneratedMessage
+      implements ActivityRankInfoOrBuilder {
+    // Use ActivityRankInfo.newBuilder() to construct.
+    private ActivityRankInfo(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private ActivityRankInfo(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final ActivityRankInfo defaultInstance;
+    public static ActivityRankInfo getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public ActivityRankInfo getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ActivityRankInfo(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              activityid_ = input.readInt32();
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              rank_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.znl.proto.M23.internal_static_M23_ActivityRankInfo_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.znl.proto.M23.internal_static_M23_ActivityRankInfo_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.znl.proto.M23.ActivityRankInfo.class, com.znl.proto.M23.ActivityRankInfo.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<ActivityRankInfo> PARSER =
+        new com.google.protobuf.AbstractParser<ActivityRankInfo>() {
+      public ActivityRankInfo parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ActivityRankInfo(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ActivityRankInfo> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional int32 activityid = 1;
+    public static final int ACTIVITYID_FIELD_NUMBER = 1;
+    private int activityid_;
+    /**
+     * <code>optional int32 activityid = 1;</code>
+     */
+    public boolean hasActivityid() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional int32 activityid = 1;</code>
+     */
+    public int getActivityid() {
+      return activityid_;
+    }
+
+    // optional int32 rank = 2;
+    public static final int RANK_FIELD_NUMBER = 2;
+    private int rank_;
+    /**
+     * <code>optional int32 rank = 2;</code>
+     *
+     * <pre>
+     *排名
+     * </pre>
+     */
+    public boolean hasRank() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int32 rank = 2;</code>
+     *
+     * <pre>
+     *排名
+     * </pre>
+     */
+    public int getRank() {
+      return rank_;
+    }
+
+    private void initFields() {
+      activityid_ = 0;
+      rank_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, activityid_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, rank_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, activityid_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, rank_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.znl.proto.M23.ActivityRankInfo parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M23.ActivityRankInfo parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M23.ActivityRankInfo parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M23.ActivityRankInfo parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M23.ActivityRankInfo parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M23.ActivityRankInfo parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M23.ActivityRankInfo parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.znl.proto.M23.ActivityRankInfo parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M23.ActivityRankInfo parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M23.ActivityRankInfo parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.znl.proto.M23.ActivityRankInfo prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code M23.ActivityRankInfo}
+     *
+     * <pre>
+     *活动排名信息
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.znl.proto.M23.ActivityRankInfoOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M23.internal_static_M23_ActivityRankInfo_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M23.internal_static_M23_ActivityRankInfo_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M23.ActivityRankInfo.class, com.znl.proto.M23.ActivityRankInfo.Builder.class);
+      }
+
+      // Construct using com.znl.proto.M23.ActivityRankInfo.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        activityid_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        rank_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.znl.proto.M23.internal_static_M23_ActivityRankInfo_descriptor;
+      }
+
+      public com.znl.proto.M23.ActivityRankInfo getDefaultInstanceForType() {
+        return com.znl.proto.M23.ActivityRankInfo.getDefaultInstance();
+      }
+
+      public com.znl.proto.M23.ActivityRankInfo build() {
+        com.znl.proto.M23.ActivityRankInfo result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.znl.proto.M23.ActivityRankInfo buildPartial() {
+        com.znl.proto.M23.ActivityRankInfo result = new com.znl.proto.M23.ActivityRankInfo(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.activityid_ = activityid_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.rank_ = rank_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.znl.proto.M23.ActivityRankInfo) {
+          return mergeFrom((com.znl.proto.M23.ActivityRankInfo)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.znl.proto.M23.ActivityRankInfo other) {
+        if (other == com.znl.proto.M23.ActivityRankInfo.getDefaultInstance()) return this;
+        if (other.hasActivityid()) {
+          setActivityid(other.getActivityid());
+        }
+        if (other.hasRank()) {
+          setRank(other.getRank());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.znl.proto.M23.ActivityRankInfo parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.znl.proto.M23.ActivityRankInfo) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional int32 activityid = 1;
+      private int activityid_ ;
+      /**
+       * <code>optional int32 activityid = 1;</code>
+       */
+      public boolean hasActivityid() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional int32 activityid = 1;</code>
+       */
+      public int getActivityid() {
+        return activityid_;
+      }
+      /**
+       * <code>optional int32 activityid = 1;</code>
+       */
+      public Builder setActivityid(int value) {
+        bitField0_ |= 0x00000001;
+        activityid_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 activityid = 1;</code>
+       */
+      public Builder clearActivityid() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        activityid_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 rank = 2;
+      private int rank_ ;
+      /**
+       * <code>optional int32 rank = 2;</code>
+       *
+       * <pre>
+       *排名
+       * </pre>
+       */
+      public boolean hasRank() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional int32 rank = 2;</code>
+       *
+       * <pre>
+       *排名
+       * </pre>
+       */
+      public int getRank() {
+        return rank_;
+      }
+      /**
+       * <code>optional int32 rank = 2;</code>
+       *
+       * <pre>
+       *排名
+       * </pre>
+       */
+      public Builder setRank(int value) {
+        bitField0_ |= 0x00000002;
+        rank_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 rank = 2;</code>
+       *
+       * <pre>
+       *排名
+       * </pre>
+       */
+      public Builder clearRank() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        rank_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:M23.ActivityRankInfo)
+    }
+
+    static {
+      defaultInstance = new ActivityRankInfo(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:M23.ActivityRankInfo)
+  }
+
   public interface M230000OrBuilder
       extends com.google.protobuf.MessageOrBuilder {
   }
@@ -15198,6 +16054,31 @@ public final class M23 {
        * <code>required int32 effectId = 3;</code>
        */
       int getEffectId();
+
+      // repeated .M23.ActivityShowInfo activityInfo = 4;
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      java.util.List<com.znl.proto.M23.ActivityShowInfo> 
+          getActivityInfoList();
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      com.znl.proto.M23.ActivityShowInfo getActivityInfo(int index);
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      int getActivityInfoCount();
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      java.util.List<? extends com.znl.proto.M23.ActivityShowInfoOrBuilder> 
+          getActivityInfoOrBuilderList();
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      com.znl.proto.M23.ActivityShowInfoOrBuilder getActivityInfoOrBuilder(
+          int index);
     }
     /**
      * Protobuf type {@code M23.M230001.S2C}
@@ -15265,6 +16146,14 @@ public final class M23 {
                 effectId_ = input.readInt32();
                 break;
               }
+              case 34: {
+                if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                  activityInfo_ = new java.util.ArrayList<com.znl.proto.M23.ActivityShowInfo>();
+                  mutable_bitField0_ |= 0x00000008;
+                }
+                activityInfo_.add(input.readMessage(com.znl.proto.M23.ActivityShowInfo.PARSER, extensionRegistry));
+                break;
+              }
             }
           }
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -15273,6 +16162,9 @@ public final class M23 {
           throw new com.google.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
+          if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+            activityInfo_ = java.util.Collections.unmodifiableList(activityInfo_);
+          }
           this.unknownFields = unknownFields.build();
           makeExtensionsImmutable();
         }
@@ -15353,10 +16245,47 @@ public final class M23 {
         return effectId_;
       }
 
+      // repeated .M23.ActivityShowInfo activityInfo = 4;
+      public static final int ACTIVITYINFO_FIELD_NUMBER = 4;
+      private java.util.List<com.znl.proto.M23.ActivityShowInfo> activityInfo_;
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      public java.util.List<com.znl.proto.M23.ActivityShowInfo> getActivityInfoList() {
+        return activityInfo_;
+      }
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      public java.util.List<? extends com.znl.proto.M23.ActivityShowInfoOrBuilder> 
+          getActivityInfoOrBuilderList() {
+        return activityInfo_;
+      }
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      public int getActivityInfoCount() {
+        return activityInfo_.size();
+      }
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      public com.znl.proto.M23.ActivityShowInfo getActivityInfo(int index) {
+        return activityInfo_.get(index);
+      }
+      /**
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+       */
+      public com.znl.proto.M23.ActivityShowInfoOrBuilder getActivityInfoOrBuilder(
+          int index) {
+        return activityInfo_.get(index);
+      }
+
       private void initFields() {
         rs_ = 0;
         activityId_ = 0;
         effectId_ = 0;
+        activityInfo_ = java.util.Collections.emptyList();
       }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
@@ -15375,6 +16304,12 @@ public final class M23 {
           memoizedIsInitialized = 0;
           return false;
         }
+        for (int i = 0; i < getActivityInfoCount(); i++) {
+          if (!getActivityInfo(i).isInitialized()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
+        }
         memoizedIsInitialized = 1;
         return true;
       }
@@ -15390,6 +16325,9 @@ public final class M23 {
         }
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
           output.writeInt32(3, effectId_);
+        }
+        for (int i = 0; i < activityInfo_.size(); i++) {
+          output.writeMessage(4, activityInfo_.get(i));
         }
         getUnknownFields().writeTo(output);
       }
@@ -15411,6 +16349,10 @@ public final class M23 {
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
           size += com.google.protobuf.CodedOutputStream
             .computeInt32Size(3, effectId_);
+        }
+        for (int i = 0; i < activityInfo_.size(); i++) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(4, activityInfo_.get(i));
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -15520,6 +16462,7 @@ public final class M23 {
         }
         private void maybeForceBuilderInitialization() {
           if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getActivityInfoFieldBuilder();
           }
         }
         private static Builder create() {
@@ -15534,6 +16477,12 @@ public final class M23 {
           bitField0_ = (bitField0_ & ~0x00000002);
           effectId_ = 0;
           bitField0_ = (bitField0_ & ~0x00000004);
+          if (activityInfoBuilder_ == null) {
+            activityInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            activityInfoBuilder_.clear();
+          }
           return this;
         }
 
@@ -15574,6 +16523,15 @@ public final class M23 {
             to_bitField0_ |= 0x00000004;
           }
           result.effectId_ = effectId_;
+          if (activityInfoBuilder_ == null) {
+            if (((bitField0_ & 0x00000008) == 0x00000008)) {
+              activityInfo_ = java.util.Collections.unmodifiableList(activityInfo_);
+              bitField0_ = (bitField0_ & ~0x00000008);
+            }
+            result.activityInfo_ = activityInfo_;
+          } else {
+            result.activityInfo_ = activityInfoBuilder_.build();
+          }
           result.bitField0_ = to_bitField0_;
           onBuilt();
           return result;
@@ -15599,6 +16557,32 @@ public final class M23 {
           if (other.hasEffectId()) {
             setEffectId(other.getEffectId());
           }
+          if (activityInfoBuilder_ == null) {
+            if (!other.activityInfo_.isEmpty()) {
+              if (activityInfo_.isEmpty()) {
+                activityInfo_ = other.activityInfo_;
+                bitField0_ = (bitField0_ & ~0x00000008);
+              } else {
+                ensureActivityInfoIsMutable();
+                activityInfo_.addAll(other.activityInfo_);
+              }
+              onChanged();
+            }
+          } else {
+            if (!other.activityInfo_.isEmpty()) {
+              if (activityInfoBuilder_.isEmpty()) {
+                activityInfoBuilder_.dispose();
+                activityInfoBuilder_ = null;
+                activityInfo_ = other.activityInfo_;
+                bitField0_ = (bitField0_ & ~0x00000008);
+                activityInfoBuilder_ = 
+                  com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                     getActivityInfoFieldBuilder() : null;
+              } else {
+                activityInfoBuilder_.addAllMessages(other.activityInfo_);
+              }
+            }
+          }
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
         }
@@ -15615,6 +16599,12 @@ public final class M23 {
           if (!hasEffectId()) {
             
             return false;
+          }
+          for (int i = 0; i < getActivityInfoCount(); i++) {
+            if (!getActivityInfo(i).isInitialized()) {
+              
+              return false;
+            }
           }
           return true;
         }
@@ -15735,6 +16725,246 @@ public final class M23 {
           effectId_ = 0;
           onChanged();
           return this;
+        }
+
+        // repeated .M23.ActivityShowInfo activityInfo = 4;
+        private java.util.List<com.znl.proto.M23.ActivityShowInfo> activityInfo_ =
+          java.util.Collections.emptyList();
+        private void ensureActivityInfoIsMutable() {
+          if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+            activityInfo_ = new java.util.ArrayList<com.znl.proto.M23.ActivityShowInfo>(activityInfo_);
+            bitField0_ |= 0x00000008;
+           }
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M23.ActivityShowInfo, com.znl.proto.M23.ActivityShowInfo.Builder, com.znl.proto.M23.ActivityShowInfoOrBuilder> activityInfoBuilder_;
+
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public java.util.List<com.znl.proto.M23.ActivityShowInfo> getActivityInfoList() {
+          if (activityInfoBuilder_ == null) {
+            return java.util.Collections.unmodifiableList(activityInfo_);
+          } else {
+            return activityInfoBuilder_.getMessageList();
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public int getActivityInfoCount() {
+          if (activityInfoBuilder_ == null) {
+            return activityInfo_.size();
+          } else {
+            return activityInfoBuilder_.getCount();
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public com.znl.proto.M23.ActivityShowInfo getActivityInfo(int index) {
+          if (activityInfoBuilder_ == null) {
+            return activityInfo_.get(index);
+          } else {
+            return activityInfoBuilder_.getMessage(index);
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public Builder setActivityInfo(
+            int index, com.znl.proto.M23.ActivityShowInfo value) {
+          if (activityInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureActivityInfoIsMutable();
+            activityInfo_.set(index, value);
+            onChanged();
+          } else {
+            activityInfoBuilder_.setMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public Builder setActivityInfo(
+            int index, com.znl.proto.M23.ActivityShowInfo.Builder builderForValue) {
+          if (activityInfoBuilder_ == null) {
+            ensureActivityInfoIsMutable();
+            activityInfo_.set(index, builderForValue.build());
+            onChanged();
+          } else {
+            activityInfoBuilder_.setMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public Builder addActivityInfo(com.znl.proto.M23.ActivityShowInfo value) {
+          if (activityInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureActivityInfoIsMutable();
+            activityInfo_.add(value);
+            onChanged();
+          } else {
+            activityInfoBuilder_.addMessage(value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public Builder addActivityInfo(
+            int index, com.znl.proto.M23.ActivityShowInfo value) {
+          if (activityInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureActivityInfoIsMutable();
+            activityInfo_.add(index, value);
+            onChanged();
+          } else {
+            activityInfoBuilder_.addMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public Builder addActivityInfo(
+            com.znl.proto.M23.ActivityShowInfo.Builder builderForValue) {
+          if (activityInfoBuilder_ == null) {
+            ensureActivityInfoIsMutable();
+            activityInfo_.add(builderForValue.build());
+            onChanged();
+          } else {
+            activityInfoBuilder_.addMessage(builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public Builder addActivityInfo(
+            int index, com.znl.proto.M23.ActivityShowInfo.Builder builderForValue) {
+          if (activityInfoBuilder_ == null) {
+            ensureActivityInfoIsMutable();
+            activityInfo_.add(index, builderForValue.build());
+            onChanged();
+          } else {
+            activityInfoBuilder_.addMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public Builder addAllActivityInfo(
+            java.lang.Iterable<? extends com.znl.proto.M23.ActivityShowInfo> values) {
+          if (activityInfoBuilder_ == null) {
+            ensureActivityInfoIsMutable();
+            super.addAll(values, activityInfo_);
+            onChanged();
+          } else {
+            activityInfoBuilder_.addAllMessages(values);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public Builder clearActivityInfo() {
+          if (activityInfoBuilder_ == null) {
+            activityInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000008);
+            onChanged();
+          } else {
+            activityInfoBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public Builder removeActivityInfo(int index) {
+          if (activityInfoBuilder_ == null) {
+            ensureActivityInfoIsMutable();
+            activityInfo_.remove(index);
+            onChanged();
+          } else {
+            activityInfoBuilder_.remove(index);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public com.znl.proto.M23.ActivityShowInfo.Builder getActivityInfoBuilder(
+            int index) {
+          return getActivityInfoFieldBuilder().getBuilder(index);
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public com.znl.proto.M23.ActivityShowInfoOrBuilder getActivityInfoOrBuilder(
+            int index) {
+          if (activityInfoBuilder_ == null) {
+            return activityInfo_.get(index);  } else {
+            return activityInfoBuilder_.getMessageOrBuilder(index);
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public java.util.List<? extends com.znl.proto.M23.ActivityShowInfoOrBuilder> 
+             getActivityInfoOrBuilderList() {
+          if (activityInfoBuilder_ != null) {
+            return activityInfoBuilder_.getMessageOrBuilderList();
+          } else {
+            return java.util.Collections.unmodifiableList(activityInfo_);
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public com.znl.proto.M23.ActivityShowInfo.Builder addActivityInfoBuilder() {
+          return getActivityInfoFieldBuilder().addBuilder(
+              com.znl.proto.M23.ActivityShowInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public com.znl.proto.M23.ActivityShowInfo.Builder addActivityInfoBuilder(
+            int index) {
+          return getActivityInfoFieldBuilder().addBuilder(
+              index, com.znl.proto.M23.ActivityShowInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 4;</code>
+         */
+        public java.util.List<com.znl.proto.M23.ActivityShowInfo.Builder> 
+             getActivityInfoBuilderList() {
+          return getActivityInfoFieldBuilder().getBuilderList();
+        }
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M23.ActivityShowInfo, com.znl.proto.M23.ActivityShowInfo.Builder, com.znl.proto.M23.ActivityShowInfoOrBuilder> 
+            getActivityInfoFieldBuilder() {
+          if (activityInfoBuilder_ == null) {
+            activityInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+                com.znl.proto.M23.ActivityShowInfo, com.znl.proto.M23.ActivityShowInfo.Builder, com.znl.proto.M23.ActivityShowInfoOrBuilder>(
+                    activityInfo_,
+                    ((bitField0_ & 0x00000008) == 0x00000008),
+                    getParentForChildren(),
+                    isClean());
+            activityInfo_ = null;
+          }
+          return activityInfoBuilder_;
         }
 
         // @@protoc_insertion_point(builder_scope:M23.M230001.S2C)
@@ -21387,6 +22617,51 @@ public final class M23 {
        * </pre>
        */
       int getResult();
+
+      // repeated .M23.LegionShareInfo legionShareInfo = 2;
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      java.util.List<com.znl.proto.M23.LegionShareInfo> 
+          getLegionShareInfoList();
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      com.znl.proto.M23.LegionShareInfo getLegionShareInfo(int index);
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      int getLegionShareInfoCount();
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      java.util.List<? extends com.znl.proto.M23.LegionShareInfoOrBuilder> 
+          getLegionShareInfoOrBuilderList();
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      com.znl.proto.M23.LegionShareInfoOrBuilder getLegionShareInfoOrBuilder(
+          int index);
     }
     /**
      * Protobuf type {@code M23.M230006.S2C}
@@ -21444,6 +22719,14 @@ public final class M23 {
                 result_ = input.readInt32();
                 break;
               }
+              case 18: {
+                if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                  legionShareInfo_ = new java.util.ArrayList<com.znl.proto.M23.LegionShareInfo>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                legionShareInfo_.add(input.readMessage(com.znl.proto.M23.LegionShareInfo.PARSER, extensionRegistry));
+                break;
+              }
             }
           }
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -21452,6 +22735,9 @@ public final class M23 {
           throw new com.google.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
+          if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            legionShareInfo_ = java.util.Collections.unmodifiableList(legionShareInfo_);
+          }
           this.unknownFields = unknownFields.build();
           makeExtensionsImmutable();
         }
@@ -21508,8 +22794,65 @@ public final class M23 {
         return result_;
       }
 
+      // repeated .M23.LegionShareInfo legionShareInfo = 2;
+      public static final int LEGIONSHAREINFO_FIELD_NUMBER = 2;
+      private java.util.List<com.znl.proto.M23.LegionShareInfo> legionShareInfo_;
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      public java.util.List<com.znl.proto.M23.LegionShareInfo> getLegionShareInfoList() {
+        return legionShareInfo_;
+      }
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      public java.util.List<? extends com.znl.proto.M23.LegionShareInfoOrBuilder> 
+          getLegionShareInfoOrBuilderList() {
+        return legionShareInfo_;
+      }
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      public int getLegionShareInfoCount() {
+        return legionShareInfo_.size();
+      }
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      public com.znl.proto.M23.LegionShareInfo getLegionShareInfo(int index) {
+        return legionShareInfo_.get(index);
+      }
+      /**
+       * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+       *
+       * <pre>
+       *宝箱箱列表活动信息
+       * </pre>
+       */
+      public com.znl.proto.M23.LegionShareInfoOrBuilder getLegionShareInfoOrBuilder(
+          int index) {
+        return legionShareInfo_.get(index);
+      }
+
       private void initFields() {
         result_ = 0;
+        legionShareInfo_ = java.util.Collections.emptyList();
       }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
@@ -21520,6 +22863,12 @@ public final class M23 {
           memoizedIsInitialized = 0;
           return false;
         }
+        for (int i = 0; i < getLegionShareInfoCount(); i++) {
+          if (!getLegionShareInfo(i).isInitialized()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
+        }
         memoizedIsInitialized = 1;
         return true;
       }
@@ -21529,6 +22878,9 @@ public final class M23 {
         getSerializedSize();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           output.writeInt32(1, result_);
+        }
+        for (int i = 0; i < legionShareInfo_.size(); i++) {
+          output.writeMessage(2, legionShareInfo_.get(i));
         }
         getUnknownFields().writeTo(output);
       }
@@ -21542,6 +22894,10 @@ public final class M23 {
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           size += com.google.protobuf.CodedOutputStream
             .computeInt32Size(1, result_);
+        }
+        for (int i = 0; i < legionShareInfo_.size(); i++) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, legionShareInfo_.get(i));
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -21651,6 +23007,7 @@ public final class M23 {
         }
         private void maybeForceBuilderInitialization() {
           if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getLegionShareInfoFieldBuilder();
           }
         }
         private static Builder create() {
@@ -21661,6 +23018,12 @@ public final class M23 {
           super.clear();
           result_ = 0;
           bitField0_ = (bitField0_ & ~0x00000001);
+          if (legionShareInfoBuilder_ == null) {
+            legionShareInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            legionShareInfoBuilder_.clear();
+          }
           return this;
         }
 
@@ -21693,6 +23056,15 @@ public final class M23 {
             to_bitField0_ |= 0x00000001;
           }
           result.result_ = result_;
+          if (legionShareInfoBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) == 0x00000002)) {
+              legionShareInfo_ = java.util.Collections.unmodifiableList(legionShareInfo_);
+              bitField0_ = (bitField0_ & ~0x00000002);
+            }
+            result.legionShareInfo_ = legionShareInfo_;
+          } else {
+            result.legionShareInfo_ = legionShareInfoBuilder_.build();
+          }
           result.bitField0_ = to_bitField0_;
           onBuilt();
           return result;
@@ -21712,6 +23084,32 @@ public final class M23 {
           if (other.hasResult()) {
             setResult(other.getResult());
           }
+          if (legionShareInfoBuilder_ == null) {
+            if (!other.legionShareInfo_.isEmpty()) {
+              if (legionShareInfo_.isEmpty()) {
+                legionShareInfo_ = other.legionShareInfo_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+              } else {
+                ensureLegionShareInfoIsMutable();
+                legionShareInfo_.addAll(other.legionShareInfo_);
+              }
+              onChanged();
+            }
+          } else {
+            if (!other.legionShareInfo_.isEmpty()) {
+              if (legionShareInfoBuilder_.isEmpty()) {
+                legionShareInfoBuilder_.dispose();
+                legionShareInfoBuilder_ = null;
+                legionShareInfo_ = other.legionShareInfo_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+                legionShareInfoBuilder_ = 
+                  com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                     getLegionShareInfoFieldBuilder() : null;
+              } else {
+                legionShareInfoBuilder_.addAllMessages(other.legionShareInfo_);
+              }
+            }
+          }
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
         }
@@ -21720,6 +23118,12 @@ public final class M23 {
           if (!hasResult()) {
             
             return false;
+          }
+          for (int i = 0; i < getLegionShareInfoCount(); i++) {
+            if (!getLegionShareInfo(i).isInitialized()) {
+              
+              return false;
+            }
           }
           return true;
         }
@@ -21790,6 +23194,318 @@ public final class M23 {
           result_ = 0;
           onChanged();
           return this;
+        }
+
+        // repeated .M23.LegionShareInfo legionShareInfo = 2;
+        private java.util.List<com.znl.proto.M23.LegionShareInfo> legionShareInfo_ =
+          java.util.Collections.emptyList();
+        private void ensureLegionShareInfoIsMutable() {
+          if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+            legionShareInfo_ = new java.util.ArrayList<com.znl.proto.M23.LegionShareInfo>(legionShareInfo_);
+            bitField0_ |= 0x00000002;
+           }
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M23.LegionShareInfo, com.znl.proto.M23.LegionShareInfo.Builder, com.znl.proto.M23.LegionShareInfoOrBuilder> legionShareInfoBuilder_;
+
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public java.util.List<com.znl.proto.M23.LegionShareInfo> getLegionShareInfoList() {
+          if (legionShareInfoBuilder_ == null) {
+            return java.util.Collections.unmodifiableList(legionShareInfo_);
+          } else {
+            return legionShareInfoBuilder_.getMessageList();
+          }
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public int getLegionShareInfoCount() {
+          if (legionShareInfoBuilder_ == null) {
+            return legionShareInfo_.size();
+          } else {
+            return legionShareInfoBuilder_.getCount();
+          }
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public com.znl.proto.M23.LegionShareInfo getLegionShareInfo(int index) {
+          if (legionShareInfoBuilder_ == null) {
+            return legionShareInfo_.get(index);
+          } else {
+            return legionShareInfoBuilder_.getMessage(index);
+          }
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public Builder setLegionShareInfo(
+            int index, com.znl.proto.M23.LegionShareInfo value) {
+          if (legionShareInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureLegionShareInfoIsMutable();
+            legionShareInfo_.set(index, value);
+            onChanged();
+          } else {
+            legionShareInfoBuilder_.setMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public Builder setLegionShareInfo(
+            int index, com.znl.proto.M23.LegionShareInfo.Builder builderForValue) {
+          if (legionShareInfoBuilder_ == null) {
+            ensureLegionShareInfoIsMutable();
+            legionShareInfo_.set(index, builderForValue.build());
+            onChanged();
+          } else {
+            legionShareInfoBuilder_.setMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public Builder addLegionShareInfo(com.znl.proto.M23.LegionShareInfo value) {
+          if (legionShareInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureLegionShareInfoIsMutable();
+            legionShareInfo_.add(value);
+            onChanged();
+          } else {
+            legionShareInfoBuilder_.addMessage(value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public Builder addLegionShareInfo(
+            int index, com.znl.proto.M23.LegionShareInfo value) {
+          if (legionShareInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureLegionShareInfoIsMutable();
+            legionShareInfo_.add(index, value);
+            onChanged();
+          } else {
+            legionShareInfoBuilder_.addMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public Builder addLegionShareInfo(
+            com.znl.proto.M23.LegionShareInfo.Builder builderForValue) {
+          if (legionShareInfoBuilder_ == null) {
+            ensureLegionShareInfoIsMutable();
+            legionShareInfo_.add(builderForValue.build());
+            onChanged();
+          } else {
+            legionShareInfoBuilder_.addMessage(builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public Builder addLegionShareInfo(
+            int index, com.znl.proto.M23.LegionShareInfo.Builder builderForValue) {
+          if (legionShareInfoBuilder_ == null) {
+            ensureLegionShareInfoIsMutable();
+            legionShareInfo_.add(index, builderForValue.build());
+            onChanged();
+          } else {
+            legionShareInfoBuilder_.addMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public Builder addAllLegionShareInfo(
+            java.lang.Iterable<? extends com.znl.proto.M23.LegionShareInfo> values) {
+          if (legionShareInfoBuilder_ == null) {
+            ensureLegionShareInfoIsMutable();
+            super.addAll(values, legionShareInfo_);
+            onChanged();
+          } else {
+            legionShareInfoBuilder_.addAllMessages(values);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public Builder clearLegionShareInfo() {
+          if (legionShareInfoBuilder_ == null) {
+            legionShareInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+            onChanged();
+          } else {
+            legionShareInfoBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public Builder removeLegionShareInfo(int index) {
+          if (legionShareInfoBuilder_ == null) {
+            ensureLegionShareInfoIsMutable();
+            legionShareInfo_.remove(index);
+            onChanged();
+          } else {
+            legionShareInfoBuilder_.remove(index);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public com.znl.proto.M23.LegionShareInfo.Builder getLegionShareInfoBuilder(
+            int index) {
+          return getLegionShareInfoFieldBuilder().getBuilder(index);
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public com.znl.proto.M23.LegionShareInfoOrBuilder getLegionShareInfoOrBuilder(
+            int index) {
+          if (legionShareInfoBuilder_ == null) {
+            return legionShareInfo_.get(index);  } else {
+            return legionShareInfoBuilder_.getMessageOrBuilder(index);
+          }
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public java.util.List<? extends com.znl.proto.M23.LegionShareInfoOrBuilder> 
+             getLegionShareInfoOrBuilderList() {
+          if (legionShareInfoBuilder_ != null) {
+            return legionShareInfoBuilder_.getMessageOrBuilderList();
+          } else {
+            return java.util.Collections.unmodifiableList(legionShareInfo_);
+          }
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public com.znl.proto.M23.LegionShareInfo.Builder addLegionShareInfoBuilder() {
+          return getLegionShareInfoFieldBuilder().addBuilder(
+              com.znl.proto.M23.LegionShareInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public com.znl.proto.M23.LegionShareInfo.Builder addLegionShareInfoBuilder(
+            int index) {
+          return getLegionShareInfoFieldBuilder().addBuilder(
+              index, com.znl.proto.M23.LegionShareInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M23.LegionShareInfo legionShareInfo = 2;</code>
+         *
+         * <pre>
+         *宝箱箱列表活动信息
+         * </pre>
+         */
+        public java.util.List<com.znl.proto.M23.LegionShareInfo.Builder> 
+             getLegionShareInfoBuilderList() {
+          return getLegionShareInfoFieldBuilder().getBuilderList();
+        }
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M23.LegionShareInfo, com.znl.proto.M23.LegionShareInfo.Builder, com.znl.proto.M23.LegionShareInfoOrBuilder> 
+            getLegionShareInfoFieldBuilder() {
+          if (legionShareInfoBuilder_ == null) {
+            legionShareInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+                com.znl.proto.M23.LegionShareInfo, com.znl.proto.M23.LegionShareInfo.Builder, com.znl.proto.M23.LegionShareInfoOrBuilder>(
+                    legionShareInfo_,
+                    ((bitField0_ & 0x00000002) == 0x00000002),
+                    getParentForChildren(),
+                    isClean());
+            legionShareInfo_ = null;
+          }
+          return legionShareInfoBuilder_;
         }
 
         // @@protoc_insertion_point(builder_scope:M23.M230006.S2C)
@@ -30349,6 +32065,1398 @@ public final class M23 {
     // @@protoc_insertion_point(class_scope:M23.M230012)
   }
 
+  public interface M230013OrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code M23.M230013}
+   *
+   * <pre>
+   *刷新活动排行榜排名
+   * </pre>
+   */
+  public static final class M230013 extends
+      com.google.protobuf.GeneratedMessage
+      implements M230013OrBuilder {
+    // Use M230013.newBuilder() to construct.
+    private M230013(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private M230013(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final M230013 defaultInstance;
+    public static M230013 getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public M230013 getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private M230013(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.znl.proto.M23.internal_static_M23_M230013_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.znl.proto.M23.internal_static_M23_M230013_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.znl.proto.M23.M230013.class, com.znl.proto.M23.M230013.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<M230013> PARSER =
+        new com.google.protobuf.AbstractParser<M230013>() {
+      public M230013 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new M230013(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<M230013> getParserForType() {
+      return PARSER;
+    }
+
+    public interface S2COrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required int32 rs = 1;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      boolean hasRs();
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      int getRs();
+
+      // repeated .M23.ActivityRankInfo activityRankInfo = 2;
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      java.util.List<com.znl.proto.M23.ActivityRankInfo> 
+          getActivityRankInfoList();
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      com.znl.proto.M23.ActivityRankInfo getActivityRankInfo(int index);
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      int getActivityRankInfoCount();
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      java.util.List<? extends com.znl.proto.M23.ActivityRankInfoOrBuilder> 
+          getActivityRankInfoOrBuilderList();
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      com.znl.proto.M23.ActivityRankInfoOrBuilder getActivityRankInfoOrBuilder(
+          int index);
+    }
+    /**
+     * Protobuf type {@code M23.M230013.S2C}
+     */
+    public static final class S2C extends
+        com.google.protobuf.GeneratedMessage
+        implements S2COrBuilder {
+      // Use S2C.newBuilder() to construct.
+      private S2C(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private S2C(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final S2C defaultInstance;
+      public static S2C getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public S2C getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private S2C(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 8: {
+                bitField0_ |= 0x00000001;
+                rs_ = input.readInt32();
+                break;
+              }
+              case 18: {
+                if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                  activityRankInfo_ = new java.util.ArrayList<com.znl.proto.M23.ActivityRankInfo>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                activityRankInfo_.add(input.readMessage(com.znl.proto.M23.ActivityRankInfo.PARSER, extensionRegistry));
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            activityRankInfo_ = java.util.Collections.unmodifiableList(activityRankInfo_);
+          }
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M23.internal_static_M23_M230013_S2C_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M23.internal_static_M23_M230013_S2C_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M23.M230013.S2C.class, com.znl.proto.M23.M230013.S2C.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<S2C> PARSER =
+          new com.google.protobuf.AbstractParser<S2C>() {
+        public S2C parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new S2C(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<S2C> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required int32 rs = 1;
+      public static final int RS_FIELD_NUMBER = 1;
+      private int rs_;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public boolean hasRs() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public int getRs() {
+        return rs_;
+      }
+
+      // repeated .M23.ActivityRankInfo activityRankInfo = 2;
+      public static final int ACTIVITYRANKINFO_FIELD_NUMBER = 2;
+      private java.util.List<com.znl.proto.M23.ActivityRankInfo> activityRankInfo_;
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      public java.util.List<com.znl.proto.M23.ActivityRankInfo> getActivityRankInfoList() {
+        return activityRankInfo_;
+      }
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      public java.util.List<? extends com.znl.proto.M23.ActivityRankInfoOrBuilder> 
+          getActivityRankInfoOrBuilderList() {
+        return activityRankInfo_;
+      }
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      public int getActivityRankInfoCount() {
+        return activityRankInfo_.size();
+      }
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      public com.znl.proto.M23.ActivityRankInfo getActivityRankInfo(int index) {
+        return activityRankInfo_.get(index);
+      }
+      /**
+       * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+       */
+      public com.znl.proto.M23.ActivityRankInfoOrBuilder getActivityRankInfoOrBuilder(
+          int index) {
+        return activityRankInfo_.get(index);
+      }
+
+      private void initFields() {
+        rs_ = 0;
+        activityRankInfo_ = java.util.Collections.emptyList();
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasRs()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeInt32(1, rs_);
+        }
+        for (int i = 0; i < activityRankInfo_.size(); i++) {
+          output.writeMessage(2, activityRankInfo_.get(i));
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(1, rs_);
+        }
+        for (int i = 0; i < activityRankInfo_.size(); i++) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, activityRankInfo_.get(i));
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M23.M230013.S2C parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M23.M230013.S2C parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M23.M230013.S2C parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M23.M230013.S2C parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M23.M230013.S2C parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M23.M230013.S2C parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M23.M230013.S2C parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M23.M230013.S2C parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M23.M230013.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M23.M230013.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M23.M230013.S2C prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M23.M230013.S2C}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M23.M230013.S2COrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M23.internal_static_M23_M230013_S2C_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M23.internal_static_M23_M230013_S2C_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M23.M230013.S2C.class, com.znl.proto.M23.M230013.S2C.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M23.M230013.S2C.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getActivityRankInfoFieldBuilder();
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          rs_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          if (activityRankInfoBuilder_ == null) {
+            activityRankInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            activityRankInfoBuilder_.clear();
+          }
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M23.internal_static_M23_M230013_S2C_descriptor;
+        }
+
+        public com.znl.proto.M23.M230013.S2C getDefaultInstanceForType() {
+          return com.znl.proto.M23.M230013.S2C.getDefaultInstance();
+        }
+
+        public com.znl.proto.M23.M230013.S2C build() {
+          com.znl.proto.M23.M230013.S2C result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M23.M230013.S2C buildPartial() {
+          com.znl.proto.M23.M230013.S2C result = new com.znl.proto.M23.M230013.S2C(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.rs_ = rs_;
+          if (activityRankInfoBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) == 0x00000002)) {
+              activityRankInfo_ = java.util.Collections.unmodifiableList(activityRankInfo_);
+              bitField0_ = (bitField0_ & ~0x00000002);
+            }
+            result.activityRankInfo_ = activityRankInfo_;
+          } else {
+            result.activityRankInfo_ = activityRankInfoBuilder_.build();
+          }
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M23.M230013.S2C) {
+            return mergeFrom((com.znl.proto.M23.M230013.S2C)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M23.M230013.S2C other) {
+          if (other == com.znl.proto.M23.M230013.S2C.getDefaultInstance()) return this;
+          if (other.hasRs()) {
+            setRs(other.getRs());
+          }
+          if (activityRankInfoBuilder_ == null) {
+            if (!other.activityRankInfo_.isEmpty()) {
+              if (activityRankInfo_.isEmpty()) {
+                activityRankInfo_ = other.activityRankInfo_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+              } else {
+                ensureActivityRankInfoIsMutable();
+                activityRankInfo_.addAll(other.activityRankInfo_);
+              }
+              onChanged();
+            }
+          } else {
+            if (!other.activityRankInfo_.isEmpty()) {
+              if (activityRankInfoBuilder_.isEmpty()) {
+                activityRankInfoBuilder_.dispose();
+                activityRankInfoBuilder_ = null;
+                activityRankInfo_ = other.activityRankInfo_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+                activityRankInfoBuilder_ = 
+                  com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                     getActivityRankInfoFieldBuilder() : null;
+              } else {
+                activityRankInfoBuilder_.addAllMessages(other.activityRankInfo_);
+              }
+            }
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasRs()) {
+            
+            return false;
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M23.M230013.S2C parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M23.M230013.S2C) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required int32 rs = 1;
+        private int rs_ ;
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public boolean hasRs() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public int getRs() {
+          return rs_;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder setRs(int value) {
+          bitField0_ |= 0x00000001;
+          rs_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder clearRs() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          rs_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // repeated .M23.ActivityRankInfo activityRankInfo = 2;
+        private java.util.List<com.znl.proto.M23.ActivityRankInfo> activityRankInfo_ =
+          java.util.Collections.emptyList();
+        private void ensureActivityRankInfoIsMutable() {
+          if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+            activityRankInfo_ = new java.util.ArrayList<com.znl.proto.M23.ActivityRankInfo>(activityRankInfo_);
+            bitField0_ |= 0x00000002;
+           }
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M23.ActivityRankInfo, com.znl.proto.M23.ActivityRankInfo.Builder, com.znl.proto.M23.ActivityRankInfoOrBuilder> activityRankInfoBuilder_;
+
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public java.util.List<com.znl.proto.M23.ActivityRankInfo> getActivityRankInfoList() {
+          if (activityRankInfoBuilder_ == null) {
+            return java.util.Collections.unmodifiableList(activityRankInfo_);
+          } else {
+            return activityRankInfoBuilder_.getMessageList();
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public int getActivityRankInfoCount() {
+          if (activityRankInfoBuilder_ == null) {
+            return activityRankInfo_.size();
+          } else {
+            return activityRankInfoBuilder_.getCount();
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public com.znl.proto.M23.ActivityRankInfo getActivityRankInfo(int index) {
+          if (activityRankInfoBuilder_ == null) {
+            return activityRankInfo_.get(index);
+          } else {
+            return activityRankInfoBuilder_.getMessage(index);
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public Builder setActivityRankInfo(
+            int index, com.znl.proto.M23.ActivityRankInfo value) {
+          if (activityRankInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureActivityRankInfoIsMutable();
+            activityRankInfo_.set(index, value);
+            onChanged();
+          } else {
+            activityRankInfoBuilder_.setMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public Builder setActivityRankInfo(
+            int index, com.znl.proto.M23.ActivityRankInfo.Builder builderForValue) {
+          if (activityRankInfoBuilder_ == null) {
+            ensureActivityRankInfoIsMutable();
+            activityRankInfo_.set(index, builderForValue.build());
+            onChanged();
+          } else {
+            activityRankInfoBuilder_.setMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public Builder addActivityRankInfo(com.znl.proto.M23.ActivityRankInfo value) {
+          if (activityRankInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureActivityRankInfoIsMutable();
+            activityRankInfo_.add(value);
+            onChanged();
+          } else {
+            activityRankInfoBuilder_.addMessage(value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public Builder addActivityRankInfo(
+            int index, com.znl.proto.M23.ActivityRankInfo value) {
+          if (activityRankInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureActivityRankInfoIsMutable();
+            activityRankInfo_.add(index, value);
+            onChanged();
+          } else {
+            activityRankInfoBuilder_.addMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public Builder addActivityRankInfo(
+            com.znl.proto.M23.ActivityRankInfo.Builder builderForValue) {
+          if (activityRankInfoBuilder_ == null) {
+            ensureActivityRankInfoIsMutable();
+            activityRankInfo_.add(builderForValue.build());
+            onChanged();
+          } else {
+            activityRankInfoBuilder_.addMessage(builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public Builder addActivityRankInfo(
+            int index, com.znl.proto.M23.ActivityRankInfo.Builder builderForValue) {
+          if (activityRankInfoBuilder_ == null) {
+            ensureActivityRankInfoIsMutable();
+            activityRankInfo_.add(index, builderForValue.build());
+            onChanged();
+          } else {
+            activityRankInfoBuilder_.addMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public Builder addAllActivityRankInfo(
+            java.lang.Iterable<? extends com.znl.proto.M23.ActivityRankInfo> values) {
+          if (activityRankInfoBuilder_ == null) {
+            ensureActivityRankInfoIsMutable();
+            super.addAll(values, activityRankInfo_);
+            onChanged();
+          } else {
+            activityRankInfoBuilder_.addAllMessages(values);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public Builder clearActivityRankInfo() {
+          if (activityRankInfoBuilder_ == null) {
+            activityRankInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+            onChanged();
+          } else {
+            activityRankInfoBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public Builder removeActivityRankInfo(int index) {
+          if (activityRankInfoBuilder_ == null) {
+            ensureActivityRankInfoIsMutable();
+            activityRankInfo_.remove(index);
+            onChanged();
+          } else {
+            activityRankInfoBuilder_.remove(index);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public com.znl.proto.M23.ActivityRankInfo.Builder getActivityRankInfoBuilder(
+            int index) {
+          return getActivityRankInfoFieldBuilder().getBuilder(index);
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public com.znl.proto.M23.ActivityRankInfoOrBuilder getActivityRankInfoOrBuilder(
+            int index) {
+          if (activityRankInfoBuilder_ == null) {
+            return activityRankInfo_.get(index);  } else {
+            return activityRankInfoBuilder_.getMessageOrBuilder(index);
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public java.util.List<? extends com.znl.proto.M23.ActivityRankInfoOrBuilder> 
+             getActivityRankInfoOrBuilderList() {
+          if (activityRankInfoBuilder_ != null) {
+            return activityRankInfoBuilder_.getMessageOrBuilderList();
+          } else {
+            return java.util.Collections.unmodifiableList(activityRankInfo_);
+          }
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public com.znl.proto.M23.ActivityRankInfo.Builder addActivityRankInfoBuilder() {
+          return getActivityRankInfoFieldBuilder().addBuilder(
+              com.znl.proto.M23.ActivityRankInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public com.znl.proto.M23.ActivityRankInfo.Builder addActivityRankInfoBuilder(
+            int index) {
+          return getActivityRankInfoFieldBuilder().addBuilder(
+              index, com.znl.proto.M23.ActivityRankInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M23.ActivityRankInfo activityRankInfo = 2;</code>
+         */
+        public java.util.List<com.znl.proto.M23.ActivityRankInfo.Builder> 
+             getActivityRankInfoBuilderList() {
+          return getActivityRankInfoFieldBuilder().getBuilderList();
+        }
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M23.ActivityRankInfo, com.znl.proto.M23.ActivityRankInfo.Builder, com.znl.proto.M23.ActivityRankInfoOrBuilder> 
+            getActivityRankInfoFieldBuilder() {
+          if (activityRankInfoBuilder_ == null) {
+            activityRankInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+                com.znl.proto.M23.ActivityRankInfo, com.znl.proto.M23.ActivityRankInfo.Builder, com.znl.proto.M23.ActivityRankInfoOrBuilder>(
+                    activityRankInfo_,
+                    ((bitField0_ & 0x00000002) == 0x00000002),
+                    getParentForChildren(),
+                    isClean());
+            activityRankInfo_ = null;
+          }
+          return activityRankInfoBuilder_;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M23.M230013.S2C)
+      }
+
+      static {
+        defaultInstance = new S2C(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M23.M230013.S2C)
+    }
+
+    public interface C2SOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+    }
+    /**
+     * Protobuf type {@code M23.M230013.C2S}
+     */
+    public static final class C2S extends
+        com.google.protobuf.GeneratedMessage
+        implements C2SOrBuilder {
+      // Use C2S.newBuilder() to construct.
+      private C2S(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private C2S(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final C2S defaultInstance;
+      public static C2S getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public C2S getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private C2S(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M23.internal_static_M23_M230013_C2S_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M23.internal_static_M23_M230013_C2S_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M23.M230013.C2S.class, com.znl.proto.M23.M230013.C2S.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<C2S> PARSER =
+          new com.google.protobuf.AbstractParser<C2S>() {
+        public C2S parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new C2S(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<C2S> getParserForType() {
+        return PARSER;
+      }
+
+      private void initFields() {
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M23.M230013.C2S parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M23.M230013.C2S parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M23.M230013.C2S parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M23.M230013.C2S parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M23.M230013.C2S parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M23.M230013.C2S parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M23.M230013.C2S parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M23.M230013.C2S parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M23.M230013.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M23.M230013.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M23.M230013.C2S prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M23.M230013.C2S}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M23.M230013.C2SOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M23.internal_static_M23_M230013_C2S_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M23.internal_static_M23_M230013_C2S_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M23.M230013.C2S.class, com.znl.proto.M23.M230013.C2S.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M23.M230013.C2S.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M23.internal_static_M23_M230013_C2S_descriptor;
+        }
+
+        public com.znl.proto.M23.M230013.C2S getDefaultInstanceForType() {
+          return com.znl.proto.M23.M230013.C2S.getDefaultInstance();
+        }
+
+        public com.znl.proto.M23.M230013.C2S build() {
+          com.znl.proto.M23.M230013.C2S result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M23.M230013.C2S buildPartial() {
+          com.znl.proto.M23.M230013.C2S result = new com.znl.proto.M23.M230013.C2S(this);
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M23.M230013.C2S) {
+            return mergeFrom((com.znl.proto.M23.M230013.C2S)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M23.M230013.C2S other) {
+          if (other == com.znl.proto.M23.M230013.C2S.getDefaultInstance()) return this;
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M23.M230013.C2S parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M23.M230013.C2S) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M23.M230013.C2S)
+      }
+
+      static {
+        defaultInstance = new C2S(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M23.M230013.C2S)
+    }
+
+    private void initFields() {
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.znl.proto.M23.M230013 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M23.M230013 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M23.M230013 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M23.M230013 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M23.M230013 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M23.M230013 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M23.M230013 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.znl.proto.M23.M230013 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M23.M230013 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M23.M230013 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.znl.proto.M23.M230013 prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code M23.M230013}
+     *
+     * <pre>
+     *刷新活动排行榜排名
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.znl.proto.M23.M230013OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M23.internal_static_M23_M230013_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M23.internal_static_M23_M230013_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M23.M230013.class, com.znl.proto.M23.M230013.Builder.class);
+      }
+
+      // Construct using com.znl.proto.M23.M230013.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.znl.proto.M23.internal_static_M23_M230013_descriptor;
+      }
+
+      public com.znl.proto.M23.M230013 getDefaultInstanceForType() {
+        return com.znl.proto.M23.M230013.getDefaultInstance();
+      }
+
+      public com.znl.proto.M23.M230013 build() {
+        com.znl.proto.M23.M230013 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.znl.proto.M23.M230013 buildPartial() {
+        com.znl.proto.M23.M230013 result = new com.znl.proto.M23.M230013(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.znl.proto.M23.M230013) {
+          return mergeFrom((com.znl.proto.M23.M230013)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.znl.proto.M23.M230013 other) {
+        if (other == com.znl.proto.M23.M230013.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.znl.proto.M23.M230013 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.znl.proto.M23.M230013) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:M23.M230013)
+    }
+
+    static {
+      defaultInstance = new M230013(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:M23.M230013)
+  }
+
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_M23_ButtonInfo_descriptor;
   private static
@@ -30389,6 +33497,11 @@ public final class M23 {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_M23_LegionShareInfo_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M23_ActivityRankInfo_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M23_ActivityRankInfo_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_M23_M230000_descriptor;
   private static
@@ -30559,6 +33672,21 @@ public final class M23 {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_M23_M230012_C2S_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M23_M230013_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M23_M230013_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M23_M230013_S2C_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M23_M230013_S2C_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M23_M230013_C2S_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M23_M230013_C2S_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -30581,7 +33709,7 @@ public final class M23 {
       "\006effect\030\014 \001(\005\022%\n\roriginalprice\030\r \003(\0132\016.M" +
       "23.PriceInfo\022 \n\010disprice\030\016 \003(\0132\016.M23.Pri" +
       "ceInfo\022\r\n\005limit\030\017 \001(\005\022\022\n\ntotalLimit\030\020 \001(" +
-      "\005\"\345\002\n\014ActivityInfo\022\022\n\nactivityId\030\001 \002(\005\022\014" +
+      "\005\"\366\002\n\014ActivityInfo\022\022\n\nactivityId\030\001 \002(\005\022\014" +
       "\n\004name\030\002 \002(\t\022\017\n\007artIcon\030\003 \002(\005\022\014\n\004info\030\004 " +
       "\002(\t\022\016\n\006uitype\030\005 \002(\005\022\r\n\005title\030\006 \002(\t\022\014\n\004so" +
       "rt\030\007 \002(\005\022 \n\007buttons\030\010 \003(\0132\017.M23.ButtonIn" +
@@ -30590,48 +33718,55 @@ public final class M23 {
       " \001(\005\022\016\n\006bgIcon\030\014 \002(\005\022\017\n\007already\030\r \001(\005\022\r\n",
       "\005total\030\016 \001(\005\022\025\n\rconditiontype\030\017 \001(\005\022\014\n\004s" +
       "how\030\020 \001(\005\022\014\n\004text\030\021 \001(\t\022\020\n\010endjudge\030\023 \001(" +
-      "\005\"v\n\020ActivityShowInfo\022\022\n\nactivityId\030\001 \002(" +
-      "\005\022 \n\007buttons\030\002 \003(\0132\017.M23.ButtonInfo\022,\n\013e" +
-      "ffectInfos\030\003 \003(\0132\027.M23.ActivityEffectInf" +
-      "o\"\231\001\n\021LimitActivityInfo\022\016\n\006uitype\030\001 \002(\005\022" +
-      "\022\n\nactivityId\030\002 \002(\005\022\020\n\010effectId\030\003 \002(\005\022\014\n" +
-      "\004name\030\004 \002(\t\022\021\n\tstartTime\030\005 \002(\005\022\017\n\007endTim" +
-      "e\030\006 \002(\005\022\016\n\006bgIcon\030\007 \002(\005\022\014\n\004info\030\010 \002(\t\"\243\001" +
-      "\n\010LaBaInfo\022\n\n\002id\030\001 \002(\005\022\014\n\004free\030\002 \002(\005\022\021\n\t",
-      "startTime\030\003 \002(\005\022\017\n\007endTime\030\004 \002(\005\022\r\n\005pric" +
-      "e\030\005 \002(\005\022\020\n\010tenPrice\030\006 \002(\005\022\023\n\013rewardgroup" +
-      "\030\007 \002(\005\022\025\n\rrewardgroupId\030\010 \001(\005\022\014\n\004type\030\t " +
-      "\001(\005\"?\n\017LegionShareInfo\022\n\n\002id\030\001 \002(\005\022\016\n\006pl" +
-      "ayer\030\002 \002(\t\022\020\n\010timeLeft\030\003 \002(\005\"s\n\007M230000\032" +
-      "a\n\003S2C\022\n\n\002rs\030\001 \002(\005\022$\n\tactivitys\030\002 \003(\0132\021." +
-      "M23.ActivityInfo\022\022\n\nnextOpenId\030\003 \001(\005\022\024\n\014" +
-      "nextOpenTime\030\004 \001(\005\032\005\n\003C2S\"}\n\007M230001\0327\n\003" +
-      "S2C\022\n\n\002rs\030\001 \002(\005\022\022\n\nactivityId\030\002 \002(\005\022\020\n\010e" +
-      "ffectId\030\003 \002(\005\0329\n\003C2S\022\022\n\nactivityId\030\001 \002(\005",
-      "\022\020\n\010effectId\030\002 \002(\005\022\014\n\004sort\030\003 \002(\005\"x\n\007M230" +
-      "002\032f\n\003S2C\022\n\n\002rs\030\001 \002(\005\022)\n\tactivitys\030\002 \003(" +
-      "\0132\026.M23.LimitActivityInfo\022\022\n\nnextOpenId\030" +
-      "\003 \001(\005\022\024\n\014nextOpenTime\030\004 \001(\005\032\005\n\003C2S\"d\n\007M2" +
-      "30003\0322\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\037\n\010labaInfo\030\002 \001" +
-      "(\0132\r.M23.LaBaInfo\032%\n\003C2S\022\020\n\010effectId\030\001 \002" +
-      "(\005\022\014\n\004type\030\002 \002(\005\"R\n\007M230005\032@\n\003S2C\022\n\n\002rs" +
+      "\005\022\017\n\007lestime\030\024 \001(\005\"\207\001\n\020ActivityShowInfo\022" +
+      "\022\n\nactivityId\030\001 \002(\005\022 \n\007buttons\030\002 \003(\0132\017.M" +
+      "23.ButtonInfo\022,\n\013effectInfos\030\003 \003(\0132\027.M23" +
+      ".ActivityEffectInfo\022\017\n\007already\030\004 \001(\005\"\252\001\n" +
+      "\021LimitActivityInfo\022\016\n\006uitype\030\001 \002(\005\022\022\n\nac" +
+      "tivityId\030\002 \002(\005\022\020\n\010effectId\030\003 \002(\005\022\014\n\004name" +
+      "\030\004 \002(\t\022\021\n\tstartTime\030\005 \002(\005\022\017\n\007endTime\030\006 \002" +
+      "(\005\022\016\n\006bgIcon\030\007 \002(\005\022\014\n\004info\030\010 \002(\t\022\017\n\007lest",
+      "ime\030\t \001(\005\"\243\001\n\010LaBaInfo\022\n\n\002id\030\001 \002(\005\022\014\n\004fr" +
+      "ee\030\002 \002(\005\022\021\n\tstartTime\030\003 \002(\005\022\017\n\007endTime\030\004" +
+      " \002(\005\022\r\n\005price\030\005 \002(\005\022\020\n\010tenPrice\030\006 \002(\005\022\023\n" +
+      "\013rewardgroup\030\007 \002(\005\022\025\n\rrewardgroupId\030\010 \001(" +
+      "\005\022\014\n\004type\030\t \001(\005\"?\n\017LegionShareInfo\022\n\n\002id" +
+      "\030\001 \002(\005\022\016\n\006player\030\002 \002(\t\022\020\n\010timeLeft\030\003 \002(\005" +
+      "\"4\n\020ActivityRankInfo\022\022\n\nactivityid\030\001 \001(\005" +
+      "\022\014\n\004rank\030\002 \001(\005\"s\n\007M230000\032a\n\003S2C\022\n\n\002rs\030\001" +
+      " \002(\005\022$\n\tactivitys\030\002 \003(\0132\021.M23.ActivityIn" +
+      "fo\022\022\n\nnextOpenId\030\003 \001(\005\022\024\n\014nextOpenTime\030\004",
+      " \001(\005\032\005\n\003C2S\"\252\001\n\007M230001\032d\n\003S2C\022\n\n\002rs\030\001 \002" +
+      "(\005\022\022\n\nactivityId\030\002 \002(\005\022\020\n\010effectId\030\003 \002(\005" +
+      "\022+\n\014activityInfo\030\004 \003(\0132\025.M23.ActivitySho" +
+      "wInfo\0329\n\003C2S\022\022\n\nactivityId\030\001 \002(\005\022\020\n\010effe" +
+      "ctId\030\002 \002(\005\022\014\n\004sort\030\003 \002(\005\"x\n\007M230002\032f\n\003S" +
+      "2C\022\n\n\002rs\030\001 \002(\005\022)\n\tactivitys\030\002 \003(\0132\026.M23." +
+      "LimitActivityInfo\022\022\n\nnextOpenId\030\003 \001(\005\022\024\n" +
+      "\014nextOpenTime\030\004 \001(\005\032\005\n\003C2S\"d\n\007M230003\0322\n" +
+      "\003S2C\022\n\n\002rs\030\001 \002(\005\022\037\n\010labaInfo\030\002 \001(\0132\r.M23" +
+      ".LaBaInfo\032%\n\003C2S\022\020\n\010effectId\030\001 \002(\005\022\014\n\004ty",
+      "pe\030\002 \002(\005\"R\n\007M230005\032@\n\003S2C\022\n\n\002rs\030\001 \002(\005\022-" +
+      "\n\017legionShareInfo\030\002 \003(\0132\024.M23.LegionShar" +
+      "eInfo\032\005\n\003C2S\"b\n\007M230006\032D\n\003S2C\022\016\n\006result" +
       "\030\001 \002(\005\022-\n\017legionShareInfo\030\002 \003(\0132\024.M23.Le" +
-      "gionShareInfo\032\005\n\003C2S\"3\n\007M230006\032\025\n\003S2C\022\016" +
-      "\n\006result\030\001 \002(\005\032\021\n\003C2S\022\n\n\002id\030\001 \002(\005\"=\n\007M23",
-      "0007\0322\n\003S2C\022+\n\014activityInfo\030\001 \003(\0132\025.M23." +
-      "ActivityShowInfo\"F\n\007M230008\032\032\n\003S2C\022\023\n\013ac" +
-      "tivityIds\030\001 \003(\005\032\037\n\003C2S\022\030\n\020checkActivityI" +
-      "ds\030\001 \003(\005\">\n\007M230009\0323\n\003S2C\022,\n\014activityIn" +
-      "fo\030\001 \002(\0132\026.M23.LimitActivityInfo\"\220\001\n\007M23" +
-      "0010\032d\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\'\n\014activityInfo\030" +
-      "\002 \003(\0132\021.M23.ActivityInfo\022\022\n\nnextOpenId\030\003" +
-      " \001(\005\022\024\n\014nextOpenTime\030\004 \001(\005\032\037\n\003C2S\022\030\n\020che" +
-      "ckActivityIds\030\001 \002(\005\"k\n\007M230011\032?\n\003S2C\022\n\n" +
-      "\002rs\030\001 \002(\005\022,\n\014activityInfo\030\002 \003(\0132\026.M23.Li",
-      "mitActivityInfo\032\037\n\003C2S\022\030\n\020checkActivityI" +
-      "ds\030\001 \002(\005\"<\n\007M230012\032*\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\027" +
-      "\n\017totalOnlineTime\030\002 \002(\005\032\005\n\003C2SB\024\n\rcom.zn" +
-      "l.protoB\003M23"
+      "gionShareInfo\032\021\n\003C2S\022\n\n\002id\030\001 \002(\005\"=\n\007M230" +
+      "007\0322\n\003S2C\022+\n\014activityInfo\030\001 \003(\0132\025.M23.A" +
+      "ctivityShowInfo\"F\n\007M230008\032\032\n\003S2C\022\023\n\013act" +
+      "ivityIds\030\001 \003(\005\032\037\n\003C2S\022\030\n\020checkActivityId" +
+      "s\030\001 \003(\005\">\n\007M230009\0323\n\003S2C\022,\n\014activityInf" +
+      "o\030\001 \002(\0132\026.M23.LimitActivityInfo\"\220\001\n\007M230",
+      "010\032d\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\'\n\014activityInfo\030\002" +
+      " \003(\0132\021.M23.ActivityInfo\022\022\n\nnextOpenId\030\003 " +
+      "\001(\005\022\024\n\014nextOpenTime\030\004 \001(\005\032\037\n\003C2S\022\030\n\020chec" +
+      "kActivityIds\030\001 \002(\005\"k\n\007M230011\032?\n\003S2C\022\n\n\002" +
+      "rs\030\001 \002(\005\022,\n\014activityInfo\030\002 \003(\0132\026.M23.Lim" +
+      "itActivityInfo\032\037\n\003C2S\022\030\n\020checkActivityId" +
+      "s\030\001 \002(\005\"<\n\007M230012\032*\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\027\n" +
+      "\017totalOnlineTime\030\002 \002(\005\032\005\n\003C2S\"T\n\007M230013" +
+      "\032B\n\003S2C\022\n\n\002rs\030\001 \002(\005\022/\n\020activityRankInfo\030" +
+      "\002 \003(\0132\025.M23.ActivityRankInfo\032\005\n\003C2SB\024\n\rc",
+      "om.znl.protoB\003M23"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -30661,19 +33796,19 @@ public final class M23 {
           internal_static_M23_ActivityInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_ActivityInfo_descriptor,
-              new java.lang.String[] { "ActivityId", "Name", "ArtIcon", "Info", "Uitype", "Title", "Sort", "Buttons", "EffectInfos", "StartTime", "EndTime", "BgIcon", "Already", "Total", "Conditiontype", "Show", "Text", "Endjudge", });
+              new java.lang.String[] { "ActivityId", "Name", "ArtIcon", "Info", "Uitype", "Title", "Sort", "Buttons", "EffectInfos", "StartTime", "EndTime", "BgIcon", "Already", "Total", "Conditiontype", "Show", "Text", "Endjudge", "Lestime", });
           internal_static_M23_ActivityShowInfo_descriptor =
             getDescriptor().getMessageTypes().get(4);
           internal_static_M23_ActivityShowInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_ActivityShowInfo_descriptor,
-              new java.lang.String[] { "ActivityId", "Buttons", "EffectInfos", });
+              new java.lang.String[] { "ActivityId", "Buttons", "EffectInfos", "Already", });
           internal_static_M23_LimitActivityInfo_descriptor =
             getDescriptor().getMessageTypes().get(5);
           internal_static_M23_LimitActivityInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_LimitActivityInfo_descriptor,
-              new java.lang.String[] { "Uitype", "ActivityId", "EffectId", "Name", "StartTime", "EndTime", "BgIcon", "Info", });
+              new java.lang.String[] { "Uitype", "ActivityId", "EffectId", "Name", "StartTime", "EndTime", "BgIcon", "Info", "Lestime", });
           internal_static_M23_LaBaInfo_descriptor =
             getDescriptor().getMessageTypes().get(6);
           internal_static_M23_LaBaInfo_fieldAccessorTable = new
@@ -30686,8 +33821,14 @@ public final class M23 {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_LegionShareInfo_descriptor,
               new java.lang.String[] { "Id", "Player", "TimeLeft", });
-          internal_static_M23_M230000_descriptor =
+          internal_static_M23_ActivityRankInfo_descriptor =
             getDescriptor().getMessageTypes().get(8);
+          internal_static_M23_ActivityRankInfo_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M23_ActivityRankInfo_descriptor,
+              new java.lang.String[] { "Activityid", "Rank", });
+          internal_static_M23_M230000_descriptor =
+            getDescriptor().getMessageTypes().get(9);
           internal_static_M23_M230000_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230000_descriptor,
@@ -30705,7 +33846,7 @@ public final class M23 {
               internal_static_M23_M230000_C2S_descriptor,
               new java.lang.String[] { });
           internal_static_M23_M230001_descriptor =
-            getDescriptor().getMessageTypes().get(9);
+            getDescriptor().getMessageTypes().get(10);
           internal_static_M23_M230001_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230001_descriptor,
@@ -30715,7 +33856,7 @@ public final class M23 {
           internal_static_M23_M230001_S2C_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230001_S2C_descriptor,
-              new java.lang.String[] { "Rs", "ActivityId", "EffectId", });
+              new java.lang.String[] { "Rs", "ActivityId", "EffectId", "ActivityInfo", });
           internal_static_M23_M230001_C2S_descriptor =
             internal_static_M23_M230001_descriptor.getNestedTypes().get(1);
           internal_static_M23_M230001_C2S_fieldAccessorTable = new
@@ -30723,7 +33864,7 @@ public final class M23 {
               internal_static_M23_M230001_C2S_descriptor,
               new java.lang.String[] { "ActivityId", "EffectId", "Sort", });
           internal_static_M23_M230002_descriptor =
-            getDescriptor().getMessageTypes().get(10);
+            getDescriptor().getMessageTypes().get(11);
           internal_static_M23_M230002_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230002_descriptor,
@@ -30741,7 +33882,7 @@ public final class M23 {
               internal_static_M23_M230002_C2S_descriptor,
               new java.lang.String[] { });
           internal_static_M23_M230003_descriptor =
-            getDescriptor().getMessageTypes().get(11);
+            getDescriptor().getMessageTypes().get(12);
           internal_static_M23_M230003_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230003_descriptor,
@@ -30759,7 +33900,7 @@ public final class M23 {
               internal_static_M23_M230003_C2S_descriptor,
               new java.lang.String[] { "EffectId", "Type", });
           internal_static_M23_M230005_descriptor =
-            getDescriptor().getMessageTypes().get(12);
+            getDescriptor().getMessageTypes().get(13);
           internal_static_M23_M230005_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230005_descriptor,
@@ -30777,7 +33918,7 @@ public final class M23 {
               internal_static_M23_M230005_C2S_descriptor,
               new java.lang.String[] { });
           internal_static_M23_M230006_descriptor =
-            getDescriptor().getMessageTypes().get(13);
+            getDescriptor().getMessageTypes().get(14);
           internal_static_M23_M230006_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230006_descriptor,
@@ -30787,7 +33928,7 @@ public final class M23 {
           internal_static_M23_M230006_S2C_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230006_S2C_descriptor,
-              new java.lang.String[] { "Result", });
+              new java.lang.String[] { "Result", "LegionShareInfo", });
           internal_static_M23_M230006_C2S_descriptor =
             internal_static_M23_M230006_descriptor.getNestedTypes().get(1);
           internal_static_M23_M230006_C2S_fieldAccessorTable = new
@@ -30795,7 +33936,7 @@ public final class M23 {
               internal_static_M23_M230006_C2S_descriptor,
               new java.lang.String[] { "Id", });
           internal_static_M23_M230007_descriptor =
-            getDescriptor().getMessageTypes().get(14);
+            getDescriptor().getMessageTypes().get(15);
           internal_static_M23_M230007_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230007_descriptor,
@@ -30807,7 +33948,7 @@ public final class M23 {
               internal_static_M23_M230007_S2C_descriptor,
               new java.lang.String[] { "ActivityInfo", });
           internal_static_M23_M230008_descriptor =
-            getDescriptor().getMessageTypes().get(15);
+            getDescriptor().getMessageTypes().get(16);
           internal_static_M23_M230008_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230008_descriptor,
@@ -30825,7 +33966,7 @@ public final class M23 {
               internal_static_M23_M230008_C2S_descriptor,
               new java.lang.String[] { "CheckActivityIds", });
           internal_static_M23_M230009_descriptor =
-            getDescriptor().getMessageTypes().get(16);
+            getDescriptor().getMessageTypes().get(17);
           internal_static_M23_M230009_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230009_descriptor,
@@ -30837,7 +33978,7 @@ public final class M23 {
               internal_static_M23_M230009_S2C_descriptor,
               new java.lang.String[] { "ActivityInfo", });
           internal_static_M23_M230010_descriptor =
-            getDescriptor().getMessageTypes().get(17);
+            getDescriptor().getMessageTypes().get(18);
           internal_static_M23_M230010_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230010_descriptor,
@@ -30855,7 +33996,7 @@ public final class M23 {
               internal_static_M23_M230010_C2S_descriptor,
               new java.lang.String[] { "CheckActivityIds", });
           internal_static_M23_M230011_descriptor =
-            getDescriptor().getMessageTypes().get(18);
+            getDescriptor().getMessageTypes().get(19);
           internal_static_M23_M230011_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230011_descriptor,
@@ -30873,7 +34014,7 @@ public final class M23 {
               internal_static_M23_M230011_C2S_descriptor,
               new java.lang.String[] { "CheckActivityIds", });
           internal_static_M23_M230012_descriptor =
-            getDescriptor().getMessageTypes().get(19);
+            getDescriptor().getMessageTypes().get(20);
           internal_static_M23_M230012_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230012_descriptor,
@@ -30889,6 +34030,24 @@ public final class M23 {
           internal_static_M23_M230012_C2S_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230012_C2S_descriptor,
+              new java.lang.String[] { });
+          internal_static_M23_M230013_descriptor =
+            getDescriptor().getMessageTypes().get(21);
+          internal_static_M23_M230013_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M23_M230013_descriptor,
+              new java.lang.String[] { });
+          internal_static_M23_M230013_S2C_descriptor =
+            internal_static_M23_M230013_descriptor.getNestedTypes().get(0);
+          internal_static_M23_M230013_S2C_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M23_M230013_S2C_descriptor,
+              new java.lang.String[] { "Rs", "ActivityRankInfo", });
+          internal_static_M23_M230013_C2S_descriptor =
+            internal_static_M23_M230013_descriptor.getNestedTypes().get(1);
+          internal_static_M23_M230013_C2S_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M23_M230013_C2S_descriptor,
               new java.lang.String[] { });
           return null;
         }

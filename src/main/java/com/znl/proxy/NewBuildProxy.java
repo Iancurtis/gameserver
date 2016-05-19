@@ -1,11 +1,15 @@
 package com.znl.proxy;
 
+import com.sun.tools.corba.se.idl.constExpr.Not;
 import com.znl.base.BaseDbPojo;
 import com.znl.base.BasicProxy;
+import com.znl.core.Notice;
 import com.znl.core.PlayerReward;
 import com.znl.define.*;
+import com.znl.pojo.db.Player;
 import com.znl.pojo.db.Production;
 import com.znl.pojo.db.ResFunBuilding;
+import com.znl.pojo.db.Timerdb;
 import com.znl.proto.M28;
 import com.znl.utils.GameUtils;
 import org.apache.mina.util.ConcurrentHashSet;
@@ -21,6 +25,7 @@ public class NewBuildProxy extends BasicProxy {
 
     private Set<ResFunBuilding> rfbs = new ConcurrentHashSet<>();
     private Set<Production> productions = new ConcurrentHashSet<>();
+
     @Override
     public void shutDownProxy() {
 
@@ -33,9 +38,9 @@ public class NewBuildProxy extends BasicProxy {
         for (ResFunBuilding rfb : rfbs) {
             if (getBuildTypeByType(rfb.getSmallType()) == 1) {
                 JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
-                if(jsonObject==null){
-                    List<JSONObject> jsonObjectList=ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.RESOUCEBUILDLEVEEFFECT,"type",rfb.getSmallType());
-                    rfb.setLevel(jsonObjectList.size()-1);
+                if (jsonObject == null) {
+                    List<JSONObject> jsonObjectList = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType());
+                    rfb.setLevel(jsonObjectList.size() - 1);
                     rfb.save();
                     continue;
                 }
@@ -46,9 +51,9 @@ public class NewBuildProxy extends BasicProxy {
                 }
             } else if (getBuildTypeByType(rfb.getSmallType()) == 2) {
                 JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
-                if(jsonObject==null){
-                    List<JSONObject> jsonObjectList=ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.FUNTIONBUILDLEVEEFFECT,"type",rfb.getSmallType());
-                    rfb.setLevel(jsonObjectList.size()-1);
+                if (jsonObject == null) {
+                    List<JSONObject> jsonObjectList = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", rfb.getSmallType());
+                    rfb.setLevel(jsonObjectList.size() - 1);
                     rfb.save();
                     continue;
                 }
@@ -69,8 +74,51 @@ public class NewBuildProxy extends BasicProxy {
         }
     }
 
+    private void tureTimeToBuild(Player player) {
+        for (Long timeId : player.getTimerdbSet()) {
+            Timerdb timerdb = BaseDbPojo.get(timeId, Timerdb.class, areaKey);
+            if (timerdb != null && timerdb.getType() == TimerDefine.BUILDING_LEVEL_UP) {
+                //时间转换只只执行一次
+                int type = timerdb.getSmallType();
+                int index = timerdb.getOtherType();
+                ResFunBuilding resFunBuilding = getResFunBuildingByIndexsmallyType(type, index);
+                if (resFunBuilding != null) {
+                    resFunBuilding.setNextLevelTime(timerdb.getLasttime());
+                }
+                timerdb.del();
+            } else if (timerdb != null && timerdb.getType() == TimerDefine.BUILD_CREATE) {
+                int order = timerdb.getOtherType();
+                int index = timerdb.getSmallType();
+                long lasttime = timerdb.getLasttime();
+                int typeid = timerdb.getAttr1();
+                int num = timerdb.getNum();
+                ResFunBuilding resFunBuilding = getResFunBuildingByIndexbigType(ResFunBuildDefine.BUILDE_TYPE_FUNTION, index);
+                int lestime = 0;
+                if (resFunBuilding != null) {
+                    if (resFunBuilding.getSmallType() == ResFunBuildDefine.BUILDE_TYPE_TANK) {
+                        JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ARM_PRODUCT, "ID", typeid);
+                        lestime = jsonObject.getInt("timeneed");
+                    } else if (resFunBuilding.getSmallType() == ResFunBuildDefine.BUILDE_TYPE_RREFIT) {
+                        JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ARM_REMOULD, "ID", typeid);
+                        lestime = jsonObject.getInt("timeneed");
+                    } else if (resFunBuilding.getSmallType() == ResFunBuildDefine.BUILDE_TYPE_CREATEROOM) {
+                        JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ITEM_MADE, "ID", typeid);
+                        lestime = jsonObject.getInt("timeneed");
+                    } else if (resFunBuilding.getSmallType() == ResFunBuildDefine.BUILDE_TYPE_SCIENCE) {
+                        TechnologyProxy technologyProxy = getGameProxy().getProxy(ActorDefine.TECHNOLOGY_PROXY_NAME);
+                        int technologyLv = technologyProxy.getTechnologyLevelByType(typeid);
+                        JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.SCIENCELV, "level", technologyLv, "scienceType", typeid);
+                        lestime = jsonObject.getInt("time");
+                    }
+                    createProduction(lestime, resFunBuilding.getSmallType(), resFunBuilding.getIndex(), num, typeid);
+                }
+            }
+        }
+        player.setTimerdbSet(new HashSet<>());
+    }
+
     //初始化建筑
-    public void initResFuBuild() {
+    public void initResFuBuild(Player player) {
         //基地建筑初始化
         List<JSONObject> flist = ConfigDataProxy.getConfigAllInfo(DataDefine.FUNTIONBUILD);
         ResFunBuilding combuild = getResFunBuildingByIndexsmallyType(ResFunBuildDefine.BUILDE_TYPE_COMMOND, 1);
@@ -89,7 +137,7 @@ public class NewBuildProxy extends BasicProxy {
 //                        creaResFunbuild(ResFunBuildDefine.BUILDE_TYPE_FUNTION, json.getInt("type"), json.getInt("ID"), json.getInt("initlevel"), 0);
 //                    }
                     //一些功能性的建筑（如演武场）就不创建了，还有一些未建造的建筑也不建造了
-                    if (!ResFunBuildDefine.NO_NEED_SAVE_FUNCTION.contains(json.getInt("ID")) && json.getInt("initlevel") > 0){
+                    if (!ResFunBuildDefine.NO_NEED_SAVE_FUNCTION.contains(json.getInt("ID")) && json.getInt("initlevel") > 0) {
                         creaResFunbuild(ResFunBuildDefine.BUILDE_TYPE_FUNTION, json.getInt("type"), json.getInt("ID"), json.getInt("initlevel"), 1);
                     }
                 }
@@ -112,7 +160,7 @@ public class NewBuildProxy extends BasicProxy {
 //            }
 //        }
 
-        if (rblist.size() == 0){
+        if (rblist.size() == 0) {
             //初次登陆还没创建过的要执行一次遍历创建
             for (JSONObject json : rlist) {
                 if (combuild.getLevel() > json.getInt("openlv")) {
@@ -120,6 +168,7 @@ public class NewBuildProxy extends BasicProxy {
                 }
             }
         }
+        tureTimeToBuild(player);
     }
 
     private long creaResFunbuild(int bigType, int smallType, int index, int level, int state) {
@@ -135,9 +184,9 @@ public class NewBuildProxy extends BasicProxy {
         rfb.setState(state);
         playerProxy.addResFunBuildToPlayer(rfb.getId());
         rfb.save();
-        if(level>0){
-        //增加繁荣度
-        playerProxy.upBuilderOrCreate(smallType, level);
+        if (level > 0) {
+            //增加繁荣度
+            playerProxy.upBuilderOrCreate(smallType, level);
         }
         rfbs.add(rfb);
         return rfb.getId();
@@ -153,35 +202,35 @@ public class NewBuildProxy extends BasicProxy {
         return list;
     }
 
-    public void addOfflineLevelAndProduction(){
+    public void addOfflineLevelAndProduction() {
         // 给离线玩家检验升级建筑
         //分为自动升级和非自动升级
         long now = GameUtils.getServerDate().getTime();
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         int autoState = playerProxy.getAutoBuildState();
-        if (playerProxy.getAutoBuildState() == TimerDefine.BUILDAUTOLEVEL_OPEN){
+        if (playerProxy.getAutoBuildState() == TimerDefine.BUILDAUTOLEVEL_OPEN) {
             //执行自动升级检测
             long minFinishTime = getMinNextLevelTime();
             long endTime = playerProxy.getAutoBuildStateendtime();
-            if (endTime > now){
+            if (endTime > now) {
                 endTime = now;
             }
-            if (minFinishTime > 0){
-                while (minFinishTime < endTime){
+            if (minFinishTime > 0) {
+                while (minFinishTime < endTime) {
                     //执行离线的自动升级逻辑
                     doBuildAutoLevelUp(minFinishTime);
-                    while (getBuildLevelNum() > 0){
+                    while (getBuildLevelNum() > 0) {
                         //开始升级下一个建筑
                         ResFunBuilding nextBuild = getNextCanLevelUpBuild();
-                        if (nextBuild == null){
+                        if (nextBuild == null) {
                             break;//没有可以升级的了
                         }
                         JSONObject jsonObject = null;
                         if (getBuildTypeByType(nextBuild.getSmallType()) == 1) {
                             jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", nextBuild.getSmallType(), "lv", nextBuild.getLevel());
 
-                        }else{
+                        } else {
                             jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", nextBuild.getSmallType(), "lv", nextBuild.getLevel());
                         }
                         JSONArray jsonArray = jsonObject.getJSONArray("need");
@@ -190,47 +239,54 @@ public class NewBuildProxy extends BasicProxy {
                             int typeId = array.getInt(0);
                             int num = array.getInt(1);
                             num = (int) Math.ceil(num * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE)) / 100.0);
-                            playerProxy.reducePowerValue(typeId,num,LogDefine.LOST_BUID_LEVELUP);
+                            playerProxy.reducePowerValue(typeId, num, LogDefine.LOST_BUID_LEVELUP);
                         }
 
                         long time = jsonObject.getInt("time");
                         long power = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_buildspeedrate);
                         time = (long) Math.ceil(time / (1 + power / 100.0));
                         long finishTime = minFinishTime + (time * 1000);
-                        setFinishLevelTime(nextBuild.getSmallType(),nextBuild.getIndex(),finishTime);
+                        setFinishLevelTime(nextBuild.getSmallType(), nextBuild.getIndex(), finishTime);
                     }
 
 
                     //重新获取最小的升级到期时间
                     minFinishTime = getMinNextLevelTime();
-                    if (minFinishTime > now){
+                    if (minFinishTime > now) {
                         break;
                     }
                 }
             }
             //判断一下自动建造的时间，是否要关闭
-            if (playerProxy.getAutoBuildStateendtime() < now){
+            if (playerProxy.getAutoBuildStateendtime() < now) {
                 playerProxy.setAutoBuildStateendtime(0l);
                 playerProxy.setAutoBuildState(TimerDefine.BUILDAUTOLEVEL_OFF);
             }
-
-        }else {
-            for (ResFunBuilding rfb : rfbs){
-                if (rfb.getSmallType() > 0 && rfb.getNextLevelTime() > 0 && rfb.getNextLevelTime() < now){
-                    doBuildLevelUp(rfb.getSmallType(),rfb.getIndex());
+            int size = getBuildLevelNum();
+            System.out.println("剩下建筑队列长度" + size);
+        } /*else {
+            for (ResFunBuilding rfb : rfbs) {
+                if (rfb.getSmallType() > 0 && rfb.getNextLevelTime() > 0 && rfb.getNextLevelTime() < now) {
+                    doBuildLevelUp(rfb.getSmallType(), rfb.getIndex());
                 }
+            }
+        }*/
+        //自动升级最后校验是否有可升级建筑
+        for (ResFunBuilding rfb : rfbs) {
+            if (rfb.getSmallType() > 0 && rfb.getNextLevelTime() > 0 && rfb.getNextLevelTime() < now) {
+                doBuildLevelUp(rfb.getSmallType(), rfb.getIndex());
             }
         }
 
         //给离线玩家检验生产
         boolean reCheck = true;
         PlayerReward reward = new PlayerReward();
-        while (reCheck){
+        while (reCheck) {
             reCheck = false;
             Set<Production> productionSet = new HashSet<>(productions);
-            for (Production p : productionSet){
-                if (p.getState() == ResFunBuildDefine.PRODUCTION_STATE_WORKING && p.getFinishTime() <= now/1000){
-                    autoFinishProduction(p,reward);
+            for (Production p : productionSet) {
+                if (p.getState() == ResFunBuildDefine.PRODUCTION_STATE_WORKING && p.getFinishTime() <= now / 1000) {
+                    autoFinishProduction(p, reward);
                     reCheck = true;
                 }
             }
@@ -241,13 +297,14 @@ public class NewBuildProxy extends BasicProxy {
     /**
      * getMinNextLevelTime()
      * 获取最小的完成升级时间
+     *
      * @return long
      */
-    private long getMinNextLevelTime(){
+    private long getMinNextLevelTime() {
         long minTime = 0l;
-        for (ResFunBuilding rfb : rfbs){
-            if (rfb.getNextLevelTime() > 0){
-                if (minTime == 0 || rfb.getNextLevelTime() < minTime){
+        for (ResFunBuilding rfb : rfbs) {
+            if (rfb.getNextLevelTime() > 0) {
+                if (minTime == 0 || rfb.getNextLevelTime() < minTime) {
                     minTime = rfb.getNextLevelTime();
                 }
             }
@@ -255,30 +312,30 @@ public class NewBuildProxy extends BasicProxy {
         return minTime;
     }
 
-    private void doBuildAutoLevelUp(long finishTime){
-        for (ResFunBuilding rfb : rfbs){
-            if (rfb.getLevel() > 0 && rfb.getSmallType() > 0){
-                if (rfb.getNextLevelTime() <= finishTime){
-                    doBuildLevelUp(rfb.getSmallType(),rfb.getIndex());
+    private void doBuildAutoLevelUp(long finishTime) {
+        for (ResFunBuilding rfb : rfbs) {
+            if (rfb.getLevel() > 0 && rfb.getSmallType() > 0) {
+                if (rfb.getNextLevelTime() <= finishTime && rfb.getNextLevelTime() > 0) {
+                    doBuildLevelUp(rfb.getSmallType(), rfb.getIndex());
                 }
             }
         }
     }
 
-    private ResFunBuilding getNextCanLevelUpBuild(){
+    private ResFunBuilding getNextCanLevelUpBuild() {
         ResFunBuilding resFunBuilding = null;
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
-        for (ResFunBuilding rfb : rfbs){
+        for (ResFunBuilding rfb : rfbs) {
             //遍历出不在升级中，并且等级最小的
             JSONObject jsonObject = null;
             JSONObject jsonUp = null;
-            if (rfb.getLevel() > 0 && rfb.getSmallType() > 0 && rfb.getNextLevelTime() == 0){
-                if (isCanBuildType(rfb.getSmallType(),rfb.getIndex())){
+            if (rfb.getLevel() > 0 && rfb.getSmallType() > 0 && rfb.getNextLevelTime() == 0) {
+                if (isCanBuildType(rfb.getSmallType(), rfb.getIndex())) {
                     if (getBuildTypeByType(rfb.getSmallType()) == 1) {
                         jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
                         jsonUp = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel() + 1);
-                    }else {
+                    } else {
                         //功能建筑
                         jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
                         jsonUp = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel() + 1);
@@ -294,7 +351,7 @@ public class NewBuildProxy extends BasicProxy {
                                 continue;
                             }
                         }
-                        if (resFunBuilding == null || resFunBuilding.getLevel() > rfb.getLevel()){
+                        if (resFunBuilding == null || resFunBuilding.getLevel() > rfb.getLevel()) {
                             resFunBuilding = rfb;
                         }
                     }
@@ -310,20 +367,20 @@ public class NewBuildProxy extends BasicProxy {
             super.expandPowerMap.put(id, value);
         } else {
             value += super.expandPowerMap.get(id);
-            super.expandPowerMap.put(id,  value);
+            super.expandPowerMap.put(id, value);
         }
 
 
     }
 
-    public NewBuildProxy(Set<Long> rfbIds,Set<Long> productions, String areaKey){
+    public NewBuildProxy(Set<Long> rfbIds, Set<Long> productions, String areaKey) {
         this.areaKey = areaKey;
         for (Long id : rfbIds) {
             ResFunBuilding rfb = BaseDbPojo.get(id, ResFunBuilding.class, areaKey);
             rfbs.add(rfb);
         }
-        for (Long id : productions){
-            Production production = BaseDbPojo.get(id,Production.class,areaKey);
+        for (Long id : productions) {
+            Production production = BaseDbPojo.get(id, Production.class, areaKey);
             this.productions.add(production);
         }
         init();
@@ -335,7 +392,7 @@ public class NewBuildProxy extends BasicProxy {
         if (secend % 60 > 0) {
             num += 1;
         }
-        if(num < 0){
+        if (num < 0) {
             num = -num;
         }
         return num;
@@ -379,7 +436,8 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * getResFunBuildingByIndexsmallyType()获取建筑
-     * @param index 建筑位置标志
+     *
+     * @param index     建筑位置标志
      * @param smallType 建筑类型
      * @return ResFunBuilding
      */
@@ -394,7 +452,8 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * getResFunBuildingByIndexsmallyType()获取建筑
-     * @param index 建筑位置标志
+     *
+     * @param index   建筑位置标志
      * @param bigType 建筑大类（资源，兵营等）
      * @return ResFunBuilding
      */
@@ -409,8 +468,9 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * getResFuBuildStateByIndex()
-     *  获得某个建筑的功能开启状态
-     * @param index 建筑位置标志
+     * 获得某个建筑的功能开启状态
+     *
+     * @param index     建筑位置标志
      * @param smallType 建筑类型
      * @return boolean
      */
@@ -418,12 +478,12 @@ public class NewBuildProxy extends BasicProxy {
         ResFunBuilding combuild = getResFunBuildingByIndexsmallyType(ResFunBuildDefine.BUILDE_TYPE_COMMOND, 1);
         if (ResFunBuildDefine.BASEBUILDLIST.contains(smallType)) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.FUNTIONBUILD, index);
-            if(combuild.getLevel()<jsonObject.getInt("condition")){
+            if (combuild.getLevel() < jsonObject.getInt("condition")) {
                 return false;
             }
         } else {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.RESOUCEBUILD, index);
-            if(combuild.getLevel()<jsonObject.getInt("openlv")){
+            if (combuild.getLevel() < jsonObject.getInt("openlv")) {
                 return false;
             }
         }
@@ -432,22 +492,23 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * isCanBuildType()
-     *  是否可以建造该类型
-     * @param index 建筑位置标志
+     * 是否可以建造该类型
+     *
+     * @param index     建筑位置标志
      * @param smallType 建筑类型
      * @return boolean
      */
     public boolean isCanBuildType(int smallType, int index) {
         if (ResFunBuildDefine.BASEBUILDLIST.contains(smallType)) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.FUNTIONBUILD, index);
-            if(jsonObject.getInt("type")==smallType){
+            if (jsonObject.getInt("type") == smallType) {
                 return true;
             }
         } else {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.RESOUCEBUILD, index);
-            JSONArray array=jsonObject.getJSONArray("canbulid");
-            for(int i=0;i<array.length();i++){
-                if(array.getInt(i)==smallType){
+            JSONArray array = jsonObject.getJSONArray("canbulid");
+            for (int i = 0; i < array.length(); i++) {
+                if (array.getInt(i) == smallType) {
                     return true;
                 }
             }
@@ -457,8 +518,9 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * getResFunBuildingByIndexsmallyType()
-     *  获得根据建筑类型获取等级
-     * @param index 建筑位置标志
+     * 获得根据建筑类型获取等级
+     *
+     * @param index     建筑位置标志
      * @param smallType 建筑类型
      * @return boolean
      */
@@ -472,7 +534,8 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * saveResFunBuildings()
-     *  保存修改的建筑信息
+     * 保存修改的建筑信息
+     *
      * @return void
      */
     public void saveResFunBuildings() {
@@ -495,7 +558,8 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * pushBuildToChangeList()
-     *  将建筑缓存到修改列表中
+     * 将建筑缓存到修改列表中
+     *
      * @param rfb 建筑
      */
     private void pushBuildToChangeList(ResFunBuilding rfb) {
@@ -509,10 +573,11 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * setFinishLevelTime()
-     *  设置建筑升级完成时间
+     * 设置建筑升级完成时间
+     *
      * @param buildType 建筑类型
-     * @param index 建筑位置标志
-     * @param time 建筑完成时间
+     * @param index     建筑位置标志
+     * @param time      建筑完成时间
      */
     public void setFinishLevelTime(int buildType, int index, long time) {
         ResFunBuilding building = getResFunBuildingByIndexsmallyType(buildType, index);
@@ -522,9 +587,10 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * changeResFuBuildType()
-     *  获得根据建筑类型获取等级
-     * @param index 建筑位置标志
-     * @param buildType 原始建筑类型
+     * 获得根据建筑类型获取等级
+     *
+     * @param index      建筑位置标志
+     * @param buildType  原始建筑类型
      * @param changeType 改变后的建筑类型
      */
     public void changeResFuBuildType(int buildType, int index, int changeType) {
@@ -537,10 +603,11 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * changeResFuBuildType()
-     *  获得根据建筑类型获取等级
-     * @param index 建筑位置标志
+     * 获得根据建筑类型获取等级
+     *
+     * @param index     建筑位置标志
      * @param buildType 原始建筑类型
-     * @param level 改变后的建筑等级
+     * @param level     改变后的建筑等级
      */
     public void changeResFuBuildLevel(int buildType, int index, int level) {
         ResFunBuilding building = getResFunBuildingByIndexsmallyType(buildType, index);
@@ -552,7 +619,8 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * getBuildLevelNum()
-     *  获得建筑剩余升级队列
+     * 获得建筑剩余升级队列
+     *
      * @return int
      */
     public int getBuildLevelNum() {
@@ -596,24 +664,25 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * buildingLevelUp()
-     *  请求建筑升级，执行倒计时
-     * @param index 建筑位置标志
+     * 请求建筑升级，执行倒计时
+     *
+     * @param index     建筑位置标志
      * @param buildType 原始建筑类型
-     * @param type 1普通升级 2金币升级
+     * @param type      1普通升级 2金币升级
      * @return int
      */
     public int buildingLevelUp(int buildType, int index, int type) {
         ResFunBuilding building = getResFunBuildingByIndexsmallyType(buildType, index);
-        ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        ActivityProxy activityProxy = getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         if (building == null && ResFunBuildDefine.RESOUCETYPELIST.contains(buildType)) {
             building = getResFunBuildingByIndexbigType(ResFunBuildDefine.BUILDE_TYPE_RESOUCE, index);
         }
         if (building == null) {
             //判断一下是不是0级创建
             JSONObject defineObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.FUNTIONBUILD, index);
-            if (defineObject != null){
+            if (defineObject != null) {
                 ResFunBuilding comBuild = getResFunBuildingByIndexsmallyType(ResFunBuildDefine.BUILDE_TYPE_COMMOND, 1);
-                if (defineObject.getInt("condition") <= comBuild.getLevel()){
+                if (defineObject.getInt("condition") <= comBuild.getLevel()) {
                     creaResFunbuild(ResFunBuildDefine.BUILDE_TYPE_FUNTION, defineObject.getInt("type"), defineObject.getInt("ID"), defineObject.getInt("initlevel"), 1);
                     building = getResFunBuildingByIndexsmallyType(buildType, index);
                 }
@@ -622,21 +691,21 @@ public class NewBuildProxy extends BasicProxy {
         if (building == null) {
             return ErrorCodeDefine.M280001_1;
         }
-        if(building.getSmallType()!=0 && building.getSmallType()!=buildType){
+        if (building.getSmallType() != 0 && building.getSmallType() != buildType) {
             return ErrorCodeDefine.M280001_1;
         }
         long nextLevelTime = building.getNextLevelTime();
-        int timeGap = (int) (nextLevelTime /1000 - GameUtils.getServerTime());//时间差值
+        int timeGap = (int) (nextLevelTime / 1000 - GameUtils.getServerTime());//时间差值
         if (timeGap > TimerDefine.TOLERNACE_TIME) {
             return ErrorCodeDefine.M280001_2;//超过服务器可允许的时间差值了
         }
-        if(!getResFuBuildStateByindex(buildType, index)){
+        if (!getResFuBuildStateByindex(buildType, index)) {
             return ErrorCodeDefine.M280001_9;
         }
-        if(!isCanBuildType(buildType, index)){
+        if (!isCanBuildType(buildType, index)) {
             return ErrorCodeDefine.M280001_10;
         }
-        if (getBuildLevelNum() <= 0){
+        if (getBuildLevelNum() <= 0) {
             return ErrorCodeDefine.M280001_6;
         }
 
@@ -675,13 +744,13 @@ public class NewBuildProxy extends BasicProxy {
                     JSONArray array = jsonArray.getJSONArray(i);
                     int typeId = array.getInt(0);
                     int num = array.getInt(1);
-                    num= (int) Math.ceil(num*(100-activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE))/100.0);
+                    num = (int) Math.ceil(num * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE)) / 100.0);
                     playerProxy.reducePowerValue(typeId, num, LogDefine.LOST_BUID_LEVELUP);
                 }
             } else {
                 playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, coin, LogDefine.LOST_BUID_LEVELUP);
             }
-            if (building.getSmallType() != buildType){
+            if (building.getSmallType() != buildType) {
                 changeResFuBuildType(building.getSmallType(), index, buildType);
             }
             long time = jsonObject.getInt("time");
@@ -690,7 +759,7 @@ public class NewBuildProxy extends BasicProxy {
             long needtime = GameUtils.getServerDate().getTime() + (time * 1000);
             //设置建筑升级完成时间
             setFinishLevelTime(buildType, index, needtime);
-        }else {
+        } else {
             //功能建筑
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel());
             JSONObject jsonUp = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel() + 1);
@@ -707,7 +776,7 @@ public class NewBuildProxy extends BasicProxy {
                     JSONArray array = jsonArray.getJSONArray(i);
                     int typeId = array.getInt(0);
                     int num = array.getInt(1);
-                    num= (int) Math.ceil(num*(100-activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE))/100.0);
+                    num = (int) Math.ceil(num * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE)) / 100.0);
                     if (playerProxy.getPowerValue(typeId) < num) {
                         return ErrorCodeDefine.M280001_4;
                     }
@@ -724,7 +793,7 @@ public class NewBuildProxy extends BasicProxy {
                     JSONArray array = jsonArray.getJSONArray(i);
                     int typeId = array.getInt(0);
                     int num = array.getInt(1);
-                    num= (int) Math.ceil(num*(100-activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE))/100.0);
+                    num = (int) Math.ceil(num * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE)) / 100.0);
                     playerProxy.reducePowerValue(typeId, num, LogDefine.LOST_BUID_LEVELUP);
                 }
             } else {
@@ -742,8 +811,9 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * doBuildLevelUp()
-     *  客户端倒计时完毕，建筑升级
-     * @param index 建筑位置标志
+     * 客户端倒计时完毕，建筑升级
+     *
+     * @param index     建筑位置标志
      * @param buildType 原始建筑类型
      * @return int
      */
@@ -757,10 +827,10 @@ public class NewBuildProxy extends BasicProxy {
         if (building == null) {
             return ErrorCodeDefine.M280002_1;
         }
-        if (building.getNextLevelTime() <= 0){
+        if (building.getNextLevelTime() <= 0) {
             return ErrorCodeDefine.M280002_2;
         }
-        int timeGap = (int) (building.getNextLevelTime()/1000 - GameUtils.getServerTime());
+        int timeGap = (int) (building.getNextLevelTime() / 1000 - GameUtils.getServerTime());
         if (timeGap > TimerDefine.TOLERNACE_TIME) {
             return timeGap;//超过服务器可允许的时间差值了
         }
@@ -774,21 +844,21 @@ public class NewBuildProxy extends BasicProxy {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_BUILD_LEVEL, level + 1, playerProxy, buildType);
 
-        if (buildType == ResFunBuildDefine.BUILDE_TYPE_COMMOND){
+        if (buildType == ResFunBuildDefine.BUILDE_TYPE_COMMOND) {
             //是个司令部的话要判断一下是不是有空地开启了
             List<JSONObject> openList = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.RESOUCEBUILD, "openlv", level + 1);
-            if (openList != null){
-                for (JSONObject openDefine : openList){
+            if (openList != null) {
+                for (JSONObject openDefine : openList) {
                     creaResFunbuild(ResFunBuildDefine.BUILDE_TYPE_RESOUCE, 0, openDefine.getInt("ID"), 0, 1);
                 }
             }
         }
-        playerProxy.upBuilderOrCreate(buildType, level+1);
+        playerProxy.upBuilderOrCreate(buildType, level + 1);
         //增加相关任务条件
         TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDING_LV,1,0);
-        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDING_NUM,1,0);
-        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDLEVEUP_TIMES,1,0);
+        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDING_LV, 1, 0);
+        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDING_NUM, 1, 0);
+        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDLEVEUP_TIMES, 1, 0);
 
         refurceExpandPowerMap();
         return 0;
@@ -797,8 +867,9 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * cancelBuildLevelUp()
-     *  取消升级
-     * @param index 建筑位置标志
+     * 取消升级
+     *
+     * @param index     建筑位置标志
      * @param buildType 原始建筑类型
      * @return int
      */
@@ -813,7 +884,7 @@ public class NewBuildProxy extends BasicProxy {
         }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         //ResFunBuildDefine.RESOUCETYPELIST.contains(building.getSmallType())
-        if ( building.getSmallType() <= ResFunBuildDefine.MAX_RESOURCE_TYPE) {
+        if (building.getSmallType() <= ResFunBuildDefine.MAX_RESOURCE_TYPE) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel());
             JSONArray jsonArray = jsonObject.getJSONArray("need");
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -821,7 +892,7 @@ public class NewBuildProxy extends BasicProxy {
                 long addValue = (long) array.getInt(1) * ResFunBuildDefine.CANCEL_LEVEL_RETURN / 100;
                 playerProxy.addPowerValue(array.getInt(0), (int) addValue, LogDefine.GET_CANCEL_BUILD_LEVELUP);
             }
-            setFinishLevelTime(buildType, index,0l);
+            setFinishLevelTime(buildType, index, 0l);
         } else {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel());
             JSONArray jsonArray = jsonObject.getJSONArray("need");
@@ -837,8 +908,9 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * speedBuildLevelUp()
-     *  建筑升级加速
-     * @param index 建筑位置标志
+     * 建筑升级加速
+     *
+     * @param index     建筑位置标志
      * @param buildType 原始建筑类型
      * @return int
      */
@@ -855,14 +927,14 @@ public class NewBuildProxy extends BasicProxy {
         if (costType == 1) {
             //金币加速
             int time = (int) (resFunBuilding.getNextLevelTime() - GameUtils.getServerDate().getTime());
-            if (time < 0){
+            if (time < 0) {
                 time = 0;
             }
             int cost = speedCost(time / 1000);
             if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < cost) {
                 return ErrorCodeDefine.M280004_3;
             }
-            if (cost > 0){
+            if (cost > 0) {
                 playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, cost, LogDefine.LOST_BUILDING_SPEEDLV);
             }
             setFinishLevelTime(buildType, index, GameUtils.getServerDate().getTime());//设置结束时间
@@ -899,11 +971,11 @@ public class NewBuildProxy extends BasicProxy {
             int reduceTime = jsonObject.getJSONArray("effect").getInt(0) * 1000 * 60;
             long needtime = resFunBuilding.getNextLevelTime() - (reduceTime);
             if (GameUtils.getServerDate().getTime() >= needtime) {
+                setFinishLevelTime(buildType, index, 1l);
                 doBuildLevelUp(buildType, index);
-                setFinishLevelTime(buildType, index, 0l);
-            }else{
+            } else {
                 setFinishLevelTime(buildType, index, needtime);
-                return (int) (needtime /1000 - GameUtils.getServerTime());
+                return (int) (needtime / 1000 - GameUtils.getServerTime());
             }
 
         }
@@ -911,20 +983,20 @@ public class NewBuildProxy extends BasicProxy {
     }
 
 
-    private void addProductionInfo(int buildType,int index,M28.BuildingInfo.Builder builder){
-        for (Production production : productions){
-            if (production.getBuildIndex() == index && production.getBuildType() == buildType){
+    private void addProductionInfo(int buildType, int index, M28.BuildingInfo.Builder builder) {
+        for (Production production : productions) {
+            if (production.getBuildIndex() == index && production.getBuildType() == buildType) {
                 builder.addProductionInfos(getProductionInfo(production));
             }
         }
     }
 
-    private M28.ProductionInfo getProductionInfo(Production production){
+    private M28.ProductionInfo getProductionInfo(Production production) {
         M28.ProductionInfo.Builder info = M28.ProductionInfo.newBuilder();
         info.setNum(production.getNum());
         info.setOrder(production.getSort());
-        int remainTime = production.getFinishTime() - GameUtils.getServerTime() ;
-        if (remainTime < 0){
+        int remainTime = production.getFinishTime() - GameUtils.getServerTime();
+        if (remainTime < 0) {
             remainTime = 0;
         }
         info.setRemainTime(remainTime);
@@ -933,34 +1005,34 @@ public class NewBuildProxy extends BasicProxy {
         return info.build();
     }
 
-    public M28.ProductionInfo getMaxSortProductionInfo(int buildType,int index){
+    public M28.ProductionInfo getMaxSortProductionInfo(int buildType, int index) {
         Production max = null;
-        for (Production production : productions){
-            if (production.getBuildIndex() == index && production.getBuildType() == buildType){
-                if (max == null || max.getSort() < production.getSort()){
+        for (Production production : productions) {
+            if (production.getBuildIndex() == index && production.getBuildType() == buildType) {
+                if (max == null || max.getSort() < production.getSort()) {
                     max = production;
                 }
             }
         }
-        if (max == null){
+        if (max == null) {
             return null;
-        }else {
+        } else {
             return getProductionInfo(max);
         }
     }
 
-    public List<M28.BuildingInfo> getAllBuildingInfo(){
+    public List<M28.BuildingInfo> getAllBuildingInfo() {
         List<M28.BuildingInfo> res = new ArrayList<>();
         int level = getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_COMMOND, 1);
         for (ResFunBuilding rfb : rfbs) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.RESOUCEBUILD, rfb.getIndex());
-            if(rfb.getSmallType() == 0){
+            if (rfb.getSmallType() == 0) {
                 continue;
             }
             if (rfb.getBigType() == ResFunBuildDefine.BUILDE_TYPE_FUNTION || level >= jsonObject.getInt("openlv")) {
                 M28.BuildingInfo info = getBuildingInfo(rfb);
                 res.add(info);
-            }else {
+            } else {
                 System.out.println("还存在没开启的建筑呢？？");
             }
         }
@@ -969,32 +1041,33 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * getBuildingInfo()
-     *  获取建筑信息
+     * 获取建筑信息
+     *
      * @param resFunBuilding 建筑
      * @return BuildingInfo
      */
-    public M28.BuildingInfo getBuildingInfo(ResFunBuilding resFunBuilding){
+    public M28.BuildingInfo getBuildingInfo(ResFunBuilding resFunBuilding) {
         M28.BuildingInfo.Builder builder = M28.BuildingInfo.newBuilder();
         int buildType = resFunBuilding.getSmallType();
         int index = resFunBuilding.getIndex();
         builder.setBuildingType(buildType);
         builder.setIndex(index);
 
-        addProductionInfo(buildType,index,builder);
+        addProductionInfo(buildType, index, builder);
         builder.setLevel(resFunBuilding.getLevel());
-        int remainTime = (int) (resFunBuilding.getNextLevelTime()/1000 - GameUtils.getServerTime());
-        if (remainTime < 0){
+        int remainTime = (int) (resFunBuilding.getNextLevelTime() / 1000 - GameUtils.getServerTime());
+        if (remainTime < 0) {
             remainTime = 0;
         }
         builder.setLevelTime(remainTime);
-        if (buildType == ResFunBuildDefine.BUILDE_TYPE_SCIENCE){
+        if (buildType == ResFunBuildDefine.BUILDE_TYPE_SCIENCE) {
             //科技馆。。。
             TechnologyProxy technologyProxy = getGameProxy().getProxy(ActorDefine.TECHNOLOGY_PROXY_NAME);
             List<JSONObject> jsonArraylist = ConfigDataProxy.getConfigAllInfo(DataDefine.MUSEUM);
             for (JSONObject jsonObject : jsonArraylist) {
                 int typeId = jsonObject.getInt("scienceType");
                 int level = technologyProxy.getTechnologyLevelByType(typeId);
-                if (level > 0){
+                if (level > 0) {
                     M28.TechnologyInfo.Builder technologyInfo = M28.TechnologyInfo.newBuilder();
                     technologyInfo.setLevel(level);
                     technologyInfo.setTypeid(typeId);
@@ -1008,7 +1081,8 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * dropBuilding()
-     *  拆除野外建筑
+     * 拆除野外建筑
+     *
      * @param index 建筑位置标志
      * @return int
      */
@@ -1022,7 +1096,7 @@ public class NewBuildProxy extends BasicProxy {
         }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         playerProxy.removeBuilder(building.getSmallType(), index);
-        setFinishLevelTime(building.getSmallType(),index,0l);
+        setFinishLevelTime(building.getSmallType(), index, 0l);
         changeResFuBuildLevel(building.getSmallType(), index, 0);
         changeResFuBuildType(building.getSmallType(), index, 0);
         return 0;
@@ -1030,16 +1104,17 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * getProductNum()
-     *  获得正在生产的数量
-     * @param index 建筑位置标志
+     * 获得正在生产的数量
+     *
+     * @param index     建筑位置标志
      * @param buildType 建筑类型
      * @return int
      */
-    private int getProductNum(int buildType, int index){
+    private int getProductNum(int buildType, int index) {
         int num = 0;
-        for (Production production : productions){
-            if (production.getBuildIndex() == index && production.getBuildType() == buildType){
-                num ++;
+        for (Production production : productions) {
+            if (production.getBuildIndex() == index && production.getBuildType() == buildType) {
+                num++;
             }
         }
         return num;
@@ -1047,16 +1122,17 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * getLastCreateTime()
-     *  获取该建筑的最后一个生产队伍的结束时间
-     * @param index 建筑位置标志
+     * 获取该建筑的最后一个生产队伍的结束时间
+     *
+     * @param index     建筑位置标志
      * @param buildType 建筑类型
      * @return int
      */
-    private int getLastCreateTime(int buildType, int index){
+    private int getLastCreateTime(int buildType, int index) {
         int startTime = GameUtils.getServerTime();
-        for (Production production : productions){
-            if (production.getBuildIndex() == index && production.getBuildType() == buildType){
-                if (production.getFinishTime() > startTime){
+        for (Production production : productions) {
+            if (production.getBuildIndex() == index && production.getBuildType() == buildType) {
+                if (production.getFinishTime() > startTime) {
                     startTime = production.getFinishTime();
                 }
             }
@@ -1064,39 +1140,40 @@ public class NewBuildProxy extends BasicProxy {
         return startTime;
     }
 
-    private int setProductSortAndState(int buildType,int index,Production production){
+    private int setProductSortAndState(int buildType, int index, Production production) {
         int sort = 0;
         int state = ResFunBuildDefine.PRODUCTION_STATE_WORKING;
-        for (Production p : productions){
-            if (p.getBuildIndex() == index && p.getBuildType() == buildType){
-                if (sort < p.getSort()){
+        for (Production p : productions) {
+            if (p.getBuildIndex() == index && p.getBuildType() == buildType) {
+                if (sort < p.getSort()) {
                     sort = p.getSort();//获得最大的顺序
                 }
-                if (p.getState() == ResFunBuildDefine.PRODUCTION_STATE_WORKING){
+                if (p.getState() == ResFunBuildDefine.PRODUCTION_STATE_WORKING) {
                     state = ResFunBuildDefine.PRODUCTION_STATE_WAITING;
                 }
             }
         }
-        production.setSort(sort+1);
+        production.setSort(sort + 1);
         production.setState(state);
-        if (state == ResFunBuildDefine.PRODUCTION_STATE_WORKING){
+        if (state == ResFunBuildDefine.PRODUCTION_STATE_WORKING) {
             //计算出结束时间
-            production.setFinishTime(GameUtils.getServerTime()+production.getProductTime());
+            production.setFinishTime(GameUtils.getServerTime() + production.getProductTime());
         }
-        return sort+1;
+        return sort + 1;
     }
 
     /**
      * createProduction()
-     *  创建一个生产队列
-     * @param index 建筑位置标志
+     * 创建一个生产队列
+     *
+     * @param index     建筑位置标志
      * @param buildType 建筑类型
-     * @param typeId 科技id
+     * @param typeId    科技id
      * @return Production
      */
-    private Production createProduction(int time,int buildType,int index,int num,int typeId){
+    private Production createProduction(int time, int buildType, int index, int num, int typeId) {
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        Production production = BaseDbPojo.create(Production.class,areaKey);
+        Production production = BaseDbPojo.create(Production.class, areaKey);
         production.setBuildIndex(index);
         production.setBuildType(buildType);
         production.setProductTime(time);
@@ -1113,21 +1190,22 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * startNextProduction()
-     *  将下一个生产队列设置为开始
-     * @param index 建筑位置标志
-     * @param buildType 建筑类型
+     * 将下一个生产队列设置为开始
+     *
+     * @param index         建筑位置标志
+     * @param buildType     建筑类型
      * @param nextStartTime 下个生产开始的时间
      */
-    private void startNextProduction(int buildType, int index,int nextStartTime){
+    private void startNextProduction(int buildType, int index, int nextStartTime) {
         Production minSort = null;
-        for (Production p : productions){
-            if (p.getBuildIndex() == index && p.getBuildType() == buildType){
-                if (minSort == null || p.getSort() < minSort.getSort()){
+        for (Production p : productions) {
+            if (p.getBuildIndex() == index && p.getBuildType() == buildType) {
+                if (minSort == null || p.getSort() < minSort.getSort()) {
                     minSort = p;
                 }
             }
         }
-        if (minSort != null){
+        if (minSort != null) {
             minSort.setState(ResFunBuildDefine.PRODUCTION_STATE_WORKING);
             //获得结束时间
             minSort.setFinishTime(nextStartTime + minSort.getProductTime());
@@ -1135,11 +1213,11 @@ public class NewBuildProxy extends BasicProxy {
         }
     }
 
-    public int getWorkingSort(int buildType, int index){
+    public int getWorkingSort(int buildType, int index) {
         int sort = 0;
-        for (Production p : productions){
-            if (p.getBuildIndex() == index && p.getBuildType() == buildType){
-                if (p.getState() == ResFunBuildDefine.PRODUCTION_STATE_WORKING){
+        for (Production p : productions) {
+            if (p.getBuildIndex() == index && p.getBuildType() == buildType) {
+                if (p.getState() == ResFunBuildDefine.PRODUCTION_STATE_WORKING) {
                     sort = p.getSort();
                     break;
                 }
@@ -1150,31 +1228,34 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * getProduction()
-     *  获得生产队列
-     * @param index 建筑位置标志
+     * 获得生产队列
+     *
+     * @param index     建筑位置标志
      * @param buildType 建筑类型
-     * @param sort 顺序
+     * @param sort      顺序
      * @return Production
      */
-    private Production getProduction(int buildType,int index,int sort){
-        for (Production p : productions){
-            if (p.getBuildIndex() == index && p.getBuildType() == buildType && p.getSort() == sort){
+    private Production getProduction(int buildType, int index, int sort) {
+        for (Production p : productions) {
+            if (p.getBuildIndex() == index && p.getBuildType() == buildType && p.getSort() == sort) {
                 return p;
             }
         }
         return null;
     }
+
     /**
      * scienceIsCanLevelUp()
-     *  检查科技是否正在升级中
-     * @param index 建筑位置标志
+     * 检查科技是否正在升级中
+     *
+     * @param index  建筑位置标志
      * @param typeId 科技id
      * @return boolean
      */
-    private boolean scienceIsCanLevelUp(int index, int typeId){
-        for (Production production : productions){
-            if (production.getBuildType() == ResFunBuildDefine.BUILDE_TYPE_SCIENCE && production.getBuildIndex() == index){
-                if (production.getTypeId() == typeId){
+    private boolean scienceIsCanLevelUp(int index, int typeId) {
+        for (Production production : productions) {
+            if (production.getBuildType() == ResFunBuildDefine.BUILDE_TYPE_SCIENCE && production.getBuildIndex() == index) {
+                if (production.getTypeId() == typeId) {
                     return false;
                 }
             }
@@ -1184,27 +1265,28 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * builderProduction()
-     *  客户端请求建筑生产
+     * 客户端请求建筑生产
+     *
      * @param buildType 建筑类型
-     * @param index 建筑位置标志
-     * @param typeId 生产的配置表id
-     * @param num 生产的数量/等级
-     * @param reward 修改的佣兵/道具缓存
+     * @param index     建筑位置标志
+     * @param typeId    生产的配置表id
+     * @param num       生产的数量/等级
+     * @param reward    修改的佣兵/道具缓存
      * @return int
      */
     public int builderProduction(int buildType, int index, int typeId, int num, PlayerReward reward) {
         int rs = 0;
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
         int waitQueueSize = vipProxy.getVipNum(ActorDefine.VIP_WAITQUEUE) + ResFunBuildDefine.MIN_WAITQUEUE;
-        ResFunBuilding resFunBuilding = getResFunBuildingByIndexsmallyType(buildType,index);
-        if (getProductNum(ResFunBuildDefine.BUILDE_TYPE_TANK,index) >= waitQueueSize) {
+        ResFunBuilding resFunBuilding = getResFunBuildingByIndexsmallyType(buildType, index);
+        if (getProductNum(ResFunBuildDefine.BUILDE_TYPE_TANK, index) >= waitQueueSize) {
             return ErrorCodeDefine.M280006_4;
         }
-        if (resFunBuilding == null){
+        if (resFunBuilding == null) {
             return ErrorCodeDefine.M280006_29;
         }
         if (buildType == ResFunBuildDefine.BUILDE_TYPE_TANK) {
-            rs = productSoldier(index,typeId,num,reward);
+            rs = productSoldier(index, typeId, num, reward);
         } else if (buildType == ResFunBuildDefine.BUILDE_TYPE_SCIENCE) {
             rs = productTechnology(index, typeId, num);
         } else if (buildType == ResFunBuildDefine.BUILDE_TYPE_CREATEROOM) {
@@ -1218,14 +1300,15 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * productSoldier()
-     *  兵营生产佣兵
-     * @param index 建筑位置标志
+     * 兵营生产佣兵
+     *
+     * @param index  建筑位置标志
      * @param typeId 生产的配置表id
-     * @param num 生产的数量/等级
+     * @param num    生产的数量/等级
      * @param reward 修改的佣兵/道具缓存
      * @return int
      */
-    private int productSoldier(int index, int typeId, int num, PlayerReward reward){
+    private int productSoldier(int index, int typeId, int num, PlayerReward reward) {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         ItemProxy itemProxy = getGameProxy().getProxy(ActorDefine.ITEM_PROXY_NAME);
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
@@ -1277,28 +1360,28 @@ public class NewBuildProxy extends BasicProxy {
         }
         int lessTime = jsonObject.getInt("timeneed");
         int powertype = getBuildTypeBypower(ResFunBuildDefine.BUILDE_TYPE_TANK);
-        ResFunBuilding resFunBuilding = getResFunBuildingByIndexsmallyType(ResFunBuildDefine.BUILDE_TYPE_TANK,index);
-        JSONObject jso = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type",ResFunBuildDefine.BUILDE_TYPE_TANK, "lv",resFunBuilding.getLevel());
+        ResFunBuilding resFunBuilding = getResFunBuildingByIndexsmallyType(ResFunBuildDefine.BUILDE_TYPE_TANK, index);
+        JSONObject jso = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", ResFunBuildDefine.BUILDE_TYPE_TANK, "lv", resFunBuilding.getLevel());
         if (powertype != 0) {
-            int power = (int)playerProxy.getPowerValue(powertype);
+            int power = (int) playerProxy.getPowerValue(powertype);
             int producteffect = jso.getInt("producteffect");
-            int countpower = power+producteffect;
-            lessTime = (int)Math.ceil(lessTime / (1 + countpower / 100.0));
+            int countpower = power + producteffect;
+            lessTime = (int) Math.ceil(lessTime / (1 + countpower / 100.0));
         }
         lessTime = lessTime * num;
 //        int finishTime = getLastCreateTime(ResFunBuildDefine.BUILDE_TYPE_TANK,index)+lessTime;
-        createProduction(lessTime,ResFunBuildDefine.BUILDE_TYPE_TANK,index,num,typeId);
+        createProduction(lessTime, ResFunBuildDefine.BUILDE_TYPE_TANK, index, num, typeId);
         return 0;
     }
 
 
-
     /**
      * productTechnology()
-     *  科技馆升级科技
-     * @param index 建筑位置标志
+     * 科技馆升级科技
+     *
+     * @param index  建筑位置标志
      * @param typeId 生产的配置表id
-     * @param num 生产的数量/等级
+     * @param num    生产的数量/等级
      * @return int
      */
     private int productTechnology(int index, int typeId, int num) {
@@ -1308,8 +1391,8 @@ public class NewBuildProxy extends BasicProxy {
         int museumLevel = getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_SCIENCE, index);
         long prestigeLv = playerProxy.getPowerValue(PlayerPowerDefine.POWER_prestigeLevel);
         int technologyLv = technologyProxy.getTechnologyLevelByType(typeId);
-        ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
-        JSONObject jsonObj = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.SCIENCELV, "level", technologyLv,"scienceType",typeId);
+        ActivityProxy activityProxy = getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        JSONObject jsonObj = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.SCIENCELV, "level", technologyLv, "scienceType", typeId);
         if (jsonObj == null) {
             return ErrorCodeDefine.M280006_8;
         } else {
@@ -1369,7 +1452,7 @@ public class NewBuildProxy extends BasicProxy {
             }
             lessTime = (int) Math.ceil(lessTime * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_RESOURCE_SCIECE_SPEED)) / 100.0);
 //            int finishTime = getLastCreateTime(ResFunBuildDefine.BUILDE_TYPE_SCIENCE,index)+lessTime;
-            createProduction(lessTime,ResFunBuildDefine.BUILDE_TYPE_SCIENCE,index,num,typeId);
+            createProduction(lessTime, ResFunBuildDefine.BUILDE_TYPE_SCIENCE, index, num, typeId);
             return 0;
         }
     }
@@ -1377,10 +1460,11 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * productItemMade()
-     *  制造车间生产道具
-     * @param index 建筑位置标志
+     * 制造车间生产道具
+     *
+     * @param index  建筑位置标志
      * @param typeId 生产的配置表id
-     * @param num 生产的数量/等级
+     * @param num    生产的数量/等级
      * @param reward 修改的佣兵/道具缓存
      * @return int
      */
@@ -1437,16 +1521,17 @@ public class NewBuildProxy extends BasicProxy {
         }
         lessTime = lessTime * num;
 //        int finishTime = getLastCreateTime(ResFunBuildDefine.BUILDE_TYPE_CREATEROOM,index)+lessTime;
-        createProduction(lessTime,ResFunBuildDefine.BUILDE_TYPE_CREATEROOM,index,num,typeId);
+        createProduction(lessTime, ResFunBuildDefine.BUILDE_TYPE_CREATEROOM, index, num, typeId);
         return 0;
     }
 
     /**
      * productArmRemould()
-     *  兵种改造改造佣兵
-     * @param index 建筑位置标志
+     * 兵种改造改造佣兵
+     *
+     * @param index  建筑位置标志
      * @param typeId 生产的配置表id
-     * @param num 生产的数量/等级
+     * @param num    生产的数量/等级
      * @param reward 修改的佣兵/道具缓存
      * @return int
      */
@@ -1518,22 +1603,23 @@ public class NewBuildProxy extends BasicProxy {
         }
         lessTime = lessTime * num;
 //        int finishTime = getLastCreateTime(ResFunBuildDefine.BUILDE_TYPE_RREFIT,index)+lessTime;
-        createProduction(lessTime,ResFunBuildDefine.BUILDE_TYPE_RREFIT,index,num,typeId);
+        createProduction(lessTime, ResFunBuildDefine.BUILDE_TYPE_RREFIT, index, num, typeId);
         return 0;
     }
 
     /**
      * doProductionFinish()
-     *  客户端请求生产完成
-     * @param index 建筑位置标志
+     * 客户端请求生产完成
+     *
+     * @param index     建筑位置标志
      * @param buildType 建筑类型
-     * @param order 生产的序号
-     * @param reward 修改的佣兵/道具缓存
+     * @param order     生产的序号
+     * @param reward    修改的佣兵/道具缓存
      * @return int
      */
     public int doProductionFinish(int buildType, int index, int order, PlayerReward reward) {
-        Production production = getProduction(buildType,index,order);
-        if (production == null){
+        Production production = getProduction(buildType, index, order);
+        if (production == null) {
             return ErrorCodeDefine.M280007_1;
         }
         int timeGap = production.getFinishTime() - GameUtils.getServerTime();
@@ -1541,69 +1627,70 @@ public class NewBuildProxy extends BasicProxy {
             return timeGap;//超过服务器可允许的时间差值了
         }
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
-        switch (buildType){
+        switch (buildType) {
             case ResFunBuildDefine.BUILDE_TYPE_TANK:
-            case ResFunBuildDefine.BUILDE_TYPE_RREFIT:{
+            case ResFunBuildDefine.BUILDE_TYPE_RREFIT: {
                 rewardProxy.addSoldierToReward(reward, production.getTypeId(), production.getNum());
-                rewardProxy.getRewardToPlayer(reward,LogDefine.GET_BUILD_PRODUCTION);
+                rewardProxy.getRewardToPlayer(reward, LogDefine.GET_BUILD_PRODUCTION);
                 TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_CREATESODIER_NUM,production.getNum(),0);
+                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_CREATESODIER_NUM, production.getNum(), 0);
                 break;
             }
-            case ResFunBuildDefine.BUILDE_TYPE_SCIENCE:{
+            case ResFunBuildDefine.BUILDE_TYPE_SCIENCE: {
                 TechnologyProxy technologyProxy = getGameProxy().getProxy(ActorDefine.TECHNOLOGY_PROXY_NAME);
                 technologyProxy.addTechinologyLeve(production.getTypeId());
                 TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_SCIENCELV_TIMES,1,0);
+                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_SCIENCELV_TIMES, 1, 0);
                 break;
             }
-            case ResFunBuildDefine.BUILDE_TYPE_CREATEROOM:{
+            case ResFunBuildDefine.BUILDE_TYPE_CREATEROOM: {
                 rewardProxy.addItemToReward(reward, production.getTypeId(), production.getNum());
-                rewardProxy.getRewardToPlayer(reward,LogDefine.GET_BUILD_PRODUCTION);
+                rewardProxy.getRewardToPlayer(reward, LogDefine.GET_BUILD_PRODUCTION);
                 break;
             }
             default:
                 return ErrorCodeDefine.M280007_3;
         }
         //删除生产队伍，并让下一个开始
-        finishProduction(production,GameUtils.getServerTime());
+        finishProduction(production, GameUtils.getServerTime());
         return 0;
     }
 
 
     /**
      * autoFinishProduction()
-     *  登陆的时候自动校验生产队列
+     * 登陆的时候自动校验生产队列
+     *
      * @param production 生产队列
-     * @param reward 修改的佣兵/道具缓存
+     * @param reward     修改的佣兵/道具缓存
      * @return int
      */
-    private int autoFinishProduction(Production production ,PlayerReward reward){
+    private int autoFinishProduction(Production production, PlayerReward reward) {
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
-        switch (production.getBuildType()){
+        switch (production.getBuildType()) {
             case ResFunBuildDefine.BUILDE_TYPE_TANK:
-            case ResFunBuildDefine.BUILDE_TYPE_RREFIT:{
+            case ResFunBuildDefine.BUILDE_TYPE_RREFIT: {
                 rewardProxy.addSoldierToReward(reward, production.getTypeId(), production.getNum());
                 break;
             }
-            case ResFunBuildDefine.BUILDE_TYPE_SCIENCE:{
+            case ResFunBuildDefine.BUILDE_TYPE_SCIENCE: {
                 TechnologyProxy technologyProxy = getGameProxy().getProxy(ActorDefine.TECHNOLOGY_PROXY_NAME);
                 technologyProxy.addTechinologyLeve(production.getTypeId());
                 TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_SCIENCELV_TIMES,1,0);
+                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_SCIENCELV_TIMES, 1, 0);
                 break;
             }
-            case ResFunBuildDefine.BUILDE_TYPE_CREATEROOM:{
+            case ResFunBuildDefine.BUILDE_TYPE_CREATEROOM: {
                 rewardProxy.addItemToReward(reward, production.getTypeId(), production.getNum());
                 break;
             }
             default:
                 return ErrorCodeDefine.M280007_3;
         }
-        rewardProxy.getRewardToPlayer(reward,LogDefine.GET_BUILD_PRODUCTION);
+        rewardProxy.getRewardToPlayer(reward, LogDefine.GET_BUILD_PRODUCTION);
         int startTime = production.getFinishTime();
         //删除生产队伍，并让下一个开始
-        finishProduction(production,startTime);
+        finishProduction(production, startTime);
         return startTime;
     }
 
@@ -1613,8 +1700,8 @@ public class NewBuildProxy extends BasicProxy {
         if (resFunBuilding == null) {
             return ErrorCodeDefine.M280008_1;//该建筑不存在
         }
-        Production production = getProduction(buildType,index,sort);
-        if (production == null){
+        Production production = getProduction(buildType, index, sort);
+        if (production == null) {
             return ErrorCodeDefine.M280008_3;
         }
         int id = production.getTypeId();
@@ -1660,20 +1747,21 @@ public class NewBuildProxy extends BasicProxy {
 
         }
         //删除生产队伍，并让下一个开始
-        finishProduction(production,GameUtils.getServerTime());
+        finishProduction(production, GameUtils.getServerTime());
         return 0;
     }
 
     /**
      * finishProduction()
-     *  删除完成的，并开始新的生产
+     * 删除完成的，并开始新的生产
+     *
      * @param production 生产队伍
      */
-    private void finishProduction(Production production,int nextStartTime){
+    private void finishProduction(Production production, int nextStartTime) {
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         playerProxy.getPlayer().removeProduction(production.getId());
         productions.remove(production);
-        startNextProduction(production.getBuildType(), production.getBuildIndex(),nextStartTime);
+        startNextProduction(production.getBuildType(), production.getBuildIndex(), nextStartTime);
         production.del();
     }
 
@@ -1684,12 +1772,12 @@ public class NewBuildProxy extends BasicProxy {
         if (resFunBuilding == null) {
             return ErrorCodeDefine.M280009_1;//该建筑不存在
         }
-        Production production = getProduction(buildType,index,order);
-        if (production == null || production.getState() != ResFunBuildDefine.PRODUCTION_STATE_WORKING){
+        Production production = getProduction(buildType, index, order);
+        if (production == null || production.getState() != ResFunBuildDefine.PRODUCTION_STATE_WORKING) {
             return ErrorCodeDefine.M280009_8;
         }
         int time = production.getFinishTime() - GameUtils.getServerTime();
-        if (time < 0){
+        if (time < 0) {
             time = 0;
         }
         if (costType == 1) {
@@ -1730,9 +1818,9 @@ public class NewBuildProxy extends BasicProxy {
 //                finishProduction(production,GameUtils.getServerTime());
                 production.setFinishTime(0);
                 doProductionFinish(buildType, index, order, reward);
-            }else {
+            } else {
                 rs = time - reducetime;
-                production.setFinishTime(GameUtils.getServerTime()+rs);
+                production.setFinishTime(GameUtils.getServerTime() + rs);
                 production.save();
             }
         }
@@ -1742,7 +1830,8 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * buyBuildSize()
-     *  vip购买建筑位
+     * vip购买建筑位
+     *
      * @return int
      */
     public int buyBuildSize() {
@@ -1766,7 +1855,7 @@ public class NewBuildProxy extends BasicProxy {
         int needGold = ((hadBuildSize - ResFunBuildDefine.MIN_BUILD_SIZE) + 1) * ResFunBuildDefine.MIN_BUY_BUILD_GOlD;
         playerProxy.addPowerValue(PlayerPowerDefine.POWER_buildsize, 1, LogDefine.GET_BUY_BUILD_POSITION);
         playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, needGold, LogDefine.LOST_BUY_BUILD_POSITION);
-        if (playerProxy.getAutoBuildStateendtime()/1000 > GameUtils.getServerTime()){
+        if (playerProxy.getAutoBuildStateendtime() / 1000 > GameUtils.getServerTime()) {
             playerProxy.setAutoBuildState(TimerDefine.BUILDAUTOLEVEL_OPEN);
         }
         return 0;
@@ -1775,7 +1864,8 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * buyBuildSize()
-     *  购买自动升级
+     * 购买自动升级
+     *
      * @return int
      */
     public int buyAutoLevel() {
@@ -1786,9 +1876,9 @@ public class NewBuildProxy extends BasicProxy {
         playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, TimerDefine.BUILDAUTOLEVELPRICE, LogDefine.LOST_BUY_AUTO);
         long startTime = GameUtils.getServerDate().getTime();
         long autoBuildEndTime = playerProxy.getAutoBuildStateendtime();
-        if (autoBuildEndTime > startTime){
+        if (autoBuildEndTime > startTime) {
             startTime = autoBuildEndTime;
-        }else {
+        } else {
             playerProxy.setAutoBuildState(TimerDefine.BUILDAUTOLEVEL_OPEN);
         }
         playerProxy.setAutoBuildStateendtime(startTime + TimerDefine.BUILDAUTOLEVEL_ADDTIME);
@@ -1797,16 +1887,41 @@ public class NewBuildProxy extends BasicProxy {
 
     /**
      * buyBuildSize()
-     *  设置自动升级状态
+     * 设置自动升级状态
+     *
      * @return int
      */
-    public int setAutoLevelUp(int state){
+    public int setAutoLevelUp(int state) {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         long autoBuildEndTime = playerProxy.getAutoBuildStateendtime();
-        if (autoBuildEndTime <= GameUtils.getServerTime()){
+        if (autoBuildEndTime <= GameUtils.getServerTime()) {
             return ErrorCodeDefine.M280013_1;
         }
         playerProxy.setAutoBuildState(state);
         return 0;
     }
+
+    //获得需要推送的数据
+    public  List<Notice> getNoticeByType(int type) {
+        List<Notice> noticeList=new ArrayList<Notice>();
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        if (type == TipDefine.NOTICE_TYPE_AUTUBUILD) {
+            for(ResFunBuilding resFunBuilding:rfbs){
+                Notice notice = new Notice(playerProxy.getPlayerId(), GameUtils.getServerDate().getTime(), areaKey, resFunBuilding.getNextLevelTime(), type, playerProxy.getPushChannelId());
+               noticeList.add(notice);
+            }
+        } else if (type == TipDefine.NOTICE_TYPE_CREATESOLDIER || type == TipDefine.NOTICE_TYPE_SCIENCELEVEL) {
+
+            for (Production pro : productions) {
+                if ( pro.getState() == ResFunBuildDefine.PRODUCTION_STATE_WORKING) {
+                    Notice notice = new Notice(playerProxy.getPlayerId(), GameUtils.getServerDate().getTime(), areaKey, pro.getFinishTime() * 1000, type, playerProxy.getPushChannelId());
+                   noticeList.add(notice);
+                }
+            }
+
+        }
+        return noticeList;
+    }
+
+
 }

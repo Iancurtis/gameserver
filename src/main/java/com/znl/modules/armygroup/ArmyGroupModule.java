@@ -38,6 +38,9 @@ public class ArmyGroupModule extends BasicModule {
 
     private String areaKey;
 
+    //是否第一次发送
+    private  boolean isfirst=true;
+
     public ArmyGroupModule(GameProxy gameProxy) {
         this.setGameProxy(gameProxy);
         this.setModuleId(ProtocolModuleDefine.NET_M22);
@@ -54,6 +57,7 @@ public class ArmyGroupModule extends BasicModule {
             GameMsg.changeMenberLevel groupmsg = new GameMsg.changeMenberLevel(playerProxy.getPlayerId(), playerProxy.getLevel());
             tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId());
         }
+        isfirst=false;
     }
 
     @Override
@@ -86,9 +90,8 @@ public class ArmyGroupModule extends BasicModule {
                 sendModuleMsg(ActorDefine.CHAT_MODULE_NAME, new GameMsg.JoinLegionNotify());
                 sendLegionameDiffer();
             }
-            sendarmoupIdIdffer();
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220103, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220103);
         } else if (anyRef instanceof GameMsg.getArmyGroupByidSucess) {
             Armygroup armygroup = ((GameMsg.getArmyGroupByidSucess) anyRef).apparm();
             int cmd = ((GameMsg.getArmyGroupByidSucess) anyRef).cmd();
@@ -117,7 +120,7 @@ public class ArmyGroupModule extends BasicModule {
                 s2c.setMyContribute(armygroupMenber.getContribute());
                 s2c.setType(typeId);
                 pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220002, s2c.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220002);
                 sendFuntctionLog(FunctionIdDefine.LEGION_SHOP_GOODS_EXCHANGE_FUNCTION_ID);
             } else {//领取
                 if (typeId == 0) {
@@ -136,14 +139,14 @@ public class ArmyGroupModule extends BasicModule {
                         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
                         M2.M20007.S2C rewardbuild = rewardProxy.getRewardClientInfo(reward);
                         pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardbuild);
-                        sendPushNetMsgToClient();
+                        sendPushNetMsgToClient(0);
                         TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
                         taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_UNIOMCONVER_TIMES, 1);
                     } else {
                         pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220002, s2c.build());
                         sendFuntctionLog(FunctionIdDefine.LEGION_SHOP_GOODS_EXCHANGE_FUNCTION_ID);
                     }
-                    sendPushNetMsgToClient();
+                    sendPushNetMsgToClient(0);
                 } else {
                     int rs = armyGroupProxy.exchangeGemItem(armygroupMenber, armygroup, itemId, reward);
                     s2c.addAllCanGet(armyGroupProxy.showArmyShopGemItem(armygroup));
@@ -158,7 +161,7 @@ public class ArmyGroupModule extends BasicModule {
                         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
                         M2.M20007.S2C rewardbuild = rewardProxy.getRewardClientInfo(reward);
                         pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardbuild);
-                        sendPushNetMsgToClient();
+                        sendPushNetMsgToClient(0);
                         TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
                         taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_UNIOMCONVER_TIMES, 1);
                         GameMsg.editLegionFinish actimsg = new GameMsg.editLegionFinish(ArmyGroupDefine.MESSIONTYPE3, playerProxy.getPlayerId());
@@ -167,7 +170,7 @@ public class ArmyGroupModule extends BasicModule {
                         pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220002, s2c.build());
                         sendFuntctionLog(FunctionIdDefine.LEGION_SHOP_GOODS_EXCHANGE_FUNCTION_ID);
                     }
-                    sendPushNetMsgToClient();
+                    sendPushNetMsgToClient(0);
                 }
                 if (reward.soldierMap.size() > 0) {
                     sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.CountCapacity());
@@ -190,22 +193,21 @@ public class ArmyGroupModule extends BasicModule {
             s2c.setMyContribute(armygroupMenber.getContribute());
             s2c.setType(typeId);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220002, s2c.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220002);
         } else if (anyRef instanceof GameMsg.notiyKickArmy) {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             playerProxy.setPost(0);
             playerProxy.setArmgroupId(0l);
             playerProxy.setLegionName("");
-            playerProxy.getPlayer().setLegionLevel(1);
+            playerProxy.setLegionLevel(1);
             playerProxy.savePlayer();
-            sendarmoupIdIdffer();
             updateMySimplePlayerData();
             sendModuleMsg(ActorDefine.CHAT_MODULE_NAME, new GameMsg.LeaveLegionNotify());
             clearTechPlayerPower();
-            setLegionLevelDiff(1);
+//            setLegionLevelDiff(1);
             sendLegionameDiffer();
             updateMySimplePlayerData();
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(0);
         } else if (anyRef instanceof GameMsg.notiyTrueManger) {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             playerProxy.setPost(ArmyGroupDefine.JOB_MANGER);
@@ -227,18 +229,17 @@ public class ArmyGroupModule extends BasicModule {
             Armygroup armygroup = ((GameMsg.notiyaddArmgroup) anyRef).armygroup();
             playerProxy.setArmgroupId(armygroup.getId());
             playerProxy.setLegionName(armygroup.getName());
-            playerProxy.getPlayer().setLegionLevel(armygroup.getLevel());
+            playerProxy.setLegionLevel(armygroup.getLevel());
             playerProxy.setPost(ArmyGroupDefine.JOB_NORMAL);
             playerProxy.setApplylist(new HashSet<>());
             playerProxy.savePlayer();
-            sendarmoupIdIdffer();
             sendModuleMsg(ActorDefine.CHAT_MODULE_NAME, new GameMsg.JoinLegionNotify());
             //请求科技增益信息
             getLegionTechnologyPowerMapFromService();
-            setLegionLevelDiff(armygroup.getLevel());
+//            setLegionLevelDiff(armygroup.getLevel());
             sendLegionameDiffer();
             updateMySimplePlayerData();
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(0);
         } else if (anyRef instanceof GameMsg.applyArmyJoinBack) {
             int rs = ((GameMsg.applyArmyJoinBack) anyRef).rs();
             Armygroup armygroup = ((GameMsg.applyArmyJoinBack) anyRef).army();
@@ -252,14 +253,14 @@ public class ArmyGroupModule extends BasicModule {
                 builder.setType(3);
                 playerProxy.setArmgroupId(armygroup.getId());
                 playerProxy.setLegionName(armygroup.getName());
-                playerProxy.getPlayer().setLegionLevel(armygroup.getLevel());
+                playerProxy.setLegionLevel(armygroup.getLevel());
                 playerProxy.setApplylist(new HashSet<>());
                 playerProxy.savePlayer();
                 updateMySimplePlayerData();
                 sendModuleMsg(ActorDefine.CHAT_MODULE_NAME, new GameMsg.JoinLegionNotify());
                 //请求科技增益信息
                 getLegionTechnologyPowerMapFromService();
-                setLegionLevelDiff(armygroup.getLevel());
+//                setLegionLevelDiff(armygroup.getLevel());
                 sendLegionameDiffer();
                 updateMySimplePlayerData();
             }
@@ -281,9 +282,8 @@ public class ArmyGroupModule extends BasicModule {
                 builder.setRs(rs);
             }
             builder.setId(armygroup.getId());
-            sendarmoupIdIdffer();
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220102, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220102);
         } else if (anyRef instanceof GameMsg.opeRateArmyBack) {
             int rs = ((GameMsg.opeRateArmyBack) anyRef).rs();
             int type = ((GameMsg.opeRateArmyBack) anyRef).retype();
@@ -295,13 +295,13 @@ public class ArmyGroupModule extends BasicModule {
             if (rs == 0 && type == ArmyGroupDefine.OPERATE_Level) {
                 playerProxy.setArmgroupId(0l);
                 playerProxy.setLegionName("");
-                playerProxy.getPlayer().setLegionLevel(1);
-                sendarmoupIdIdffer();
+                playerProxy.setLegionLevel(1);
+//                sendarmoupIdIdffer();
                 updateMySimplePlayerData();
                 sendModuleMsg(ActorDefine.CHAT_MODULE_NAME, new GameMsg.LeaveLegionNotify());
                 //清除公会增益
                 clearTechPlayerPower();
-                setLegionLevelDiff(1);
+//                setLegionLevelDiff(1);
                 sendLegionameDiffer();
             }
             List<M22.LegionMemberInfo> list = ((GameMsg.opeRateArmyBack) anyRef).legInfos();
@@ -312,7 +312,7 @@ public class ArmyGroupModule extends BasicModule {
             builder.addAllInfo(list);
             builder.setId(otherid);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220201, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220201);
             sendFuntctionLog(FunctionIdDefine.LEGION_MENBER_OPERATE_FUNCTION_ID, type, otherid, 0);
             updateMySimplePlayerData();
         } else if (anyRef instanceof GameMsg.clearApplylistBack) {
@@ -321,7 +321,7 @@ public class ArmyGroupModule extends BasicModule {
             M22.M220204.S2C.Builder builder = M22.M220204.S2C.newBuilder();
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220204, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220204);
         } else if (anyRef instanceof GameMsg.editArmyGroupback) {
             int rs = ((GameMsg.editArmyGroupback) anyRef).rs();
             int jointype = ((GameMsg.editArmyGroupback) anyRef).joinType();
@@ -338,7 +338,7 @@ public class ArmyGroupModule extends BasicModule {
             builder.setNotice(content);
             builder.addAllUpdateList(list);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220210, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220210);
             sendFuntctionLog(FunctionIdDefine.COMPILE_LEGION_MANIFESTO_FUNCTION_ID);
         } else if (anyRef instanceof GameMsg.editJobNameback) {
             int rs = ((GameMsg.editJobNameback) anyRef).rs();
@@ -347,7 +347,7 @@ public class ArmyGroupModule extends BasicModule {
             builder.setRs(rs);
             builder.addAllInfos(list);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220220, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220220);
             sendFuntctionLog(FunctionIdDefine.POST_COMPILE_FUNCTION_ID);
         } else if (anyRef instanceof GameMsg.setorUpJobBack) {
             int rs = ((GameMsg.setorUpJobBack) anyRef).rs();
@@ -369,7 +369,7 @@ public class ArmyGroupModule extends BasicModule {
             builder.setType(type);
             builder.setId(otherid);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220221, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220221);
         } else if (anyRef instanceof GameMsg.agreeApplyBack) {
             int rs = ((GameMsg.agreeApplyBack) anyRef).rs();
             long id = ((GameMsg.agreeApplyBack) anyRef).armId();
@@ -385,7 +385,7 @@ public class ArmyGroupModule extends BasicModule {
                 builder.setMemberInfo(menber);
             }
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220203, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220203);
         } else if (anyRef instanceof GameMsg.getAllArmyGroupSucess) {
             int cmd = ((GameMsg.getAllArmyGroupSucess) anyRef).cmd();
             Object object = ((GameMsg.getAllArmyGroupSucess) anyRef).obj();
@@ -399,7 +399,7 @@ public class ArmyGroupModule extends BasicModule {
             int rs = armyGroupProxy.getMyGroupInfo(armygroup, list, builder);
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220200, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220200);
             sendFuntctionLog(FunctionIdDefine.GET_LEGION_INFO_FUNCTION_ID);
         } else if (anyRef instanceof GameMsg.lookAppListback) {
             List<SimplePlayer> simplePlayers = ((GameMsg.lookAppListback) anyRef).list();
@@ -408,7 +408,7 @@ public class ArmyGroupModule extends BasicModule {
             int rs = armyGroupProxy.getApplyList(simplePlayers, builder);
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220202, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220202);
             sendFuntctionLog(FunctionIdDefine.GET_APPROVAL_LISTS_FUNCTION_ID);
         } else if (anyRef instanceof GameMsg.GetTechExpandPowerMap) {//军团科技属性加成
          //   Map<Integer, Long> techExpandPower = ((GameMsg.GetTechExpandPowerMap) anyRef).techExpandPowerMap();
@@ -446,7 +446,7 @@ public class ArmyGroupModule extends BasicModule {
                 builder.setTechInfo(techInfo);
                 builder.addAllResInfo(resInfo);
                 pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220010, builder.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220010);
             } else {//1请求升级
                 PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
                 int rs = armyGroupProxy.legionTechUp(armyLv, techLv, buildNum);
@@ -458,7 +458,7 @@ public class ArmyGroupModule extends BasicModule {
                 builder.setRs(rs);
                 builder.addAllResInfo(resInfo);
                 pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220010, builder.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220010);
             }
 
         } else if (anyRef instanceof GameMsg.StMTechUpInfoSucc) {//科技大厅升级成功
@@ -472,7 +472,7 @@ public class ArmyGroupModule extends BasicModule {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220010, builder.build());
             sendFuntctionLog(FunctionIdDefine.LEGION_SCIENCE_HALL_UPGRADE_FUNCTION_ID, techInfo.getTechLv(), 0, playerProxy.getArmGrouId());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220010);
 
         } else if (anyRef instanceof GameMsg.StMTechContributeInfo) {//科技捐献
             int techExp = ((GameMsg.StMTechContributeInfo) anyRef).techExp();
@@ -496,17 +496,7 @@ public class ArmyGroupModule extends BasicModule {
                 }
                 GameMsg.MtSTechContributeReq msg = new GameMsg.MtSTechContributeReq(techId, power, playerProxy.getPlayerId(), ArmyGroupDefine.UP_OPT, timerNum, alltime);
                 sendToArmyGroupNode(msg);
-                M2.M20002.S2C.Builder dif = M2.M20002.S2C.newBuilder();
-                Common.AttrDifInfo.Builder diff = Common.AttrDifInfo.newBuilder();
-                if (power == 200) {
-                    power = 206;
-                }
-                diff.setTypeid(power);
-                long value = playerProxy.getPowerValue(power);
-                diff.setValue(value);
-                dif.addDiffs(diff.build());
-                pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20002, dif.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(0);
             } else {
                 M22.M220009.S2C.Builder builder = M22.M220009.S2C.newBuilder();
                 builder.setRs(rs);
@@ -515,7 +505,7 @@ public class ArmyGroupModule extends BasicModule {
                 builder.setTechInfo(techInfo);
                 builder.addAllResInfo(resInfo);
                 pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220009, builder.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220009);
             }
         } else if (anyRef instanceof GameMsg.StMContributeSucc) {//科技捐献成功
             M22.M220009.S2C.Builder builder = M22.M220009.S2C.newBuilder();
@@ -542,7 +532,7 @@ public class ArmyGroupModule extends BasicModule {
             PlayerReward reward = new PlayerReward();
             taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_UNIONCONTRIBUTE_TIMES, 1);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220008, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220008);
         } else if (anyRef instanceof GameMsg.StMHallUpInfo) {//军团大厅请求升级
             int armyLv = ((GameMsg.StMHallUpInfo) anyRef).armyLv();
             int buildNum = ((GameMsg.StMHallUpInfo) anyRef).buildNum();
@@ -557,7 +547,7 @@ public class ArmyGroupModule extends BasicModule {
                 builder.setArmyInfo(armyInfo);
                 builder.addAllResInfo(resInfo);
                 pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220007, builder.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220007);
             } else {
                 int rs = armyGroupProxy.legionHallUp(armyLv, buildNum, armygroupMenber);
                 if (rs == 0) {
@@ -569,7 +559,7 @@ public class ArmyGroupModule extends BasicModule {
                     builder.setArmyInfo(armyInfo);
                     builder.addAllResInfo(resInfo);
                     pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220007, builder.build());
-                    sendPushNetMsgToClient();
+                    sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220007);
                 }
             }
         } else if (anyRef instanceof GameMsg.StMHallUpInfoFaild) {//军团大厅升级失败
@@ -581,7 +571,7 @@ public class ArmyGroupModule extends BasicModule {
             builder.setArmyInfo(armyInfo);
             builder.addAllResInfo(resInfo);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220007, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220007);
         } else if (anyRef instanceof GameMsg.StMHallUpInfoSucc) {//军团大厅升级成功
             M22.M220007.S2C.Builder builder = M22.M220007.S2C.newBuilder();
             M22.ArmyInfo armyInfo = ((GameMsg.StMHallUpInfoSucc) anyRef).hallInfo();
@@ -591,9 +581,9 @@ public class ArmyGroupModule extends BasicModule {
             builder.setArmyInfo(armyInfo);
             builder.addAllResInfo(resInfo);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220007, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220007);
             sendFuntctionLog(FunctionIdDefine.LEGION_HALL_UPGRADE_FUNCTION_ID, armyInfo.getArmyLv(), 0, 0, armyInfo.getArmyName());
-            setLegionLevelDiff(armyInfo.getArmyLv());
+//            setLegionLevelDiff(armyInfo.getArmyLv());
         } else if (anyRef instanceof GameMsg.StMHallContributeSucc) {//军团大厅捐献成功
             M22.M220008.S2C.Builder builder = M22.M220008.S2C.newBuilder();
             M22.ArmyInfo armyInfo = ((GameMsg.StMHallContributeSucc) anyRef).hallInfo();
@@ -614,7 +604,7 @@ public class ArmyGroupModule extends BasicModule {
             PlayerReward reward = new PlayerReward();
             taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_UNIONCONTRIBUTE_TIMES, 1);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220008, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220008);
         } else if (anyRef instanceof GameMsg.StMwelfarReqInfo) {//请求面板
             M22.M220013.S2C.Builder s2c = M22.M220013.S2C.newBuilder();
             M22.PanelInfo info = ((GameMsg.StMwelfarReqInfo) anyRef).welfareInfo();
@@ -628,7 +618,7 @@ public class ArmyGroupModule extends BasicModule {
             s2c.setIscangetWelf(num);
             System.err.println("我的贡献值：" + info.getMyContribute());
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220013, s2c.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220013);
         } else if (anyRef instanceof GameMsg.StMwelfareUpInfo) {//福利院请求升级
             int wefareLv = ((GameMsg.StMwelfareUpInfo) anyRef).wefareLv();
             int armyLv = ((GameMsg.StMwelfareUpInfo) anyRef).armyLv();
@@ -648,7 +638,7 @@ public class ArmyGroupModule extends BasicModule {
                 builder.setType(type);
                 builder.setIscangetWelf(num);
                 pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220013, builder.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220013);
             }
         } else if (anyRef instanceof GameMsg.MtSHallContributeReqSucess) {
             //    TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
@@ -668,7 +658,7 @@ public class ArmyGroupModule extends BasicModule {
                 M22.M220008.S2C.Builder s2c = M22.M220008.S2C.newBuilder();
                 s2c.setRs(rs);
                 pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220008, s2c.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220008);
             }
         } else if (anyRef instanceof GameMsg.StMwelfareUpInfoSucc) {//福利院升级成功
             M22.M220013.S2C.Builder builder = M22.M220013.S2C.newBuilder();
@@ -683,7 +673,7 @@ public class ArmyGroupModule extends BasicModule {
             builder.setIscangetWelf(num);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220013, builder.build());
             sendFuntctionLog(FunctionIdDefine.LEGION_WELFAREHOUSE_WELFARE_UPGRADE_GET_FUNCTION_ID, 2, 0, 0);
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220013);
         } else if (anyRef instanceof GameMsg.StMGetwelfare) {//福利院领取
             M22.PanelInfo info = ((GameMsg.StMGetwelfare) anyRef).welfareInfo();
             int canGetId = ((GameMsg.StMGetwelfare) anyRef).canGetid();
@@ -711,7 +701,7 @@ public class ArmyGroupModule extends BasicModule {
                 M2.M20007.S2C build2007 = rewardProxy.getRewardClientInfo(reward);
                 pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, build2007);
             }
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220013);
         } else if (anyRef instanceof GameMsg.MtSwelfareGetSucc) {//资源列表
             Map<Integer, Integer> resMap = ((GameMsg.MtSwelfareGetSucc) anyRef).canGetfiveResMap();
             ArmygroupMenber menber = ((GameMsg.MtSwelfareGetSucc) anyRef).menber();
@@ -720,7 +710,7 @@ public class ArmyGroupModule extends BasicModule {
             M22.M220015.S2C.Builder builder = M22.M220015.S2C.newBuilder();
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220015, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220015);
         } else if (anyRef instanceof GameMsg.requestSlMwelfareInfoBack) {//请求福利院信息
             M22.PanelInfo info = ((GameMsg.requestSlMwelfareInfoBack) anyRef).welfareInfo();
             M22.M220012.S2C.Builder builder = M22.M220012.S2C.newBuilder();
@@ -733,13 +723,13 @@ public class ArmyGroupModule extends BasicModule {
             builder.setPanelInfo(info);
             builder.setIscangetWelf(num);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220012, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220012);
         } else if (anyRef instanceof GameMsg.editAffecheSucess) {//请求军团公告
             int rs = ((GameMsg.editAffecheSucess) anyRef).rs();
             M22.M220211.S2C.Builder builder = M22.M220211.S2C.newBuilder();
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220211, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220211);
             sendFuntctionLog(FunctionIdDefine.LEGION_NOTICE_FUNCTION_ID);
         } else if (anyRef instanceof GameMsg.getLegionLevelInfoback) {//请求建筑信息
             Armygroup armygroup = ((GameMsg.getLegionLevelInfoback) anyRef).army();
@@ -748,40 +738,45 @@ public class ArmyGroupModule extends BasicModule {
             builder.setRs(0);
             builder.addAllInfo(armyGroupProxy.getLeginBuildInfo(armygroup));
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220000, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220000);
             sendFuntctionLog(FunctionIdDefine.GET_LEGION_LEVEL_INFO_FUNCTION_ID);
         } else if (anyRef instanceof GameMsg.notityLegionLevel) {
             int level = ((GameMsg.notityLegionLevel) anyRef).level();
-            setLegionLevelDiff(level);
+            PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+            playerProxy.setLegionLevel(level);
+            sendPushNetMsgToClient(0);
+//            setLegionLevelDiff(level);
         } else if (anyRef instanceof GameMsg.checkeNoneId) {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             playerProxy.setArmgroupId(0l);
-            setLegionLevelDiff(1);
+            playerProxy.setLegionLevel(1);
+//            setLegionLevelDiff(1);
+            sendPushNetMsgToClient(0);
             updateMySimplePlayerData();
         } else if (anyRef instanceof GameMsg.getSituationInfoback) {
             M22.M220300.S2C.Builder build = ((GameMsg.getSituationInfoback) anyRef).build();
             build.setRs(0);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220300, build.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220300);
         } else if (anyRef instanceof GameMsg.applistNumback) {
             int num = ((GameMsg.applistNumback) anyRef).num();
             M22.M220205.S2C.Builder builder = M22.M220205.S2C.newBuilder();
             builder.setRs(0);
             builder.setNum(num);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220205, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220205);
         }
     }
 
-    public void setLegionLevelDiff(int level) {
-        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        playerProxy.setPowerValue(PlayerPowerDefine.POWER_legionLevel, (long) level);
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(PlayerPowerDefine.POWER_legionLevel);
-        M2.M20002.S2C different = sendDifferent(list);
-        pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, different);
-        sendPushNetMsgToClient();
-    }
+//    public void setLegionLevelDiff(int level) {
+//        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+//        playerProxy.setPowerValue(PlayerPowerDefine.POWER_legionLevel, (long) level);
+//        List<Integer> list = new ArrayList<Integer>();
+//        list.add(PlayerPowerDefine.POWER_legionLevel);
+//        M2.M20002.S2C different = sendDifferent(list);
+//        pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, different);
+//        sendPushNetMsgToClient();
+//    }
 
 //    public void sendActivitDiff() {
 //        List<Integer> list = new ArrayList<Integer>();
@@ -803,6 +798,11 @@ public class ArmyGroupModule extends BasicModule {
         if (groupId > 0 && ArmygroupNode.techExpandPowerMap().get(groupId) != null) {
             Map<Integer, Long> techExpandPower = ArmygroupNode.techExpandPowerMap().get(groupId);
             refLegionTechnologyPowerMap(techExpandPower);
+            if(isfirst==false) {
+                sendPushNetMsgToClient(0);
+            }else {
+                playerProxy.getChangePower();
+            }
         }
     }
 
@@ -814,7 +814,7 @@ public class ArmyGroupModule extends BasicModule {
         ArmyGroupProxy armyGroupProxy = getProxy(ActorDefine.ARMYGROUP_PROXY_NAME);
         armyGroupProxy.clearTechPlayerPower();
 //        checkPlayerPowerValues(powerMap);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
 //        multicastNetToClient();
     }
 
@@ -826,7 +826,6 @@ public class ArmyGroupModule extends BasicModule {
         ArmyGroupProxy armyGroupProxy = getProxy(ActorDefine.ARMYGROUP_PROXY_NAME);
         armyGroupProxy.addTechPlayerPower(techExpandPower);
 //        checkPlayerPowerValues(powerMap);
-        sendPushNetMsgToClient();
 //        multicastNetToClient();
     }
 
@@ -846,7 +845,7 @@ public class ArmyGroupModule extends BasicModule {
             int rs = armyGroupProxy.getArmyGroupDetailInfo(army, builder, iconid, penid);
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220101, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220101);
             sendFuntctionLog(FunctionIdDefine.GET_LEGION_DETAIL_INFO_FUNCTION_ID);
         }
     }
@@ -858,7 +857,7 @@ public class ArmyGroupModule extends BasicModule {
             int rs = armyGroupProxy.getArmygroupInfos(map, builder);
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220100, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220100);
             sendFuntctionLog(FunctionIdDefine.LEGION_LISTS_FUNCTION_ID);
         } else if (cmd == ArmyGroupDefine.OPERATE_GETALLGROUP_SEND220104) {
             ArmyGroupProxy armyGroupProxy = getProxy(ActorDefine.ARMYGROUP_PROXY_NAME);
@@ -867,7 +866,7 @@ public class ArmyGroupModule extends BasicModule {
             int rs = armyGroupProxy.getsearchInfos(map, builder, name);
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220104, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220104);
             sendFuntctionLog(FunctionIdDefine.LEGION_SEARCH_FUNCTION_ID, 0, 0, 0, name);
         }
     }
@@ -914,11 +913,11 @@ public class ArmyGroupModule extends BasicModule {
         SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
         if (playerProxy.getArmGrouId() > 0) {
             M22.M220102.S2C.Builder builder = M22.M220102.S2C.newBuilder();
-            builder.setRs(ErrorCodeDefine.M220108_8);
+            builder.setRs(ErrorCodeDefine.M220102_8);
             builder.setId(id);
             builder.setType(type);
             sendNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220102, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220102);
         } else {
             GameMsg.applyArmyJoin msg = new GameMsg.applyArmyJoin(playerProxy.getPlayerApplylist(), type, playerProxy.getLevel(), soldierProxy.getHighestCapacity(), playerProxy.getPlayerId());
             sendFuntctionLog(FunctionIdDefine.LEGION_ASK_FUNCTION_ID, id, playerProxy.getPlayerId(), 0);
@@ -952,7 +951,7 @@ public class ArmyGroupModule extends BasicModule {
             builder.setRs(ErrorCodeDefine.M220200_1);
             sendNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220200, builder.build());
             sendFuntctionLog(FunctionIdDefine.GET_LEGION_INFO_FUNCTION_ID);
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220200);
         }
     }
 
@@ -1027,7 +1026,7 @@ public class ArmyGroupModule extends BasicModule {
             builder.setRs(0);
             builder.setNum(0);
             sendNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220205, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220205);
         }
     }
 
@@ -1101,7 +1100,7 @@ public class ArmyGroupModule extends BasicModule {
             M22.M220010.S2C.Builder builder = M22.M220010.S2C.newBuilder();
             builder.setRs(ErrorCodeDefine.M220007_4);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220007, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220007);
         } else {
             GameMsg.MtSHallUpReq msg = new GameMsg.MtSHallUpReq(playerProxy.getPlayerId(), opt);
             sendToArmyGroupNode(msg);
@@ -1120,7 +1119,7 @@ public class ArmyGroupModule extends BasicModule {
             M22.M220010.S2C.Builder builder = M22.M220010.S2C.newBuilder();
             builder.setRs(0);
             pushNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220010, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220010);
         } else {
             GameMsg.MtSTechUpReq msg = new GameMsg.MtSTechUpReq(playerProxy.getPlayerId(), opt);
             tellMsgToArmygroupNode(msg, groupId);
@@ -1197,7 +1196,7 @@ public class ArmyGroupModule extends BasicModule {
             builder.setRs(-1);
             sendNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220000, builder.build());
             sendFuntctionLog(FunctionIdDefine.GET_LEGION_LEVEL_INFO_FUNCTION_ID);
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220000);
         } else {
             GameMsg.getLegionLevelInfo msg = new GameMsg.getLegionLevelInfo();
             sendToArmyGroupNode(msg);
@@ -1213,7 +1212,7 @@ public class ArmyGroupModule extends BasicModule {
         if (playerProxy.getArmGrouId() <= 0) {
             builder.setRs(ErrorCodeDefine.M220300_1);
             sendNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220300, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220300);
         } else {
             tellMsgToArmygroupNode(new GameMsg.getSituationInfo(builder), playerProxy.getArmGrouId());
         }
@@ -1228,7 +1227,7 @@ public class ArmyGroupModule extends BasicModule {
         if (playerProxy.getArmGrouId() <= 0) {
             builder.setRs(ErrorCodeDefine.M220400_3);
             sendNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220400, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220400);
         } else {
             tellMsgToArmygroupNode(new GameMsg.legionenlist(playerProxy.getPlayerId()), playerProxy.getArmGrouId());
         }
@@ -1259,12 +1258,12 @@ public class ArmyGroupModule extends BasicModule {
         } else {
             M22.M220012.S2C.Builder builder = M22.M220012.S2C.newBuilder();
             //       TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-            ArmyGroupProxy armyGroupProxy = getGameProxy().getProxy(ActorDefine.ARENA_PROXY_NAME);
+            ArmyGroupProxy armyGroupProxy = getGameProxy().getProxy(ActorDefine.ARMYGROUP_PROXY_NAME);
             int num = armyGroupProxy.legionTimer.getWalfRewad();//timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_WELFAREREWARD, 0, 0);
             builder.setRs(-1);
             builder.setIscangetWelf(num);
             sendNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220012, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M22_C220012);
         }
     }
 
@@ -1283,29 +1282,27 @@ public class ArmyGroupModule extends BasicModule {
         context().actorSelection("../../../" + ActorDefine.ARMYGROUP_SERVICE_NAME + "/" + ActorDefine.ARMYGROUPNODE + id).tell(mess, self());
     }
 
-    private void sendarmoupIdIdffer() {
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(PlayerPowerDefine.POWER_armygroupId);
-        M2.M20002.S2C different = sendDifferent(list);
-        pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, different);
+//    private void sendarmoupIdIdffer() {
+//        List<Integer> list = new ArrayList<Integer>();
+//        list.add(PlayerPowerDefine.POWER_armygroupId);
+//        M2.M20002.S2C different = sendDifferent(list);
+//        pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, different);
 //        sendPushNetMsgToClient();
-    }
+//    }
 
     private void sendLegionameDiffer() {
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         M2.M20201.S2C.Builder different = M2.M20201.S2C.newBuilder();
         different.setName(playerProxy.getPlayer().getLegionName());
         pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20201, different.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M2_C20201);
     }
 
     /**
      * 重复协议请求处理
-     *
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
-
+    public void repeatedProtocalHandler(Request request) {
     }
 }

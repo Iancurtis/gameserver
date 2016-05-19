@@ -266,6 +266,12 @@ public class  ProtocolModuleDefine {
      */
     public static final int NET_M6_C60105 = 60105;
 
+
+    /**
+     * 冒险副本次数请求4点刷新
+     */
+    public static final int NET_M6_C60106 = 60106;
+
     /**
      * 军队模块**
      */
@@ -613,6 +619,7 @@ public class  ProtocolModuleDefine {
     public static final int NET_M23_C230010= 230010;//检测一个普通活动是否开启
     public static final int NET_M23_C230011= 230011;//检测一个限时活动是否开启
     public static final int NET_M23_C230012= 230012;//检测一个在线礼包活动是否开启
+    public static final int NET_M23_C230013= 230013;//推送排行活动排名
     /******cdkey*********/
     public static final int NET_M24 = 24;
     public static final int NET_M24_C240000 = 240000;//cdkey领取

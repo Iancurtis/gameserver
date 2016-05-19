@@ -10,33 +10,33 @@ import java.util.List;
  * Created by Administrator on 2015/11/16.
  */
 public class ArmygroupMenber extends BaseDbPojo {
-    private String accoutName;
-    private int contribute;  //贡献值
-    private  long capity;   //玩家战力
-    private Long  playerId;
-    private int level; //等级
-    private String name;//玩家名字
-    private int sex;//玩家性别
-    private long logintime= GameUtils.getServerDate().getTime();//登陆时间
-    private long outlinetime=GameUtils.getServerDate().getTime();//下线时间
-    private long armyId;
-    private int job;
-    private int capityrank; //战力排名
-    private int devotrank; //贡献排名
-    private int vitality; //活跃度
-    private int donatecontributeWeek=0;  //捐献周贡献
-    private int contributeWeek=0;  //打副本贡献
+    private String accoutName = "";
+    private int contribute = 0;  //贡献值
+    private long capity = 0l;   //玩家战力
+    private Long playerId = 0l;
+    private int level = 0; //等级
+    private String name = "";//玩家名字
+    private int sex = 0;//玩家性别
+    private long logintime = GameUtils.getServerDate().getTime();//登陆时间
+    private long outlinetime = GameUtils.getServerDate().getTime();//下线时间
+    private long armyId = 0l;
+    private int job = 0;
+    private int capityrank = 0; //战力排名
+    private int devotrank = 0; //贡献排名
+    private int vitality = 0; //活跃度
+    private int donatecontributeWeek = 0;  //捐献周贡献
+    private int contributeWeek = 0;  //打副本贡献
     private int tael = 0;
     private int iron = 0;
     private int wood = 0;
     private int stones = 0;
     private int food = 0;
-    private int activityrank;
-    private int isgetwelfare=0; //0还没领1领过了  福利院
-    private int pendantId=0;//挂件Id
-    private int icon=0;
-    private long joinTime=GameUtils.getServerDate().getTime();//加入时间
-    private int activitycontributerank;//活动期间贡献值
+    private int activityrank = 0;
+    private int isgetwelfare = 0; //0还没领1领过了  福利院
+    private int pendantId = 0;//挂件Id
+    private int icon = 0;
+    private long joinTime = GameUtils.getServerDate().getTime();//加入时间
+    private int activitycontributerank = 0;//活动期间贡献值
 
     public int getActivitycontributerank() {
         return activitycontributerank;
@@ -45,6 +45,7 @@ public class ArmygroupMenber extends BaseDbPojo {
     public void setActivitycontributerank(int activitycontributerank) {
         this.activitycontributerank = activitycontributerank;
     }
+
     public long getJoinTime() {
         return joinTime;
     }

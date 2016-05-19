@@ -6,21 +6,22 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2015/10/29.
  */
 public class Mail extends BaseDbPojo {
-    private long playerId;
-    private String title="";
-    private String content="";
-    private String rewardIdStr="";
-    private String attachmentStr="";
-    private long senderId;
-    private String senderName="";
-    private long createMailTime;
-    private int type;
+    private long playerId = 0l;
+    private String title = "";
+    private String content = "";
+    private String rewardIdStr = "";
+    private String attachmentStr = "";
+    private long senderId = 0l;
+    private String senderName = "";
+    private long createMailTime = 0l;
+    private int type = 0;
     private int state = 0;
     private long receiverId = 0l;
     private String receiverName = "";
-    private long reportId;
+    private long reportId = 0l;
     private int extracted = 0;
-    private long friendId;
+    private long friendId = 0l;
+
     public int getType() {
         return type;
     }
@@ -28,6 +29,7 @@ public class Mail extends BaseDbPojo {
     public void setType(int type) {
         this.type = type;
     }
+
     public long getPlayerId() {
         return playerId;
     }

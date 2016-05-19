@@ -57,7 +57,7 @@ public class LotterModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M15, ProtocolModuleDefine.NET_M15_C150000, builder.build());
         sendFuntctionLog(FunctionIdDefine.GET_EQUIP_LOTTER_INFOS_FUNCTION_ID);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M15_C150000);
     }
 
     private void OnTriggerNet150001Event(Request request) {
@@ -79,7 +79,7 @@ public class LotterModule extends BasicModule {
             PlayerReward reward = new PlayerReward();
             taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_LOTTEREQUIP_TIEMS, 1);
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M15_C150001);
     }
 
     private void OnTriggerNet150002Event(Request request) {
@@ -98,7 +98,7 @@ public class LotterModule extends BasicModule {
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
         }
         sendNetMsg(ProtocolModuleDefine.NET_M15, ProtocolModuleDefine.NET_M15_C150003, lotterProxy.getTaoInfos(type));
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M15_C150003);
     }
 
     private void OnTriggerNet150003Event(Request request) {
@@ -149,7 +149,7 @@ public class LotterModule extends BasicModule {
             builder.setType(type);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M15, ProtocolModuleDefine.NET_M15_C150003, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M15_C150003);
     }
 
     private void sendM20007(PlayerReward reward) {
@@ -161,10 +161,10 @@ public class LotterModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

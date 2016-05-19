@@ -401,19 +401,51 @@ public class FormationProxy  extends BasicProxy {
         return createPlayerTroop(teams,playerId);
     }
 
+    public List<M7.FormationMember> createFormationMemberList(List<PlayerTeam> teams){
+        List<M7.FormationMember> formationElementInfos = new ArrayList<>();
+        for (PlayerTeam team : teams){
+            M7.FormationMember.Builder builder = M7.FormationMember.newBuilder();
+            builder.setNum((Integer) team.getValue(SoldierDefine.NOR_POWER_NUM));
+            int post = (int) team.getValue(SoldierDefine.NOR_POWER_INDEX);
+            if(post > 20){
+                builder.setPost(post -20);
+            }else if(post > 10){
+                builder.setPost(post -10);
+            }else{
+                builder.setPost(post);
+            }
+
+            builder.setTypeid((Integer) team.getValue(SoldierDefine.NOR_POWER_TYPE_ID));
+            formationElementInfos.add(builder.build());
+        }
+        return formationElementInfos;
+    }
+
+    public List<Common.FightElementInfo> createFightElementInfoList(List<PlayerTeam> teams){
+        List<Common.FightElementInfo> formationElementInfos = new ArrayList<>();
+        for (PlayerTeam team : teams){
+            Common.FightElementInfo.Builder builder = Common.FightElementInfo.newBuilder();
+            builder.setNum((Integer) team.getValue(SoldierDefine.NOR_POWER_NUM));
+            int post = (int) team.getValue(SoldierDefine.NOR_POWER_INDEX);
+            if(post > 20){
+                builder.setPost(post -20);
+            }else if(post > 10){
+                builder.setPost(post -10);
+            }else{
+                builder.setPost(post);
+            }
+
+            builder.setTypeid((Integer) team.getValue(SoldierDefine.NOR_POWER_TYPE_ID));
+            formationElementInfos.add(builder.build());
+        }
+        return formationElementInfos;
+    }
+
     public PlayerTroop createPlayerTroop(List<PlayerTeam> teams,long playerId){
         PlayerTroop troop = new PlayerTroop();
         troop.setPlayerTeams(teams);
         troop.setPlayerId(playerId);
-        List<M7.FormationMember> fightElementInfos = new ArrayList<>();
-        for (PlayerTeam team : teams){
-            M7.FormationMember.Builder builder = M7.FormationMember.newBuilder();
-            builder.setNum((Integer) team.getValue(SoldierDefine.NOR_POWER_NUM));
-            builder.setPost((Integer) team.getValue(SoldierDefine.NOR_POWER_INDEX)-20);
-            builder.setTypeid((Integer) team.getValue(SoldierDefine.NOR_POWER_TYPE_ID));
-            fightElementInfos.add(builder.build());
-        }
-        troop.setFightElementInfos(fightElementInfos);
+        troop.setFightElementInfos(createFormationMemberList(teams));
         return troop;
     }
 }

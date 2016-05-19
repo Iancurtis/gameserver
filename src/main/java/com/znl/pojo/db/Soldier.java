@@ -8,8 +8,8 @@ import org.json.JSONObject;
 /**
  * Created by Administrator on 2015/10/24.
  */
-public class Soldier extends BaseDbPojo{
-    private Long playerId;
+public class Soldier extends BaseDbPojo {
+    private Long playerId = 0l;
     private int typeId = 0;
     private int num = 0;
     private int lostNum = 0;

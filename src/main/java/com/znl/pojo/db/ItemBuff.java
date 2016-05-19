@@ -6,14 +6,14 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2015/11/30.
  */
 public class ItemBuff extends BaseDbPojo {
-    private long playerId;
-    private int itemId;
-    private int type;
-    private int powerId;
-    private int value;
-    private long beginTime;
-    private long endTime;
-    private int state;
+    private long playerId = 0l;
+    private int itemId = 0;
+    private int type = 0;
+    private int powerId = 0;
+    private int value = 0;
+    private long beginTime = 0l;
+    private long endTime = 0l;
+    private int state = 0;
 
     public long getPlayerId() {
         return playerId;

@@ -49,7 +49,7 @@ public class AdviserModule extends BasicModule {
         s2c.setRs(0);
         s2c.addAllAdviserinfo(adviserProxy.getAllAdviserInfo());
         sendNetMsg(ProtocolModuleDefine.NET_M26, ProtocolModuleDefine.NET_M26_C260000, s2c.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M26_C260000);
     }
 
     private void OnTriggerNet260001Event(Request request) {
@@ -66,7 +66,7 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M26_C260001);
     }
 
     private void OnTriggerNet260002Event(Request request) {
@@ -82,7 +82,7 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M26_C260002);
     }
 
 
@@ -99,7 +99,7 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M26_C260003);
     }
 
 
@@ -110,7 +110,7 @@ public class AdviserModule extends BasicModule {
         builder.addAllCostInfos(adviserProxy.getCostInfo());
         builder.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M26, ProtocolModuleDefine.NET_M26_C260004,builder.build() );
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M26_C260004);
     }
 
 
@@ -130,7 +130,7 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M26_C260005);
     }
 
     private void OnTriggerNet260006Event(Request request) {
@@ -146,14 +146,14 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M26_C260006);
     }
     /**
      * 重复协议请求处理
-     * @param cmd 协议id
+     * @param request 协议id
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 

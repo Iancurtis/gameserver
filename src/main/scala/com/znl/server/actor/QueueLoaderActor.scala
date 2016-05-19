@@ -58,7 +58,7 @@ class QueueLoaderActor(id : Int,mysql_ip : String, mysql_db : String, mysql_user
         statement = conn.createStatement()
         for (dbOper <- data) {
           statement.addBatch(dbOper.sql)
-          System.err.println("+++++++++++++保存的sql:"+dbOper.sql)
+          //System.err.println("+++++++++++++保存的sql:"+dbOper.sql)
         }
         statement.executeBatch()
         log.info("存储时间：" + (System.currentTimeMillis() - time))
@@ -85,7 +85,7 @@ class QueueLoaderActor(id : Int,mysql_ip : String, mysql_db : String, mysql_user
       val conn = getConnection()
       var statement: Statement = null
       try{
-        println("mysql_db:"+mysql_db+" ;load开始读取"+id+"这次录入操作是："+dbOper.sql)
+//        println("mysql_db:"+mysql_db+" ;load开始读取"+id+"这次录入操作是："+dbOper.sql)
         val time = System.currentTimeMillis()
         statement = conn.createStatement()
         statement.addBatch(dbOper.sql)

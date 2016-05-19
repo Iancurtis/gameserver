@@ -4,6 +4,7 @@ import akka.actor.Props;
 import akka.japi.Creator;
 import com.znl.base.BasicModule;
 import com.znl.define.ProtocolModuleDefine;
+import com.znl.framework.socket.Request;
 import com.znl.proxy.GameProxy;
 
 /**
@@ -33,10 +34,10 @@ public class TechnologyModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

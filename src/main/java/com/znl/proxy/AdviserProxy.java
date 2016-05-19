@@ -17,6 +17,7 @@ import com.znl.proto.M7;
 import com.znl.template.MailTemplate;
 import com.znl.utils.GameUtils;
 import com.znl.utils.SortUtil;
+import org.apache.mina.util.ConcurrentHashSet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,7 +27,7 @@ import java.util.*;
  * Created by Administrator on 2015/10/28.
  */
 public class AdviserProxy extends BasicProxy {
-    private Set<Adviser> advis = new HashSet<Adviser>();
+    private Set<Adviser> advis = new ConcurrentHashSet<>();
 
     @Override
     public long getExpandPowerValue(int power) {

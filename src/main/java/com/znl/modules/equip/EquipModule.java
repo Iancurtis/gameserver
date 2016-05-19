@@ -92,7 +92,7 @@ public class EquipModule extends BasicModule {
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
 
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130001);
     }
 
     private void OnTriggerNet130002Event(Request request) {
@@ -107,6 +107,7 @@ public class EquipModule extends BasicModule {
         int rs = equipProxy.equipOn(id, position, type, funid, builder, baseLogs);
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130002, builder.build());
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130002);
         if (rs == 0) {
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
             sendLog(baseLogs);
@@ -120,7 +121,6 @@ public class EquipModule extends BasicModule {
             equipProxy.initPutOnEquipNumByQuilty(4);
 
         }
-        sendPushNetMsgToClient();
     }
 
 
@@ -146,7 +146,7 @@ public class EquipModule extends BasicModule {
             updateSimplePlayerData(playerProxy.getSimplePlayer());
 
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130003);
     }
 
     private void OnTriggerNet130005Event(Request request) {
@@ -164,7 +164,7 @@ public class EquipModule extends BasicModule {
             equipProxy.initPurpleEquipLeveNum();
 
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130005);
     }
 
 
@@ -183,7 +183,7 @@ public class EquipModule extends BasicModule {
             sendLog(baseLogs);
             sendFuntctionLog(FunctionIdDefine.CHANGE_EQUIP_POSITION_FUNCTION_ID,positione,positiontwo,0);
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130006);
     }
 
 
@@ -198,7 +198,7 @@ public class EquipModule extends BasicModule {
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130007, builder.build());
         sendLog(baseLogs);
         sendFuntctionLog(FunctionIdDefine.EQUIP_BAGS_EXTEND_FUNCTION_ID);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130007);
     }
 
 
@@ -209,7 +209,7 @@ public class EquipModule extends BasicModule {
         builder.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130100, builder.build());
         sendFuntctionLog(FunctionIdDefine.GET_ORDNANCE_PIECE_INFOS_FUNCTION_ID);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130100);
     }
 
     private void OnTriggerNet130101Event(Request request) {
@@ -219,7 +219,7 @@ public class EquipModule extends BasicModule {
         builder.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130101, builder.build());
         sendFuntctionLog(FunctionIdDefine.GET_ORDANCE_INFOS_FUNCTION_ID);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130101);
     }
 
     private void OnTriggerNet130102Event(Request request) {
@@ -232,7 +232,7 @@ public class EquipModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130102, builder.build());
         sendLog(baseLogs);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130102);
     }
 
     private void OnTriggerNet130103Event(Request request) {
@@ -253,7 +253,7 @@ public class EquipModule extends BasicModule {
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
         M2.M20007.S2C builder1 = rewardProxy.getRewardClientInfo(reward);
         sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, builder1);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130103);
     }
 
 
@@ -271,7 +271,7 @@ public class EquipModule extends BasicModule {
         sendM4000(builder1);
         sendLog(baseLogs);
         sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130104);
     }
 
 
@@ -289,7 +289,7 @@ public class EquipModule extends BasicModule {
         sendM4000(builder1);
         sendLog(baseLogs);
         sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130105);
     }
 
     private void OnTriggerNet130106Event(Request request) {
@@ -309,7 +309,7 @@ public class EquipModule extends BasicModule {
             sendM20007(itemlist);
             sendLog(baseLogs);
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130106);
     }
 
     private void OnTriggerNet130107Event(Request request) {
@@ -336,7 +336,7 @@ public class EquipModule extends BasicModule {
             sendLog(baseLogs);
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130107);
     }
 
     private void OnTriggerNet130108Event(Request request) {
@@ -361,7 +361,7 @@ public class EquipModule extends BasicModule {
             sendLog(baseLogs);
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130108);
     }
 
     private void OnTriggerNet130109Event(Request request) {
@@ -386,7 +386,7 @@ public class EquipModule extends BasicModule {
             sendLog(baseLogs);
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M13_C130109);
     }
 
     private void sendM4000(List<M2.M20007.S2C.Builder> builder1) {
@@ -442,10 +442,10 @@ public class EquipModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 

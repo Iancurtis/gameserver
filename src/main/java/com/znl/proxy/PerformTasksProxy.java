@@ -12,6 +12,7 @@ import com.znl.msg.GameMsg;
 import com.znl.pojo.db.*;
 import com.znl.proto.Common;
 import com.znl.proto.M8;
+import com.znl.service.WorldService;
 import com.znl.utils.GameUtils;
 import org.apache.mina.util.ConcurrentHashSet;
 import scala.Tuple2;
@@ -360,7 +361,7 @@ public class PerformTasksProxy extends BasicProxy {
                     removeList.add(task);
                     if (task.getType() == TaskDefine.PERFORM_TASK_DIGGING) {
                         //删除后向世界请求一次校验，如果是误删除的还要给他加回来
-                        sendMsgToWorldNode(task.getWorldTileX(), task.getWorldTileY(), new GameMsg.CheckDeleteDiggingTask(playerProxy.getPlayerId()), playerProxy);
+//                        sendMsgToWorldNode(task.getWorldTileX(), task.getWorldTileY(), new GameMsg.CheckDeleteDiggingTask(playerProxy.getPlayerId()), playerProxy);
                     }
                 }
             }
@@ -799,21 +800,21 @@ public class PerformTasksProxy extends BasicProxy {
     }
 
     public int changerHelp(long id) {
-        PerformTasks performTasks = getPerformTaskById(id);
-        if (performTasks == null) {
+        WorldTeamData teamData = WorldService.getTeamData(id);
+        if (teamData == null) {
             return ErrorCodeDefine.M80014_1;
         }
-        if (performTasks.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
+        if (teamData.getType() != TaskDefine.PERFORM_TASK_HELPBACK) {
             return ErrorCodeDefine.M80014_2;
         }
-        if (performTasks.getTimeer() != performTasks.getBeginTime()) {
+        if (teamData.getEndTime()>GameUtils.getServerTime()) {
             return ErrorCodeDefine.M80014_3;
         }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         if (playerProxy.getPlayer().getUsedefine() == id) {
             playerProxy.getPlayer().setUsedefine(0l);
         } else {
-            playerProxy.getPlayer().setUsedefine(performTasks.getId());
+            playerProxy.getPlayer().setUsedefine(id);
         }
         playerProxy.getPlayer().save();
         return 0;
@@ -830,6 +831,8 @@ public class PerformTasksProxy extends BasicProxy {
         checkPerformTask(playerProxy);
         return performTasks.size();
     }
+
+
 
     /**
      * 根据任务到期时间获取任务

@@ -639,7 +639,7 @@ public class OrdnanceProxy extends BasicProxy {
             itemlist.add(EquipDefine.ORDNANCE_REMOULD_ADDRATE_NUM);
         } else {
             ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
-            if(activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_ORDANCE_remou)!=0) {
+            if(activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_ORDANCE_remou)==0) {
                 reduceOrdnanceStrthLevel(od, 3);
             }
         }

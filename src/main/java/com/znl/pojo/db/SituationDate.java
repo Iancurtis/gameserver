@@ -6,7 +6,7 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2016/1/14.
  */
 public class SituationDate extends BaseDbPojo {
-    private byte[] team;
+    private byte[] team = null;
 
     public byte[] getTeam() {
         return team;

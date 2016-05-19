@@ -329,4 +329,7 @@ public class ActorDefine {
 
    /******军团副本******/
     public static final int LEGION_DUNGEO_CHANGE_TIME = 5;//军团副本挑战次数
+
+
+    public static final String BANIP= "BANIP";//禁止IP
 }

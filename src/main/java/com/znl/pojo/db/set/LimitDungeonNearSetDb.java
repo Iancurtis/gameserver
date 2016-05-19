@@ -54,7 +54,9 @@ public class LimitDungeonNearSetDb extends BaseSetDbPojo {
         List<LimitDungeoReport> res = new ArrayList<>(3);
         for (String key : keys){
             LimitDungeoReport report = getDbPojoByKey(key,LimitDungeoReport.class);
-            res.add(report);
+            if(report!=null) {
+                res.add(report);
+            }
         }
         return res;
     }
