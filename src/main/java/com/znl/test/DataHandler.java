@@ -1,5 +1,6 @@
 package com.znl.test;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
 import com.sun.xml.internal.rngom.parse.host.Base;
@@ -26,6 +27,27 @@ public class DataHandler {
     private static JedisCluster jc =new JedisCluster(jedisClusterNodes);
 
 
+    private static final String mysql_ip="";
+
+    private static DruidDataSource cpds;
+
+    private static void initMysql(){
+        cpds.setDriverClassName("com.mysql.jdbc.Driver");
+        cpds.setUrl("jdbc:mysql://%s/?useUnicode=true&characterEncoding=UTF-8".format(mysql_ip));
+        cpds.setUsername("root");
+        cpds.setPassword("3kwan123");
+
+        cpds.setMaxActive(20);
+        cpds.setMinIdle(1);
+        cpds.setMaxWait(60000);
+        cpds.setInitialSize(1);
+    }
+
+
+
+
+
+
     public static void main(String[]args){
          initRedis();
          getDbData("9989");
@@ -49,11 +71,14 @@ public class DataHandler {
     private static void  redis2Mysql(){
         String[] areaServer3 = GameUtils.getAreaServer3();
         //首先遍历player，把player转换出pojo
+        val formatStr = "replace into %s(id, data) values (%d, '%s');"
+        val sql : String = formatStr.format("GcolGame"+logAreaId+"."+table, id, json)
     }
 
 
     private static Map<String,StringBuilder>updateMap=new HashMap<>();
 
+   private static Set<String>updateSet=new HashSet<>();
 
    private static void getDbData(String areaKey){
        try {
