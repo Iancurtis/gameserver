@@ -95,6 +95,16 @@ public class tbllog_items extends BaseLog{
 	this.happend_time = happend_time;
 	}
 
+	private Long remain_num = 0l ;
+
+	public Long getRemain_num() {
+		return remain_num;
+	}
+
+	public void setRemain_num(Long remain_num) {
+		this.remain_num = remain_num;
+	}
+
 	/***写日志时间，索引字段***/
 	private Integer log_time = 0 ;
 	public Integer getLog_time(){

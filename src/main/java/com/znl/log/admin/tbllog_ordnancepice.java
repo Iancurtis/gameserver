@@ -89,6 +89,17 @@ public class tbllog_ordnancepice extends BaseLog{
 	this.map_id = map_id;
 	}
 
+
+	private Long remain_num = 0l ;
+
+	public Long getRemain_num() {
+		return remain_num;
+	}
+
+	public void setRemain_num(Long remain_num) {
+		this.remain_num = remain_num;
+	}
+
 	/***事件发生时间***/
 	private Integer happend_time = 0 ;
 	public Integer getHappend_time(){

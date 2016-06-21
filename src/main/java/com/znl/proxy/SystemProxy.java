@@ -71,11 +71,13 @@ public class SystemProxy extends BasicProxy {
         cacheIds.forEach(id -> {
             M3.ClientCacheInfo.Builder cacheInfoBuilder = M3.ClientCacheInfo.newBuilder();
             ClientCache clientCache = getClientCache(id);
-            cacheInfoBuilder.setMsgType(clientCache.getMsgType());
+            if(clientCache!=null){
+                cacheInfoBuilder.setMsgType(clientCache.getMsgType());
 
-            ByteString bs = ByteString.copyFrom(clientCache.getMsg());
-            cacheInfoBuilder.setMsg(bs);
-            builder.addCacheInfos(cacheInfoBuilder.build());
+                ByteString bs = ByteString.copyFrom(clientCache.getMsg());
+                cacheInfoBuilder.setMsg(bs);
+                builder.addCacheInfos(cacheInfoBuilder.build());
+            }
         });
 
         return builder.build();
@@ -90,11 +92,13 @@ public class SystemProxy extends BasicProxy {
         cacheIds.forEach(id -> {
             M3.ClientCacheInfo.Builder cacheInfoBuilder = M3.ClientCacheInfo.newBuilder();
             ClientCache clientCache = getClientCache(id);
-            cacheInfoBuilder.setMsgType(clientCache.getMsgType());
+            if(clientCache!=null) {
+                cacheInfoBuilder.setMsgType(clientCache.getMsgType());
 
-            ByteString bs = ByteString.copyFrom(clientCache.getMsg());
-            cacheInfoBuilder.setMsg(bs);
-           list.add(cacheInfoBuilder.build());
+                ByteString bs = ByteString.copyFrom(clientCache.getMsg());
+                cacheInfoBuilder.setMsg(bs);
+                list.add(cacheInfoBuilder.build());
+            }
         });
 
         return list;
@@ -102,6 +106,9 @@ public class SystemProxy extends BasicProxy {
 
     public ClientCache getClientCache(Long id) {
         ClientCache clientCache = BaseDbPojo.get(id, ClientCache.class, areaKey);
+        if(clientCache==null){
+            return null;
+        }
         cacheMap.put(clientCache.getMsgType(), clientCache);
 
         return clientCache;

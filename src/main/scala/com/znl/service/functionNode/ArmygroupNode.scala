@@ -231,6 +231,7 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
         endTime = endDate.getTime
         CustomerLogger.error("排行榜居然出现时间类型为4的定时器！！！")
       }
+
     }
     return endTime
   }

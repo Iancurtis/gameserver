@@ -97,7 +97,7 @@ public class OrdnancePieceProxy extends BasicProxy {
         } else {
             creatOrdnancePiece(typeId, num,logtype);
         }
-        ordnancePiceLog(1,typeId,num,logtype);
+        ordnancePiceLog(1,typeId,num,logtype,getOrdnancePieceNum(typeId));
 
     }
 
@@ -187,7 +187,7 @@ public class OrdnancePieceProxy extends BasicProxy {
         } else {
             pushOrdnancePieceToChangeList(odp);
         }
-        ordnancePiceLog(0,typeId,reduce,logtype);
+        ordnancePiceLog(0,typeId,reduce,logtype,getOrdnancePieceNum(typeId));
     }
 
     public List<Common.OrdnancePieceInfo> getOrdnancePieceInfos() {
@@ -304,7 +304,7 @@ public class OrdnancePieceProxy extends BasicProxy {
     /**
      * ordnancePiceLog:1增加，0使用
      */
-    public void ordnancePiceLog(int opt, int itemId, int num,int logType) {
+    public void ordnancePiceLog(int opt, int itemId, int num,int logType,long remain_num) {
         PlayerProxy player = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         PlayerCache cache = player.getPlayerCache();
         tbllog_ordnancepice itemslog = new tbllog_ordnancepice();
@@ -317,6 +317,7 @@ public class OrdnancePieceProxy extends BasicProxy {
         itemslog.setType_id(itemId);
         itemslog.setItem_number((long) num);
         itemslog.setMap_id(0);
+        itemslog.setRemain_num(remain_num);
         itemslog.setHappend_time(GameUtils.getServerTime());
         sendPorxyLog(itemslog);
     }

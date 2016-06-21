@@ -135,8 +135,17 @@ public class AdviserProxy extends BasicProxy {
         } else {
             createAdviser(typeId, num);
         }
-        adviserLog(1, typeId, num, logtype);
+        adviserLog(1, typeId, num, logtype,getAdviserNumBytypeId(typeId));
         init();
+    }
+
+    private int getAdviserNumBytypeId(int typeId){
+        for (Adviser adviser : advis) {
+           if(adviser.getTypeId()==typeId){
+               return adviser.getNum();
+           }
+        }
+        return 0;
     }
 
     //获得军师府军师的数量
@@ -170,7 +179,7 @@ public class AdviserProxy extends BasicProxy {
         } else {
             pushAdviserToChangeList(adviser);
         }
-        adviserLog(0, typeId, num, logtype);
+        adviserLog(0, typeId, num, logtype,getAdviserNumBytypeId(typeId));
         init();
     }
 
@@ -632,7 +641,7 @@ public class AdviserProxy extends BasicProxy {
     /**
      * tbllog_advisers 道具opt:1增加，0使用
      */
-    public void adviserLog(int opt, int typeid, int num, int logType) {
+    public void adviserLog(int opt, int typeid, int num, int logType,long remian_num) {
         if (getGameProxy() == null) {
             return;
         }
@@ -648,6 +657,7 @@ public class AdviserProxy extends BasicProxy {
         itemslog.setType_id(typeid);
         itemslog.setItem_number((long) num);
         itemslog.setMap_id(0);
+        itemslog.setRemain_num(remian_num);
         itemslog.setHappend_time(GameUtils.getServerTime());
         sendPorxyLog(itemslog);
     }

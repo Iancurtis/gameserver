@@ -107,6 +107,16 @@ public class tbllog_advisers extends BaseLog{
 	this.log_time = log_time;
 	}
 
+	private Long remain_num = 0l ;
+
+	public Long getRemain_num() {
+		return remain_num;
+	}
+
+	public void setRemain_num(Long remain_num) {
+		this.remain_num = remain_num;
+	}
+
 	public tbllog_advisers() {
 	}
 
