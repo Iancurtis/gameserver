@@ -1,0 +1,15 @@
+{
+ "1" : {"ID" : 1 ,"type" : 1 ,"opentype" : 1 ,"condition" : 0 ,"initlevel" : 1  },
+ "2" : {"ID" : 2 ,"type" : 9 ,"opentype" : 1 ,"condition" : 0 ,"initlevel" : 1  },
+ "3" : {"ID" : 3 ,"type" : 9 ,"opentype" : 1 ,"condition" : 0 ,"initlevel" : 0  },
+ "4" : {"ID" : 4 ,"type" : 10 ,"opentype" : 1 ,"condition" : 0 ,"initlevel" : 0  },
+ "6" : {"ID" : 6 ,"type" : 13 ,"opentype" : 1 ,"condition" : 0 ,"initlevel" : 0  },
+ "7" : {"ID" : 7 ,"type" : 14 ,"opentype" : 1 ,"condition" : 18 ,"initlevel" : 0  },
+ "8" : {"ID" : 8 ,"type" : 15 ,"opentype" : 1 ,"condition" : 0 ,"initlevel" : 0  },
+ "9" : {"ID" : 9 ,"type" : 7 ,"opentype" : 1 ,"condition" : 6 ,"initlevel" : 0  },
+ "10" : {"ID" : 10 ,"type" : 7 ,"opentype" : 1 ,"condition" : 13 ,"initlevel" : 0  },
+ "11" : {"ID" : 11 ,"type" : 11 ,"opentype" : 1 ,"condition" : 7 ,"initlevel" : 0  },
+ "12" : {"ID" : 12 ,"type" : 8 ,"opentype" : 1 ,"condition" : 0 ,"initlevel" : 0  },
+ "13" : {"ID" : 13 ,"type" : 16 ,"opentype" : 1 ,"condition" : 15 ,"initlevel" : 0  },
+ "14" : {"ID" : 14 ,"type" : 17 ,"opentype" : 1 ,"condition" : 10 ,"initlevel" : 1  }
+}

@@ -1,0 +1,5 @@
+{
+ "1" : {"ID" : 1 ,"type" : 1 ,"level" : 10 ,"time" : 5 ,"starNum" : 36 ,"star1" : 12 ,"rewardId1" : [171] ,"star2" : 24 ,"rewardId2" : [172] ,"star3" : 36 ,"rewardId3" : [173]  },
+ "2" : {"ID" : 2 ,"type" : 2 ,"level" : 18 ,"time" : 5 ,"starNum" : 36 ,"star1" : 12 ,"rewardId1" : [174,175] ,"star2" : 24 ,"rewardId2" : [176,177] ,"star3" : 36 ,"rewardId3" : [178]  },
+ "4" : {"ID" : 4 ,"type" : 4 ,"level" : 35 ,"time" : 5 ,"starNum" : 0 ,"star1" : 0 ,"rewardId1" : [] ,"star2" : 0 ,"rewardId2" : [] ,"star3" : 0 ,"rewardId3" : []  }
+}

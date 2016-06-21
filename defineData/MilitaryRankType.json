@@ -1,0 +1,19 @@
+{
+ "1" : {"ID" : 1 ,"name" : "主簿" ,"captainLv" : 5 ,"crysneed" : 2000 ,"prestige" : 50  },
+ "2" : {"ID" : 2 ,"name" : "治中从事" ,"captainLv" : 10 ,"crysneed" : 12000 ,"prestige" : 100  },
+ "3" : {"ID" : 3 ,"name" : "长史" ,"captainLv" : 15 ,"crysneed" : 60000 ,"prestige" : 150  },
+ "4" : {"ID" : 4 ,"name" : "御史中丞" ,"captainLv" : 20 ,"crysneed" : 240000 ,"prestige" : 200  },
+ "5" : {"ID" : 5 ,"name" : "尚书僕射" ,"captainLv" : 25 ,"crysneed" : 720000 ,"prestige" : 250  },
+ "6" : {"ID" : 6 ,"name" : "光禄大夫" ,"captainLv" : 30 ,"crysneed" : 1800000 ,"prestige" : 300  },
+ "7" : {"ID" : 7 ,"name" : "少府" ,"captainLv" : 35 ,"crysneed" : 3600000 ,"prestige" : 350  },
+ "8" : {"ID" : 8 ,"name" : "大司农" ,"captainLv" : 40 ,"crysneed" : 5400000 ,"prestige" : 400  },
+ "9" : {"ID" : 9 ,"name" : "大鸿胪" ,"captainLv" : 45 ,"crysneed" : 8100000 ,"prestige" : 450  },
+ "10" : {"ID" : 10 ,"name" : "廷尉" ,"captainLv" : 50 ,"crysneed" : 12150000 ,"prestige" : 500  },
+ "11" : {"ID" : 11 ,"name" : "卫尉" ,"captainLv" : 55 ,"crysneed" : 18000000 ,"prestige" : 550  },
+ "12" : {"ID" : 12 ,"name" : "光禄勋" ,"captainLv" : 60 ,"crysneed" : 24000000 ,"prestige" : 600  },
+ "13" : {"ID" : 13 ,"name" : "太傅" ,"captainLv" : 65 ,"crysneed" : 30000000 ,"prestige" : 650  },
+ "14" : {"ID" : 14 ,"name" : "司空" ,"captainLv" : 70 ,"crysneed" : 40000000 ,"prestige" : 700  },
+ "15" : {"ID" : 15 ,"name" : "司徒" ,"captainLv" : 75 ,"crysneed" : 100000000 ,"prestige" : 750  },
+ "16" : {"ID" : 16 ,"name" : "大司马" ,"captainLv" : 80 ,"crysneed" : 400000000 ,"prestige" : 800  },
+ "17" : {"ID" : 17 ,"name" : "丞相" ,"captainLv" : 0 ,"crysneed" : 800000000 ,"prestige" : 850  }
+}

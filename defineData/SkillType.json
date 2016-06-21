@@ -1,0 +1,14 @@
+{
+ "1" : {"ID" : 1 ,"tanktype" : 0 ,"lvLimit" : 80 ,"property" : [4,100]  },
+ "2" : {"ID" : 2 ,"tanktype" : 0 ,"lvLimit" : 80 ,"property" : [5,100]  },
+ "3" : {"ID" : 3 ,"tanktype" : 0 ,"lvLimit" : 80 ,"property" : [6,100]  },
+ "4" : {"ID" : 4 ,"tanktype" : 0 ,"lvLimit" : 80 ,"property" : [7,100]  },
+ "5" : {"ID" : 5 ,"tanktype" : 2 ,"lvLimit" : 80 ,"property" : [14,100]  },
+ "6" : {"ID" : 6 ,"tanktype" : 1 ,"lvLimit" : 80 ,"property" : [16,100]  },
+ "7" : {"ID" : 7 ,"tanktype" : 3 ,"lvLimit" : 80 ,"property" : [18,100]  },
+ "8" : {"ID" : 8 ,"tanktype" : 4 ,"lvLimit" : 80 ,"property" : [20,100]  },
+ "9" : {"ID" : 9 ,"tanktype" : 2 ,"lvLimit" : 80 ,"property" : [13,100]  },
+ "10" : {"ID" : 10 ,"tanktype" : 1 ,"lvLimit" : 80 ,"property" : [15,100]  },
+ "11" : {"ID" : 11 ,"tanktype" : 3 ,"lvLimit" : 80 ,"property" : [17,100]  },
+ "12" : {"ID" : 12 ,"tanktype" : 4 ,"lvLimit" : 80 ,"property" : [19,100]  }
+}

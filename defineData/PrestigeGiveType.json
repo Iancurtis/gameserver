@@ -1,0 +1,6 @@
+{
+ "1" : {"ID" : 1 ,"type" : 1 ,"prestige" : 10 ,"price" : [201,1000]  },
+ "2" : {"ID" : 2 ,"type" : 2 ,"prestige" : 100 ,"price" : [206,10]  },
+ "3" : {"ID" : 3 ,"type" : 3 ,"prestige" : 400 ,"price" : [206,40]  },
+ "4" : {"ID" : 4 ,"type" : 4 ,"prestige" : 1200 ,"price" : [206,100]  }
+}

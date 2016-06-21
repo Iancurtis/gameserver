@@ -1,0 +1,7 @@
+{
+ "1" : {"ID" : 1 ,"activeneed" : 20 ,"fixreward" : [244]  },
+ "2" : {"ID" : 2 ,"activeneed" : 40 ,"fixreward" : [245]  },
+ "3" : {"ID" : 3 ,"activeneed" : 60 ,"fixreward" : [246]  },
+ "4" : {"ID" : 4 ,"activeneed" : 80 ,"fixreward" : [246]  },
+ "5" : {"ID" : 5 ,"activeneed" : 100 ,"fixreward" : [247,248]  }
+}

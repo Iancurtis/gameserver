@@ -1,0 +1,19 @@
+{
+ "1" : {"ID" : 1 ,"scienceType" : 1 ,"reqSCenterLv" : 1 ,"maxLevel" : 80 ,"property" : [[70,5]]  },
+ "2" : {"ID" : 2 ,"scienceType" : 2 ,"reqSCenterLv" : 2 ,"maxLevel" : 80 ,"property" : [[13,500]]  },
+ "3" : {"ID" : 3 ,"scienceType" : 3 ,"reqSCenterLv" : 3 ,"maxLevel" : 80 ,"property" : [[14,500]]  },
+ "4" : {"ID" : 4 ,"scienceType" : 4 ,"reqSCenterLv" : 4 ,"maxLevel" : 80 ,"property" : [[72,5]]  },
+ "5" : {"ID" : 5 ,"scienceType" : 5 ,"reqSCenterLv" : 5 ,"maxLevel" : 80 ,"property" : [[15,500]]  },
+ "6" : {"ID" : 6 ,"scienceType" : 6 ,"reqSCenterLv" : 6 ,"maxLevel" : 80 ,"property" : [[16,500]]  },
+ "7" : {"ID" : 7 ,"scienceType" : 7 ,"reqSCenterLv" : 7 ,"maxLevel" : 80 ,"property" : [[71,5]]  },
+ "8" : {"ID" : 8 ,"scienceType" : 8 ,"reqSCenterLv" : 8 ,"maxLevel" : 80 ,"property" : [[17,500]]  },
+ "9" : {"ID" : 9 ,"scienceType" : 9 ,"reqSCenterLv" : 9 ,"maxLevel" : 80 ,"property" : [[18,500]]  },
+ "10" : {"ID" : 10 ,"scienceType" : 10 ,"reqSCenterLv" : 10 ,"maxLevel" : 80 ,"property" : [[73,5]]  },
+ "11" : {"ID" : 11 ,"scienceType" : 11 ,"reqSCenterLv" : 11 ,"maxLevel" : 80 ,"property" : [[19,500]]  },
+ "12" : {"ID" : 12 ,"scienceType" : 12 ,"reqSCenterLv" : 12 ,"maxLevel" : 80 ,"property" : [[20,500]]  },
+ "13" : {"ID" : 13 ,"scienceType" : 13 ,"reqSCenterLv" : 13 ,"maxLevel" : 80 ,"property" : [[76,5]]  },
+ "14" : {"ID" : 14 ,"scienceType" : 14 ,"reqSCenterLv" : 14 ,"maxLevel" : 80 ,"property" : [[69,5]]  },
+ "15" : {"ID" : 15 ,"scienceType" : 15 ,"reqSCenterLv" : 15 ,"maxLevel" : 80 ,"property" : [[68,5],[74,5]]  },
+ "16" : {"ID" : 16 ,"scienceType" : 16 ,"reqSCenterLv" : 16 ,"maxLevel" : 80 ,"property" : [[75,5]]  },
+ "17" : {"ID" : 17 ,"scienceType" : 17 ,"reqSCenterLv" : 17 ,"maxLevel" : 80 ,"property" : [[23,500]]  }
+}

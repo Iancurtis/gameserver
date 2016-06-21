@@ -1,0 +1,5 @@
+{
+ "1" : {"ID" : 1 ,"type" : 1 ,"price" : 20 ,"freetime" : 240 ,"freetotal" : 3 ,"freemax" : 5 ,"ruleID" : 1 ,"purpletime" : 0 ,"purpleID" : 0  },
+ "2" : {"ID" : 2 ,"type" : 2 ,"price" : 100 ,"freetime" : 1440 ,"freetotal" : 1 ,"freemax" : 1 ,"ruleID" : 2 ,"purpletime" : 0 ,"purpleID" : 0  },
+ "3" : {"ID" : 3 ,"type" : 3 ,"price" : 300 ,"freetime" : 2880 ,"freetotal" : 1 ,"freemax" : 1 ,"ruleID" : 3 ,"purpletime" : 9 ,"purpleID" : 5  }
+}

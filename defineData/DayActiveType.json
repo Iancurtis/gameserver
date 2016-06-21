@@ -1,0 +1,19 @@
+{
+ "201" : {"ID" : 201 ,"type" : 1 ,"stype" : 3 ,"finishcond1" : 0 ,"finishcond2" : 10 ,"reward" : [255] ,"opencond" : 0  },
+ "202" : {"ID" : 202 ,"type" : 1 ,"stype" : 16 ,"finishcond1" : 0 ,"finishcond2" : 5 ,"reward" : [254] ,"opencond" : 0  },
+ "203" : {"ID" : 203 ,"type" : 1 ,"stype" : 17 ,"finishcond1" : 0 ,"finishcond2" : 5 ,"reward" : [254] ,"opencond" : 18  },
+ "204" : {"ID" : 204 ,"type" : 1 ,"stype" : 18 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [251] ,"opencond" : 35  },
+ "206" : {"ID" : 206 ,"type" : 1 ,"stype" : 15 ,"finishcond1" : 0 ,"finishcond2" : 5 ,"reward" : [254] ,"opencond" : 15  },
+ "207" : {"ID" : 207 ,"type" : 1 ,"stype" : 4 ,"finishcond1" : 0 ,"finishcond2" : 2 ,"reward" : [253] ,"opencond" : 0  },
+ "208" : {"ID" : 208 ,"type" : 1 ,"stype" : 20 ,"finishcond1" : 0 ,"finishcond2" : 2 ,"reward" : [252] ,"opencond" : 0  },
+ "209" : {"ID" : 209 ,"type" : 1 ,"stype" : 21 ,"finishcond1" : 0 ,"finishcond2" : 10 ,"reward" : [253] ,"opencond" : 10  },
+ "212" : {"ID" : 212 ,"type" : 1 ,"stype" : 24 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [250] ,"opencond" : 10  },
+ "213" : {"ID" : 213 ,"type" : 1 ,"stype" : 25 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [251] ,"opencond" : 10  },
+ "214" : {"ID" : 214 ,"type" : 1 ,"stype" : 26 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [249] ,"opencond" : 0  },
+ "215" : {"ID" : 215 ,"type" : 1 ,"stype" : 14 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [249] ,"opencond" : 0  },
+ "216" : {"ID" : 216 ,"type" : 1 ,"stype" : 27 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [249] ,"opencond" : 18  },
+ "219" : {"ID" : 219 ,"type" : 1 ,"stype" : 12 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [250] ,"opencond" : 0  },
+ "220" : {"ID" : 220 ,"type" : 1 ,"stype" : 13 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [250] ,"opencond" : 0  },
+ "221" : {"ID" : 221 ,"type" : 1 ,"stype" : 8 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [250] ,"opencond" : 0  },
+ "222" : {"ID" : 222 ,"type" : 1 ,"stype" : 11 ,"finishcond1" : 0 ,"finishcond2" : 1 ,"reward" : [253] ,"opencond" : 0  }
+}

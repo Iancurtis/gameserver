@@ -1,0 +1,20 @@
+{
+ "1" : {"ID" : 1 ,"type" : 1 ,"typesheet" : 1 ,"prospeeditem" : [] ,"power" : []  },
+ "2" : {"ID" : 2 ,"type" : 2 ,"typesheet" : 1 ,"prospeeditem" : [] ,"power" : []  },
+ "3" : {"ID" : 3 ,"type" : 3 ,"typesheet" : 1 ,"prospeeditem" : [] ,"power" : []  },
+ "4" : {"ID" : 4 ,"type" : 4 ,"typesheet" : 1 ,"prospeeditem" : [] ,"power" : []  },
+ "5" : {"ID" : 5 ,"type" : 5 ,"typesheet" : 1 ,"prospeeditem" : [] ,"power" : []  },
+ "6" : {"ID" : 6 ,"type" : 6 ,"typesheet" : 1 ,"prospeeditem" : [] ,"power" : []  },
+ "7" : {"ID" : 7 ,"type" : 7 ,"typesheet" : 1 ,"prospeeditem" : [] ,"power" : []  },
+ "8" : {"ID" : 8 ,"type" : 8 ,"typesheet" : 2 ,"prospeeditem" : [3151,3152,3153] ,"power" : [77]  },
+ "9" : {"ID" : 9 ,"type" : 9 ,"typesheet" : 2 ,"prospeeditem" : [3141,3142,3143] ,"power" : [82]  },
+ "10" : {"ID" : 10 ,"type" : 10 ,"typesheet" : 2 ,"prospeeditem" : [3141,3142,3143] ,"power" : [83]  },
+ "11" : {"ID" : 11 ,"type" : 11 ,"typesheet" : 2 ,"prospeeditem" : [] ,"power" : []  },
+ "12" : {"ID" : 12 ,"type" : 12 ,"typesheet" : 0 ,"prospeeditem" : [] ,"power" : []  },
+ "13" : {"ID" : 13 ,"type" : 13 ,"typesheet" : 0 ,"prospeeditem" : [] ,"power" : []  },
+ "14" : {"ID" : 14 ,"type" : 14 ,"typesheet" : 0 ,"prospeeditem" : [] ,"power" : []  },
+ "15" : {"ID" : 15 ,"type" : 15 ,"typesheet" : 0 ,"prospeeditem" : [] ,"power" : []  },
+ "16" : {"ID" : 16 ,"type" : 16 ,"typesheet" : 0 ,"prospeeditem" : [] ,"power" : []  },
+ "17" : {"ID" : 17 ,"type" : 17 ,"typesheet" : 0 ,"prospeeditem" : [] ,"power" : []  },
+ "18" : {"ID" : 18 ,"type" : 18 ,"typesheet" : 0 ,"prospeeditem" : [] ,"power" : []  }
+}

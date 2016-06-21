@@ -1,0 +1,7 @@
+{
+ "1" : {"ID" : 1 ,"level" : 1 ,"contrnum" : 0 ,"scoretimes" : 100 ,"resrate" : 0 ,"activeneed" : 500 ,"dailydeduct" : 50  },
+ "2" : {"ID" : 2 ,"level" : 2 ,"contrnum" : 0 ,"scoretimes" : 100 ,"resrate" : 2 ,"activeneed" : 2500 ,"dailydeduct" : 200  },
+ "3" : {"ID" : 3 ,"level" : 3 ,"contrnum" : 1 ,"scoretimes" : 300 ,"resrate" : 4 ,"activeneed" : 5500 ,"dailydeduct" : 300  },
+ "4" : {"ID" : 4 ,"level" : 4 ,"contrnum" : 1 ,"scoretimes" : 400 ,"resrate" : 6 ,"activeneed" : 9500 ,"dailydeduct" : 400  },
+ "5" : {"ID" : 5 ,"level" : 5 ,"contrnum" : 1 ,"scoretimes" : 500 ,"resrate" : 10 ,"activeneed" : 120000 ,"dailydeduct" : 600  }
+}

@@ -1,0 +1,11 @@
+{
+ "1" : {"ID" : 1 ,"rewardgroup1" : 10001 ,"numsec" : [8,8] ,"rewardgroup2" : 10001 ,"totalnum" : 8  },
+ "2" : {"ID" : 2 ,"rewardgroup1" : 10002 ,"numsec" : [8,8] ,"rewardgroup2" : 10002 ,"totalnum" : 8  },
+ "3" : {"ID" : 3 ,"rewardgroup1" : 10003 ,"numsec" : [8,8] ,"rewardgroup2" : 10003 ,"totalnum" : 8  },
+ "4" : {"ID" : 4 ,"rewardgroup1" : 10003 ,"numsec" : [8,8] ,"rewardgroup2" : 10003 ,"totalnum" : 8  },
+ "5" : {"ID" : 5 ,"rewardgroup1" : 10004 ,"numsec" : [8,8] ,"rewardgroup2" : 10004 ,"totalnum" : 8  },
+ "6" : {"ID" : 6 ,"rewardgroup1" : 10011 ,"numsec" : [9,9] ,"rewardgroup2" : 10011 ,"totalnum" : 8  },
+ "7" : {"ID" : 7 ,"rewardgroup1" : 10012 ,"numsec" : [9,9] ,"rewardgroup2" : 10012 ,"totalnum" : 8  },
+ "8" : {"ID" : 8 ,"rewardgroup1" : 10013 ,"numsec" : [8,8] ,"rewardgroup2" : 10013 ,"totalnum" : 8  },
+ "9" : {"ID" : 9 ,"rewardgroup1" : 10014 ,"numsec" : [8,8] ,"rewardgroup2" : 10014 ,"totalnum" : 8  }
+}

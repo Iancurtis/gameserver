@@ -1,0 +1,21 @@
+{
+ "1" : {"ID" : 1 ,"boomlv" : 0 ,"numneed" : 0 ,"nummax" : 599 ,"command" : 0 ,"boomAddRate" : 100 ,"estExpAddRate" : 0 ,"BaseLook" : 52  },
+ "2" : {"ID" : 2 ,"boomlv" : 1 ,"numneed" : 600 ,"nummax" : 1199 ,"command" : 5 ,"boomAddRate" : 110 ,"estExpAddRate" : 0 ,"BaseLook" : 53  },
+ "3" : {"ID" : 3 ,"boomlv" : 2 ,"numneed" : 1200 ,"nummax" : 1799 ,"command" : 10 ,"boomAddRate" : 120 ,"estExpAddRate" : 0 ,"BaseLook" : 53  },
+ "4" : {"ID" : 4 ,"boomlv" : 3 ,"numneed" : 1800 ,"nummax" : 2399 ,"command" : 15 ,"boomAddRate" : 130 ,"estExpAddRate" : 0 ,"BaseLook" : 53  },
+ "5" : {"ID" : 5 ,"boomlv" : 4 ,"numneed" : 2400 ,"nummax" : 2999 ,"command" : 25 ,"boomAddRate" : 140 ,"estExpAddRate" : 0 ,"BaseLook" : 53  },
+ "6" : {"ID" : 6 ,"boomlv" : 5 ,"numneed" : 3000 ,"nummax" : 3599 ,"command" : 35 ,"boomAddRate" : 150 ,"estExpAddRate" : 0 ,"BaseLook" : 54  },
+ "7" : {"ID" : 7 ,"boomlv" : 6 ,"numneed" : 3600 ,"nummax" : 4199 ,"command" : 45 ,"boomAddRate" : 160 ,"estExpAddRate" : 0 ,"BaseLook" : 54  },
+ "8" : {"ID" : 8 ,"boomlv" : 7 ,"numneed" : 4200 ,"nummax" : 4799 ,"command" : 60 ,"boomAddRate" : 170 ,"estExpAddRate" : 0 ,"BaseLook" : 54  },
+ "9" : {"ID" : 9 ,"boomlv" : 8 ,"numneed" : 4800 ,"nummax" : 5399 ,"command" : 75 ,"boomAddRate" : 180 ,"estExpAddRate" : 0 ,"BaseLook" : 54  },
+ "10" : {"ID" : 10 ,"boomlv" : 9 ,"numneed" : 5400 ,"nummax" : 5999 ,"command" : 90 ,"boomAddRate" : 190 ,"estExpAddRate" : 5 ,"BaseLook" : 55  },
+ "11" : {"ID" : 11 ,"boomlv" : 10 ,"numneed" : 6000 ,"nummax" : 6999 ,"command" : 110 ,"boomAddRate" : 200 ,"estExpAddRate" : 10 ,"BaseLook" : 55  },
+ "12" : {"ID" : 12 ,"boomlv" : 11 ,"numneed" : 7000 ,"nummax" : 7999 ,"command" : 110 ,"boomAddRate" : 210 ,"estExpAddRate" : 20 ,"BaseLook" : 55  },
+ "13" : {"ID" : 13 ,"boomlv" : 12 ,"numneed" : 8000 ,"nummax" : 8999 ,"command" : 110 ,"boomAddRate" : 220 ,"estExpAddRate" : 30 ,"BaseLook" : 55  },
+ "14" : {"ID" : 14 ,"boomlv" : 13 ,"numneed" : 9000 ,"nummax" : 9999 ,"command" : 110 ,"boomAddRate" : 229 ,"estExpAddRate" : 40 ,"BaseLook" : 56  },
+ "15" : {"ID" : 15 ,"boomlv" : 14 ,"numneed" : 10000 ,"nummax" : 11499 ,"command" : 110 ,"boomAddRate" : 240 ,"estExpAddRate" : 50 ,"BaseLook" : 56  },
+ "16" : {"ID" : 16 ,"boomlv" : 15 ,"numneed" : 11500 ,"nummax" : 12999 ,"command" : 110 ,"boomAddRate" : 250 ,"estExpAddRate" : 60 ,"BaseLook" : 56  },
+ "17" : {"ID" : 17 ,"boomlv" : 16 ,"numneed" : 13000 ,"nummax" : 14499 ,"command" : 110 ,"boomAddRate" : 260 ,"estExpAddRate" : 70 ,"BaseLook" : 56  },
+ "18" : {"ID" : 18 ,"boomlv" : 17 ,"numneed" : 14500 ,"nummax" : 15999 ,"command" : 110 ,"boomAddRate" : 270 ,"estExpAddRate" : 80 ,"BaseLook" : 57  },
+ "19" : {"ID" : 19 ,"boomlv" : 18 ,"numneed" : 16000 ,"nummax" : 200000 ,"command" : 110 ,"boomAddRate" : 280 ,"estExpAddRate" : 90 ,"BaseLook" : 57  }
+}

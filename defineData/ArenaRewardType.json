@@ -1,0 +1,9 @@
+{
+ "1" : {"ID" : 1 ,"rankmin" : 1 ,"ranmax" : 1 ,"fixreward" : [301,308,312]  },
+ "2" : {"ID" : 2 ,"rankmin" : 2 ,"ranmax" : 2 ,"fixreward" : [302,309,313]  },
+ "3" : {"ID" : 3 ,"rankmin" : 3 ,"ranmax" : 3 ,"fixreward" : [303,310,314]  },
+ "4" : {"ID" : 4 ,"rankmin" : 4 ,"ranmax" : 10 ,"fixreward" : [304,311,315]  },
+ "5" : {"ID" : 5 ,"rankmin" : 11 ,"ranmax" : 50 ,"fixreward" : [305,316]  },
+ "6" : {"ID" : 6 ,"rankmin" : 51 ,"ranmax" : 100 ,"fixreward" : [306,317]  },
+ "7" : {"ID" : 7 ,"rankmin" : 101 ,"ranmax" : 500 ,"fixreward" : [307,318]  }
+}

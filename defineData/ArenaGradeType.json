@@ -1,0 +1,9 @@
+{
+ "1" : {"ID" : 1 ,"resulttype" : 1 ,"timemin" : 1 ,"timemax" : 5 ,"score" : 10 ,"rateward" : 251  },
+ "2" : {"ID" : 2 ,"resulttype" : 1 ,"timemin" : 6 ,"timemax" : 10 ,"score" : 12 ,"rateward" : 251  },
+ "3" : {"ID" : 3 ,"resulttype" : 1 ,"timemin" : 11 ,"timemax" : 20 ,"score" : 14 ,"rateward" : 251  },
+ "4" : {"ID" : 4 ,"resulttype" : 1 ,"timemin" : 21 ,"timemax" : 50 ,"score" : 16 ,"rateward" : 251  },
+ "5" : {"ID" : 5 ,"resulttype" : 1 ,"timemin" : 51 ,"timemax" : 100 ,"score" : 18 ,"rateward" : 251  },
+ "6" : {"ID" : 6 ,"resulttype" : 1 ,"timemin" : 101 ,"timemax" : 9999 ,"score" : 20 ,"rateward" : 251  },
+ "7" : {"ID" : 7 ,"resulttype" : 2 ,"timemin" : 0 ,"timemax" : 0 ,"score" : 5 ,"rateward" : 252  }
+}

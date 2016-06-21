@@ -1,0 +1,12 @@
+{
+ "203" : {"id" : 203 ,"icon" : 203 ,"type" : 1 ,"useneed" : [] ,"gender" : 2  },
+ "101" : {"id" : 101 ,"icon" : 101 ,"type" : 1 ,"useneed" : [] ,"gender" : 1  },
+ "102" : {"id" : 102 ,"icon" : 102 ,"type" : 1 ,"useneed" : [] ,"gender" : 1  },
+ "103" : {"id" : 103 ,"icon" : 103 ,"type" : 1 ,"useneed" : [] ,"gender" : 1  },
+ "104" : {"id" : 104 ,"icon" : 104 ,"type" : 2 ,"useneed" : [114,5] ,"gender" : 1  },
+ "105" : {"id" : 105 ,"icon" : 105 ,"type" : 2 ,"useneed" : [114,5] ,"gender" : 1  },
+ "106" : {"id" : 106 ,"icon" : 106 ,"type" : 2 ,"useneed" : [114,5] ,"gender" : 1  },
+ "107" : {"id" : 107 ,"icon" : 107 ,"type" : 2 ,"useneed" : [114,5] ,"gender" : 1  },
+ "201" : {"id" : 201 ,"icon" : 201 ,"type" : 1 ,"useneed" : [] ,"gender" : 2  },
+ "202" : {"id" : 202 ,"icon" : 202 ,"type" : 1 ,"useneed" : [] ,"gender" : 2  }
+}

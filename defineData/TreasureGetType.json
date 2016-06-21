@@ -1,0 +1,4 @@
+{
+ "1" : {"ID" : 1 ,"type" : 1 ,"consume" : [4014,1] ,"goldprice" : 15 ,"freetime" : 4 ,"freemax" : 1 ,"ruleID" : 6  },
+ "2" : {"ID" : 2 ,"type" : 2 ,"consume" : [4014,3] ,"goldprice" : 15 ,"freetime" : -1 ,"freemax" : 0 ,"ruleID" : 7  }
+}

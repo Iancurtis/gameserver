@@ -1,0 +1,57 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{ISO8601} [%thread] %-5level %logger{36} %X{akkaSource} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Prudent>false</Prudent>
+        <file>logs/debug.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/debug/game-%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{ISO8601} [%thread] %-5level %logger{36} [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="STAT_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/temp.log</file>
+        <Prudent>false</Prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- %d{yyyy-MM-dd}/-->
+            <fileNamePattern>logs/stat/game-%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 数据中心的日志-->
+    <appender name="DATA_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/temp_data.log</file>
+        <Prudent>false</Prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/data/data-%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.znl.server" level="INFO" />
+
+    <logger name="com.znl.log.FlumeLog" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="STAT_LOG_FILE" />
+    </logger>
+
+    <logger name="com.znl.service.LogService" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="DATA_LOG_FILE" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

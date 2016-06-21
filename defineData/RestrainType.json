@@ -1,0 +1,14 @@
+{
+ "1" : {"ID" : 1 ,"restraintype" : 1 ,"lv" : 1 ,"Atanktype" : 2 ,"AtankID" : 0 ,"Dtanktype" : 4 ,"DtankID" : 0 ,"damRate" : 125  },
+ "2" : {"ID" : 2 ,"restraintype" : 2 ,"lv" : 2 ,"Atanktype" : 4 ,"AtankID" : 0 ,"Dtanktype" : 2 ,"DtankID" : 0 ,"damRate" : 70  },
+ "3" : {"ID" : 3 ,"restraintype" : 3 ,"lv" : 1 ,"Atanktype" : 1 ,"AtankID" : 0 ,"Dtanktype" : 2 ,"DtankID" : 0 ,"damRate" : 125  },
+ "4" : {"ID" : 4 ,"restraintype" : 4 ,"lv" : 1 ,"Atanktype" : 1 ,"AtankID" : 0 ,"Dtanktype" : 3 ,"DtankID" : 0 ,"damRate" : 80  },
+ "5" : {"ID" : 5 ,"restraintype" : 5 ,"lv" : 1 ,"Atanktype" : 1 ,"AtankID" : 209 ,"Dtanktype" : 4 ,"DtankID" : 409 ,"damRate" : 125  },
+ "6" : {"ID" : 6 ,"restraintype" : 6 ,"lv" : 1 ,"Atanktype" : 3 ,"AtankID" : 0 ,"Dtanktype" : 1 ,"DtankID" : 0 ,"damRate" : 125  },
+ "7" : {"ID" : 7 ,"restraintype" : 7 ,"lv" : 1 ,"Atanktype" : 3 ,"AtankID" : 0 ,"Dtanktype" : 4 ,"DtankID" : 0 ,"damRate" : 80  },
+ "8" : {"ID" : 8 ,"restraintype" : 8 ,"lv" : 1 ,"Atanktype" : 3 ,"AtankID" : 309 ,"Dtanktype" : 4 ,"DtankID" : 407 ,"damRate" : 80  },
+ "9" : {"ID" : 9 ,"restraintype" : 9 ,"lv" : 1 ,"Atanktype" : 3 ,"AtankID" : 309 ,"Dtanktype" : 4 ,"DtankID" : 408 ,"damRate" : 80  },
+ "10" : {"ID" : 10 ,"restraintype" : 10 ,"lv" : 1 ,"Atanktype" : 3 ,"AtankID" : 309 ,"Dtanktype" : 4 ,"DtankID" : 409 ,"damRate" : 80  },
+ "11" : {"ID" : 11 ,"restraintype" : 11 ,"lv" : 1 ,"Atanktype" : 4 ,"AtankID" : 0 ,"Dtanktype" : 3 ,"DtankID" : 0 ,"damRate" : 125  },
+ "12" : {"ID" : 12 ,"restraintype" : 2 ,"lv" : 1 ,"Atanktype" : 4 ,"AtankID" : 0 ,"Dtanktype" : 2 ,"DtankID" : 0 ,"damRate" : 80  }
+}

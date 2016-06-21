@@ -1,0 +1,15 @@
+{
+ "1" : {"ID" : 1 ,"page" : 1 ,"sort" : 1 ,"type" : 401 ,"typeID" : 3301 ,"num" : 1 ,"scoreprice" : 280  },
+ "2" : {"ID" : 2 ,"page" : 1 ,"sort" : 2 ,"type" : 401 ,"typeID" : 3092 ,"num" : 1 ,"scoreprice" : 168  },
+ "3" : {"ID" : 3 ,"page" : 1 ,"sort" : 3 ,"type" : 401 ,"typeID" : 3102 ,"num" : 1 ,"scoreprice" : 168  },
+ "4" : {"ID" : 4 ,"page" : 1 ,"sort" : 4 ,"type" : 401 ,"typeID" : 3112 ,"num" : 1 ,"scoreprice" : 168  },
+ "5" : {"ID" : 5 ,"page" : 1 ,"sort" : 5 ,"type" : 401 ,"typeID" : 3122 ,"num" : 1 ,"scoreprice" : 168  },
+ "6" : {"ID" : 6 ,"page" : 2 ,"sort" : 1 ,"type" : 401 ,"typeID" : 3031 ,"num" : 1 ,"scoreprice" : 198  },
+ "7" : {"ID" : 7 ,"page" : 2 ,"sort" : 2 ,"type" : 401 ,"typeID" : 3041 ,"num" : 1 ,"scoreprice" : 198  },
+ "8" : {"ID" : 8 ,"page" : 2 ,"sort" : 3 ,"type" : 401 ,"typeID" : 3051 ,"num" : 1 ,"scoreprice" : 198  },
+ "9" : {"ID" : 9 ,"page" : 2 ,"sort" : 4 ,"type" : 401 ,"typeID" : 3061 ,"num" : 1 ,"scoreprice" : 198  },
+ "10" : {"ID" : 10 ,"page" : 2 ,"sort" : 5 ,"type" : 401 ,"typeID" : 3071 ,"num" : 1 ,"scoreprice" : 198  },
+ "11" : {"ID" : 11 ,"page" : 3 ,"sort" : 1 ,"type" : 401 ,"typeID" : 2004 ,"num" : 1 ,"scoreprice" : 8800  },
+ "12" : {"ID" : 12 ,"page" : 3 ,"sort" : 2 ,"type" : 401 ,"typeID" : 2003 ,"num" : 1 ,"scoreprice" : 1000  },
+ "13" : {"ID" : 13 ,"page" : 3 ,"sort" : 3 ,"type" : 401 ,"typeID" : 4017 ,"num" : 1 ,"scoreprice" : 108  }
+}

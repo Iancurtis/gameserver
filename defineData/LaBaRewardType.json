@@ -1,0 +1,22 @@
+{
+ "1" : {"ID" : 1 ,"rewardgroup" : 101 ,"typegroup" : [1,1,1] ,"reward" : [501] ,"rate" : 15  },
+ "2" : {"ID" : 2 ,"rewardgroup" : 101 ,"typegroup" : [2,2,2] ,"reward" : [502] ,"rate" : 15  },
+ "3" : {"ID" : 3 ,"rewardgroup" : 101 ,"typegroup" : [3,3,3] ,"reward" : [503] ,"rate" : 15  },
+ "4" : {"ID" : 4 ,"rewardgroup" : 101 ,"typegroup" : [4,4,4] ,"reward" : [504] ,"rate" : 15  },
+ "5" : {"ID" : 5 ,"rewardgroup" : 101 ,"typegroup" : [1,1,2] ,"reward" : [505,510] ,"rate" : 45  },
+ "6" : {"ID" : 6 ,"rewardgroup" : 101 ,"typegroup" : [1,1,3] ,"reward" : [505,511] ,"rate" : 45  },
+ "7" : {"ID" : 7 ,"rewardgroup" : 101 ,"typegroup" : [1,1,4] ,"reward" : [505,512] ,"rate" : 45  },
+ "8" : {"ID" : 8 ,"rewardgroup" : 101 ,"typegroup" : [2,2,1] ,"reward" : [506,509] ,"rate" : 45  },
+ "9" : {"ID" : 9 ,"rewardgroup" : 101 ,"typegroup" : [2,2,3] ,"reward" : [506,511] ,"rate" : 45  },
+ "10" : {"ID" : 10 ,"rewardgroup" : 101 ,"typegroup" : [2,2,4] ,"reward" : [506,512] ,"rate" : 45  },
+ "11" : {"ID" : 11 ,"rewardgroup" : 101 ,"typegroup" : [3,3,1] ,"reward" : [507,509] ,"rate" : 45  },
+ "12" : {"ID" : 12 ,"rewardgroup" : 101 ,"typegroup" : [3,3,2] ,"reward" : [507,510] ,"rate" : 45  },
+ "13" : {"ID" : 13 ,"rewardgroup" : 101 ,"typegroup" : [3,3,4] ,"reward" : [507,512] ,"rate" : 45  },
+ "14" : {"ID" : 14 ,"rewardgroup" : 101 ,"typegroup" : [4,4,1] ,"reward" : [508,509] ,"rate" : 45  },
+ "15" : {"ID" : 15 ,"rewardgroup" : 101 ,"typegroup" : [4,4,2] ,"reward" : [508,510] ,"rate" : 45  },
+ "16" : {"ID" : 16 ,"rewardgroup" : 101 ,"typegroup" : [4,4,3] ,"reward" : [508,512] ,"rate" : 45  },
+ "17" : {"ID" : 17 ,"rewardgroup" : 101 ,"typegroup" : [1,2,3] ,"reward" : [509,510,511] ,"rate" : 100  },
+ "18" : {"ID" : 18 ,"rewardgroup" : 101 ,"typegroup" : [1,2,4] ,"reward" : [509,510,512] ,"rate" : 100  },
+ "19" : {"ID" : 19 ,"rewardgroup" : 101 ,"typegroup" : [1,3,4] ,"reward" : [509,511,512] ,"rate" : 100  },
+ "20" : {"ID" : 20 ,"rewardgroup" : 101 ,"typegroup" : [2,3,4] ,"reward" : [510,511,512] ,"rate" : 100  }
+}

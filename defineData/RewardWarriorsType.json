@@ -1,0 +1,5 @@
+{
+ "101" : {"ID" : 101 ,"warriorsID" : 102 ,"num" : 10  },
+ "102" : {"ID" : 102 ,"warriorsID" : 102 ,"num" : 50  },
+ "103" : {"ID" : 103 ,"warriorsID" : 104 ,"num" : 50  }
+}
