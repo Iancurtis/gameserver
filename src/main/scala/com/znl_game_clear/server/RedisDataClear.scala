@@ -1,13 +1,14 @@
 package com.znl_game_clear.server
 
 import java.io.{InputStreamReader, BufferedReader}
+import java.sql.{Statement, SQLException}
 import java.util
 
 import akka.actor.ActorSystem
 import com.znl.base.{BaseDbPojo, BaseSetDbPojo}
-import com.znl.msg.GameMsg.{GMCommand, DelToMysql}
+import com.znl.msg.GameMsg.{LoadDone, GMCommand, DelToMysql}
 import com.znl.pojo.db.Player
-import com.znl.pojo.db.set.AccountNameSetDb
+import com.znl.pojo.db.set._
 import com.znl.proxy.DbProxy
 import com.znl.server.action.{DbActionType, DbAction}
 import com.znl.utils.{GameUtils, GetClassUtil}
@@ -23,48 +24,100 @@ object RedisDataClear extends App{
   jedisClusterNodes.add(new HostAndPort(redisIp, redisPort))
   val jc: JedisCluster = new JedisCluster(jedisClusterNodes)
 
-  var br : BufferedReader = new BufferedReader(new InputStreamReader(System.in))
-  while(true){
-    println("输入命令:<start/stop/openServer(了解更多指令)>")
-    try {
-      var str : String = br.readLine().trim().toString
-//      if (str.equals("start")) {
-//        println("服务器正在运行")
-//      }else if(str.startsWith("clearAll")){
-//        val ary : Array[String] = str.split("=")
-//        val areaKey = ary(1)
-//        RedisDataClear.clearDbData(areaKey)
-//        RedisDataClear.clearSetData(areaKey)
-//      }else if(str.startsWith("clear")){
-//        val ary : Array[String] = str.split("=")
-//        val id = ary(1).toLong
-//        val name =ary(2)
-//        clearOneDbData(id,name)
-//      }else if(str.startsWith("allRole")){
-//        val ary : Array[String] = str.split("=")
-//        val areaKey = ary(1)
-//        printAllPlayers(areaKey)
-//      }else if(str.startsWith("edit")) {
-//        val ary: Array[String] = str.split("=")
-//        val id = ary(1).toLong
-//        val name = ary(2)
-//        val editName = ary(3)
-//        val editValue = ary(4)
-//      }
-      if(str.startsWith("fix")){
+
+
+  var serverIp = new util.HashMap[Integer,java.lang.String]()
+  def initServer(): Unit ={
+//    serverIp = new util.HashMap[Integer,java.lang.String]()
+    serverIp.put(1,"10.251.28.13:4711")
+    serverIp.put(2,"10.104.67.88:4711")
+  }
+
+
+  val mysql_ip = "203.195.140.103"
+
+  val cpds = new com.alibaba.druid.pool.DruidDataSource()
+  cpds.setDriverClassName("com.mysql.jdbc.Driver")
+  cpds.setUrl("jdbc:mysql://%s/?useUnicode=true&characterEncoding=UTF-8".format(mysql_ip))
+  cpds.setUsername("root")
+  cpds.setPassword("3kwan123")
+
+  cpds.setMaxActive(20)
+  cpds.setMinIdle(1)
+  cpds.setMaxWait(60000)
+  cpds.setInitialSize(1)
+
+
+  initServer()
+  startToolServer()
+
+  def getConnection() ={
+    try{
+      cpds.getConnection
+    }catch{
+      case e:SQLException =>
+        e.printStackTrace();
+        null
+    }
+  }
+
+  def startToolServer():Unit = {
+    var br : BufferedReader = new BufferedReader(new InputStreamReader(System.in))
+    while(true){
+      println("输入命令:<start/stop/openServer(了解更多指令)>")
+      try {
+        var str : String = br.readLine().trim().toString
+        if (str.equals("start")) {
+          println("服务器正在运行")
+        }
+        else if(str.startsWith("clearAll")) {
+          val ary : Array[String] = str.split("=")
+          val areaKey = ary(1)
+          var index = 10
+          while (index>0){
+            println("clearAll 即将清除掉 areaKey="+areaKey+"的数据，误操作请赶紧CTRL+C--------------"+index)
+            index = index-1
+            Thread.sleep(1000)
+          }
+          RedisDataClear.clearDbData(areaKey)
+          RedisDataClear.clearSetData(areaKey)
+        }else if(str.startsWith("clear")){
+          val ary : Array[String] = str.split("=")
+          val id = ary(1).toLong
+          val name =ary(2)
+          var index = 5
+          while (index>0){
+            println("clear 即将清除掉 id="+id+"，name="+name+"的数据，误操作请赶紧CTRL+C--------------"+index)
+            index = index-1
+            Thread.sleep(1000)
+          }
+          clearOneDbData(id,name)
+        }else if(str.startsWith("allRole")){
+          val ary : Array[String] = str.split("=")
+          val areaKey = ary(1)
+          printAllPlayers(areaKey)
+        }else if(str.startsWith("fixClose")){
           implicit val system = ActorSystem("Admin")
-          val actor = system.actorSelection("akka.tcp://game@10.251.28.13:4711/user/root/adminServer")
+          val ary : Array[String] = str.split("=")
+          val areaId:Int= ary(1).toInt
+          var index = 10
+          while (index>0){
+            println("fixClose 即将关闭服务器 areaId="+areaId+"，误操作请赶紧CTRL+C--------------"+index)
+            index = index-1
+            Thread.sleep(1000)
+          }
+          val actor = system.actorSelection("akka.tcp://game@"+serverIp.get(areaId)+"/user/root/adminServer")
           actor ! GMCommand("stop")
-      }else if(str.startsWith("fix2")) {
-        implicit val system = ActorSystem("Admin")
-        val actor = system.actorSelection("akka.tcp://game@10.104.67.88:4711/user/root/adminServer")
-        actor ! GMCommand("stop")
-      }
-
-
-    }catch {
-      case e: Exception => {
-        e.printStackTrace()
+        }else if(str.startsWith("updateSetFromRedisToMysql")){//updateSetFromRedisToMysql=游戏服areaKey=数据库表id（GcolGame9992的9992）
+          val ary : Array[String] = str.split("=")
+          val areaKey:String= ary(1)
+          val dbId :Int = ary(2).toInt
+          updateAllDbSetToMysql(areaKey,dbId)
+        }
+      }catch {
+        case e: Exception => {
+          e.printStackTrace()
+        }
       }
     }
   }
@@ -104,6 +157,80 @@ object RedisDataClear extends App{
     val key = String.format("%s:[%d]",name,id)
     jc.del(key)
     println("清理完成"+key)
+  }
+
+  def updateAllDbSetToMysql(areaKey : String,dbId : Int): Unit ={
+    updateDbSetToMysql(areaKey,dbId,classOf[AccountNameSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[ArenaLastRankSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[ArenaRankSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[ArenaReportSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[ArmGroupSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[BillOrderSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[HelpTeamDateSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[LegionDungeoTeamSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[LimitDungeonFastSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[LimitDungeonNearSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[NoticeDateSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[PlayerRankSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[RoleNameSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[SituationDateSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[TeamDateSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[VipActSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[WorldCloseSaveReward])
+    updateDbSetToMysql(areaKey,dbId,classOf[WorldRewardSetDb])
+    updateDbSetToMysql(areaKey,dbId,classOf[WorldTileSetDb])
+  }
+
+  def updateDbSetToMysql[T <: BaseSetDbPojo](areaKey : String,dbId : Int,pojoClass: Class[T]): Unit ={
+    val setDb = getSetDbPojo(pojoClass, areaKey)
+    val table: String = GameUtils.getClassName(pojoClass)
+    val keys = setDb.getAllKey
+    val sqlList = new  util.ArrayList[String]()
+    var index = 0
+    val allKeySize = keys.size()//存储总数量
+    println("================开始保存"+table+"！"+index+"/"+allKeySize)
+    for (key : String <- keys){
+      index = index+1
+      val value =setDb.getValueByKey(key)
+      val formatStr = "replace into %s(set_key, set_value) values (\"%s\", "+value+");"
+      val sql : String = formatStr.format("GcolGame"+dbId+"."+table, key)
+      sqlList.add(sql)
+      if(index % 100 == 0){
+        //每一百条保存一下
+        loadToMysql(sqlList)
+        sqlList.clear()
+        println("当前保存进度："+index+"/"+allKeySize)
+        Thread.sleep(100)
+      }
+    }
+    //保存到mysql
+    loadToMysql(sqlList)
+    println("当前保存进度："+index+"/"+allKeySize)
+    Thread.sleep(1000)
+    println("================保存"+table+"完成！"+index+"/"+allKeySize)
+  }
+
+  //保存到mysql的方法
+  def loadToMysql(sqlList :util.ArrayList[String]): Unit ={
+    val conn = getConnection()
+    var statement: Statement = null
+    try{
+      statement = conn.createStatement()
+      for (sql <- sqlList){
+        statement.addBatch(sql)
+      }
+      statement.executeBatch()
+    }catch{
+      case e:Exception =>
+        e.printStackTrace()
+    }finally {
+      if(statement != null){
+        statement.close()
+      }
+      if(conn != null){
+        conn.close()
+      }
+    }
   }
 
   def clearDbData(areaKey : String): Unit ={

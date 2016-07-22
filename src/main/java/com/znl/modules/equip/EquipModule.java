@@ -76,11 +76,7 @@ public class EquipModule extends BasicModule {
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130001, builder.build());
         if (rs == 0) {
             TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-            PlayerReward reward = new PlayerReward();
-            M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_EQUIPLVUP_TIMES, 1, reward);
-            if(builder19!=null) {
-                sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
-            }
+            taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_EQUIPLVUP_TIMES, 1);
             sendLog(baseLogs);
             /**
              * tbllog_equipment日志
@@ -96,6 +92,7 @@ public class EquipModule extends BasicModule {
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
 
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet130002Event(Request request) {
@@ -123,6 +120,7 @@ public class EquipModule extends BasicModule {
             equipProxy.initPutOnEquipNumByQuilty(4);
 
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -148,6 +146,7 @@ public class EquipModule extends BasicModule {
             updateSimplePlayerData(playerProxy.getSimplePlayer());
 
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet130005Event(Request request) {
@@ -165,6 +164,7 @@ public class EquipModule extends BasicModule {
             equipProxy.initPurpleEquipLeveNum();
 
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -183,6 +183,7 @@ public class EquipModule extends BasicModule {
             sendLog(baseLogs);
             sendFuntctionLog(FunctionIdDefine.CHANGE_EQUIP_POSITION_FUNCTION_ID,positione,positiontwo,0);
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -197,6 +198,7 @@ public class EquipModule extends BasicModule {
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130007, builder.build());
         sendLog(baseLogs);
         sendFuntctionLog(FunctionIdDefine.EQUIP_BAGS_EXTEND_FUNCTION_ID);
+        sendPushNetMsgToClient();
     }
 
 
@@ -207,6 +209,7 @@ public class EquipModule extends BasicModule {
         builder.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130100, builder.build());
         sendFuntctionLog(FunctionIdDefine.GET_ORDNANCE_PIECE_INFOS_FUNCTION_ID);
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet130101Event(Request request) {
@@ -216,6 +219,7 @@ public class EquipModule extends BasicModule {
         builder.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130101, builder.build());
         sendFuntctionLog(FunctionIdDefine.GET_ORDANCE_INFOS_FUNCTION_ID);
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet130102Event(Request request) {
@@ -228,6 +232,7 @@ public class EquipModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130102, builder.build());
         sendLog(baseLogs);
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet130103Event(Request request) {
@@ -248,6 +253,7 @@ public class EquipModule extends BasicModule {
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
         M2.M20007.S2C builder1 = rewardProxy.getRewardClientInfo(reward);
         sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, builder1);
+        sendPushNetMsgToClient();
     }
 
 
@@ -256,7 +262,7 @@ public class EquipModule extends BasicModule {
         long id = c2s.getId();
         OrdnanceProxy ordnanceProxy = getProxy(ActorDefine.ORDANCE_PROXY_NAME);
         M13.M130104.S2C.Builder builder = M13.M130104.S2C.newBuilder();
-        List<M4.M40000.S2C.Builder> builder1 = new ArrayList<M4.M40000.S2C.Builder>();
+        List<M2.M20007.S2C.Builder> builder1 = new ArrayList<M2.M20007.S2C.Builder>();
         List<BaseLog> baseLogs = new ArrayList<BaseLog>();
         int rs = ordnanceProxy.ordnanceOn(id, builder1, baseLogs, builder);
         builder.setRs(rs);
@@ -265,7 +271,7 @@ public class EquipModule extends BasicModule {
         sendM4000(builder1);
         sendLog(baseLogs);
         sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
-
+        sendPushNetMsgToClient();
     }
 
 
@@ -274,7 +280,7 @@ public class EquipModule extends BasicModule {
         long id = c2s.getId();
         OrdnanceProxy ordnanceProxy = getProxy(ActorDefine.ORDANCE_PROXY_NAME);
         M13.M130105.S2C.Builder builder = M13.M130105.S2C.newBuilder();
-        List<M4.M40000.S2C.Builder> builder1 = new ArrayList<M4.M40000.S2C.Builder>();
+        List<M2.M20007.S2C.Builder> builder1 = new ArrayList<M2.M20007.S2C.Builder>();
         List<BaseLog> baseLogs = new ArrayList<BaseLog>();
         int rs = ordnanceProxy.ordnanceOff(id, builder1, baseLogs);
         builder.setRs(rs);
@@ -283,7 +289,7 @@ public class EquipModule extends BasicModule {
         sendM4000(builder1);
         sendLog(baseLogs);
         sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
-
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet130106Event(Request request) {
@@ -302,8 +308,8 @@ public class EquipModule extends BasicModule {
         if (rs == 0) {
             sendM20007(itemlist);
             sendLog(baseLogs);
-
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet130107Event(Request request) {
@@ -313,27 +319,24 @@ public class EquipModule extends BasicModule {
         OrdnanceProxy ordnanceProxy = getProxy(ActorDefine.ORDANCE_PROXY_NAME);
         M13.M130107.S2C.Builder builder = M13.M130107.S2C.newBuilder();
         List<Integer> itemlist = new ArrayList<Integer>();
-        List<M4.M40000.S2C.Builder> builder1 = new ArrayList<M4.M40000.S2C.Builder>();
+        List<M2.M20007.S2C.Builder> builder1 = new ArrayList<M2.M20007.S2C.Builder>();
         List<BaseLog> baseLogs = new ArrayList<BaseLog>();
         int rs = ordnanceProxy.intensifyOrdnance(id, num, builder, itemlist, builder1, baseLogs);
         builder.setRs(rs);
         if (rs >= 0 || rs == -6) {
-            checkPlayerPowerValues(request.getPowerMap());
+//            checkPlayerPowerValues(request.getPowerMap());
             sendM20007(itemlist);
 
         }
         sendNetMsg(ProtocolModuleDefine.NET_M13, ProtocolModuleDefine.NET_M13_C130107, builder.build());
         if (rs == 0) {
             TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-            PlayerReward reward = new PlayerReward();
-            M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_ORNDANCESTENGTH_TIMES, 1, reward);
-            if(builder19!=null) {
-                sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
-            }
+            taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_ORNDANCESTENGTH_TIMES, 1);
             sendM4000(builder1);
             sendLog(baseLogs);
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet130108Event(Request request) {
@@ -343,12 +346,12 @@ public class EquipModule extends BasicModule {
         OrdnanceProxy ordnanceProxy = getProxy(ActorDefine.ORDANCE_PROXY_NAME);
         M13.M130108.S2C.Builder builder = M13.M130108.S2C.newBuilder();
         List<Integer> itemlist = new ArrayList<Integer>();
-        List<M4.M40000.S2C.Builder> builder1 = new ArrayList<M4.M40000.S2C.Builder>();
+        List<M2.M20007.S2C.Builder> builder1 = new ArrayList<M2.M20007.S2C.Builder>();
         List<BaseLog> baseLogs = new ArrayList<BaseLog>();
         int rs = ordnanceProxy.remouldOrndance(id, type, builder, itemlist, builder1, baseLogs);
         builder.setRs(rs);
         if (rs == 0) {
-            checkPlayerPowerValues(request.getPowerMap());
+//            checkPlayerPowerValues(request.getPowerMap());
             sendM20007(itemlist);
 
         }
@@ -358,6 +361,7 @@ public class EquipModule extends BasicModule {
             sendLog(baseLogs);
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet130109Event(Request request) {
@@ -365,14 +369,14 @@ public class EquipModule extends BasicModule {
         long id = c2s.getId();
         OrdnanceProxy ordnanceProxy = getProxy(ActorDefine.ORDANCE_PROXY_NAME);
         M13.M130109.S2C.Builder builder = M13.M130109.S2C.newBuilder();
-        List<M4.M40000.S2C.Builder> builder1 = new ArrayList<M4.M40000.S2C.Builder>();
+        List<M2.M20007.S2C.Builder> builder1 = new ArrayList<M2.M20007.S2C.Builder>();
         List<BaseLog> baseLogs = new ArrayList<BaseLog>();
         PlayerReward reward = new PlayerReward();
         int rs = ordnanceProxy.ordnanceAdvance(id, builder, reward, builder1, baseLogs);
         builder.addOdInfos(ordnanceProxy.getOrdnanceInfo(id));
         builder.setRs(rs);
         if (rs == 0) {
-            checkPlayerPowerValues(request.getPowerMap());
+//            checkPlayerPowerValues(request.getPowerMap());
             sendM20007(reward);
 
         }
@@ -382,12 +386,12 @@ public class EquipModule extends BasicModule {
             sendLog(baseLogs);
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
         }
-
+        sendPushNetMsgToClient();
     }
 
-    private void sendM4000(List<M4.M40000.S2C.Builder> builder1) {
-        for (M4.M40000.S2C.Builder builder : builder1) {
-            sendNetMsg(ProtocolModuleDefine.NET_M4, ProtocolModuleDefine.NET_M4_C40000, builder.build());
+    private void sendM4000(List<M2.M20007.S2C.Builder> builder1) {
+        for (M2.M20007.S2C.Builder builder : builder1) {
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, builder.build());
         }
     }
 

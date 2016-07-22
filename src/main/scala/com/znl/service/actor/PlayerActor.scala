@@ -23,6 +23,7 @@ import com.znl.modules.dungeo.DungeoModule
 import com.znl.modules.equip.EquipModule
 import com.znl.modules.friend.FriendModule
 import com.znl.modules.item.ItemModule
+import com.znl.modules.legiondungeo.LegionDungeoModule
 import com.znl.modules.login.LoginModule
 import com.znl.modules.lotter.LotterModule
 import com.znl.modules.mail.MailModule
@@ -97,8 +98,6 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
     soldierProxy.saveSoldier
     val itemProxy: ItemProxy = gameProxy.getProxy(ActorDefine.ITEM_PROXY_NAME)
     itemProxy.saveItems
-    val timerdbProxy: TimerdbProxy = gameProxy.getProxy(ActorDefine.TIMERDB_PROXY_NAME)
-    timerdbProxy.saveTimers
     val dungeoProxy: DungeoProxy = gameProxy.getProxy(ActorDefine.DUNGEO_PROXY_NAME)
     dungeoProxy.saveDungeo
     val resFunBuildProxy: ResFunBuildProxy = gameProxy.getProxy(ActorDefine.RESFUNBUILD_PROXY_NAME)
@@ -354,6 +353,7 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
     moduleMap += (ActorDefine.CAPACITY_MODULE_ID -> ActorDefine.CAPACITY_MODULE_NAME)
     moduleMap += (ActorDefine.ADVISER_MODULE_ID -> ActorDefine.ADVISER_MODULE_NAME)
     moduleMap += (ActorDefine.NEW_BUILD_MODULE_ID -> ActorDefine.NEW_BUILD_MODULE_NAME)
+    moduleMap += (ActorDefine.LEGION_DUNGEO_MODULE_ID -> ActorDefine.LEGION_DUNGEO_MODULE_NAME)
   }
 
   //开始登陆模块，进行校验，校验完成后，才会启动所有的模块
@@ -391,6 +391,7 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
     context.watch(context.actorOf(CapacityModule.props(gameProxy),ActorDefine.CAPACITY_MODULE_NAME))
     context.watch(context.actorOf(AdviserModule.props(gameProxy),ActorDefine.ADVISER_MODULE_NAME))
     context.watch(context.actorOf(NewBuildModule.props(gameProxy),ActorDefine.NEW_BUILD_MODULE_NAME))
+    context.watch(context.actorOf(LegionDungeoModule.props(gameProxy),ActorDefine.LEGION_DUNGEO_MODULE_NAME))
     getModuleRef(ActorDefine.ROLE_MODULE_NAME) ! InitSendRoleInfo()  //模块全部启动完毕，发送角色信息 通知客户端 进入游戏
 //    getModuleRef(ActorDefine.CAPACITY_MODULE_NAME) ! LoginInitCapacity()//启动的时候重算一下战斗力
   }

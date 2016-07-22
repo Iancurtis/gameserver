@@ -59,6 +59,7 @@ public class SkillModule extends BasicModule {
         s2c.addAllSkillInfos(skillProxy.getAllSkillInfo());
         s2c.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M12, ProtocolModuleDefine.NET_M12_C120000, s2c.build());
+        sendPushNetMsgToClient();
     }
 
     /**
@@ -77,8 +78,6 @@ public class SkillModule extends BasicModule {
         s2c.setSkillInfo(skillProxy.getSkillInfo(skillId));
         sendNetMsg(ProtocolModuleDefine.NET_M12, ProtocolModuleDefine.NET_M12_C120001, s2c.build());
         if (rs == 0) {// 向客户端推送道具刷新
-            GameMsg.SystemTimer message = new GameMsg.SystemTimer();
-//            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message);//2016/04/11屏蔽发送
             if (itemList.size() > 0) {
                 RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
                 M2.M20007.S2C msg = rewardProxy.getItemListClientInfo(itemList);
@@ -90,6 +89,7 @@ public class SkillModule extends BasicModule {
            }
 
         }
+        sendPushNetMsgToClient();
     }
 
     /**
@@ -104,8 +104,6 @@ public class SkillModule extends BasicModule {
         s2c.addAllSkillInfo(skillProxy.getAllSkillInfo());
         sendNetMsg(ProtocolModuleDefine.NET_M12, ProtocolModuleDefine.NET_M12_C120002, s2c.build());
         if (rs == 0) {// 向客户端推送道具刷新
-            GameMsg.SystemTimer message = new GameMsg.SystemTimer();
-//            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message);//2016/04/11屏蔽发送
             if (itemList.size() > 0) {
                 RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
                 M2.M20007.S2C msg = rewardProxy.getItemListClientInfo(itemList);
@@ -115,7 +113,9 @@ public class SkillModule extends BasicModule {
             BaseLog log = new SkillLog(0, 0, 0, 0, ActorDefine.MIN_RESET_SKILL);
             sendLog(log);
             sendFuntctionLog(FunctionIdDefine.SKILL_INITIALIZE_FUNCTION_ID);
+            sendPushNetMsgToClient();
         }
+        sendPushNetMsgToClient();
     }
 
     /**

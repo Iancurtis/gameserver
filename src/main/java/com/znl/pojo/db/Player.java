@@ -1,6 +1,7 @@
 package com.znl.pojo.db;
 
 import com.znl.base.BaseDbPojo;
+import com.znl.utils.GameUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -106,6 +107,279 @@ public class Player extends BaseDbPojo implements Serializable {
     private long friendbleestimeId = 0l;//好友被祝福的定时器
     private Set<Long> advids = new HashSet<Long>();
     private Set<Long> productions = new HashSet<>();
+    private int resetDataTime=0;//重置时间(4点)
+    private long resourereftime=GameUtils.getServerDate().getTime();
+    private int junshigoldtimes=0;//军师金币抽奖次数  四点耍刷新
+    private int junshiresoucetimes=0;//军师金币抽奖次数   四点耍刷新
+    private long arenaId=0;//竞技场id
+    private int zeroTime=0;//零点重置时间
+
+    public int getZeroTime() {return zeroTime;}
+
+    public void setZeroTime(int zeroTime) {this.zeroTime = zeroTime;}
+
+    public long getArenaId() {return arenaId;}
+
+    public void setArenaId(long arenaId) {this.arenaId = arenaId;}
+
+    private int dungeolimitrest=0;//极限副本重置次数  四点耍刷新
+    private int dungeolimitchange=0;//极限副本挑战次数  四点耍刷新
+    private int dungeolimitmoptimes=0;//极限副本扫荡
+    private long energyaddtime = 0;//体力恢复定时器
+    private long equipLottertime3 = 0;//顶级武将抽奖时间
+    private long equipLottertime2 = 0;//高级武将抽奖时间
+    private long equipLottertime1 = 0;//普通武将抽奖时间
+    private long dungeolimitmop=GameUtils.getServerDate().getTime();//极限副本扫荡
+    private int lottertime1 =0;//普通武将已抽次数
+    private int lottertime2 =0;//高级武将已抽次数
+    private int lottertime3 =0;//顶级武将已抽次数
+    private int firstlotter =1;//第一次抽必出紫将
+    private int prestaeReward=0;//登陆自动领取声望 0为未领取 1为领取  四点耍刷新
+    private int prestaeshouxun=0;//授勋声望 0为未领取 1为领取  四点耍刷新
+    private long taskTimerId=0;//任务定时器id
+    private long legionTimerId=0;//军团定时器id
+    private List<Integer> getbox= new ArrayList<Integer>();//每日已领军团副本宝箱
+    private int armygroupdungeotimes =5;//军团副本剩余攻打次数
+    private int everylottery=0;//每日抽奖   四点耍刷新
+    private int firthlogin=0;//每日登录 四点耍刷新
+    private int buyenergytimes =0 ;//购买体力次数
+    private int labafree =0 ;//拉霸免费次数  四点耍刷新
+    private int daybless;//每日的祝福可获取奖励的次数
+    private int getbless;//每日可领取祝福奖励的次数
+    private int taobaofree;//探宝免费
+    private int onlinetime;//在线累计时长
+    public int getTaobaofree() {
+        return taobaofree;
+    }
+
+    public int getFirstlotter() {
+        return firstlotter;
+    }
+
+    public void setFirstlotter(int firstlotter) {
+        this.firstlotter = firstlotter;
+    }
+
+    public void setTaobaofree(int taobaofree) {
+        this.taobaofree = taobaofree;
+    }
+    public int getOnlinetime() {
+        return onlinetime;
+    }
+    public void setOnlinetime(int onlinetime) {
+        this.onlinetime = onlinetime;
+    }    public int getLabafree() {
+        return labafree;
+    }
+
+    public void setLabafree(int labafree) {
+        this.labafree = labafree;
+    }      public int getDaybless() {
+        return daybless;
+    }
+
+    public void setDaybless(int daybless) {
+        this.daybless = daybless;
+    }
+
+    public int getGetbless() {
+        return getbless;
+    }
+
+    public void setGetbless(int getbless) {
+        this.getbless = getbless;
+    }
+    public int getFirthlogin() {
+        return firthlogin;
+    }
+
+    public void setFirthlogin(int firthlogin) {
+        this.firthlogin = firthlogin;
+    }
+
+
+
+    public int getEverylottery() {
+        return everylottery;
+    }
+
+    public void setEverylottery(int everylottery) {
+        this.everylottery = everylottery;
+    }    public int getBuyenergytimes() {
+        return buyenergytimes;
+    }
+
+    public void setBuyenergytimes(int buyenergytimes) {
+        this.buyenergytimes = buyenergytimes;
+    } 
+   public List<Integer> getGetbox() {
+        return getbox;
+    }
+
+    public void setGetbox(List<Integer> getbox) {
+        this.getbox = getbox;
+    }
+
+    public int getArmygroupdungeotimes() {
+        return armygroupdungeotimes;
+    }
+
+    public void setArmygroupdungeotimes(int armygroupdungeotimes) {
+        this.armygroupdungeotimes = armygroupdungeotimes;
+    }
+
+    public long getLegionTimerId() {
+        return legionTimerId;
+    }
+
+    public void setLegionTimerId(long legionTimerId) {
+        this.legionTimerId = legionTimerId;
+    }
+
+    public long getTaskTimerId() {
+        return taskTimerId;
+    }
+
+    public void setTaskTimerId(long taskTimerId) {
+        this.taskTimerId = taskTimerId;
+    }
+    public int getPrestaeshouxun() {
+        return prestaeshouxun;
+    }
+
+    public void setPrestaeshouxun(int prestaeshouxun) {
+        this.prestaeshouxun = prestaeshouxun;
+    }
+
+    public int getPrestaeReward() {
+        return prestaeReward;
+    }
+
+    public void setPrestaeReward(int prestaeReward) {
+        this.prestaeReward = prestaeReward;
+    }
+    private int lottereedtime3 = 9;//顶级武将已抽次数（再抽几次出紫）
+    public int getLottereedtime3() {
+        return lottereedtime3;
+    }
+
+    public void setLottereedtime3(int lottereedtime3) {
+        this.lottereedtime3 = lottereedtime3;
+    }
+    public int getLottertime1() {
+        return lottertime1;
+    }
+
+    public void setLottertime1(int lottertime1) {
+        this.lottertime1 = lottertime1;
+    }
+
+    public int getLottertime2() {
+        return lottertime2;
+    }
+
+    public void setLottertime2(int lottertime2) {
+        this.lottertime2 = lottertime2;
+    }
+
+    public int getLottertime3() {
+        return lottertime3;
+    }
+
+    public void setLottertime3(int lottertime3) {
+        this.lottertime3 = lottertime3;
+    }
+
+    public int getDungeolimitmoptimes() {
+        return dungeolimitmoptimes;
+    }
+
+    public void setDungeolimitmoptimes(int dungeolimitmoptimes) {
+        this.dungeolimitmoptimes = dungeolimitmoptimes;
+    }
+
+    public long getDungeolimitmop() {
+        return dungeolimitmop;
+    }
+
+    public void setDungeolimitmop(long dungeolimitmop) {
+        this.dungeolimitmop = dungeolimitmop;
+    }
+
+    public int getDungeolimitrest() {
+        return dungeolimitrest;
+    }
+
+    public void setDungeolimitrest(int dungeolimitrest) {
+        this.dungeolimitrest = dungeolimitrest;
+    }
+
+    public int getDungeolimitchange() {
+        return dungeolimitchange;
+    }
+
+    public void setDungeolimitchange(int dungeolimitchange) {
+        this.dungeolimitchange = dungeolimitchange;
+    }
+
+    public int getResetDataTime() {return resetDataTime;}
+    public void setResetDataTime(int resetDataTime) {this.resetDataTime = resetDataTime;}
+
+    public long getEquipLottertime1() {
+        return equipLottertime1;
+    }
+
+    public void setEquipLottertime1(long equipLottertime1) {
+        this.equipLottertime1 = equipLottertime1;
+    }
+
+    public long getEquipLottertime2() {
+        return equipLottertime2;
+    }
+
+    public void setEquipLottertime2(long equipLottertime2) {
+        this.equipLottertime2 = equipLottertime2;
+    }
+
+    public long getEquipLottertime3() {
+        return equipLottertime3;
+    }
+
+    public void setEquipLottertime3(long equipLottertime3) {
+        this.equipLottertime3 = equipLottertime3;
+    }
+
+    public int getJunshigoldtimes() {
+        return junshigoldtimes;
+    }
+
+    public void setJunshigoldtimes(int junshigoldtimes) {
+        this.junshigoldtimes = junshigoldtimes;
+    }
+
+    public int getJunshiresoucetimes() {return junshiresoucetimes;}
+
+    public void setJunshiresoucetimes(int junshiresoucetimes) {
+        this.junshiresoucetimes = junshiresoucetimes;
+    }
+
+    public long getResourereftime() {
+        return resourereftime;
+    }
+
+    public void setResourereftime(long resourereftime) {
+        this.resourereftime = resourereftime;
+    }
+    public long getEnergyaddtime() {
+        return energyaddtime;
+    }
+
+    public void setEnergyaddtime(long energyaddtime) {
+        this.energyaddtime = energyaddtime;
+    }
+    public void setRegTime(int regTime) {
+        this.regTime = regTime;
+    }
 
     public Set<Long> getAdvids() {
         return advids;

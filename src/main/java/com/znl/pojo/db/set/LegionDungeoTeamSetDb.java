@@ -30,6 +30,9 @@ public class LegionDungeoTeamSetDb extends BaseSetDbPojo {
         String key = legionId + "_" +dongeoid +"_"+ SoldierDefine.FORMATION_LEGION_DUNGEO;
         if(this.isKeyExist(key)){
             TeamDate teamDate =  this.getDbPojoByKey(key, TeamDate.class);
+            if(teamDate==null){
+                return null;
+            }
             Object obj  = GameUtils.ByteToObject(teamDate.getTeam());
 
             return (PlayerTroop)obj;

@@ -5,9 +5,7 @@ import com.znl.base.BasicProxy;
 import com.znl.core.PlayerReward;
 import com.znl.core.SimplePlayer;
 import com.znl.define.*;
-import com.znl.pojo.db.Activity;
-import com.znl.pojo.db.Armygroup;
-import com.znl.pojo.db.ArmygroupMenber;
+import com.znl.pojo.db.*;
 import com.znl.proto.M22;
 import com.znl.service.PlayerService;
 import com.znl.utils.GameUtils;
@@ -23,6 +21,7 @@ import java.util.*;
  */
 public class ArmyGroupProxy extends BasicProxy {
 
+    public LegionTimer legionTimer;
 
     @Override
     public void shutDownProxy() {
@@ -34,13 +33,26 @@ public class ArmyGroupProxy extends BasicProxy {
 
     }
 
-    public ArmyGroupProxy(String areaKey) {
+
+    public ArmyGroupProxy(Player playr, String areaKey) {
         this.areaKey = areaKey;
+        legionTimer = BaseDbPojo.get(playr.getLegionTimerId(), LegionTimer.class, areaKey);
+        if (legionTimer == null) {
+            legionTimer = BaseDbPojo.create(LegionTimer.class, areaKey);
+            playr.setLegionTimerId(legionTimer.getId());
+            legionTimer.setPlayerId(playr.getId());
+            legionTimer.save();
+        }
+    }
+
+    public void saveDate() {
+        legionTimer.save();
     }
 
     public void clearTechPlayerPower() {
         expandPowerMap.clear();
     }
+
     /**
      * 军团科技属性效果加成
      */
@@ -94,7 +106,7 @@ public class ArmyGroupProxy extends BasicProxy {
         }
 
         //判断字符合法
-        if(!playerProxy.checkString(name)){
+        if (!playerProxy.checkString(name)) {
             return ErrorCodeDefine.M220103_12;//军团名称非法
         }
         if (String_length(name) < 4 || String_length(name) > 12) {
@@ -118,7 +130,7 @@ public class ArmyGroupProxy extends BasicProxy {
         }
 
 
-        Armygroup armygroup = BaseDbPojo.create(Armygroup.class,areaKey);
+        Armygroup armygroup = BaseDbPojo.create(Armygroup.class, areaKey);
         armygroup.setBuild(0);
         armygroup.setApplymenbers(new LinkedHashSet<Long>());
         armygroup.setCommander(playerProxy.getPlayerName());
@@ -134,7 +146,7 @@ public class ArmyGroupProxy extends BasicProxy {
         Set<Long> menbers = new LinkedHashSet<Long>();
         menbers.add(playerProxy.getPlayerId());
         armygroup.setMenbers(menbers);
-        ArmygroupMenber armygroupMenber = BaseDbPojo.create(ArmygroupMenber.class,areaKey);
+        ArmygroupMenber armygroupMenber = BaseDbPojo.create(ArmygroupMenber.class, areaKey);
         armygroupMenber.setAccoutName(playerProxy.getAccountName());
         armygroupMenber.setActivityrank(1);
         armygroupMenber.setArmyId(armygroup.getId());
@@ -152,7 +164,7 @@ public class ArmyGroupProxy extends BasicProxy {
         armygroupMenber.setJob(ArmyGroupDefine.JOB_MANGER);
         armygroupMenber.setPlayerId(playerProxy.getPlayerId());
         armygroupMenber.setLogintime(GameUtils.getServerDate().getTime());
-        armygroupMenber.setOutlinetime(GameUtils.getServerDate().getTime()-1000);
+        armygroupMenber.setOutlinetime(GameUtils.getServerDate().getTime() - 1000);
         armygroupMenber.setLevel(playerProxy.getLevel());
         armygroupMenber.setPendantId(playerProxy.getPlayer().getPendant());
         armygroupMenber.setIcon(playerProxy.getPlayer().getIcon());
@@ -168,9 +180,9 @@ public class ArmyGroupProxy extends BasicProxy {
         playerProxy.setPost(ArmyGroupDefine.JOB_MANGER);
         playerProxy.savePlayer();
         sendFunctionLog(FunctionIdDefine.CREATE_LEGION_FUNCTION_ID, armygroup.getId(), 0, 0, sb.toString());
-        if(armygroup.getId()>0){
+        if (armygroup.getId() > 0) {
             int value = 1;
-            ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+            ActivityProxy activityProxy = getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
             activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_HAVE_LEGION, value, playerProxy, 0);
         }
         return armygroup.getId();
@@ -258,9 +270,6 @@ public class ArmyGroupProxy extends BasicProxy {
     }
 
 
-
-
-
     //设置玩家某个随机商品购买次数
     public void setArmyRandouShopBuyTimes(Armygroup armygroup, int type, long playerId) {
         String list = armygroup.getPlayerrandomBuytimes();
@@ -292,6 +301,21 @@ public class ArmyGroupProxy extends BasicProxy {
         armygroup.setPlayerrandomBuytimes(all);
     }
 
+    private int getshopBuyTimes(int id) {
+        int num = 0;
+        for (int temp : legionTimer.getIds()) {
+            if (temp == id) {
+                num++;
+            }
+        }
+        return num;
+    }
+
+    private void addShopBuyid(int id){
+        List<Integer> ids=legionTimer.getIds();
+        ids.add(id);
+        legionTimer.setIds(ids);
+    }
 
     /**
      * 军团商店,贡献值兑换物品(固定)
@@ -299,15 +323,15 @@ public class ArmyGroupProxy extends BasicProxy {
     public int exchangeItem(ArmygroupMenber armygroupMenber, Armygroup armygroup, int id, PlayerReward reward) {
         JSONObject obj = ConfigDataProxy.getConfigInfoFindById(DataDefine.LEGION_FIX_SHOP, id);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        timerdbProxy.addTimer(TimerDefine.ARMYGROUP_SHOP, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, id, 0,playerProxy);
-        int exchangeNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_SHOP, id, 0);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //   timerdbProxy.addTimer(TimerDefine.ARMYGROUP_SHOP, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, id, 0,playerProxy);
+        int exchangeNum = getshopBuyTimes(id);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_SHOP, id, 0);
         if (obj != null) {
             if (armygroupMenber.getContribute() < obj.getInt("contributeneed")) {
                 return ErrorCodeDefine.M220002_1;
             } else if (exchangeNum >= obj.getInt("exchangemax")) {
                 return ErrorCodeDefine.M220002_3;
-            }else if(armygroup.getLevel()<obj.getInt("legionlv")){
+            } else if (armygroup.getLevel() < obj.getInt("legionlv")) {
                 return ErrorCodeDefine.M220002_6;
             }
             int itemId = obj.getInt("typeID");
@@ -318,15 +342,17 @@ public class ArmyGroupProxy extends BasicProxy {
                 ItemProxy itemProxy = getGameProxy().getProxy(ActorDefine.ITEM_PROXY_NAME);
                 itemProxy.addItem(itemId, num, LogDefine.GET_ARMYGROUP_SHOP);
                 rewardProxy.getRewardContent(reward, PlayerPowerDefine.BIG_POWER_ITEM, itemId, num);
-                timerdbProxy.addNum(TimerDefine.ARMYGROUP_SHOP, id, 0, 1);
+                //     timerdbProxy.addNum(TimerDefine.ARMYGROUP_SHOP, id, 0, 1);
+                addShopBuyid(id);
             } else if (obj.getInt("type") == PlayerPowerDefine.BIG_POWER_GENERAL) {
                 EquipProxy equipProxy = getGameProxy().getProxy(ActorDefine.EQUIP_PROXY_NAME);
                 equipProxy.addEquip(itemId, LogDefine.GET_ARMYGROUP_SHOP);
                 rewardProxy.getRewardContent(reward, PlayerPowerDefine.BIG_POWER_GENERAL, itemId, num);
-                timerdbProxy.addNum(TimerDefine.ARMYGROUP_SHOP, id, 0, 1);
+                addShopBuyid(id);
+                //    timerdbProxy.addNum(TimerDefine.ARMYGROUP_SHOP, id, 0, 1);
             }
-           armygroupMenber.setContribute(armygroupMenber.getContribute()-needContribute);
-           sendFunctionLog(FunctionIdDefine.LEGION_SHOP_GOODS_EXCHANGE_FUNCTION_ID, itemId, needContribute, playerProxy.getPlayerId());
+            armygroupMenber.setContribute(armygroupMenber.getContribute() - needContribute);
+            sendFunctionLog(FunctionIdDefine.LEGION_SHOP_GOODS_EXCHANGE_FUNCTION_ID, itemId, needContribute, playerProxy.getPlayerId());
         }
         return 0;
     }
@@ -347,9 +373,9 @@ public class ArmyGroupProxy extends BasicProxy {
                 return ErrorCodeDefine.M220002_3;
             } else if (legexchamax >= obj.getInt("legexchamax")) {
                 return ErrorCodeDefine.M220002_4;
-            }else if(armygroup.getRandomShops().contains(id)==false){
+            } else if (armygroup.getRandomShops().contains(id) == false) {
                 return ErrorCodeDefine.M220002_5;
-            }else if(armygroup.getLevel()<obj.getInt("legionlv")){
+            } else if (armygroup.getLevel() < obj.getInt("legionlv")) {
                 return ErrorCodeDefine.M220002_6;
             }
 
@@ -371,9 +397,46 @@ public class ArmyGroupProxy extends BasicProxy {
             }
             setArmyRandouShopBuyTimes(armygroup, id);//军团兑换上限
             setArmyRandouShopBuyTimes(armygroup, id, playerProxy.getPlayerId());//个人兑换上限
-            armygroupMenber.setContribute(armygroupMenber.getContribute()-needContribute);
+            armygroupMenber.setContribute(armygroupMenber.getContribute() - needContribute);
         }
         return 0;
+    }
+
+    //获得军团某个类型的捐赠次数
+    public int gethallDonateTimes(int power){
+        int num=0;
+        for(int id:legionTimer.getHalldontes()){
+            if(power==id){
+                num++;
+            }
+        }
+        return num;
+    }
+
+    //增加某个类型军团捐赠次数
+    public void addhallDonateTimes(int power){
+        List<Integer> ids=legionTimer.getHalldontes();
+        ids.add(power);
+        legionTimer.setHalldontes(ids);
+    }
+
+
+    //获得科技某个类型的捐赠次数
+    public int getScienceDonateTimes(int power){
+        int num=0;
+        for(int id:legionTimer.getSciencedontes()){
+            if(power==id){
+                num++;
+            }
+        }
+        return num;
+    }
+
+    //增加某个类型科技捐赠次数
+    public void addScienceDonateTimes(int power){
+        List<Integer> ids=legionTimer.getSciencedontes();
+        ids.add(power);
+        legionTimer.setSciencedontes(ids);
     }
 
 
@@ -384,13 +447,13 @@ public class ArmyGroupProxy extends BasicProxy {
         List<M22.ArmyShopInfo> itemIdList = new ArrayList<M22.ArmyShopInfo>();
         M22.ArmyShopInfo.Builder armyShop = M22.ArmyShopInfo.newBuilder();
         List<JSONObject> objList = ConfigDataProxy.getConfigAllInfo(DataDefine.LEGION_FIX_SHOP);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //   TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         int armyLv = armygroup.getLevel();
         if (objList.size() > 0) {
             for (JSONObject obj : objList) {
                 if (armyLv >= obj.getInt("legionlv")) {
                     armyShop.setCanGetId(obj.getInt("ID"));
-                    int exchangeNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_SHOP, obj.getInt("ID"), 0);
+                    int exchangeNum = getshopBuyTimes(obj.getInt("ID"));// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_SHOP, obj.getInt("ID"), 0);
                     if (exchangeNum < 0) {
                         exchangeNum = 0;
                     }
@@ -424,51 +487,51 @@ public class ArmyGroupProxy extends BasicProxy {
      */
     public List<M22.ResInfo> resContributeNum() {
         List<M22.ResInfo> buildList = new ArrayList<M22.ResInfo>();
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int goldNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, 200, ArmyGroupDefine.CONTRUBUTE_TECH);
+        // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int goldNum = getScienceDonateTimes(200);//timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, 200, ArmyGroupDefine.CONTRUBUTE_TECH);
         M22.ResInfo.Builder builder = M22.ResInfo.newBuilder();
         builder.setResType(200);
-        if (goldNum == 0) {
-            goldNum = 1;
-        }
-        builder.setCurCount(goldNum);
+          if (goldNum == 0) {
+             goldNum = 1;
+            }
+            builder.setCurCount(goldNum);
         buildList.add(builder.build());
-        int taelNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_tael, ArmyGroupDefine.CONTRUBUTE_TECH);
+        int taelNum = getScienceDonateTimes(PlayerPowerDefine.POWER_tael);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_tael, ArmyGroupDefine.CONTRUBUTE_TECH);
         M22.ResInfo.Builder builder1 = M22.ResInfo.newBuilder();
-        builder1.setResType(201);
+        builder1.setResType(PlayerPowerDefine.POWER_tael);
         if (taelNum == 0) {
             taelNum = 1;
         }
         builder1.setCurCount(taelNum);
         buildList.add(builder1.build());
-        int ironNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_iron, ArmyGroupDefine.CONTRUBUTE_TECH);
+        int ironNum = getScienceDonateTimes(PlayerPowerDefine.POWER_iron);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_iron, ArmyGroupDefine.CONTRUBUTE_TECH);
         M22.ResInfo.Builder builder2 = M22.ResInfo.newBuilder();
-        builder2.setResType(202);
+        builder2.setResType(PlayerPowerDefine.POWER_iron);
         if (ironNum == 0) {
             ironNum = 1;
         }
         builder2.setCurCount(ironNum);
         buildList.add(builder2.build());
-        int woodNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_wood, ArmyGroupDefine.CONTRUBUTE_TECH);
+        int woodNum = getScienceDonateTimes(PlayerPowerDefine.POWER_wood);//timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_wood, ArmyGroupDefine.CONTRUBUTE_TECH);
         M22.ResInfo.Builder builder4 = M22.ResInfo.newBuilder();
-        builder4.setResType(203);
+        builder4.setResType(PlayerPowerDefine.POWER_wood);
         if (woodNum == 0) {
             woodNum = 1;
         }
         builder4.setCurCount(woodNum);
         buildList.add(builder4.build());
-        int stoneNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_stones, ArmyGroupDefine.CONTRUBUTE_TECH);
+        int stoneNum =getScienceDonateTimes( PlayerPowerDefine.POWER_stones);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_stones, ArmyGroupDefine.CONTRUBUTE_TECH);
         M22.ResInfo.Builder builder3 = M22.ResInfo.newBuilder();
-        builder3.setResType(204);
+        builder3.setResType( PlayerPowerDefine.POWER_stones);
         if (stoneNum == 0) {
             stoneNum = 1;
         }
         builder3.setCurCount(stoneNum);
         buildList.add(builder3.build());
 
-        int foodNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_food, ArmyGroupDefine.CONTRUBUTE_TECH);
+        int foodNum =getScienceDonateTimes( PlayerPowerDefine.POWER_food);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, PlayerPowerDefine.POWER_food, ArmyGroupDefine.CONTRUBUTE_TECH);
         M22.ResInfo.Builder builder5 = M22.ResInfo.newBuilder();
-        builder5.setResType(205);
+        builder5.setResType(PlayerPowerDefine.POWER_food);
         if (foodNum == 0) {
             foodNum = 1;
         }
@@ -482,8 +545,8 @@ public class ArmyGroupProxy extends BasicProxy {
      */
     public List<M22.ResInfo> hallContributeNum() {
         List<M22.ResInfo> buildList = new ArrayList<M22.ResInfo>();
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int goldNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, 200, ArmyGroupDefine.CONTRUBUTE_HALL);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int goldNum = gethallDonateTimes(200);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, 200, ArmyGroupDefine.CONTRUBUTE_HALL);
         M22.ResInfo.Builder builder = M22.ResInfo.newBuilder();
         builder.setResType(200);
         if (goldNum == 0) {
@@ -491,42 +554,42 @@ public class ArmyGroupProxy extends BasicProxy {
         }
         builder.setCurCount(goldNum);
         buildList.add(builder.build());
-        int taelNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_tael, ArmyGroupDefine.CONTRUBUTE_HALL);
+        int taelNum = gethallDonateTimes(PlayerPowerDefine.POWER_tael);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_tael, ArmyGroupDefine.CONTRUBUTE_HALL);
         M22.ResInfo.Builder builder1 = M22.ResInfo.newBuilder();
-        builder1.setResType(201);
+        builder1.setResType(PlayerPowerDefine.POWER_tael);
         if (taelNum == 0) {
             taelNum = 1;
         }
         builder1.setCurCount(taelNum);
         buildList.add(builder1.build());
-        int ironNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_iron, ArmyGroupDefine.CONTRUBUTE_HALL);
+        int ironNum =gethallDonateTimes(PlayerPowerDefine.POWER_iron);//timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_iron, ArmyGroupDefine.CONTRUBUTE_HALL);
         M22.ResInfo.Builder builder2 = M22.ResInfo.newBuilder();
-        builder2.setResType(202);
+        builder2.setResType(PlayerPowerDefine.POWER_iron);
         if (ironNum == 0) {
             ironNum = 1;
         }
         builder2.setCurCount(ironNum);
         buildList.add(builder2.build());
-        int woodNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_wood, ArmyGroupDefine.CONTRUBUTE_HALL);
+        int woodNum = gethallDonateTimes(PlayerPowerDefine.POWER_wood);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_wood, ArmyGroupDefine.CONTRUBUTE_HALL);
         M22.ResInfo.Builder builder4 = M22.ResInfo.newBuilder();
-        builder4.setResType(203);
+        builder4.setResType(PlayerPowerDefine.POWER_wood);
         if (woodNum == 0) {
             woodNum = 1;
         }
         builder4.setCurCount(woodNum);
         buildList.add(builder4.build());
-        int stoneNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_stones, ArmyGroupDefine.CONTRUBUTE_HALL);
+        int stoneNum = gethallDonateTimes(PlayerPowerDefine.POWER_stones);//timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_stones, ArmyGroupDefine.CONTRUBUTE_HALL);
         M22.ResInfo.Builder builder3 = M22.ResInfo.newBuilder();
-        builder3.setResType(204);
+        builder3.setResType(PlayerPowerDefine.POWER_stones);
         if (stoneNum == 0) {
             stoneNum = 1;
         }
         builder3.setCurCount(stoneNum);
         buildList.add(builder3.build());
 
-        int foodNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_food, ArmyGroupDefine.CONTRUBUTE_HALL);
+        int foodNum = gethallDonateTimes(PlayerPowerDefine.POWER_food);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, PlayerPowerDefine.POWER_food, ArmyGroupDefine.CONTRUBUTE_HALL);
         M22.ResInfo.Builder builder5 = M22.ResInfo.newBuilder();
-        builder5.setResType(205);
+        builder5.setResType(PlayerPowerDefine.POWER_food);
         if (foodNum == 0) {
             foodNum = 1;
         }
@@ -538,23 +601,25 @@ public class ArmyGroupProxy extends BasicProxy {
     /**
      * 军团科技，金币,资源捐献
      */
-    public int legionTechGoldDonate(int power, int techId, int techLv, int techExp, int armyTechLv,ArmygroupMenber armygroupMenber,Armygroup armygroup) {
+    public int legionTechGoldDonate(int power, int techId, int techLv, int techExp, int armyTechLv, ArmygroupMenber armygroupMenber, Armygroup armygroup) {
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //     TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         JSONObject techObj = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.LEGIONLEVEL, "type", techId, "level", techLv);
-        JSONObject scijson=ConfigDataProxy.getConfigInfoFindById(DataDefine.LEGIONSCIENCE,techId);
-        ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        JSONObject scijson = ConfigDataProxy.getConfigInfoFindById(DataDefine.LEGIONSCIENCE, techId);
+        ActivityProxy activityProxy = getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         if (power == 200) {
-            timerdbProxy.addTimer(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, 1, 0, TimerDefine.TIMER_REFRESH_FOUR, power, ArmyGroupDefine.CONTRUBUTE_TECH,playerProxy);
-            int donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH);
+            //  timerdbProxy.addTimer(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, 1, 0, TimerDefine.TIMER_REFRESH_FOUR, power, ArmyGroupDefine.CONTRUBUTE_TECH,playerProxy);
+            int donateNum = getScienceDonateTimes(power);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH);
             if (donateNum == 0) {
-                timerdbProxy.addNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH, 1);
-                donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH);
+                addScienceDonateTimes(power);
+                donateNum = getScienceDonateTimes(power);
+                //timerdbProxy.addNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH, 1);
+                //  donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH);
             }
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.GOLD_CONTIBUTE, "num", donateNum);
             List<JSONObject> objectList = ConfigDataProxy.getConfigAllInfo(DataDefine.GOLD_CONTIBUTE);
-            JSONObject jsonObjectmession=ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.LEGIONMESSION,"type",ArmyGroupDefine.MESSIONTYPE1);
+            JSONObject jsonObjectmession = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.LEGIONMESSION, "type", ArmyGroupDefine.MESSIONTYPE1);
             long vipLv = vipProxy.getVipLevel();
             long hadGold = playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold);
             if (jsonObject == null) {
@@ -564,28 +629,32 @@ public class ArmyGroupProxy extends BasicProxy {
             } else if (donateNum >= (objectList.size() + 1)) {
                 return ErrorCodeDefine.M220009_2;
             }
-            int needgold= (int) Math.ceil(jsonObject.getInt("goldneed")*(100-activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_LEGION_SCIENCE_GOLD_RETURN))/100.0);
+            int needgold = (int) Math.ceil(jsonObject.getInt("goldneed") * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_LEGION_SCIENCE_GOLD_RETURN)) / 100.0);
             if (hadGold < needgold) {
                 return ErrorCodeDefine.M220009_3;
-            } else if (armyTechLv <= techLv ) {
+            } else if (armyTechLv <= techLv) {
                 return ErrorCodeDefine.M220009_6;
-            }else if(armyTechLv<scijson.getInt("seciencelv")){
+            } else if (armyTechLv < scijson.getInt("seciencelv")) {
                 return ErrorCodeDefine.M220009_7;
             }
            /* if(armygroup.getMession1()>=jsonObjectmession.getInt("max")){
                 return ErrorCodeDefine.M220009_2;
             }*/
-            timerdbProxy.addNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH, 1);
-            timerdbProxy.addNum(TimerDefine.LEGION_ALLTIME_DONATE,0, 0, 1);
-           // armygroupMenber.setContribute(armygroupMenber.getContribute()+jsonObject.getInt("contribute"));
+            addScienceDonateTimes(power);
+             //timerdbProxy.addNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH, 1);
+            //  timerdbProxy.addNum(TimerDefine.LEGION_ALLTIME_DONATE,0, 0, 1);
+            legionTimer.setAlldonetetimes(legionTimer.getAlldonetetimes()+1);
+            // armygroupMenber.setContribute(armygroupMenber.getContribute()+jsonObject.getInt("contribute"));
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, needgold, LogDefine.LOST_ARMYGROUP_CONTRIBUTE);
-            sendFunctionLog(FunctionIdDefine.LEGION_SCIENCE_GOLD_RESOURCE_DONATE_FUNCTION_ID, power,needgold, playerProxy.getPlayerId());
+            sendFunctionLog(FunctionIdDefine.LEGION_SCIENCE_GOLD_RESOURCE_DONATE_FUNCTION_ID, power, needgold, playerProxy.getPlayerId());
         } else {
-            timerdbProxy.addTimer(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, 1, 0, TimerDefine.TIMER_REFRESH_FOUR, power, ArmyGroupDefine.CONTRUBUTE_TECH,playerProxy);
-            int donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH);
+            //  timerdbProxy.addTimer(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, 1, 0, TimerDefine.TIMER_REFRESH_FOUR, power, ArmyGroupDefine.CONTRUBUTE_TECH,playerProxy);
+            int donateNum = getScienceDonateTimes(power);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH);
             if (donateNum == 0) {
-                timerdbProxy.addNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH, 1);
-                donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH);
+                addScienceDonateTimes(power);
+                donateNum = getScienceDonateTimes(power);
+                //  timerdbProxy.addNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH, 1);
+                //  donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH);
             }
             List<JSONObject> objectList = ConfigDataProxy.getConfigAllInfo(DataDefine.RES_CONTIBUTE);
             int num = 0;
@@ -594,7 +663,7 @@ public class ArmyGroupProxy extends BasicProxy {
                     num += 1;
                 }
             }
-            JSONObject jsonObjectmession=ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.LEGION,"level",armygroup.getLevel());
+            JSONObject jsonObjectmession = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.LEGION, "level", armygroup.getLevel());
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RES_CONTIBUTE, "restype", power, "num", donateNum);
             long hadNum = playerProxy.getPowerValue(power);
             if (jsonObject == null) {
@@ -603,19 +672,21 @@ public class ArmyGroupProxy extends BasicProxy {
                 return ErrorCodeDefine.M220009_2;
             } else if (hadNum < jsonObject.getInt("reqneed")) {
                 return ErrorCodeDefine.M220009_4;
-            } else if (armyTechLv <= techLv ) {
+            } else if (armyTechLv <= techLv) {
                 return ErrorCodeDefine.M220009_6;
-            }else if(armyTechLv<scijson.getInt("seciencelv")){
+            } else if (armyTechLv < scijson.getInt("seciencelv")) {
                 return ErrorCodeDefine.M220009_7;
             }
-            if(armygroup.getMession1()>=jsonObjectmession.getInt("personNum")*ArmyGroupDefine.JUANZENGTIME){
+            if (armygroup.getMession1() >= jsonObjectmession.getInt("personNum") * ArmyGroupDefine.JUANZENGTIME) {
                 return ErrorCodeDefine.M220009_2;
             }
-            timerdbProxy.addNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH, 1);
-            timerdbProxy.addNum(TimerDefine.LEGION_ALLTIME_DONATE,0, 0, 1);
-         //   armygroupMenber.setContribute(armygroupMenber.getContribute()+jsonObject.getInt("contribute"));
+            addScienceDonateTimes(power);
+            //  timerdbProxy.addNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH, 1);
+            //timerdbProxy.addNum(TimerDefine.LEGION_ALLTIME_DONATE,0, 0, 1);
+            legionTimer.setAlldonetetimes(legionTimer.getAlldonetetimes()+1);
+            //   armygroupMenber.setContribute(armygroupMenber.getContribute()+jsonObject.getInt("contribute"));
             playerProxy.reducePowerValue(power, jsonObject.getInt("reqneed"), LogDefine.LOST_ARMYGROUP_CONTRIBUTE);
-            sendFunctionLog(FunctionIdDefine.LEGION_SCIENCE_GOLD_RESOURCE_DONATE_FUNCTION_ID,power,jsonObject.getInt("reqneed"),playerProxy.getPlayerId());
+            sendFunctionLog(FunctionIdDefine.LEGION_SCIENCE_GOLD_RESOURCE_DONATE_FUNCTION_ID, power, jsonObject.getInt("reqneed"), playerProxy.getPlayerId());
         }
         return 0;
     }
@@ -658,9 +729,9 @@ public class ArmyGroupProxy extends BasicProxy {
      */
     public int getWelfareReward(int rewardId, PlayerReward reward, ArmygroupMenber armygroupMenber) {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        timerdbProxy.addTimer(TimerDefine.ARMYGROUP_WELFAREREWARD, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, 0, 0,playerProxy);
-        int num = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_WELFAREREWARD, 0, 0);
+        //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        // timerdbProxy.addTimer(TimerDefine.ARMYGROUP_WELFAREREWARD, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, 0, 0,playerProxy);
+        int num =legionTimer.getWalfRewad();// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_WELFAREREWARD, 0, 0);
         if (num >= 1) {
             return ErrorCodeDefine.M220013_7;
         }
@@ -677,15 +748,16 @@ public class ArmyGroupProxy extends BasicProxy {
             rewardProxy.getPlayerRewardByFixReward(rewardList.getInt(i), reward);
         }
         rewardProxy.getRewardToPlayer(reward, LogDefine.GET_ARMYGROUP_WELFAREREWARD);
-        timerdbProxy.setNum(TimerDefine.ARMYGROUP_WELFAREREWARD, 0, 0, 1);
-        armygroupMenber.setContribute(armygroupMenber.getContribute()-json.getInt("contrineed"));
+        //  timerdbProxy.setNum(TimerDefine.ARMYGROUP_WELFAREREWARD, 0, 0, 1);
+        legionTimer.setWalfRewad(UtilDefine.REWARD_STATE_HAS_GET);
+        armygroupMenber.setContribute(armygroupMenber.getContribute() - json.getInt("contrineed"));
         return 0;
     }
 
     /***
      * 获得某个军团的详细信息
      ***/
-    public int getArmyGroupDetailInfo(Armygroup arm, M22.M220101.S2C.Builder builder,int iconid,int penid) {
+    public int getArmyGroupDetailInfo(Armygroup arm, M22.M220101.S2C.Builder builder, int iconid, int penid) {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         M22.LegionDetailInfo.Builder lginfo = M22.LegionDetailInfo.newBuilder();
         lginfo.setId(arm.getId());
@@ -785,10 +857,10 @@ public class ArmyGroupProxy extends BasicProxy {
         return 0;
     }
 
-    private int getMyDevate( List<ArmygroupMenber> menbers){
-        PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        for(ArmygroupMenber armygroupMenber:menbers){
-            if(armygroupMenber.getPlayerId()==playerProxy.getPlayerId()){
+    private int getMyDevate(List<ArmygroupMenber> menbers) {
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        for (ArmygroupMenber armygroupMenber : menbers) {
+            if (armygroupMenber.getPlayerId() == playerProxy.getPlayerId()) {
                 return armygroupMenber.getContribute();
             }
         }
@@ -866,7 +938,7 @@ public class ArmyGroupProxy extends BasicProxy {
             legMen.setActivityvalue(armygroupMenber.getVitality());
             legMen.setPendantId(armygroupMenber.getPendantId());
             legMen.setIconId(armygroupMenber.getIcon());
-            SimplePlayer sp = PlayerService.getSimplePlayer(armygroupMenber.getPlayerId(),playerProxy.getAreaKey());
+            SimplePlayer sp = PlayerService.getSimplePlayer(armygroupMenber.getPlayerId(), playerProxy.getAreaKey());
             if (sp.online) {
                 legMen.setIsOnline(1);
             } else {
@@ -877,7 +949,7 @@ public class ArmyGroupProxy extends BasicProxy {
         return list;
     }
 
-    public M22.LegionMemberInfo.Builder getMenberInfo(ArmygroupMenber armygroupMenber){
+    public M22.LegionMemberInfo.Builder getMenberInfo(ArmygroupMenber armygroupMenber) {
         M22.LegionMemberInfo.Builder legMen = M22.LegionMemberInfo.newBuilder();
         legMen.setId(armygroupMenber.getPlayerId());
         legMen.setDevoterank(armygroupMenber.getDevotrank());
@@ -956,46 +1028,51 @@ public class ArmyGroupProxy extends BasicProxy {
     /**
      * 军团大厅，金币,资源捐献
      */
-    public int legionHallGoldDonate(int power,Armygroup armygroup) {
+    public int legionHallGoldDonate(int power, Armygroup armygroup) {
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        ActivityProxy activityProxy = getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         if (power == 200) {
-            timerdbProxy.addTimer(TimerDefine.ARMYGROUP_HALL_CONTIBUTE,1, 0, TimerDefine.TIMER_REFRESH_FOUR, power, ArmyGroupDefine.CONTRUBUTE_HALL,playerProxy);
-            int donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL);
+            //   timerdbProxy.addTimer(TimerDefine.ARMYGROUP_HALL_CONTIBUTE,1, 0, TimerDefine.TIMER_REFRESH_FOUR, power, ArmyGroupDefine.CONTRUBUTE_HALL,playerProxy);
+            int donateNum = gethallDonateTimes(power);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL);
             if (donateNum == 0) {
-                timerdbProxy.addNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL, 1);
-                donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL);
+                // timerdbProxy.addNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL, 1);
+                //   donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL);
+                addhallDonateTimes(200);
+                donateNum=gethallDonateTimes(power);
             }
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.GOLD_CONTIBUTE, "num", donateNum);
             List<JSONObject> objectList = ConfigDataProxy.getConfigAllInfo(DataDefine.GOLD_CONTIBUTE);
             long vipLv = vipProxy.getVipLevel();
-            JSONObject jsonObjectmession=ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.LEGION,"level",armygroup.getLevel());
+            JSONObject jsonObjectmession = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.LEGION, "level", armygroup.getLevel());
             long hadGold = playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold);
             if (jsonObject == null) {
                 return ErrorCodeDefine.M220008_5;
             } else if (vipLv < 1) {
                 return ErrorCodeDefine.M220008_1;
             }
-            int needgold= (int) Math.ceil(jsonObject.getInt("goldneed")*(100-activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_LEGION_DERONATE_RETRUEN))/100.0);
-           if (donateNum > (objectList.size() + 1)) {
+            int needgold = (int) Math.ceil(jsonObject.getInt("goldneed") * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_LEGION_DERONATE_RETRUEN)) / 100.0);
+            if (donateNum > (objectList.size() + 1)) {
                 return ErrorCodeDefine.M220008_2;
             } else if (hadGold < needgold) {
                 return ErrorCodeDefine.M220008_3;
             }/*if(armygroup.getMession1()>=jsonObjectmession.getInt("personNum")){
                 return ErrorCodeDefine.M220008_1;
             }*/
-            timerdbProxy.addNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL, 1);
-            ///playerProxy.addPowerValue(PlayerPowerDefine.POWER_contribute, jsonObject.getInt("contribute"), LogDefine.GET_ARMYGROUP_CONTRIBUTE);
+            addhallDonateTimes(power);
+            // timerdbProxy.addNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL, 1);
+            //playerProxy.addPowerValue(PlayerPowerDefine.POWER_contribute, jsonObject.getInt("contribute"), LogDefine.GET_ARMYGROUP_CONTRIBUTE);
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, needgold, LogDefine.LOST_ARMYGROUP_CONTRIBUTE);
-            sendFunctionLog(FunctionIdDefine.LEGION_HALL_GOLD_RESOURCE_DONATE_FUNCTION_ID, power, needgold,playerProxy.getPlayerId());
+            sendFunctionLog(FunctionIdDefine.LEGION_HALL_GOLD_RESOURCE_DONATE_FUNCTION_ID, power, needgold, playerProxy.getPlayerId());
         } else {
-            timerdbProxy.addTimer(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, 1, 0, TimerDefine.TIMER_REFRESH_FOUR, power, ArmyGroupDefine.CONTRUBUTE_HALL,playerProxy);
-            int donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL);
+            // timerdbProxy.addTimer(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, 1, 0, TimerDefine.TIMER_REFRESH_FOUR, power, ArmyGroupDefine.CONTRUBUTE_HALL,playerProxy);
+            int donateNum = gethallDonateTimes(power);// timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL);
             if (donateNum == 0) {
-                timerdbProxy.addNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL, 1);
-                donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL);
+                addhallDonateTimes(power);
+                //  timerdbProxy.addNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL, 1);
+                //  donateNum = timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL);
+                donateNum = gethallDonateTimes(power);
             }
             List<JSONObject> objectList = ConfigDataProxy.getConfigAllInfo(DataDefine.RES_CONTIBUTE);
             int num = 0;
@@ -1004,7 +1081,7 @@ public class ArmyGroupProxy extends BasicProxy {
                     num += 1;
                 }
             }
-            JSONObject jsonObjectmession=ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.LEGION,"level",armygroup.getLevel());
+            JSONObject jsonObjectmession = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.LEGION, "level", armygroup.getLevel());
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RES_CONTIBUTE, "restype", power, "num", donateNum);
             long hadNum = playerProxy.getPowerValue(power);
             if (jsonObject == null) {
@@ -1013,13 +1090,15 @@ public class ArmyGroupProxy extends BasicProxy {
                 return ErrorCodeDefine.M220008_2;
             } else if (hadNum < jsonObject.getInt("reqneed")) {
                 return ErrorCodeDefine.M220008_4;
-            }if(armygroup.getMession1()>=jsonObjectmession.getInt("personNum")*ArmyGroupDefine.JUANZENGTIME){
+            }
+            if (armygroup.getMession1() >= jsonObjectmession.getInt("personNum") * ArmyGroupDefine.JUANZENGTIME) {
                 return ErrorCodeDefine.M220008_2;
             }
-            timerdbProxy.addNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL, 1);
+            addhallDonateTimes(power);
+            //  timerdbProxy.addNum(TimerDefine.ARMYGROUP_HALL_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_HALL, 1);
             //playerProxy.addPowerValue(PlayerPowerDefine.POWER_contribute, jsonObject.getInt("contribute"), LogDefine.GET_ARMYGROUP_CONTRIBUTE);
             playerProxy.reducePowerValue(power, jsonObject.getInt("reqneed"), LogDefine.LOST_ARMYGROUP_CONTRIBUTE);
-            sendFunctionLog(FunctionIdDefine.LEGION_HALL_GOLD_RESOURCE_DONATE_FUNCTION_ID,power,jsonObject.getInt("reqneed"),playerProxy.getPlayerId());
+            sendFunctionLog(FunctionIdDefine.LEGION_HALL_GOLD_RESOURCE_DONATE_FUNCTION_ID, power, jsonObject.getInt("reqneed"), playerProxy.getPlayerId());
         }
         return 0;
     }
@@ -1065,7 +1144,7 @@ public class ArmyGroupProxy extends BasicProxy {
         PlayerProxy playrProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         StringBuffer sb = new StringBuffer();
         int rs = -1;
-        if(GameUtils.getServerDate().getTime()-menber.getJoinTime()< ArmyGroupDefine.needTime){
+        if (GameUtils.getServerDate().getTime() - menber.getJoinTime() < ArmyGroupDefine.needTime) {
             return ErrorCodeDefine.M220015_1;
         }
         for (int power : resMap.keySet()) {
@@ -1077,7 +1156,7 @@ public class ArmyGroupProxy extends BasicProxy {
             return rs;
         } else {
             for (int power : resMap.keySet()) {
-                 if (power == PlayerPowerDefine.POWER_tael) {
+                if (power == PlayerPowerDefine.POWER_tael) {
                     playrProxy.addPowerValue(PlayerPowerDefine.POWER_tael, resMap.get(power), LogDefine.GET_ARMYGROUP_WELFAREREWARD);
                     menber.setTael(menber.getTael() + resMap.get(power));
                     sb.append(PlayerPowerDefine.POWER_tael);
@@ -1113,7 +1192,7 @@ public class ArmyGroupProxy extends BasicProxy {
                     sb.append(resMap.get(power));
                 }
             }
-            sendFunctionLog(FunctionIdDefine.LEGION_WELFAREHOUSE_ACTIVITY_WELFARE_RESOUTCE_GET_FUNCTION_ID,playrProxy.getPlayerId(),0,0,sb.toString());
+            sendFunctionLog(FunctionIdDefine.LEGION_WELFAREHOUSE_ACTIVITY_WELFARE_RESOUTCE_GET_FUNCTION_ID, playrProxy.getPlayerId(), 0, 0, sb.toString());
         }
         return 0;
     }
@@ -1132,20 +1211,28 @@ public class ArmyGroupProxy extends BasicProxy {
         return valueLength;
     }
 
-    public List<M22.BuildingInfo> getLeginBuildInfo(Armygroup armygroup){
-        List<M22.BuildingInfo> list=new ArrayList<M22.BuildingInfo>();
-        M22.BuildingInfo.Builder info1=M22.BuildingInfo.newBuilder();
+    public List<M22.BuildingInfo> getLeginBuildInfo(Armygroup armygroup) {
+        List<M22.BuildingInfo> list = new ArrayList<M22.BuildingInfo>();
+        M22.BuildingInfo.Builder info1 = M22.BuildingInfo.newBuilder();
         info1.setId(1);
         info1.setLevel(armygroup.getSciencelevel());
         list.add(info1.build());
-        M22.BuildingInfo.Builder info2=M22.BuildingInfo.newBuilder();
+        M22.BuildingInfo.Builder info2 = M22.BuildingInfo.newBuilder();
         info2.setId(2);
         info2.setLevel(armygroup.getLevel());
         list.add(info2.build());
-        M22.BuildingInfo.Builder info3=M22.BuildingInfo.newBuilder();
+        M22.BuildingInfo.Builder info3 = M22.BuildingInfo.newBuilder();
         info3.setId(3);
         info3.setLevel(armygroup.getWelfarelevel());
         list.add(info3.build());
         return list;
+    }
+
+    @Override
+    public void fixedTimeEventHandler() {
+       legionTimer.setHalldontes(new ArrayList<Integer>());
+        legionTimer.setIds(new ArrayList<Integer>());
+        legionTimer.setSciencedontes(new ArrayList<Integer>());
+        legionTimer.setWalfRewad(0);
     }
 }

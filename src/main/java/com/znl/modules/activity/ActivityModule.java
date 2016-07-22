@@ -49,15 +49,11 @@ public class ActivityModule extends BasicModule {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             activityProxy.reloadDefineData(playerProxy);
             OnTriggerNet230000Event(null);
-            OnTriggerNet230002Event(null);
             //获取限时活动列表
         }else if (anyRef instanceof GameMsg.RefreshActivity) {
             ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
-            M23.M230002.S2C.Builder builder = M23.M230002.S2C.newBuilder();
-            int rs = 0;
-            builder.addAllActivitys(activityProxy.getAllLimitActivityInfo());
-            builder.setRs(rs);
-            sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230002, builder.build());
+            M23.M230002.S2C builder=activityProxy.getAllLimitActivityInfo();
+            sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230002, builder);
             sendFuntctionLog(FunctionIdDefine.GET_LIMIT_ACTIVITY_LISTS_FUNCTION_ID);
         } else if (anyRef instanceof GameMsg.RefreshLaba) {
             ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
@@ -95,8 +91,13 @@ public class ActivityModule extends BasicModule {
             builder.addAllActivitys(activityProxy.getAllActivityList());
         }
         builder.setRs(rs);
+        int[]nextOpenActivity=activityProxy.nextAddActivitStartTime(playerProxy,1);
+        builder.setNextOpenTime(nextOpenActivity[0]);//下一个要开启的活动时间
+        builder.setNextOpenId(nextOpenActivity[1]);//下一个要开启的活动Id
         sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230000, builder.build());
+        sendPushNetMsgToClient();
         sendFuntctionLog(FunctionIdDefine.GET_ACTIVITY_LISTS_FUNCTION_ID);
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet230001Event(Request request) {
@@ -105,37 +106,37 @@ public class ActivityModule extends BasicModule {
         int effectId = c2S.getEffectId();
         int sort = c2S.getSort();
         ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
-        M23.M230001.S2C.Builder builder = M23.M230001.S2C.newBuilder();
+       // M23.M230001.S2C.Builder builder = M23.M230001.S2C.newBuilder();
         PlayerReward reward = new PlayerReward();
-        int rs = activityProxy.getActivityReward(activityId, effectId, sort, reward);
-        builder.setRs(rs);
-        sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230001, builder.build());
-        if (rs == 0) {
+        M23.M230001.S2C s2C= activityProxy.getActivityReward(activityId, effectId, sort, reward);
+        sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230001, s2C);
+        if (s2C.getRs() == 0) {
             RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
             M2.M20007.S2C rewardbuild = rewardProxy.getRewardClientInfo(reward);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardbuild);
-            OnTriggerNet230000Event(null);
             if (reward.soldierMap.size() > 0) {
                 sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.CountCapacity());
             }
-//            sendFuntctionLog(FunctionIdDefine.GET_BUY_ACTIVITY_REWARD_FUNCTION_ID);
         }
+        sendPushNetMsgToClient();
 
     }
 
+    /**
+     * 获得限时活动列表
+     * @param request
+     */
     private void OnTriggerNet230002Event(Request request) {
         ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
-        M23.M230002.S2C.Builder builder = M23.M230002.S2C.newBuilder();
-        int rs = 0;
-        builder.addAllActivitys(activityProxy.getAllLimitActivityInfo());
-        builder.setRs(rs);
+        M23.M230002.S2C builder= activityProxy.getAllLimitActivityInfo();
         if(request!=null) {
-            sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230002, builder.build());
+            sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230002, builder);
         }else{
-            pushNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230002, builder.build());
+            pushNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230002, builder);
             sendPushNetMsgToClient();
         }
         sendFuntctionLog(FunctionIdDefine.GET_LIMIT_ACTIVITY_LISTS_FUNCTION_ID);
+        sendPushNetMsgToClient();
     }
 
     /**
@@ -147,6 +148,7 @@ public class ActivityModule extends BasicModule {
         ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         M23.M230005.S2C  builder= activityProxy.getLegionShareBoxInfo();
         sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230005, builder);
+        sendPushNetMsgToClient();
        // pushNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230005, builder);
         //sendPushNetMsgToClient();
     }
@@ -170,11 +172,8 @@ public class ActivityModule extends BasicModule {
             rewardProxy.getRewardToPlayer(reward, LogDefine.GET_LEGIONSHARE_SHARE);
             M2.M20007.S2C rewardbuild = rewardProxy.getRewardClientInfo(reward);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardbuild);
-            //小红点操作d
-            GameMsg.RefrshTip msg = new GameMsg.RefrshTip();
-            sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, msg);
         }
-
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet230003Event(Request request) {
@@ -211,6 +210,7 @@ public class ActivityModule extends BasicModule {
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.CountCapacity());
             sendFuntctionLog(FunctionIdDefine.BUY_LABA_LOTTER);
         }
+        sendPushNetMsgToClient();
     }
 
     /**
@@ -223,7 +223,37 @@ public class ActivityModule extends BasicModule {
         ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         M23.M230008.S2C resultBuilder= activityProxy.checkActivityToDelete(c2S.getCheckActivityIdsList());
         sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230008, resultBuilder);
+        sendPushNetMsgToClient();
     }
+
+
+    /**
+     * 检测一个普通活动是否开启
+     * @param request
+     */
+    private void OnTriggerNet230010Event(Request request) {
+        M23.M230010.C2S c2S = request.getValue();
+        int id=c2S.getCheckActivityIds();
+        ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        M23.M230010.S2C resultBuilder= activityProxy.checkNormalActivityIsOpen(id);
+        sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230010, resultBuilder);
+        sendPushNetMsgToClient();
+    }
+
+
+    /**
+     * 检测一个普通活动是否开启
+     * @param request
+     */
+    private void OnTriggerNet230011Event(Request request) {
+        M23.M230011.C2S c2S = request.getValue();
+        int id=c2S.getCheckActivityIds();
+        ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        M23.M230011.S2C resultBuilder= activityProxy.checkLimitActivityIsOpen(id);
+        sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230011, resultBuilder);
+        sendPushNetMsgToClient();
+    }
+
 
 
     /**

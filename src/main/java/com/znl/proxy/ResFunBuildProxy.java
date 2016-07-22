@@ -8,7 +8,6 @@ import com.znl.core.PlayerTask;
 import com.znl.define.*;
 import com.znl.log.BuildingLog;
 import com.znl.pojo.db.ResFunBuilding;
-import com.znl.pojo.db.Timerdb;
 import com.znl.proto.M10;
 import com.znl.proto.M13;
 import com.znl.proto.M3;
@@ -128,7 +127,7 @@ public class ResFunBuildProxy extends BasicProxy {
                 changerfbs.offer(rfb);
             }
         }
-        init();
+        refurceExpandPowerMap();
     }
 
 
@@ -389,7 +388,7 @@ public class ResFunBuildProxy extends BasicProxy {
 
     //获取建筑所有
     public List<M10.BuildingInfo> getBuildingInfos() {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+     //   TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         List<M10.BuildingInfo> list = new ArrayList<M10.BuildingInfo>();
         int level = getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_COMMOND, 1);
         for (ResFunBuilding rfb : rfbs) {
@@ -407,10 +406,10 @@ public class ResFunBuildProxy extends BasicProxy {
                 if (time < 0) {
                     time = 0;
                 }
-                int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
-                builder.setLevelTime(dbTime);
+            //    int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
+          //      builder.setLevelTime(dbTime);
 //                builder.setLevelTime((int) time / 1000);
-                builder.addAllProductionInfos(timerdbProxy.getProductionInfo(rfb.getIndex(),rfb.getSmallType()));
+           //     builder.addAllProductionInfos(timerdbProxy.getProductionInfo(rfb.getIndex(),rfb.getSmallType()));
                 builder.addAllBuildingDetailInfos(getBuildingDetailInfo(rfb.getSmallType(), rfb.getIndex()));
                 PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
                 int powertype = getBuildTypeBypower(rfb.getSmallType());
@@ -431,8 +430,8 @@ public class ResFunBuildProxy extends BasicProxy {
                 if (time < 0) {
                     time = 0;
                 }
-                int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
-                builder.setLevelTime(dbTime);
+             //   int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
+             //   builder.setLevelTime(dbTime);
 //                builder.setLevelTime((int) time / 1000);
                 PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
                 int powertype = getBuildTypeBypower(rfb.getSmallType());
@@ -449,7 +448,7 @@ public class ResFunBuildProxy extends BasicProxy {
 
     //获得建筑信息通过大类和index
     public M10.BuildingInfo getBuildingInfoBbyBigtypeIndex(int bigtype, int index) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+//        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         ResFunBuilding rfb = getResFuBuildByBigtypeIndex(bigtype, index);
         if(rfb==null){
             return null;
@@ -462,10 +461,10 @@ public class ResFunBuildProxy extends BasicProxy {
         if (time < 0) {
             time = 0;
         }
-        int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
-        builder.setLevelTime(dbTime);
+     //   int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
+      //  builder.setLevelTime(dbTime);
 //        builder.setLevelTime((int) time / 1000);
-        builder.addAllProductionInfos(timerdbProxy.getProductionInfo(rfb.getIndex(),rfb.getSmallType()));
+   //     builder.addAllProductionInfos(timerdbProxy.getProductionInfo(rfb.getIndex(),rfb.getSmallType()));
         builder.addAllBuildingDetailInfos(getBuildingDetailInfo(rfb.getSmallType(), rfb.getIndex()));
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         int powertype = getBuildTypeBypower(rfb.getSmallType());
@@ -478,7 +477,7 @@ public class ResFunBuildProxy extends BasicProxy {
 
 
     public M10.BuildingInfo getBuildingInfo(int buildType, int index) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+       // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         ResFunBuilding rfb = getResFunBuildingByIndexsmallyType(buildType, index);
         if(rfb==null){
             return null;
@@ -491,10 +490,10 @@ public class ResFunBuildProxy extends BasicProxy {
         if (time < 0) {
             time = 0;
         }
-        int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
-        builder.setLevelTime(dbTime);
+      //  int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
+     //   builder.setLevelTime(dbTime);
 //        builder.setLevelTime((int) time / 1000);
-        builder.addAllProductionInfos(timerdbProxy.getProductionInfo(rfb.getIndex(),rfb.getSmallType()));
+      //  builder.addAllProductionInfos(timerdbProxy.getProductionInfo(rfb.getIndex(),rfb.getSmallType()));
         builder.addAllBuildingDetailInfos(getBuildingDetailInfo(rfb.getSmallType(), rfb.getIndex()));
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         int powertype = getBuildTypeBypower(buildType);
@@ -509,7 +508,7 @@ public class ResFunBuildProxy extends BasicProxy {
     //获得某个类型建筑信息
     public List<M10.BuildingInfo> getBuildingInfobytype(int buildType) {
         List<M10.BuildingInfo> infos = new ArrayList<M10.BuildingInfo>();
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+       // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         for (ResFunBuilding rfb : rfbs) {
             if (rfb.getSmallType() == buildType) {
                 M10.BuildingInfo.Builder builder = M10.BuildingInfo.newBuilder();
@@ -520,10 +519,10 @@ public class ResFunBuildProxy extends BasicProxy {
                 if (time < 0) {
                     time = 0;
                 }
-                int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
-                builder.setLevelTime(dbTime);
+           //     int dbTime = timerdbProxy.getTimerlesTime(TimerDefine.BUILDING_LEVEL_UP, rfb.getSmallType(), rfb.getIndex());
+           //     builder.setLevelTime(dbTime);
 //                builder.setLevelTime((int) time / 1000);
-                builder.addAllProductionInfos(timerdbProxy.getProductionInfo(rfb.getIndex(),rfb.getSmallType()));
+             //   builder.addAllProductionInfos(timerdbProxy.getProductionInfo(rfb.getIndex(),rfb.getSmallType()));
                 builder.addAllBuildingDetailInfos(getBuildingDetailInfo(rfb.getSmallType(), rfb.getIndex()));
                 PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
                 int powertype = getBuildTypeBypower(buildType);
@@ -585,7 +584,7 @@ public class ResFunBuildProxy extends BasicProxy {
     //建筑升级
     public int buildingLeveUp(int buildType, int index, int type, List<Integer> powerlist,int lvtype , int upLevel) {
         ResFunBuilding building = getResFunBuildingByIndexsmallyType(buildType, index);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+      //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         if (building == null) {
             building = getResFunBuildingByIndexbigType(ResFunBuildDefine.BUILDE_TYPE_RESOUCE, index);
@@ -599,14 +598,14 @@ public class ResFunBuildProxy extends BasicProxy {
             }
         }
 
-        long nextLevelTime = timerdbProxy.getLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex());
+        long nextLevelTime =0;// timerdbProxy.getLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex());
         int timeGap = (int) (nextLevelTime /1000 - GameUtils.getServerTime());//时间差值
         if (timeGap > TimerDefine.TOLERNACE_TIME) {
             return ErrorCodeDefine.M100001_2;//超过服务器可允许的时间差值了
         }
-        if (timerdbProxy.getBuildLeveNum() <= 0) {
-            return ErrorCodeDefine.M100001_6;
-        }
+     //   if (timerdbProxy.getBuildLeveNum() <= 0) {
+     //       return ErrorCodeDefine.M100001_6;
+    //    }
         if(getResFuBuilStateByindex(buildType,index)==false){
             return ErrorCodeDefine.M100001_9;
         }
@@ -696,10 +695,10 @@ public class ResFunBuildProxy extends BasicProxy {
             //设置建筑升级完成时间
             setFinishLevelTime(buildType, index, needtime);
             //设置定时器
-            timerdbProxy.addTimer(TimerDefine.BUILDING_LEVEL_UP, 0, (int) time, -1, building.getSmallType(), building.getIndex(), playerProxy);
-            timerdbProxy.setIsAutolv(TimerDefine.BUILDING_LEVEL_UP,building.getSmallType(), building.getIndex(),lvtype);
-            timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(), needtime);
-            timerdbProxy.setIsAutolv(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(),lvtype);
+            //timerdbProxy.addTimer(TimerDefine.BUILDING_LEVEL_UP, 0, (int) time, -1, building.getSmallType(), building.getIndex(), playerProxy);
+           // timerdbProxy.setIsAutolv(TimerDefine.BUILDING_LEVEL_UP,building.getSmallType(), building.getIndex(),lvtype);
+         //   timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(), needtime);
+          //  timerdbProxy.setIsAutolv(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(),lvtype);
         } else {
             //功能建筑
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel());
@@ -759,10 +758,10 @@ public class ResFunBuildProxy extends BasicProxy {
             //设置建筑升级完成时间
             setFinishLevelTime(buildType, index, needtime);
             //设置定时器
-            timerdbProxy.addTimer(TimerDefine.BUILDING_LEVEL_UP, 0, (int) time, -1, building.getSmallType(), building.getIndex(), playerProxy);
-            timerdbProxy.setIsAutolv(TimerDefine.BUILDING_LEVEL_UP,building.getSmallType(), building.getIndex(),lvtype);
-            timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(), needtime);
-            timerdbProxy.setIsAutolv(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(),lvtype);
+          //  timerdbProxy.addTimer(TimerDefine.BUILDING_LEVEL_UP, 0, (int) time, -1, building.getSmallType(), building.getIndex(), playerProxy);
+           // timerdbProxy.setIsAutolv(TimerDefine.BUILDING_LEVEL_UP,building.getSmallType(), building.getIndex(),lvtype);
+         //   timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(), needtime);
+          //  timerdbProxy.setIsAutolv(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(),lvtype);
         }
         return 0;
     }
@@ -779,7 +778,7 @@ public class ResFunBuildProxy extends BasicProxy {
             //建筑没有在升级中
             return ErrorCodeDefine.M100003_2;//建筑没有在升级中
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+   //     TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         if (ResFunBuildDefine.RESOUCETYPELIST.contains(building.getSmallType())) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel());
@@ -790,7 +789,7 @@ public class ResFunBuildProxy extends BasicProxy {
                 playerProxy.addPowerValue(array.getInt(0), (int) addValue, LogDefine.GET_CANCEL_BUILD_LEVELUP);
             }
             //删除定时器
-            timerdbProxy.delTimer(TimerDefine.BUILDING_LEVEL_UP, buildType, index);
+         //   timerdbProxy.delTimer(TimerDefine.BUILDING_LEVEL_UP, buildType, index);
             setFinishLevelTime(buildType, index, GameUtils.getServerDate().getTime());
         } else {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel());
@@ -802,7 +801,7 @@ public class ResFunBuildProxy extends BasicProxy {
             }
 
             //删除定时器
-            timerdbProxy.delTimer(TimerDefine.BUILDING_LEVEL_UP, buildType, index);
+       //     timerdbProxy.delTimer(TimerDefine.BUILDING_LEVEL_UP, buildType, index);
             setFinishLevelTime(buildType, index, GameUtils.getServerDate().getTime());
         }
 
@@ -813,17 +812,17 @@ public class ResFunBuildProxy extends BasicProxy {
         ResFunBuilding resFunBuilding = getResFunBuildingByIndexsmallyType(buildType, index);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         SystemProxy systemProxy = getGameProxy().getProxy(ActorDefine.SYSTEM_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+      //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         if (resFunBuilding == null) {
             return ErrorCodeDefine.M100003_1;//该建筑不存在
         }
-        long time = timerdbProxy.getLastOperatinTime(TimerDefine.BUILD_CREATE, index, order);
-        int num = timerdbProxy.getTimerNum(TimerDefine.BUILD_CREATE, index, order);
+        long time = 0;//timerdbProxy.getLastOperatinTime(TimerDefine.BUILD_CREATE, index, order);
+        int num =0;// timerdbProxy.getTimerNum(TimerDefine.BUILD_CREATE, index, order);
         time = time - GameUtils.getServerDate().getTime();
         if (time <= 0) {
             return ErrorCodeDefine.M100003_3;
         }
-        int id = timerdbProxy.getAttr1(TimerDefine.BUILD_CREATE, index, order);
+        int id = 1;//timerdbProxy.getAttr1(TimerDefine.BUILD_CREATE, index, order);
         //返还资源
         if (buildType == ResFunBuildDefine.BUILDE_TYPE_TANK) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.ARM_PRODUCT, id);
@@ -866,8 +865,8 @@ public class ResFunBuildProxy extends BasicProxy {
         }
         //TODO 其它类型添加
         //删除oreder定时器
-        timerdbProxy.delTimer(TimerDefine.BUILD_CREATE, index, order);
-        timerdbProxy.modifBuildfinishTime(index, time, order);
+        //timerdbProxy.delTimer(TimerDefine.BUILD_CREATE, index, order);
+       // timerdbProxy.modifBuildfinishTime(index, time, order);
         return 0;
     }
 
@@ -897,9 +896,9 @@ public class ResFunBuildProxy extends BasicProxy {
             return ErrorCodeDefine.M100005_2;//该类型建筑不可以拆除
         }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         //定时器删除
-        timerdbProxy.delTimer(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), index);
+        //timerdbProxy.delTimer(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), index);
         playerProxy.removeBuilder(building.getSmallType(), index);
         changeResFuBuildLevel(buildType, index, 0);
         changeResFuBuildType(buildType, index, 0);
@@ -912,7 +911,7 @@ public class ResFunBuildProxy extends BasicProxy {
         ResFunBuilding resFunBuilding = getResFunBuildingByIndexsmallyType(buildType, index);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         SystemProxy systemProxy = getGameProxy().getProxy(ActorDefine.SYSTEM_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         if (resFunBuilding == null) {
             return ErrorCodeDefine.M100004_1;//该建筑不存在
         }
@@ -962,7 +961,7 @@ public class ResFunBuildProxy extends BasicProxy {
             int reducetime = jsonObject.getJSONArray("effect").getInt(0) * 1000 * 60;
             long needtime = resFunBuilding.getNextLevelTime() - (reducetime);
             setFinishLevelTime(buildType, index, needtime);
-            timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, resFunBuilding.getSmallType(), resFunBuilding.getIndex(), needtime);
+           // timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, resFunBuilding.getSmallType(), resFunBuilding.getIndex(), needtime);
             if (GameUtils.getServerDate().getTime() >= resFunBuilding.getNextLevelTime()) {
                 systemProxy.doBuildingLevelUp(buildType, index);
             }
@@ -979,12 +978,12 @@ public class ResFunBuildProxy extends BasicProxy {
         ResFunBuilding resFunBuilding = getResFunBuildingByIndexsmallyType(buildType, index);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         SystemProxy systemProxy = getGameProxy().getProxy(ActorDefine.SYSTEM_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         int rs = 0;
         if (resFunBuilding == null) {
             return ErrorCodeDefine.M100004_1;//该建筑不存在
         }
-        long time = timerdbProxy.getLastOperatinTime(TimerDefine.BUILD_CREATE, index, order);
+        long time =0;// timerdbProxy.getLastOperatinTime(TimerDefine.BUILD_CREATE, index, order);
         time = time - GameUtils.getServerDate().getTime();
         if (time <= 0) {
             return ErrorCodeDefine.M100004_8;
@@ -995,7 +994,7 @@ public class ResFunBuildProxy extends BasicProxy {
                 return ErrorCodeDefine.M100004_3;
             }
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, cost, LogDefine.LOST_BUILDING_SPEEDPRODUCTION);
-            timerdbProxy.modifBuildfinishTime(index, time, order);
+         //   timerdbProxy.modifBuildfinishTime(index, time, order);
             BuildingLog buildingLog = new BuildingLog(buildType, index, LogDefine.BUILDINGPRODUCTSPEEDBYCOIN, 0, 0, getResFuBuildLevelBysmallType(buildType, index));
             buildingLog.setCost(cost);
             baseLogs.add(buildingLog);
@@ -1026,7 +1025,7 @@ public class ResFunBuildProxy extends BasicProxy {
                 reducetime = time;
                 rs = 2;
             }
-            timerdbProxy.modifBuildfinishTime(index, reducetime, order);
+          //  timerdbProxy.modifBuildfinishTime(index, reducetime, order);
             BuildingLog buildingLog = new BuildingLog(buildType, index, LogDefine.BUILDINGPRODUCTSPEEDBYITEM, 0, 0, getResFuBuildLevelBysmallType(buildType, index));
             buildingLog.setItemCost(typeId);
             buildingLog.setItemCostNum(1);
@@ -1097,7 +1096,7 @@ public class ResFunBuildProxy extends BasicProxy {
      * 建筑生产
      ***********/
     public int builderProduction(int buildType, int index, int typeId, int num, PlayerReward reward, List<BaseLog> baseLogs) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         ItemProxy itemProxy = getGameProxy().getProxy(ActorDefine.ITEM_PROXY_NAME);
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
@@ -1128,9 +1127,9 @@ public class ResFunBuildProxy extends BasicProxy {
                     return ErrorCodeDefine.M100006_3;
                 }
             }
-            if (timerdbProxy.getCreateingNum(index) >= hadWaitQueue) {
-                return ErrorCodeDefine.M100006_4;
-            }
+        //    if (timerdbProxy.getCreateingNum(index) >= hadWaitQueue) {
+             //   return ErrorCodeDefine.M100006_4;
+        //    }
             if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_level) < jsonObject.getInt("commanderLv")) {
                 return ErrorCodeDefine.M100006_5;
             }
@@ -1162,14 +1161,14 @@ public class ResFunBuildProxy extends BasicProxy {
             }
             lessTime = lessTime * num;
             //添加计数器   smallType=工厂的index  otherType 队列的第几个
-            int order = timerdbProxy.getCreateBigNum(index);
-            long timeId = timerdbProxy.addTimer(TimerDefine.BUILD_CREATE, num, (int) lessTime, -1, index, order + 1, playerProxy);
-            timerdbProxy.setAttrValue(timeId, 1, typeId);
-            timerdbProxy.setAttrValue(timeId, 2, (int) lessTime);
+           // int order = timerdbProxy.getCreateBigNum(index);
+         //   long timeId = timerdbProxy.addTimer(TimerDefine.BUILD_CREATE, num, (int) lessTime, -1, index, order + 1, playerProxy);
+          //  timerdbProxy.setAttrValue(timeId, 1, typeId);
+          //  timerdbProxy.setAttrValue(timeId, 2, (int) lessTime);
             long timeadd = lessTime * 1000;
          //   timeadd= (long) Math.ceil(timeadd*(100-activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_CREATE_TANKE_SPEED))/100.0);
-            long lasttime = timerdbProxy.getLastCreateTime(index, order) + (timeadd);
-            timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_CREATE, index, order + 1, lasttime);
+        //    long lasttime = timerdbProxy.getLastCreateTime(index, order) + (timeadd);
+        //    timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_CREATE, index, order + 1, lasttime);
             BuildingLog buildingLog = new BuildingLog(index, buildType, LogDefine.BUILDINGPRODUCT, typeId, num, getResFuBuildLevelBysmallType(buildType, index));
             baseLogs.add(buildingLog);
         } else if (buildType == ResFunBuildDefine.BUILDE_TYPE_SCIENCE) {
@@ -1188,7 +1187,7 @@ public class ResFunBuildProxy extends BasicProxy {
 
     //兵种改造
     private int armsTransformation(int index, int typeId, int num, int buildType, PlayerReward reward, List<BaseLog> baseLogs) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         ItemProxy itemProxy = getGameProxy().getProxy(ActorDefine.ITEM_PROXY_NAME);
         SoldierProxy soldierProxy = getGameProxy().getProxy(ActorDefine.SOLDIER_PROXY_NAME);
@@ -1203,9 +1202,9 @@ public class ResFunBuildProxy extends BasicProxy {
         if (jsonObject == null) {
             return ErrorCodeDefine.M100006_14;
         }
-        if (timerdbProxy.getCreateingNum(index) >= hadWaitQueue) {
-            return ErrorCodeDefine.M100006_4;
-        }
+     //   if (timerdbProxy.getCreateingNum(index) >= hadWaitQueue) {
+     //       return ErrorCodeDefine.M100006_4;
+     //   }
         JSONArray buildarry = jsonObject.getJSONArray("Lvneed");
         if (getMaxLevelByBuildType(buildarry.getInt(0)) < buildarry.getInt(1)) {
             return ErrorCodeDefine.M100006_27;
@@ -1262,14 +1261,14 @@ public class ResFunBuildProxy extends BasicProxy {
         }
         lessTime = lessTime * num;
         //添加计数器   smallType=工厂的index  otherType 队列的第几个
-        int order = timerdbProxy.getCreateBigNum(index);
-        long timeId = timerdbProxy.addTimer(TimerDefine.BUILD_CREATE, num, (int) lessTime, -1, index, order + 1, playerProxy);
-        timerdbProxy.setAttrValue(timeId, 1, typeId);
-        timerdbProxy.setAttrValue(timeId, 2, (int) lessTime);
+      //  int order = timerdbProxy.getCreateBigNum(index);
+       // long timeId = timerdbProxy.addTimer(TimerDefine.BUILD_CREATE, num, (int) lessTime, -1, index, order + 1, playerProxy);
+      //  timerdbProxy.setAttrValue(timeId, 1, typeId);
+     //   timerdbProxy.setAttrValue(timeId, 2, (int) lessTime);
         long timeadd = (long) lessTime * 1000;
      //   timeadd= (long) Math.ceil(timeadd*(100-activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_CHANGE_TANK_SPEED))/100.0);
-        long lasttime = timerdbProxy.getLastCreateTime(index, order) + (timeadd);
-        timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_CREATE, index, order + 1, lasttime);
+    //    long lasttime = timerdbProxy.getLastCreateTime(index, order) + (timeadd);
+     //   timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_CREATE, index, order + 1, lasttime);
         BuildingLog buildingLog = new BuildingLog(buildType, index, LogDefine.BUILDINGPRODUCT, typeId, num, getResFuBuildLevelBysmallType(buildType, index));
         baseLogs.add(buildingLog);
         return 0;
@@ -1279,7 +1278,7 @@ public class ResFunBuildProxy extends BasicProxy {
 
     //制造车间生产
     private int manufacturing(int index, int typeId, int num, int buildtype, PlayerReward reward, List<BaseLog> baseLogs) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+     //   TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         ItemProxy itemProxy = getGameProxy().getProxy(ActorDefine.ITEM_PROXY_NAME);
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
@@ -1292,9 +1291,9 @@ public class ResFunBuildProxy extends BasicProxy {
         if (jsonObject == null) {
             return ErrorCodeDefine.M100006_8;
         }
-        if (timerdbProxy.getCreateingNum(index) >= hadWaitQueue) {
-            return ErrorCodeDefine.M100006_9;
-        }
+     //   if (timerdbProxy.getCreateingNum(index) >= hadWaitQueue) {
+      //      return ErrorCodeDefine.M100006_9;
+     //   }
         JSONArray rejsonArray = jsonObject.getJSONArray("need");
         for (int i = 0; i < rejsonArray.length(); i++) {
             JSONArray array = rejsonArray.getJSONArray(i);
@@ -1338,13 +1337,13 @@ public class ResFunBuildProxy extends BasicProxy {
         }
         lessTime = lessTime * num;
         //添加计数器   smallType=工厂的index  otherType 队列的第几个
-        int order = timerdbProxy.getCreateBigNum(index);
-        long timeId = timerdbProxy.addTimer(TimerDefine.BUILD_CREATE, num, lessTime, -1, index, order + 1, playerProxy);
-        timerdbProxy.setAttrValue(timeId, 1, typeId);
-        timerdbProxy.setAttrValue(timeId, 2, lessTime);
+    //    int order = timerdbProxy.getCreateBigNum(index);
+      //  long timeId = timerdbProxy.addTimer(TimerDefine.BUILD_CREATE, num, lessTime, -1, index, order + 1, playerProxy);
+       // timerdbProxy.setAttrValue(timeId, 1, typeId);
+     //   timerdbProxy.setAttrValue(timeId, 2, lessTime);
         long timeadd = (long) lessTime * 1000;
-        long lasttime = timerdbProxy.getLastCreateTime(index, order) + timeadd;
-        timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_CREATE, index, order + 1, lasttime);
+      //  long lasttime = timerdbProxy.getLastCreateTime(index, order) + timeadd;
+     //   timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_CREATE, index, order + 1, lasttime);
         BuildingLog buildingLog = new BuildingLog(buildtype, index, LogDefine.BUILDINGPRODUCT, typeId, num, getResFuBuildLevelBysmallType(buildtype, index));
         baseLogs.add(buildingLog);
         return 0;
@@ -1551,28 +1550,28 @@ public class ResFunBuildProxy extends BasicProxy {
     //获得三个生产队列数量
     public int getProductNum() {
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+      //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         int sum = 0;
         //2 3 4 12
         if (getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_TANK, 2) > 0) {
-            if (timerdbProxy.getCreateBigNum(2) == 0) {
-                sum += 1;
-            }
+        //    if (timerdbProxy.getCreateBigNum(2) == 0) {
+        //        sum += 1;
+       //     }
         }
         if (getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_TANK, 3) > 0) {
-            if (timerdbProxy.getCreateBigNum(3) == 0) {
-                sum += 1;
-            }
+        //    if (timerdbProxy.getCreateBigNum(3) == 0) {
+           //     sum += 1;
+         //   }
         }
         if (getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_RREFIT, 11) > 0) {
-            if (timerdbProxy.getCreateBigNum(11) == 0) {
-                sum += 1;
-            }
+       //     if (timerdbProxy.getCreateBigNum(11) == 0) {
+           //     sum += 1;
+        //    }
         }
         if (getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_SCIENCE, 12) > 0) {
-            if (timerdbProxy.getCreateBigNum(12) == 0) {
-                sum += 1;
-            }
+        //    if (timerdbProxy.getCreateBigNum(12) == 0) {
+           //     sum += 1;
+           // }
         }
         return sum;
 
@@ -1629,8 +1628,8 @@ public class ResFunBuildProxy extends BasicProxy {
                         timeInfo.setSmalltype(building.getSmallType());
                         timeInfo.setOthertype(building.getIndex());
                         //System.err.println("========buildAutoLevelUp=================" + building.getSmallType() + "  " + building.getIndex());
-                        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-                        timerdbProxy.addTimeDbToList(timeInfo.build(),m3info);
+                    //    TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+                    //    timerdbProxy.addTimeDbToList(timeInfo.build(),m3info);
 //                        m3info.add(timeInfo.build());
                     }
                 }
@@ -1696,7 +1695,7 @@ public class ResFunBuildProxy extends BasicProxy {
     //离线建筑升级
     public long outlinebuilLevelTime(int buildType, int index, long starTime) {
         ResFunBuilding building = getResFunBuildingByIndexsmallyType(buildType, index);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+     //   TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         if (building == null) {
             building = getResFunBuildingByIndexbigType(ResFunBuildDefine.BUILDE_TYPE_RESOUCE, index);
         }
@@ -1706,9 +1705,9 @@ public class ResFunBuildProxy extends BasicProxy {
         if (starTime < building.getNextLevelTime()) {
             return ErrorCodeDefine.M100001_2;
         }
-        if (timerdbProxy.getBuildLeveNum() <= 0) {
-            return ErrorCodeDefine.M100001_6;
-        }
+       // if (timerdbProxy.getBuildLeveNum() <= 0) {
+        //    return ErrorCodeDefine.M100001_6;
+     //   }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         if (getBuildTypeByType(buildType) == 1) {
             //资源建筑
@@ -1746,8 +1745,8 @@ public class ResFunBuildProxy extends BasicProxy {
             //设置建筑升级完成时间
             setFinishLevelTime(buildType, index, needtime);
             //设置定时器
-            timerdbProxy.addTimer(TimerDefine.BUILDING_LEVEL_UP, 0, (int) time, -1, building.getSmallType(), building.getIndex(), playerProxy);
-            timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(), needtime);
+          //  timerdbProxy.addTimer(TimerDefine.BUILDING_LEVEL_UP, 0, (int) time, -1, building.getSmallType(), building.getIndex(), playerProxy);
+           // timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(), needtime);
             return needtime;
         } else {
             //功能建筑
@@ -1785,8 +1784,8 @@ public class ResFunBuildProxy extends BasicProxy {
             //设置建筑升级完成时间
             setFinishLevelTime(buildType, index, needtime);
             //设置定时器
-            timerdbProxy.addTimer(TimerDefine.BUILDING_LEVEL_UP, 0, (int) time, -1, building.getSmallType(), building.getIndex(), playerProxy);
-            timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(), needtime);
+         //   timerdbProxy.addTimer(TimerDefine.BUILDING_LEVEL_UP, 0, (int) time, -1, building.getSmallType(), building.getIndex(), playerProxy);
+           // timerdbProxy.setLastOperatinTime(TimerDefine.BUILDING_LEVEL_UP, building.getSmallType(), building.getIndex(), needtime);
             return needtime;
         }
     }
@@ -1796,7 +1795,7 @@ public class ResFunBuildProxy extends BasicProxy {
      * 购买自动升级
      ********/
     public int buyAutoLevel() {
-        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+     /*   PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < TimerDefine.BUILDAUTOLEVELPRICE) {
             return ErrorCodeDefine.M100011_1;
         }
@@ -1807,11 +1806,11 @@ public class ResFunBuildProxy extends BasicProxy {
         long lasttiem = timerdbProxy.getLastOperatinTime(TimerDefine.BUILD_AUTO_LEVLE_UP, 0, 0);
         long endTime = GameUtils.getServerDate().getTime() - lasttiem;
         if (hastime > 0) {
-          /*  if (state == TimerDefine.BUILDAUTOLEVEL_OFF) {
+          *//*  if (state == TimerDefine.BUILDAUTOLEVEL_OFF) {
                 //表示默认不开
                 timerdbProxy.setNum(TimerDefine.BUILD_AUTO_LEVLE_UP, 0, 0, TimerDefine.BUILDAUTOLEVEL_ADDTIME / 1000 + hastime);
                 playerProxy.setAutoBuildStateendtime(0l);
-            }*/
+            }*//*
             timerdbProxy.setNum(TimerDefine.BUILD_AUTO_LEVLE_UP, 0, 0, 0);
             playerProxy.setAutoBuildState(TimerDefine.BUILDAUTOLEVEL_OPEN);
             timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_AUTO_LEVLE_UP, 0, 0, GameUtils.getServerDate().getTime() +hastime*1000+ TimerDefine.BUILDAUTOLEVEL_ADDTIME);
@@ -1826,7 +1825,7 @@ public class ResFunBuildProxy extends BasicProxy {
                 timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_AUTO_LEVLE_UP, 0, 0, GameUtils.getServerDate().getTime() + TimerDefine.BUILDAUTOLEVEL_ADDTIME);
                 playerProxy.setAutoBuildStateendtime(GameUtils.getServerDate().getTime() + TimerDefine.BUILDAUTOLEVEL_ADDTIME);
             }
-        }
+        }*/
         return 0;
     }
 
@@ -1835,7 +1834,7 @@ public class ResFunBuildProxy extends BasicProxy {
      * 改变自动升状态
      ********/
     public int changetAutoBuildState(int type) {
-        if (type == TimerDefine.BUILDAUTOLEVEL_OPEN) {
+    /*    if (type == TimerDefine.BUILDAUTOLEVEL_OPEN) {
             if (isHasAutoLevel() == false) {
                 return ErrorCodeDefine.M100012_1;
             }
@@ -1859,13 +1858,13 @@ public class ResFunBuildProxy extends BasicProxy {
                 playerProxy.setAutoBuildState(type);
                 playerProxy.setAutoBuildStateendtime(0l);
             }
-        }
+        }*/
         return 0;
     }
 
     //判断有没有在自动升级
     public boolean isHasAutoLevel() {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+       /* TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         long lasttiem = timerdbProxy.getLastOperatinTime(TimerDefine.BUILD_AUTO_LEVLE_UP, 0, 0);
         long endTime = GameUtils.getServerDate().getTime() - lasttiem;
         if (endTime < 0) {
@@ -1873,13 +1872,13 @@ public class ResFunBuildProxy extends BasicProxy {
         }
         if (timerdbProxy.getTimerNum(TimerDefine.BUILD_AUTO_LEVLE_UP, 0, 0) > 0) {
             return true;
-        }
+        }*/
         return false;
     }
 
     //判断某个时间是否有在自动升级
     public boolean isAutoLeveling(long nowTime) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+       /* TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         long lasttiem = timerdbProxy.getLastOperatinTime(TimerDefine.BUILD_AUTO_LEVLE_UP, 0, 0);
         long endTime = nowTime - lasttiem;
         if (endTime >= 0) {
@@ -1888,7 +1887,7 @@ public class ResFunBuildProxy extends BasicProxy {
                 playerProxy.setAutoBuildState(TimerDefine.BUILDAUTOLEVEL_OFF);
             }
             return false;
-        }
+        }*/
         return true;
     }
 

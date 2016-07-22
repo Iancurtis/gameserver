@@ -185,7 +185,7 @@ public class SoldierProxy extends BasicProxy {
 //        long t3 = System.currentTimeMillis();
 //        System.err.println("第二阶段时间为："+(t3-t2));
         highestCapacity = cap;
-        init();
+        refurceExpandPowerMap();
         playerProxy.setCapacity(highestCapacity);
         return highestCapacity;
     }
@@ -198,11 +198,11 @@ public class SoldierProxy extends BasicProxy {
                 CustomerLogger.error("还有部队没回来呢,执行补回逻辑");
                 addSoldierNumWithoutBaseNum(soldier.getTypeId(), soldier.getBaseNum() - soldier.getNum(), LogDefine.GET_CLOSE_WORLD);
                 pushSoldierToChangeList(soldier);
-                soldierInfos.add(getSoldierInfo(soldier));
+                soldierInfos.add(getSoldierInfo(soldier.getTypeId()));
             }else if(soldier.getBaseNum() < soldier.getNum()){
                 soldier.setNum(soldier.getBaseNum());
                 pushSoldierToChangeList(soldier);
-                soldierInfos.add(getSoldierInfo(soldier));
+                soldierInfos.add(getSoldierInfo(soldier.getTypeId()));
             }
         }
 
@@ -282,12 +282,12 @@ public class SoldierProxy extends BasicProxy {
                 Common.SoldierInfo.Builder info = Common.SoldierInfo.newBuilder();
                 info.setNum(soldier.getNum());
                 info.setTypeid(soldier.getTypeId());
-                HashMap<Integer,Integer> map = getEmptySoldierPowerMap(soldier.getTypeId());
+                /*HashMap<Integer,Integer> map = getEmptySoldierPowerMap(soldier.getTypeId());
                 info.setHp(map.get(SoldierDefine.POWER_hpMax));
                 info.setAttack(map.get(SoldierDefine.POWER_atk));
                 for (int i=SoldierDefine.POWER_hpMax;i<=SoldierDefine.TOTAL_FIGHT_POWER;i++){
                     info.addPowerList(map.get(i));
-                }
+                }*/
                 infos.add(info.build());
             }
         }
@@ -312,9 +312,30 @@ public class SoldierProxy extends BasicProxy {
         if(soldier == null){
             info.setNum(0);
             info.setTypeid(soldierId);
+            //HashMap<Integer,Integer> map = getEmptySoldierPowerMap(soldierId);
+            //info.setHp(map.get(SoldierDefine.POWER_hpMax));
+            //info.setAttack(map.get(SoldierDefine.POWER_atk));
+            /*for (int i=SoldierDefine.POWER_hpMax;i<=SoldierDefine.TOTAL_FIGHT_POWER;i++){
+                info.addPowerList(map.get(i));
+            }*/
+            return info.build();
+        }
+        Common.SoldierInfo.Builder builder = Common.SoldierInfo.newBuilder();
+        builder.setNum(soldier.getNum());
+        builder.setTypeid(soldier.getTypeId());
+        return builder.build();
+    }
+
+    //分享佣兵是调用
+    public Common.SoldierInfo getSoldierInfotoshare(int soldierId){
+        Soldier soldier = getSoldierBySoldierId(soldierId);
+        Common.SoldierInfo.Builder info = Common.SoldierInfo.newBuilder();
+        if(soldier == null){
+            info.setNum(0);
+            info.setTypeid(soldierId);
             HashMap<Integer,Integer> map = getEmptySoldierPowerMap(soldierId);
-            info.setHp(map.get(SoldierDefine.POWER_hpMax));
-            info.setAttack(map.get(SoldierDefine.POWER_atk));
+            //info.setHp(map.get(SoldierDefine.POWER_hpMax));
+            //info.setAttack(map.get(SoldierDefine.POWER_atk));
             for (int i=SoldierDefine.POWER_hpMax;i<=SoldierDefine.TOTAL_FIGHT_POWER;i++){
                 info.addPowerList(map.get(i));
             }
@@ -347,14 +368,14 @@ public class SoldierProxy extends BasicProxy {
             }
 
         }
-        int hp = getPowerValue(SoldierDefine.POWER_hp,soldier);
+        /*int hp = getPowerValue(SoldierDefine.POWER_hp,soldier);
         int hpPercent = getPowerValue(SoldierDefine.POWER_hpMaxRate,soldier);
         hp = (int) (hp *(1+hpPercent /10000.0));
         builder.setHp(hp);
         int atk = getPowerValue(SoldierDefine.POWER_atk,soldier);
         int atkPer = getPowerValue(SoldierDefine.POWER_atkRate,soldier);
         atk = (int) (atk * (1+atkPer/10000.0));
-        builder.setAttack(atk);
+        builder.setAttack(atk);*/
         return builder.build();
     }
 
@@ -755,7 +776,7 @@ public class SoldierProxy extends BasicProxy {
         }else {
             Soldier soldier = getSoldierBySoldierId(typeId);
             if(soldier == null){
-                return ErrorCodeDefine.M40002_1;
+                return ErrorCodeDefine.M20007_1;
             }
             JSONObject soldierDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.ARM_KINDS,typeId);
             if(type == 1){
@@ -769,13 +790,13 @@ public class SoldierProxy extends BasicProxy {
         if (type == 1){
             value = playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold);
             if(value < price){
-                return ErrorCodeDefine.M40002_2;
+                return ErrorCodeDefine.M20007_2;
             }
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold,price,LogDefine.LOST_REPAIR_SOLDIER);
         }else {
             value = playerProxy.getPowerValue(PlayerPowerDefine.POWER_tael);
             if(value < price){
-                return ErrorCodeDefine.M40002_3;
+                return ErrorCodeDefine.M20007_3;
             }
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_tael,price,LogDefine.LOST_REPAIR_SOLDIER);
         }

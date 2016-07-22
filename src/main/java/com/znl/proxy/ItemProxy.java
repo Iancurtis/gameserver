@@ -51,7 +51,9 @@ public class ItemProxy extends BasicProxy {
 //                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>item竟然出现:" + item.getTypeId() + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 //                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>item竟然出现:" + item.getTypeId() + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 //            }
-            items.add(item);
+            if(item!=null) {
+                items.add(item);
+            }
         }
         init();
     }

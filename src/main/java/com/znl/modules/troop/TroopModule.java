@@ -127,6 +127,7 @@ public class TroopModule extends BasicModule {
 
     private void OnTriggerNet70000Event(Request request) {
         sendNetMsg(ActorDefine.TROOP_MODULE_ID, ProtocolModuleDefine.NET_M7_C70000, getFormationListMess());
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet70001Event(Request request) {
@@ -145,6 +146,7 @@ public class TroopModule extends BasicModule {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             GameMsg.RestArena msg = new GameMsg.RestArena(formationInfo, 1, playerProxy.getPlayerId(), playerProxy.getAreaKey());
             sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME, msg);
+            sendPushNetMsgToClient();
         }
         if (formationInfo.getType() == SoldierDefine.FORMATION_DEFEND && rs >= 0){
             List<PlayerTeam> defendTeams = formationProxy.createFormationTeam(formationInfo.getType());
@@ -159,7 +161,7 @@ public class TroopModule extends BasicModule {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             PlayerTroop troop = formationProxy.createPlayerTroop(defendTeams, playerProxy.getPlayerId());
             GameMsg.UpdateSimplePlayerDefendTroop mess = new GameMsg.UpdateSimplePlayerDefendTroop(playerProxy.getPlayerId(),troop);
-            sendServiceMsg(ActorDefine.PLAYER_SERVICE_NAME,mess);
+            sendServiceMsg(ActorDefine.PLAYER_SERVICE_NAME, mess);
 //            updateMySimplePlayerData();
         }
     }

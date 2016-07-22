@@ -59,11 +59,11 @@ public class TaskModule extends BasicModule {
             M19.M190000.S2C.Builder builder = M19.M190000.S2C.newBuilder();
             builder.addAllTaskInfos(taskProxy.getTaskInfoBytableTypedel(TaskDefine.TABLE_TASK_DAY));
             taskProxy.initTask();
-            TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+         //   TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
             builder.addAllTaskInfos(taskProxy.getTaskInfoBytableType(TaskDefine.TABLE_TASK_ACTIVITY_DAY));
             builder.addAllTaskInfos(taskProxy.getTaskInfoBytableType(TaskDefine.TABLE_TASK_DAY));
-            int dayilNum = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
-            int dayactivity = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+            int dayilNum =taskProxy.taskTimer.getDaytaskNum(); //timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
+           int dayactivity =taskProxy.taskTimer.getActivyTastId(); // timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
             builder.setHasGetMaxId(dayactivity);
             builder.setDayActivityId(dayactivity + 1);
             builder.setDayliynum(dayilNum);
@@ -78,17 +78,14 @@ public class TaskModule extends BasicModule {
             M19.M190000.S2C.Builder builder = ((GameMsg.RefeshTaskUpdate) object).build();
             PlayerReward reward = ((GameMsg.RefeshTaskUpdate) object).reward();
             if (builder != null) {
-                TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+             //   TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
                 TaskProxy taskProxy=getProxy(ActorDefine.TASK_PROXY_NAME);
-                int dayilNum = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
-                int num = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+                int dayilNum =taskProxy.taskTimer.getDaytaskNum();// timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
+                int num = taskProxy.taskTimer.getActivyTastId();//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
                 builder.setHasGetMaxId(num);
                 builder.setDayActivityId(taskProxy.getActivityId());
                 builder.setDayliynum(dayilNum);
                 pushNetMsg(ProtocolModuleDefine.NET_M19, ProtocolModuleDefine.NET_M19_C190000, builder.build());
-                List<Integer> powerlist=new ArrayList<Integer>();
-                powerlist.add(PlayerPowerDefine.POWER_active);
-                sendPowerDiff(powerlist);
                 sendPushNetMsgToClient();
             }
             if (reward.addItemMap.size() > 0 || reward.counsellorMap.size() > 0 || reward.generalList.size() > 0 || reward.generalMap.size() > 0 && reward.ordanceFragmentMap.size() > 0 || reward.ordanceList.size() > 0 || reward.ordanceMap.size() > 0 || reward.soldierMap.size() > 0) {
@@ -98,7 +95,7 @@ public class TaskModule extends BasicModule {
                 sendPushNetMsgToClient();
             }
             if(reward.addPowerMap.size()>0) {
-                checkPlayerPowerValues(getPlayerPowerValues());
+//                checkPlayerPowerValues(getPlayerPowerValues());
             }
         } if (object instanceof GameMsg.getOrePoint) {
             PerformTasksProxy performTasksProxy=getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
@@ -115,6 +112,7 @@ public class TaskModule extends BasicModule {
         TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
         taskProxy.initTaskAll();
         sendNetMsg(ProtocolModuleDefine.NET_M19, ProtocolModuleDefine.NET_M19_C190000, taskProxy.getTaskInfoToClient().build());
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet190001Event(Request request) {
@@ -125,8 +123,8 @@ public class TaskModule extends BasicModule {
         TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
         PlayerReward reward = new PlayerReward();
         int rs = taskProxy.getSessionReward(tableType, typeId, reward, builder);
-        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int dayilNum = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
+        //TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int dayilNum = taskProxy.taskTimer.getDaytaskNum();//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
         builder.setDayliynum(dayilNum);
         builder.setRs(rs);
         builder.setTableType(tableType);
@@ -148,6 +146,7 @@ public class TaskModule extends BasicModule {
                 sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
             }
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -155,14 +154,14 @@ public class TaskModule extends BasicModule {
         M19.M190002.C2S c2S = request.getValue();
         int type = c2S.getType();
         int typeId = c2S.getTypeId();
-        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+    //    TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         M19.M190002.S2C.Builder builder = M19.M190002.S2C.newBuilder();
         TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
         PlayerReward reward = new PlayerReward();
         int rs = taskProxy.dayTaskOperate(type, typeId, builder, reward);
         builder.setRs(rs);
         builder.setType(type);
-        int dayilNum = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
+        int dayilNum = taskProxy.taskTimer.getDaytaskNum();//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
         builder.setDayliynum(dayilNum);
         sendNetMsg(ProtocolModuleDefine.NET_M19, ProtocolModuleDefine.NET_M19_C190002, builder.build());
         if (rs == 0 && type == 5) {
@@ -196,6 +195,7 @@ public class TaskModule extends BasicModule {
             tasklog.setHappend_time(GameUtils.getServerTime());
             sendLog(tasklog);
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet190003Event(Request request) {
@@ -206,8 +206,8 @@ public class TaskModule extends BasicModule {
         int rs = taskProxy.getDayActivity(reward, baseLog);
         builder.setRs(rs);
         builder.setDayActivityId(taskProxy.getActivityId());
-        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int num = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+        //TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int num =taskProxy.taskTimer.getActivyTastId();// timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
         builder.setHasGetMaxId(num);
         sendNetMsg(ProtocolModuleDefine.NET_M19, ProtocolModuleDefine.NET_M19_C190003, builder.build());
         if (rs == 0) {
@@ -216,6 +216,7 @@ public class TaskModule extends BasicModule {
             sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, message);
             sendLog(baseLog);
         }
+        sendPushNetMsgToClient();
     }
 
     /**

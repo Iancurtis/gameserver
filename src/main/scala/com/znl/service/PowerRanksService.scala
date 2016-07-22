@@ -7,7 +7,7 @@ import akka.actor._
 import com.znl.GameMainServer
 import com.znl.base.{BaseLog, BaseDbPojo, BaseSetDbPojo}
 import com.znl.core.{ArenaRank, PowerRanks, SimplePlayer}
-import com.znl.define.{DataDefine, ActivityDefine, ActorDefine, PowerRanksDefine}
+import com.znl.define._
 import com.znl.log.CustomerLogger
 import com.znl.log.admin.tbllog_activityrank
 import com.znl.msg.GameMsg._

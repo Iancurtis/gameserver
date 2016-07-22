@@ -485,4 +485,5 @@ public class SimplePlayer {
     public void setBoomRefTime(long boomRefTime) {
         this.boomRefTime = boomRefTime;
     }
+
 }

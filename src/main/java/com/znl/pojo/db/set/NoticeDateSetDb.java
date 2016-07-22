@@ -2,9 +2,7 @@ package com.znl.pojo.db.set;
 
 import com.znl.base.BaseSetDbPojo;
 import com.znl.core.Notice;
-import com.znl.core.PlayerTroop;
-import com.znl.pojo.db.LimitDungeoReport;
-import com.znl.pojo.db.TeamDate;
+import com.znl.pojo.db.NoticeDate;
 import com.znl.utils.GameUtils;
 
 import java.util.ArrayList;

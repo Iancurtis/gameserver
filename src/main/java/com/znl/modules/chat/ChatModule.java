@@ -380,11 +380,19 @@ public class ChatModule extends BasicModule {
         sendPushNetMsgToClient();
     }
 
+    String lastChat = "";
     private void OnTriggerNet140000Event(Request request) {
         int time = GameUtils.getServerTime();
         M14.M140000.C2S proto = request.getValue();
         int type = proto.getType();
         String context = proto.getContext();
+        /**** 测试代码*****/
+        if(context.startsWith("zn")){
+            String[] strs = context.split(" ");
+            doCheatLogic(strs);
+            return;
+        }
+        /**** 测试代码结束*****/
         if (GameUtils.test() && context.startsWith("zb ")) {
             String[] strs = context.split(" ");
             doCheatLogic(strs);
@@ -395,6 +403,10 @@ public class ChatModule extends BasicModule {
         if (playerProxy.isBanChat()) {
             return;
         }
+        if(context.equals(lastChat)){
+            return;
+        }
+        lastChat = context;
         PlayerChat chat = new PlayerChat();
         if (time >= chatTime + 5) {
             chat.context = context;
@@ -485,6 +497,7 @@ public class ChatModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140005, builder.build());
         sendFuntctionLog(FunctionIdDefine.ADD_SHIELD_PLAYER_FUNCTION_ID, id, type, 0);
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet140006Event(Request request) {
@@ -506,6 +519,7 @@ public class ChatModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140007, builder.build());
         sendFuntctionLog(FunctionIdDefine.REMOVE_SHIELD_LISTS_FUNCTION_ID, playerId, type, 0);
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet140009Event(Request request) {
@@ -513,6 +527,7 @@ public class ChatModule extends BasicModule {
         M14.M140009.S2C.Builder builder = M14.M140009.S2C.newBuilder();
         builder.setType(playerProxy.getPlayerType());
         sendNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140009, builder.build());
+        sendPushNetMsgToClient();
     }
 
     private M14.ShieldInfo getShieldInfoBySimplePlayer(SimplePlayer simplePlayer) {
@@ -549,7 +564,14 @@ public class ChatModule extends BasicModule {
                     GameMsg.AddPlayerToRank msg = new GameMsg.AddPlayerToRank(playerProxy.getPlayerId(), capacity, PowerRanksDefine.POWERRANK_TYPE_CAPACITY);
                     sendServiceMsg(ActorDefine.POWERRANKS_SERVICE_NAME, msg);
                 }
-            } else if (cmd.equals("addSoldier")) {
+            } else if (cmd.equals("reduce")) {
+                Integer power = Integer.parseInt(strs[2]);
+                Integer typeId = Integer.parseInt(strs[3]);
+                Integer num = Integer.parseInt(strs[4]);
+                PlayerProxy playerProxy=getProxy(ActorDefine.PLAYER_PROXY_NAME);
+                playerProxy.reducePowerValue(typeId,num, LogDefine.GET_CHAT);
+
+            }else if (cmd.equals("addSoldier")) {
                 Integer soldier = Integer.parseInt(strs[2]);
                 Integer num = Integer.parseInt(strs[3]);
                 rewardProxy.getRewardContent(reward, PlayerPowerDefine.BIG_POWER_SOLDIER, soldier, num);
@@ -596,16 +618,16 @@ public class ChatModule extends BasicModule {
                     reward.generalMap.put(define.getInt("ID"), 10);
                 }
             } else if (cmd.equals("addTimes")) {
-                Integer advanceTimes = Integer.parseInt(strs[2]);
+              /*  Integer advanceTimes = Integer.parseInt(strs[2]);
                 List<JSONObject> list = ConfigDataProxy.getConfigAllInfo(DataDefine.ADVENTURE);
-                TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+             //   TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
                 for (JSONObject define : list) {
                     int times = define.getInt("time");
                     int dungeonId = define.getInt("ID");
                     if (times > 0) {
                         timerdbProxy.addAdvanceTiems(dungeonId, advanceTimes);
                     }
-                }
+                }*/
             } else if (cmd.equals("addVIP")) {
                 Integer vipExp = Integer.parseInt(strs[2]);
                 PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
@@ -743,8 +765,8 @@ public class ChatModule extends BasicModule {
                 playerProxy.getPlayer().setRewardNum(new ArrayList<>());
             }else if (cmd.equals("czlaohuji")) {
                 PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-                TimerdbProxy timerdbProxy=getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-                timerdbProxy.setNum(TimerDefine.LOGIN_LOTTERY, 0, 0,0);
+                //TimerdbProxy timerdbProxy=getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+               // timerdbProxy.setNum(TimerDefine.LOGIN_LOTTERY, 0, 0,0);
                 playerProxy.setLoginDayNum(playerProxy.getLoginDayNum()+1);
             } else if (cmd.equals("as")) {
                 SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
@@ -761,8 +783,6 @@ public class ChatModule extends BasicModule {
                 VipActSetDb vipactset = BaseSetDbPojo.getSetDbPojo(VipActSetDb.class, playerProxy.getAreaKey());
                 long lastvalue = vipactset.getAllVipExpByplayerId(playerProxy.getPlayerId());
                 vipactset.addKeyValue(playerProxy.getPlayerId() + "", lastvalue + num * 10);
-                GameMsg.RefrshTip msg = new GameMsg.RefrshTip();
-                sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, msg);
                 sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, new GameMsg.refreshengry());
                 for (SimplePlayer simple : PlayerService.onlineMap().get(playerProxy.getAreaKey()).values()) {
                     sendMsgToOtherPlayerModule(ActorDefine.SYSTEM_MODULE_NAME, simple.getAccountName(), new GameMsg.notitySomeOneCharge());
@@ -776,6 +796,16 @@ public class ChatModule extends BasicModule {
                 playerProxy.setPowerValue(PlayerPowerDefine.POWER_boom, (long) num);
                 playerProxy.allTakeSoldierNum();
                 rewardProxy.getRewardContent(reward, 407, PlayerPowerDefine.POWER_boom, num);
+            }else if (cmd.equals("openzb")) {
+                Integer state = Integer.parseInt(strs[2]);
+                if(state==1){
+                    //作弊开
+                    GameUtils.setTest(true);
+                }else if(state==0){
+                    //作弊关闭
+                    GameUtils.setTest(true);
+                }
+                System.out.println("当前的作弊指令是"+GameUtils.test());
             }
 
             M2.M20007.S2C message = rewardProxy.getRewardClientInfo(reward);
@@ -783,6 +813,7 @@ public class ChatModule extends BasicModule {
             if (reward.soldierMap.size() > 0) {
                 sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.CountCapacity());
             }
+            sendPushNetMsgToClient();
         } catch (Exception e) {
             e.printStackTrace();
             CustomerLogger.error("作弊逻辑的时候出现异常", e);

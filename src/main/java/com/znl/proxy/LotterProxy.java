@@ -5,7 +5,6 @@ import com.znl.base.BasicProxy;
 import com.znl.core.PlayerReward;
 import com.znl.define.*;
 import com.znl.pojo.db.Player;
-import com.znl.pojo.db.Timerdb;
 import com.znl.proto.Common;
 import com.znl.proto.M15;
 import com.znl.proto.M3;
@@ -124,18 +123,35 @@ public class LotterProxy extends BasicProxy {
 
     //根据武将抽奖类型活的免费抽奖次数
     public int getFreeWarioLotterTimes(int type) {
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", type);
         if (jsonObject == null) {
             return 0;
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        long lasttime = timerdbProxy.getLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0);
-        long time = GameUtils.getServerDate().getTime() - lasttime;
+        long lasttime;
+        int num;
+        if(type ==1 ){
+           lasttime = playerProxy.getPlayer().getEquipLottertime1();
+            num = playerProxy.getPlayer().getLottertime1();
+        }else if(type == 2){
+           lasttime = playerProxy.getPlayer().getEquipLottertime2();
+            num = playerProxy.getPlayer().getLottertime2();
+        }else{
+           lasttime = playerProxy.getPlayer().getEquipLottertime3();
+            num = playerProxy.getPlayer().getLottertime3();
+        }
+        long time = GameUtils.getServerDate().getTime() -lasttime;
         int times = (int) (time / 1000 / 60 / jsonObject.getInt("freetime"));
-        int num = timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY_TODAY, type, 0);
+
         if (times >= jsonObject.getInt("freetotal")) {
             long reduce = GameUtils.getServerDate().getTime() - (jsonObject.getInt("freetotal") * jsonObject.getInt("freetime") * 60000);
-            timerdbProxy.setLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0, reduce);
+            if(type ==1){
+                playerProxy.getPlayer().setEquipLottertime1(reduce);
+            }else if(type ==2){
+                playerProxy.getPlayer().setEquipLottertime2(reduce);
+            }else{
+                playerProxy.getPlayer().setEquipLottertime3(reduce);
+            }
             times = jsonObject.getInt("freetotal");
         }
         if (times > jsonObject.getInt("freemax") - num) {
@@ -146,7 +162,7 @@ public class LotterProxy extends BasicProxy {
 
     //抽奖价格
     public int getWarioLotterCost(int type) {
-        JSONObject jsonObject = null;
+       JSONObject jsonObject = null;
         ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         if (type == 4) {
             jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", 3);
@@ -155,14 +171,38 @@ public class LotterProxy extends BasicProxy {
             return price;
         }
         jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", type);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        long lasttime = timerdbProxy.getLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //long lasttime = timerdbProxy.getLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0);
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        long lasttime;
+        if(type == 1){
+            lasttime = playerProxy.getPlayer().getEquipLottertime1();
+        }else if(type ==2){
+            lasttime = playerProxy.getPlayer().getEquipLottertime2();
+        }else{
+            lasttime = playerProxy.getPlayer().getEquipLottertime3();
+        }
         long time = GameUtils.getServerDate().getTime() - lasttime;
         int times = (int) (time / 1000 / 60 / jsonObject.getInt("freetime"));
-        int num = timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY_TODAY, type, 0);
+        //int num = timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY_TODAY, type, 0);
+        int num;
+        if(type ==1 ){
+            num = playerProxy.getPlayer().getLottertime1();
+        }else if(type == 2){
+            num = playerProxy.getPlayer().getLottertime2();
+        }else{
+            num = playerProxy.getPlayer().getLottertime3();
+        }
         if (times >= jsonObject.getInt("freetotal")) {
             long reduce = GameUtils.getServerDate().getTime() - (jsonObject.getInt("freetotal") * jsonObject.getInt("freetime") * 60000);
-            timerdbProxy.setLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0, reduce);
+            //timerdbProxy.setLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0, reduce);
+            if(type ==1){
+                playerProxy.getPlayer().setEquipLottertime1(reduce);
+            }else if(type ==2){
+                playerProxy.getPlayer().setEquipLottertime2(reduce);
+            }else{
+                playerProxy.getPlayer().setEquipLottertime3(reduce);
+            }
             times = jsonObject.getInt("freetotal");
         }
         if (times > jsonObject.getInt("freemax") - num) {
@@ -179,20 +219,36 @@ public class LotterProxy extends BasicProxy {
 
     //抽奖价格
     public int getWarioLotterforShow(int type) {
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         JSONObject jsonObject = null;
         if (type == 4) {
             jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", 3);
             return jsonObject.getInt("price") * 9;
         }
         jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", type);
-   /*     TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        long lasttime = timerdbProxy.getLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0);
+        long lasttime;
+        int num;
+        if(type ==1 ){
+            lasttime = playerProxy.getPlayer().getEquipLottertime1();
+            num = playerProxy.getPlayer().getLottertime1();
+        }else if (type == 2){
+            lasttime = playerProxy.getPlayer().getEquipLottertime2();
+            num = playerProxy.getPlayer().getLottertime2();
+        }else{
+            lasttime = playerProxy.getPlayer().getEquipLottertime3();
+            num = playerProxy.getPlayer().getLottertime3();
+        }
         long time = GameUtils.getServerDate().getTime() - lasttime;
         int times = (int) (time / 1000 / 60 / jsonObject.getInt("freetime"));
-        int num = timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY_TODAY, type, 0);
         if (times >= jsonObject.getInt("freetotal")) {
             long reduce = GameUtils.getServerDate().getTime() - (jsonObject.getInt("freetotal") * jsonObject.getInt("freetime") * 60000);
-            timerdbProxy.setLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0, reduce);
+            if(type ==1){
+                playerProxy.getPlayer().setEquipLottertime1(reduce);
+            }else if(type ==2){
+                playerProxy.getPlayer().setEquipLottertime2(reduce);
+            }else{
+                playerProxy.getPlayer().setEquipLottertime3(reduce);
+            }
             times = jsonObject.getInt("freetotal");
         }
         if (times > jsonObject.getInt("freemax") - num) {
@@ -200,25 +256,39 @@ public class LotterProxy extends BasicProxy {
         }
         if (times > 0 && type != LotterDefine.WARIOOR_LOTTER_BEST_TEN) {
             return 0;
-        }*/
+        }
         return jsonObject.getInt("price");
     }
 
     //获得免费倒计时时间
     public int getFreeWarLotterLesTime(int type) {
-        JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", type);
-
+       JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", type);
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         if (jsonObject == null) {
             return -1;
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        long lasttime = timerdbProxy.getLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0);
+        long lasttime ;
+        if(type ==1 ){
+            lasttime = playerProxy.getPlayer().getEquipLottertime1();
+        }else if(type == 2){
+            lasttime = playerProxy.getPlayer().getEquipLottertime2();
+        }else{
+            lasttime = playerProxy.getPlayer().getEquipLottertime3();
+         }
         long time = GameUtils.getServerDate().getTime() - lasttime;
         time = jsonObject.getInt("freetime") * 60000 - time;
         if (time < 0) {
             time = 0l;
         }
-        return (int) (Math.ceil(time / 1000.0));
+       int lesstime=(int) (Math.ceil(time / 1000.0));
+        if(lesstime == 0){
+           if(type == 2){
+                playerProxy.getPlayer().setLottertime2(0);
+            }else{
+                playerProxy.getPlayer().setLottertime3(0);
+            }
+        }
+        return lesstime;
     }
 
 
@@ -231,9 +301,10 @@ public class LotterProxy extends BasicProxy {
         if (jsonObject.getInt("freetime") == 0) {
             return 0;
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+       // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         int max=jsonObject.getInt("freemax");
-        int num=timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY_TAOBAO, type, 0);
+        int num=playerProxy.getPlayer().getTaobaofree();//timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY_TAOBAO, type, 0);
         int valoue=max - num;
         if (valoue < 0) {
             valoue = 0;
@@ -243,31 +314,48 @@ public class LotterProxy extends BasicProxy {
 
     //获得某个类型抽奖的信息
     public M15.EquipLotterInfo getEquipLotterInfo(int type) {
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         M15.EquipLotterInfo.Builder eli = M15.EquipLotterInfo.newBuilder();
         eli.setType(type);
         if(type==1) {
-            TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-            int num = timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY_TODAY, type, 0);
-            if (num >= LotterDefine.WARIOOR_LOTTER_MAXNUM) {
+            long time = GameUtils.getServerDate().getTime()-playerProxy.getPlayer().getEquipLottertime1();
+            JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", type);
+            if (playerProxy.getPlayer().getLottertime1() >= LotterDefine.WARIOOR_LOTTER_MAXNUM) {
                 eli.setFreeTimes(0);
                 eli.setTime(0);
             } else {
-                eli.setFreeTimes(getFreeWarioLotterTimes(type));
                 eli.setTime(getFreeWarLotterLesTime(type));
+                eli.setFreeTimes(getFreeWarioLotterTimes(type));
             }
         }else {
-            eli.setFreeTimes(getFreeWarioLotterTimes(type));
             eli.setTime(getFreeWarLotterLesTime(type));
+            eli.setFreeTimes(getFreeWarioLotterTimes(type));
         }
         eli.setCost(getWarioLotterforShow(type));
+        if(type==3){
+            JSONObject jsonObject = null;
+            jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", 3);
+            eli.setCost(jsonObject.getInt("price"));
+        }
         JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.WARRIORGET, "type", type);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int num = timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY, type, 0);
+        int num;
+        if(type ==1 ){
+            num = playerProxy.getPlayer().getLottertime1();
+        }else if(type == 2){
+            num = playerProxy.getPlayer().getLottertime2();
+        }else{
+            num = playerProxy.getPlayer().getLottertime3();
+        }
         if (jsonObject.getInt("purpletime") != 0) {
-            if (num == 0) {
+           /* if (num == 0) {
                 eli.setWillNum(-1);
-            } else {
-                eli.setWillNum((jsonObject.getInt("purpletime") + 1) - num % (jsonObject.getInt("purpletime") + 1));
+            } else {*/
+               // eli.setWillNum((jsonObject.getInt("purpletime") + 1) - num % (jsonObject.getInt("purpletime") + 1));
+            //}
+            if(playerProxy.getPlayer().getFirstlotter() ==1){
+                eli.setWillNum(-1);
+            }else {
+                eli.setWillNum(playerProxy.getPlayer().getLottereedtime3());
             }
         }
 
@@ -279,8 +367,8 @@ public class LotterProxy extends BasicProxy {
      *******/
     public int getAllEquipLotterInfos(M15.M150000.S2C.Builder builder) {
         List<M15.EquipLotterInfo> list = new ArrayList<M15.EquipLotterInfo>();
-        for (int i = 1; i <= 3; i++) {
-            list.add(getEquipLotterInfo(i));
+        for (int i = 1; i <=3; i++) {
+           list.add(getEquipLotterInfo(i));
         }
         builder.addAllEquipLotterInfos(list);
         return 0;
@@ -311,7 +399,7 @@ public class LotterProxy extends BasicProxy {
         }
         //是否免费
         int freetimes = getFreeWarioLotterTimes(type);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+       //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         int cost = getWarioLotterCost(type);
 
@@ -334,14 +422,25 @@ public class LotterProxy extends BasicProxy {
             //抽过的次数
             int num = 0;
             int ranId = jsonObject.getInt("ruleID");
-            num = timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY, type, 0);
-            if (jsonObject.getInt("purpletime") != 0 && num == 0) {
-                ranId = jsonObject.getInt("purpleID");
+            if(type == 3){
+                if(playerProxy.getPlayer().getFirstlotter() ==1){
+                    ranId = jsonObject.getInt("purpleID");
+                    playerProxy.getPlayer().setFirstlotter(0);
+                }else{
+                    playerProxy.getPlayer().setLottereedtime3(playerProxy.getPlayer().getLottereedtime3() - 1);
+                    num = playerProxy.getPlayer().getLottereedtime3();
+                    if (jsonObject.getInt("purpletime") != 0 && num == 0) {
+                        ranId = jsonObject.getInt("purpleID");
+                        playerProxy.getPlayer().setLottereedtime3(jsonObject.getInt("purpletime"));
+                    }
+                }
+
             }
-            if (jsonObject.getInt("purpletime") != 0 && (num + 1) % (jsonObject.getInt("purpletime") + 1) == 0) {
+            // num = timerdbProxy.getTimerNum(TimerDefine.TIMIER_LOTTERY, type, 0);
+            /*if (jsonObject.getInt("purpletime") != 0 && (num + 1) % (jsonObject.getInt("purpletime") + 1) == 0) {
                 ranId = jsonObject.getInt("purpleID");
-            }
-            timerdbProxy.addNum(TimerDefine.TIMIER_LOTTERY, type, 0, 1);
+            }*/
+           // timerdbProxy.addNum(TimerDefine.TIMIER_LOTTERY, type, 0, 1);
             int rewardId = getRandomReward(ranId);
             addlist.add(rewardId);
             JSONObject rewarjson = ConfigDataProxy.getConfigInfoFindById(DataDefine.RANDCONTENT, rewardId);
@@ -360,11 +459,25 @@ public class LotterProxy extends BasicProxy {
         builder.addAllEquips(eqlist);
         addRewardToBag(addlist, LogDefine.GET_LOTTEREQUIP, equreward);
         if (freetimes > 0 && type != LotterDefine.WARIOOR_LOTTER_BEST_TEN) {
-            timerdbProxy.addNum(TimerDefine.TIMIER_LOTTERY_TODAY, type, 0, 1);
+            /*timerdbProxy.addNum(TimerDefine.TIMIER_LOTTERY_TODAY, type, 0, 1);
             long lasttime = timerdbProxy.getLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0);
             long addtime = jsonObject.getInt("freetime") * 60000 * times;
-            timerdbProxy.setLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0, lasttime + addtime);
-
+            timerdbProxy.setLastOperatinTime(TimerDefine.TIMIER_LOTTERY, type, 0, lasttime + addtime);*/
+            long lasttime;
+            long addtime = jsonObject.getInt("freetime") * 60000 * times;
+            if(type == 1){
+                playerProxy.getPlayer().setLottertime1(playerProxy.getPlayer().getLottertime1()+1);
+                lasttime = playerProxy.getPlayer().getEquipLottertime1();
+                playerProxy.getPlayer().setEquipLottertime1(lasttime+addtime);
+            }else if(type ==2){
+                playerProxy.getPlayer().setLottertime2(playerProxy.getPlayer().getLottertime2()+1);
+                lasttime = playerProxy.getPlayer().getEquipLottertime2();
+                playerProxy.getPlayer().setEquipLottertime2(lasttime+addtime);
+            }else{
+                playerProxy.getPlayer().setLottertime3(playerProxy.getPlayer().getLottertime3()+1);
+                lasttime = playerProxy.getPlayer().getEquipLottertime3();
+                playerProxy.getPlayer().setEquipLottertime3(lasttime+addtime);
+            }
         }
         sendFunctionLog(FunctionIdDefine.EQUIP_LOTTER_FUNCTION_ID, type, 0, 0, sb.toString());
         return 0;
@@ -379,7 +492,7 @@ public class LotterProxy extends BasicProxy {
         if (jsonObject == null) {
             return ErrorCodeDefine.M150002_1;
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+      //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         ItemProxy itemProxy = getGameProxy().getProxy(ActorDefine.ITEM_PROXY_NAME);
         int itemId = jsonObject.getJSONArray("consume").getInt(0);
         int itemNum = jsonObject.getJSONArray("consume").getInt(1);
@@ -408,7 +521,9 @@ public class LotterProxy extends BasicProxy {
         }
         for (int i = 0; i < num; i++) {
             int ranId = jsonObject.getInt("ruleID");
-            timerdbProxy.addNum(TimerDefine.TIMIER_LOTTERY_TAOBAO, type, 0, 1);
+          //  timerdbProxy.addNum(TimerDefine.TIMIER_LOTTERY_TAOBAO, type, 0, 1);
+            PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+            playerProxy.getPlayer().setTaobaofree(playerProxy.getPlayer().getTaobaofree()+1);
             List<Integer> alllist = new ArrayList<Integer>();
             int rewardId = getRandomRewardTaoBao(ranId, alllist);
             for (int getId : alllist) {
@@ -431,7 +546,7 @@ public class LotterProxy extends BasicProxy {
             sb.append(rewardId);
             sb.append(",");
             addRewardToBag(addlist, LogDefine.GET_LOTTER_TAOBAO, reward);
-            timerdbProxy.addNum(TimerDefine.TIMIER_LOTTERY_TAOBAO, type, 0, 1);
+        //    timerdbProxy.addNum(TimerDefine.TIMIER_LOTTERY_TAOBAO, type, 0, 1);
             sendFunctionLog(FunctionIdDefine.LOTTER_TAOBAO_FUNCTION_ID, (long) type, 0, 0, sb.toString());
         }
         if (num > 1) {

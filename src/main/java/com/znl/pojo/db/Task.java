@@ -1,6 +1,7 @@
 package com.znl.pojo.db;
 
 import com.znl.base.BaseDbPojo;
+import com.znl.define.TaskDefine;
 
 /**
  * Created by Administrator on 2015/11/16.

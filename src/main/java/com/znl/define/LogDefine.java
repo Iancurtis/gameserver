@@ -110,7 +110,7 @@ public class LogDefine {
     public static final int GET_ADVISER_JINJIE = 66;//军师进阶
     public static final int GET_ADVISER_LOTTERY = 67;//军师抽奖
     public static final int GET_WORLD_ATTACK_FAIL = 68;//世界战斗超过30回合的佣兵返还
-    /***获得方式****/
+    public static final int GET_LEGION_DUNGEO = 68;//军团副本挑战战    /***获得方式****/
 
     /***
      * 失去方式

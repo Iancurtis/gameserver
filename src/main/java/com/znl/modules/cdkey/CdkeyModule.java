@@ -175,6 +175,7 @@ public class CdkeyModule extends BasicModule{
             coldDownTime = GameUtils.getServerDate().getTime() + 60*1000;
         }
         sendNetMsg(ActorDefine.CDKEY_MODULE_ID,ProtocolModuleDefine.NET_M24_C240000,builder.build());
+        sendPushNetMsgToClient();
     }
 
     /**

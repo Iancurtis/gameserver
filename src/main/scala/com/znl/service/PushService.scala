@@ -8,7 +8,7 @@ import com.znl.core.{SimplePlayer, Notice}
 import com.znl.define.{DataDefine, TipDefine, TimerDefine, ActorDefine}
 import com.znl.msg.GameMsg._
 import com.znl.pojo.db.set.{NoticeDateSetDb, LimitDungeonFastSetDb}
-import com.znl.proxy.{ConfigDataProxy, TimerdbProxy}
+import com.znl.proxy.{ConfigDataProxy}
 import com.znl.utils.GameUtils
 import org.json.JSONObject
 import scala.concurrent.duration._

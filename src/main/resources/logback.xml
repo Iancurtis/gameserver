@@ -38,7 +38,26 @@
         </encoder>
     </appender>
 
-    <logger name="com.znl.server" level="INFO" />
+    <!-- 存储流水的日志-->
+    <appender name="DB_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/db_save.log</file>
+        <Prudent>false</Prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/db/db-%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.znl.server.DbServer" additivity="false">
+        <level value="ERROR" />
+        <appender-ref ref="DB_LOG_FILE" />
+    </logger>
+
+    <logger name="com.znl.server" level="ERROR" />
+    <logger name="com.znl_game_db" level="INFO" />
+    <logger name="com.znl.service.LogService" level="INFO" />
 
     <logger name="com.znl.log.FlumeLog" additivity="false">
         <level value="INFO" />

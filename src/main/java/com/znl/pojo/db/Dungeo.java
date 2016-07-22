@@ -16,6 +16,24 @@ public class Dungeo extends BaseDbPojo implements Serializable {
     private int dungeoId = 0;
     private Set<Long> getBox = new HashSet<Long>();//已经领取的宝箱index
     private List<Integer> starList = new ArrayList<>();
+    private int changetimes=0;//挑战次数
+    private int buytimes=0;//购买次数
+
+    public int getChangetimes() {
+        return changetimes;
+    }
+
+    public void setChangetimes(int changetimes) {
+        this.changetimes = changetimes;
+    }
+
+    public int getBuytimes() {
+        return buytimes;
+    }
+
+    public void setBuytimes(int buytimes) {
+        this.buytimes = buytimes;
+    }
 
     public long getPlayerId() {
         return playerId;

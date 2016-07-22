@@ -87,7 +87,7 @@ object GameMsg {
   final case class EachHourNotice()//每小时定时
   final case class EachMinuteNotice()//每分钟定时
   final case class EachSecondNotice()//每分钟定时
-  final case class FixedTimeNotice(timeFlag:Int)//定时器
+  //final case class FixedTimeNotice(timeFlag:Int)//定时器
   final case class ActivityRankTrigger()
 
   final case class Reload()
@@ -186,6 +186,7 @@ object GameMsg {
   final case class AddMailBattleProto(reportTemplate : ReportTemplate,cmd : String)//添加一个战斗包到服务，
   final case class GetBattleProto(id : Long, cmd : String)
   final case class GetBattleProtoSuccess(msg : GeneratedMessage,cmd : String)
+  final case class addNewReport(id : Long)
   ///////////////////logService/日志服务/////////////////////
   final case class SendLog(obj : BaseLog) //发送日志
   final case class ModuleSendLog(obj : BaseLog) //模块发送日志
@@ -266,6 +267,7 @@ object GameMsg {
   //mysql
   final case class InsertToMysql(table : String, id : Long, logAreaId : Int)  //将新的创建的ID插入到MySQL
   final case class UpdateToMysql(table : String, id : Long, json : String, logAreaId : Int) //将数据结构转成json 更新到mysql
+  final case class UpdateSetToMysql(table : String,key : String,value : Long, logAreaId : Int)//保存set结构
   final case class DelToMysql(table : String, id : Long, logAreaId : Int) //通过id 删除数据
   final case class QueryToMysql(sql : String) // 向mysql查询数据
   final case class TriggerExecuteToMysql() // 触发运行到MySQL数据库
@@ -298,14 +300,14 @@ object GameMsg {
   final case class LoginFail(player: Player) //玩家登陆失败
   final case class AutoSavePlayer()
   final case class CheckHeartbeat() //检测心跳包
-  final case class SystemTimer()  //定时器时间
+//  final case class SystemTimer()  //定时器时间
   final case class NewArenaReportNotify()
   final case class GetWinTimesReward(simplePlayer: util.List[SimplePlayer],cmd : String,battle :PlayerBattle)
   final case class SendFormationToClient()//刷新阵型
   final case class CheckBaseDefendFormation()//检查阵型是否需要刷新
   final case class AddServerArenaReport(report : Report)
-  final case class GetAllServerArenaReport()
-  final case class GetAllServerArenaReportBack(reports : util.List[Report])
+  final case class GetAllServerArenaReport(cmd :Int)
+  final case class GetAllServerArenaReportBack(reports : util.List[Report],cmd :Int)
   final case class GetOneServerArenaReport(id : Long)
   final case class GetOneServerArenaReportBack(report : Report)
   final case class AutoPushToArena()
@@ -325,7 +327,7 @@ object GameMsg {
   final case class ReshBuildings()  //刷新建筑信息
   final case class BuildTimer(cn : Int , cmd : Int ,obj : Object, powerlist: util.List[Integer],buildType : Int,index :Int )  //建筑定时器
   final case class BuyBuildSite()  //升级建筑时，如队列已满，但可以购买时，提示购买
-  final case class CheckAllTimerAndSend30000()  //检查所有定时器并发送30000
+//  final case class CheckAllTimerAndSend30000()  //检查所有定时器并发送30000
   ////////////////////////admin////////////////////////////////
   final case class GMCommand(command : String)
 
@@ -356,7 +358,7 @@ object GameMsg {
   final case class EndBattle(battle : PlayerBattle)
   final case class PackPuppet(puppet : M5.PuppetAttr)
   final case class ErrorBattle(rs : Int)
-
+  //final case class addPuppetList(acname:String,battleType: Int, eventId: Int, cmd: Int, team: util.List[PlayerTeam], saveTraffic: Int)//获取怪物信息(军团副本)
   ///////////////////soldier//////////////////////
   final case class FixSoldierList()
 
@@ -366,6 +368,7 @@ object GameMsg {
   final case class RefrshTip()
   final case class addAtivity(conditionType: Int, value: Int, expandCondition: Int)
   final case class refreshengry()
+  final case class refreshLegionDungeoTimes(playerid:Long,dungeoinfo:util.Map[Integer, util.List[PlayerTeam]])//刷新玩家军团副本挑战次数
 
 
   /////////////dungeo//////////////////////
@@ -396,6 +399,15 @@ object GameMsg {
   final case class TechExpandPowerMap()  // 获得军团科技属性加成
   final case class ArmyGroupShop(playerId : Long , itemId : Int,opt : Int,typeId : Int)  // 军团商店贡献值兑换
   final case class getAllArmyGroup(obj : Object,cmd : Int)  // 获得全部军团信息
+ /* final case class getArmyGroupDungeoInfo(dungeoid:Int)  // 获得军团副本信息(dungeoid 为章节)
+  final case class ArmyGroupDungeoInfo(chapter:Int,dungeoinfo:util.Map[Integer, util.List[PlayerTeam]])
+  final case class returnarmygroupinfos(battleType: Int, eventId: Int, cmd: Int, team:util.List[PlayerTeam],saveTraffic: Int,infoslist:util.List[PlayerTeam])//返回军团副本信息
+  final case class iscanattackArmyGroupDungeo(dungeoid:Int)//判断是否可打
+  final case class iscanattackArmyGroupDungeore(flag:Boolean) //返回判断结果
+  final case class changeArmyGroupDungeoInfo(sort:Integer) //每日通关副本更新
+  final case class allarmygroupdungeoinfo()//270000上线初始信息
+  final case class reallarmygroupdungeoinfo(dungeoinfo:util.Map[Integer, util.List[PlayerTeam]])//270000上线初始信息返回
+  final case class changeGroupDungeomonsterInfo(dungeoId:Int,monsterlist:util.List[PlayerTeam]) //更新副本怪物信息*/
 
   final case class createArmyArmyGroupSucess(name : String , joinType : Int ,way : Int , armymap: util.Map[java.lang.Long, Armygroup])
   final case class getArmyGroupByidSucess(apparm : Armygroup ,icon : Int ,peniCon :Int,  cmd : Int)  //获得某个军团成功

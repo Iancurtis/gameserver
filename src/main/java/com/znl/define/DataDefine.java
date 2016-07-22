@@ -115,5 +115,8 @@ public class DataDefine {
     public static final String CounsellorAdcost="CounsellorAdcostType";
     public static final String CounsellorDetail="CounsellorDetailType";
     public static final String LegionCapter="LegionCapterType";
-    public static final String LegionEvent="LegionEventType";    public static final String CounsellorRule="CounsellorRuleType";
-    public static final String CounsellorPrice="CounsellorPriceType";}
+    public static final String LegionEvent="LegionEventType";
+    public static final String CounsellorRule="CounsellorRuleType";
+    public static final String CounsellorPrice="CounsellorPriceType";
+
+}

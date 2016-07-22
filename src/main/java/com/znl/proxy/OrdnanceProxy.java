@@ -18,6 +18,7 @@ import com.znl.pojo.db.Ordnance;
 import com.znl.pojo.db.OrdnancePiece;
 import com.znl.proto.Common;
 import com.znl.proto.M13;
+import com.znl.proto.M2;
 import com.znl.proto.M4;
 import com.znl.utils.GameUtils;
 import com.znl.utils.RandomUtil;
@@ -416,7 +417,7 @@ public class OrdnanceProxy extends BasicProxy {
     /********
      * 穿上军械
      *********/
-    public int ordnanceOn(long id, List<M4.M40000.S2C.Builder> builder1, List<BaseLog> baseLogs, M13.M130104.S2C.Builder builder) {
+    public int ordnanceOn(long id, List<M2.M20007.S2C.Builder> builder1, List<BaseLog> baseLogs, M13.M130104.S2C.Builder builder) {
         Ordnance od = getOrdnanceByid(id);
         if (od == null) {
             return ErrorCodeDefine.M130104_1;
@@ -445,7 +446,7 @@ public class OrdnanceProxy extends BasicProxy {
     /****************
      * 卸下军械
      ***********/
-    public int ordnanceOff(long id, List<M4.M40000.S2C.Builder> builder1, List<BaseLog> baseLogs) {
+    public int ordnanceOff(long id, List<M2.M20007.S2C.Builder> builder1, List<BaseLog> baseLogs) {
         Ordnance od = getOrdnanceByid(id);
         if (od == null) {
             return ErrorCodeDefine.M130105_1;
@@ -517,7 +518,7 @@ public class OrdnanceProxy extends BasicProxy {
     /**************
      * 强化军械
      ***********/
-    public int intensifyOrdnance(long id, int num, M13.M130107.S2C.Builder builder, List<Integer> itemlist, List<M4.M40000.S2C.Builder> builder1, List<BaseLog> baseLogs) {
+    public int intensifyOrdnance(long id, int num, M13.M130107.S2C.Builder builder, List<Integer> itemlist, List<M2.M20007.S2C.Builder> builder1, List<BaseLog> baseLogs) {
         Ordnance od = getOrdnanceByid(id);
         if (od == null) {
             return ErrorCodeDefine.M130107_1;//没有该军械
@@ -599,7 +600,7 @@ public class OrdnanceProxy extends BasicProxy {
     /***********
      * 改造军械
      ************/
-    public int remouldOrndance(long id, int type, M13.M130108.S2C.Builder builder, List<Integer> itemlist, List<M4.M40000.S2C.Builder> builder1, List<BaseLog> baseLogs) {
+    public int remouldOrndance(long id, int type, M13.M130108.S2C.Builder builder, List<Integer> itemlist, List<M2.M20007.S2C.Builder> builder1, List<BaseLog> baseLogs) {
         Ordnance od = getOrdnanceByid(id);
         if (od == null) {
             return ErrorCodeDefine.M130108_1;
@@ -655,7 +656,7 @@ public class OrdnanceProxy extends BasicProxy {
     /*********
      * 军械进化
      **********/
-    public int ordnanceAdvance(long id, M13.M130109.S2C.Builder builder, PlayerReward reward, List<M4.M40000.S2C.Builder> builder1, List<BaseLog> baseLogs) {
+    public int ordnanceAdvance(long id, M13.M130109.S2C.Builder builder, PlayerReward reward, List<M2.M20007.S2C.Builder> builder1, List<BaseLog> baseLogs) {
         Ordnance od = getOrdnanceByid(id);
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
         if (od == null) {
@@ -726,15 +727,15 @@ public class OrdnanceProxy extends BasicProxy {
         return 0;
     }
 
-    public M4.M40000.S2C.Builder initSoldierInfoBytype(int type) {
-        M4.M40000.S2C.Builder builder = M4.M40000.S2C.newBuilder();
+    public M2.M20007.S2C.Builder initSoldierInfoBytype(int type) {
+        M2.M20007.S2C.Builder builder = M2.M20007.S2C.newBuilder();
         SoldierProxy soldierProxy = getGameProxy().getProxy(ActorDefine.SOLDIER_PROXY_NAME);
         List<Integer> solList = soldierProxy.getSodierByType(type);
         for (int soldierId : solList) {
             soldierProxy.initPowerValue(soldierId);
         }
         for (int soldierId : solList) {
-            builder.addSoldiers(soldierProxy.getSoldierInfo(soldierId));
+            builder.addSoldierList(soldierProxy.getSoldierInfo(soldierId));
         }
         return builder;
     }

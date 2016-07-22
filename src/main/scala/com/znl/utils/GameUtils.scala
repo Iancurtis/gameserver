@@ -12,7 +12,7 @@ import akka.event.LoggingAdapter
 import com.znl.GameMainServer
 import com.znl.base.{BaseSetDbPojo, BaseDbPojo}
 import com.znl.core.{PlayerCache, PlayerTeam, PlayerTroop, SimplePlayer}
-import com.znl.define.{PlayerPowerDefine, DataDefine, SoldierDefine, ActorDefine}
+import com.znl.define._
 import com.znl.framework.http.{HttpRequestMessage, HttpMessage}
 import com.znl.msg.GameMsg.{getTeamDate}
 import com.znl.pojo.db.set.TeamDateSetDb
@@ -60,6 +60,7 @@ object GameUtils {
   }
   //TODO  java.util.ConcurrentModificationException
   def set2str[T](set: java.util.Set[T]) = {
+//    val newSet = new util.HashSet[T](set)//创建一个镜像避免出现遍历过程中被修改的异常
     val sb = StringBuilder.newBuilder
     set.foreach(e => {
       sb.append(e + ",")
@@ -141,6 +142,9 @@ object GameUtils {
 
   var test = true
 
+  def setTest(value:Boolean): Unit ={
+    test=value
+  }
   var time = (System.currentTimeMillis / 1000).toInt
 
   def getServerTime():Int = {
@@ -551,6 +555,65 @@ object GameUtils {
 
   def printAllSlowMap(): Unit ={
 
+  }
+
+  /**
+   * 检查到期时间是否正确
+   *
+   * 时间戳（秒）
+   * @return 是否可以
+   */
+  def checkTime(time : Int): Boolean ={
+    if (getServerTime() <= TimerDefine.TOLERNACE_TIME +time ){
+      true
+    }else{
+      false
+    }
+  }
+
+  /**
+   * 获取两个时间差的天数
+   * @param small 小一点的时间
+   * @param big 大一点的时间
+   * @return 如果small比big要打 返回0
+   */
+  def getDaysBetween(small: Int, big: Int): Int = {
+    if (small >= big || small == 0 || big == 0) {
+      return 0
+    }
+    val add: Int = (big - small) % (24 * 60 * 60)
+    val a: Int = (big - small) / (24 * 60 * 60) + (if (add > 0) 1 else 0)
+    return a
+  }
+
+
+  /**
+   * 是否已做重置操作
+   * @param resetTime 上一次重置时间
+   * @param checkTime 要检测的时间,例如凌晨：0 ；4点：4
+   * @return true 否 false 是
+   */
+  def hasNotResetDataHandler(resetTime:Int,checkTime:Int):Boolean={
+    if(resetTime<=0)return true;
+    val betweenHour: Int = (getServerTime() - resetTime) / ( 60 * 60)
+    return betweenHour>=24
+  }
+
+
+  /**
+   * 获取今天指定的的时间点
+   * @param time 要检测的时间,例如凌晨：0 ；4点：4
+   * @return 零时以long类型返回的数值
+   *
+   */
+  def getTodayTimeForHourInt(time:Int): Int = {
+    val calendar: Calendar = Calendar.getInstance()
+    calendar.setTimeInMillis(System.currentTimeMillis)
+    calendar.set(Calendar.HOUR_OF_DAY,time)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+    return (calendar.getTimeInMillis / 1000).asInstanceOf[Int]
   }
 
 }

@@ -9,7 +9,9 @@ import com.znl.core.PlayerReward;
 import com.znl.core.PlayerTask;
 import com.znl.define.*;
 import com.znl.log.TaskActivityLog;
+import com.znl.pojo.db.Player;
 import com.znl.pojo.db.Task;
+import com.znl.pojo.db.TaskTimer;
 import com.znl.proto.Common;
 import com.znl.proto.M19;
 import com.znl.utils.DateUtil;
@@ -26,6 +28,7 @@ import java.util.*;
  */
 public class TaskProxy extends BasicProxy {
     private Set<Task> tasks = new ConcurrentHashSet<>();
+    public TaskTimer taskTimer;
 
     @Override
     public void shutDownProxy() {
@@ -41,9 +44,30 @@ public class TaskProxy extends BasicProxy {
     }
 
 
-    public TaskProxy(Set<Long> Taskids, String areaKey) {
+    private void restTaskTImer() {
+        taskTimer.setActivyTastId(0);
+        taskTimer.setRefdayState(0);
+        taskTimer.setRefactivityState(0);
+        taskTimer.setRestTimes(0);
+        taskTimer.setDaytaskNum(0);
+        taskTimer.save();
+    }
+
+
+    public TaskProxy(Player player, String areaKey) {
         this.areaKey = areaKey;
-        for (Long id : Taskids) {
+        taskTimer = BaseDbPojo.get(player.getTaskTimerId(), TaskTimer.class, areaKey);
+        if (taskTimer == null) {
+            taskTimer = BaseDbPojo.create(TaskTimer.class, areaKey);
+            taskTimer.setPlayerId(player.getId());
+            taskTimer.setActivyTastId(0);
+            taskTimer.setRefdayState(0);
+            taskTimer.setRefactivityState(0);
+            taskTimer.setRestTimes(0);
+            taskTimer.setDaytaskNum(0);
+            player.setTaskTimerId(taskTimer.getId());
+        }
+        for (Long id : player.getTaskSet()) {
             Task task = BaseDbPojo.get(id, Task.class, areaKey);
             if (task == null) {
                 System.out.print("任务出现空值");
@@ -52,6 +76,7 @@ public class TaskProxy extends BasicProxy {
             }
         }
         init();
+
     }
 
 
@@ -69,7 +94,7 @@ public class TaskProxy extends BasicProxy {
         for (Task Task : Tasks) {
             Task.save();
         }
-
+        taskTimer.save();
     }
 
     private LinkedList<Task> changeTasks = new LinkedList<Task>();
@@ -114,7 +139,8 @@ public class TaskProxy extends BasicProxy {
         tasks.add(task);
         playerProxy.addTaskIdToPlayer(task.getId());
         task.save();
-        doaddcompleteness(tastType, 0, new PlayerReward(), 0);
+        doaddcompleteness(tastType, 0, 0);
+        addNeedPushTask(task);
         return task.getId();
     }
 
@@ -247,7 +273,7 @@ public class TaskProxy extends BasicProxy {
     }
 
     interface AddcompletenessFormula {
-        boolean addcompleteness(int tastType, int addnum, PlayerReward reward, int type);
+        boolean addcompleteness(int tastType, int addnum, int type);
     }
 
     interface TaskFormula {
@@ -262,8 +288,8 @@ public class TaskProxy extends BasicProxy {
 
     private Map<Integer, GetRewardFormula> _mapgetRewardMetic = new HashMap<>();
 
-    public boolean doaddcompleteness(int tastType, int addnum, PlayerReward reward, int type) {
-        return _mapTaskaddCompletedMetic.get(tastType).addcompleteness(tastType, addnum, reward, type);
+    public boolean doaddcompleteness(int tastType, int addnum, int type) {
+        return _mapTaskaddCompletedMetic.get(tastType).addcompleteness(tastType, addnum, type);
     }
 
     private int dogetReward(int tableType, int typeId, PlayerReward reward, List<Long> chanlist, List<Task> dellist, M19.M190001.S2C.Builder builder) {
@@ -283,7 +309,7 @@ public class TaskProxy extends BasicProxy {
             }
             //执行领取
             changIsget(task, TaskDefine.TASK_STATUS_HASGET);
-            finishMainTaskgetNext(reward);
+            finishMainTaskgetNext();
             JSONArray jsonArray = jsonObject.getJSONArray("fixreward");
             RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -333,23 +359,40 @@ public class TaskProxy extends BasicProxy {
 
     }
 
+    //修改了需要推送给前端的任务
+    private Set<Long> needPushTasks = new ConcurrentHashSet<>();
+
+    public Set<Long> getNeedPushTasks() {
+        Set<Long> res = new HashSet<>(needPushTasks);
+        needPushTasks.clear();
+        return res;
+    }
+
+    private void addNeedPushTask(Task task) {
+        if (task.getIsget() != TaskDefine.TASK_STATUS_FINISH) {
+            //没完成的才需要做推送
+            needPushTasks.add(task.getId());
+        }
+    }
+
     private void initaddcompletenessMetic() {
         AddcompletenessFormula formula;
-        formula = (int tastType, int addnum, PlayerReward reward, int type) -> {
+        formula = (int tastType, int addnum, int type) -> {
             boolean falg = false;
             //TODO 次数
             List<Task> taskList = getTaskBYTaskType(tastType);
             for (Task task : taskList) {
 
-                if (isCanadd(task) && isCanAddTask(task)&&iscanChangeTaskNum(task)) {
+                if (isCanadd(task) && isCanAddTask(task) && iscanChangeTaskNum(task)) {
                     falg = true;
+                    addNeedPushTask(task);
                     addTaskNum(task, addnum);
                     JSONObject jsonObject = getTastJsonObject(task.getTableType(), task.getTastId());
                     if (jsonObject == null || task == null) {
                         System.err.println("空值出现了---------");
                         continue;
                     }
-                    checkFinish(task, jsonObject, reward);
+                    checkFinish(task, jsonObject);
                 }
             }
             return falg;
@@ -375,64 +418,68 @@ public class TaskProxy extends BasicProxy {
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_ORNDANCESTENGTH_TIMES, formula);
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_ZHAOMUGENERAIS_TIMES, formula);
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_ADVANCEGENERAIS_TIMES, formula);
-        formula = (int tastType, int addnum, PlayerReward reward, int type) -> {
+        formula = (int tastType, int addnum, int type) -> {
             //TODO 1	声望等级
             boolean falg = false;
             List<Task> taskList = getTaskBYTaskType(tastType);
             PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
             for (Task task : taskList) {
-                if (isCanAddTask(task)&&iscanChangeTaskNum(task)) {
+                if (isCanAddTask(task) && iscanChangeTaskNum(task)) {
                     falg = true;
+                    addNeedPushTask(task);
                     setTaskNum(task, playerProxy.getPowerValue(PlayerPowerDefine.POWER_prestigeLevel));
                     JSONObject jsonObject = getTastJsonObject(task.getTableType(), task.getTastId());
-                    checkFinish(task, jsonObject, reward);
+                    checkFinish(task, jsonObject);
                 }
             }
             return falg;
         };
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_SHENGWANG_LV, formula);
-        formula = (int tastType, int addnum, PlayerReward reward, int type) -> {
+        formula = (int tastType, int addnum, int type) -> {
             //TODO  2	军衔等级
             boolean falg = false;
             List<Task> taskList = getTaskBYTaskType(tastType);
             PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
             for (Task task : taskList) {
-                if (isCanAddTask(task)&&iscanChangeTaskNum(task)) {
+                if (isCanAddTask(task) && iscanChangeTaskNum(task)) {
                     falg = true;
+                    addNeedPushTask(task);
                     setTaskNum(task, playerProxy.getPowerValue(PlayerPowerDefine.POWER_militaryRank));
                     JSONObject jsonObject = getTastJsonObject(task.getTableType(), task.getTastId());
-                    checkFinish(task, jsonObject, reward);
+                    checkFinish(task, jsonObject);
                 }
             }
             return falg;
         };
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_JUNXIAN_LV, formula);
-        formula = (int tastType, int addnum, PlayerReward reward, int type) -> {
+        formula = (int tastType, int addnum, int type) -> {
             //TODO 10	战胜关卡		关卡ID
             boolean falg = false;
             List<Task> taskList = getTaskBYTaskType(tastType);
             for (Task task : taskList) {
-                if (isCanAddTask(task)&&iscanChangeTaskNum(task)) {
+                if (isCanAddTask(task) && iscanChangeTaskNum(task)) {
                     falg = true;
+                    addNeedPushTask(task);
                     DungeoProxy dungeoProxy = getGameProxy().getProxy(ActorDefine.DUNGEO_PROXY_NAME);
                     PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
                     int dungonId = dungeoProxy.getMaxEvenId(playerProxy.getHigestDungId());
                     setTaskNum(task, dungonId);
                     JSONObject jsonObject = getTastJsonObject(task.getTableType(), task.getTastId());
-                    checkFinish(task, jsonObject, reward);
+                    checkFinish(task, jsonObject);
                 }
             }
             return falg;
         };
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_WINGATE_ID, formula);
-        formula = (int tastType, int addnum, PlayerReward reward, int type) -> {
+        formula = (int tastType, int addnum, int type) -> {
             //TODO  5	战胜资源点等级		资源点等级
             boolean falg = false;
             List<Task> taskList = getTaskBYTaskType(tastType);
             PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
             for (Task task : taskList) {
-                if (isCanadd(task) && isCanAddTask(task)&&iscanChangeTaskNum(task)) {
+                if (isCanadd(task) && isCanAddTask(task) && iscanChangeTaskNum(task)) {
                     falg = true;
+                    addNeedPushTask(task);
                     int lv = playerProxy.getWorldResourceLevel();
                     if (task.getNum() > lv) {
                         continue;
@@ -440,37 +487,39 @@ public class TaskProxy extends BasicProxy {
                     JSONObject jsonObject = getTastJsonObject(task.getTableType(), task.getTastId());
                     setTaskNum(task, lv);
                     playerProxy.setWorldResourceLevel(0);
-                    checkFinish(task, jsonObject, reward);
+                    checkFinish(task, jsonObject);
                 }
             }
             return falg;
         };
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_WINRESOURCE_LV, formula);
-        formula = (int tastType, int addnum, PlayerReward reward, int type) -> {
+        formula = (int tastType, int addnum, int type) -> {
             //TODO 6	建筑物等级	建筑物类型	建筑物等级  7	建筑物建造数量	建筑物类型	建筑物数量
             boolean falg = false;
-            ResFunBuildProxy resFunBuildProxy = getGameProxy().getProxy(ActorDefine.RESFUNBUILD_PROXY_NAME);
+//            ResFunBuildProxy resFunBuildProxy = getGameProxy().getProxy(ActorDefine.RESFUNBUILD_PROXY_NAME);
+            NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
             List<Task> taskList = getTaskBYTaskType(tastType);
             for (Task task : taskList) {
-                if (isCanadd(task) && isCanAddTask(task)&&iscanChangeTaskNum(task)) {
+                if (isCanadd(task) && isCanAddTask(task) && iscanChangeTaskNum(task)) {
                     falg = true;
+                    addNeedPushTask(task);
                     int typeId = task.getTastId();
                     int buildType = 0;
                     JSONObject jsonObject = getTastJsonObject(task.getTableType(), typeId);
                     buildType = jsonObject.getInt("finishcond1");
                     if (buildType != 0) {
                         if (tastType == TaskDefine.TASK_TYPE_BUILDING_LV) {
-                            int maxlevel = resFunBuildProxy.getMaxLevelByBuildType(buildType);
+                            int maxlevel = newBuildProxy.getMaxLevelByBuildType(buildType);
                             if (task.getIsget() != TaskDefine.TASK_STATUS_UNFISH) {
                                 falg = false;
                             }
                             setTaskNum(task, maxlevel);
-                            checkFinish(task, jsonObject, reward);
+                            checkFinish(task, jsonObject);
                         } else if (tastType == TaskDefine.TASK_TYPE_BUILDING_NUM) {
-                            int num = resFunBuildProxy.getBuildTypeNum(buildType);
+                            int num = newBuildProxy.getBuildTypeNum(buildType);
                             falg = true;
                             setTaskNum(task, num);
-                            checkFinish(task, jsonObject, reward);
+                            checkFinish(task, jsonObject);
                         }
                     }
                 }
@@ -480,13 +529,14 @@ public class TaskProxy extends BasicProxy {
         };
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_BUILDING_LV, formula);
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_BUILDING_NUM, formula);
-        formula = (int tastType, int addnum, PlayerReward reward, int type) -> {
+        formula = (int tastType, int addnum, int type) -> {
             //TODO 8	生成兵种	兵种类型	数量
             boolean falg = false;
             List<Task> taskList = getTaskBYTaskType(tastType);
             for (Task task : taskList) {
-                if (isCanadd(task) && isCanAddTask(task)&&iscanChangeTaskNum(task)) {
+                if (isCanadd(task) && isCanAddTask(task) && iscanChangeTaskNum(task)) {
                     falg = true;
+                    addNeedPushTask(task);
                     int typeId = task.getTastId();
                     int soldierId = 0;
                     JSONObject jsonObject = getTastJsonObject(task.getTableType(), typeId);
@@ -494,32 +544,33 @@ public class TaskProxy extends BasicProxy {
                     long maxnum = task.getNum();
                     SoldierProxy soldierProxy = getGameProxy().getProxy(ActorDefine.SOLDIER_PROXY_NAME);
                     if (soldierId != 0) {
-                      int  newaddnum = soldierProxy.getSoldierNum(soldierId);
+                        int newaddnum = soldierProxy.getSoldierNum(soldierId);
                       /*  if(addnum<maxnum){
                             return;
                         }*/
                         setTaskNum(task, newaddnum);
-                        checkFinish(task, jsonObject, reward);
+                        checkFinish(task, jsonObject);
                     } else {
                       /*  addnum=soldierProxy.getAllSoldierNum();*/
                       /*  if(addnum<maxnum) {
                          return;
                         }*/
                         addTaskNum(task, addnum);
-                        checkFinish(task, jsonObject, reward);
+                        checkFinish(task, jsonObject);
                     }
                 }
             }
             return falg;
         };
         _mapTaskaddCompletedMetic.put(TaskDefine.TASK_TYPE_CREATESODIER_NUM, formula);
-        formula = (int tastType, int addnum, PlayerReward reward, int type) -> {
+        formula = (int tastType, int addnum, int type) -> {
             //TODO 9	资源产量	资源类型	产量
             boolean falg = false;
             List<Task> taskList = getTaskBYTaskType(tastType);
             for (Task task : taskList) {
-                if (isCanadd(task) && isCanAddTask(task)&&iscanChangeTaskNum(task)) {
+                if (isCanadd(task) && isCanAddTask(task) && iscanChangeTaskNum(task)) {
                     falg = true;
+                    addNeedPushTask(task);
                     int typeId = task.getTastId();
                     int power = 0;
                     JSONObject jsonObject = getTastJsonObject(task.getTableType(), typeId);
@@ -527,7 +578,7 @@ public class TaskProxy extends BasicProxy {
                     PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
                     if (power != TaskDefine.TASK_STATUS_UNFISH) {
                         long num = playerProxy.getPowerValue(power);
-                        checkFinish(task, num, addnum, jsonObject, reward);
+                        checkFinish(task, num, addnum, jsonObject);
                     }
                 }
             }
@@ -571,12 +622,21 @@ public class TaskProxy extends BasicProxy {
     }
 
 
-    private void checkFinish(Task task, JSONObject jsonObject, PlayerReward reward) {
-        if (task.getNum() >= jsonObject.getInt("finishcond2") && task.getIsget() == TaskDefine.TASK_STATUS_UNFISH) {
-            if (task.getTableType() == TaskDefine.TABLE_TASK_ACTIVITY_DAY) {
+    /***
+     * 获得修改的任务里面完成的每日活跃任务，并且结算出奖励
+     ****/
+    public PlayerReward getDayActivityTaskReward(Set<Long> sendSet) {
+        PlayerReward reward = new PlayerReward();
+        for (Long id : sendSet) {
+            Task task = getTaskById(id);
+            if (task == null) {
+                continue;
+            }
+            if (task.getTableType() == TaskDefine.TABLE_TASK_ACTIVITY_DAY && task.getIsget() == TaskDefine.TASK_STATUS_FINISH) {
+                JSONObject jsonObject = getTastJsonObject(task.getTableType(), task.getTastId());
                 PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
                 if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_level) >= jsonObject.getInt("opencond")) {
-                    task.setIsget(TaskDefine.TASK_STATUS_FINISH);
+//
                     RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
                     JSONArray array = jsonObject.getJSONArray("reward");
                     for (int i = 0; i < array.length(); i++) {
@@ -586,13 +646,18 @@ public class TaskProxy extends BasicProxy {
                     task.setIsget(TaskDefine.TASK_STATUS_HASGET);
                     rewardProxy.getRewardToPlayer(reward, LogDefine.GET_DAYLIY_TASK_DAYACTIVITY);
                 }
-            } else {
-                task.setIsget(TaskDefine.TASK_STATUS_FINISH);
             }
+        }
+        return reward;
+    }
+
+    private void checkFinish(Task task, JSONObject jsonObject) {
+        if (task.getNum() >= jsonObject.getInt("finishcond2") && task.getIsget() == TaskDefine.TASK_STATUS_UNFISH) {
+            task.setIsget(TaskDefine.TASK_STATUS_FINISH);
         }
     }
 
-    private void checkFinish(Task task, long num, int addnum, JSONObject jsonObject, PlayerReward reward) {
+    private void checkFinish(Task task, long num, int addnum, JSONObject jsonObject) {
         if (task.getIsget() == TaskDefine.TASK_STATUS_UNFISH && task.getIsget() != TaskDefine.TASK_STATUS_HASGET) {
             if (task.getTableType() == TaskDefine.TABLE_TASK_ACTIVITY_DAY) {
                 PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
@@ -606,14 +671,14 @@ public class TaskProxy extends BasicProxy {
                     }
                     if (task.getNum() >= jsonObject.getInt("finishcond2")) {
                         task.setIsget(TaskDefine.TASK_STATUS_FINISH);
-                        JSONArray array = jsonObject.getJSONArray("reward");
-                        RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
-                        for (int i = 0; i < array.length(); i++) {
-                            int rewardId = array.getInt(i);
-                            rewardProxy.getPlayerRewardByFixReward(rewardId, reward);
-                        }
+//                        JSONArray array = jsonObject.getJSONArray("reward");
+//                        RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
+//                        for (int i = 0; i < array.length(); i++) {
+//                            int rewardId = array.getInt(i);
+//                            rewardProxy.getPlayerRewardByFixReward(rewardId, reward);
+//                        }
                         task.setIsget(TaskDefine.TASK_STATUS_HASGET);
-                        rewardProxy.getRewardToPlayer(reward, LogDefine.GET_DAYLIY_TASK_DAYACTIVITY);
+//                        rewardProxy.getRewardToPlayer(reward, LogDefine.GET_DAYLIY_TASK_DAYACTIVITY);
                     }
                 }
             } else {
@@ -650,7 +715,7 @@ public class TaskProxy extends BasicProxy {
     /*********
      * 主线任务
      **********/
-    private void finishMainTaskgetNext(PlayerReward reward) {
+    private void finishMainTaskgetNext() {
         List<JSONObject> objectList = ConfigDataProxy.getConfigAllInfo(DataDefine.MAINMISSION);
         for (JSONObject jsonObject : objectList) {
             JSONArray jsonArray = jsonObject.getJSONArray("premission");
@@ -674,7 +739,7 @@ public class TaskProxy extends BasicProxy {
                 addTask(TaskDefine.TABLE_TASK_MAIN_LINE, jsonObject.getInt("stype"), jsonObject.getInt("ID"));
             }
         }
-        doaddcompleteness(TaskDefine.TASK_TYPE_CREATESODIER_NUM, 0, reward, 0);
+        doaddcompleteness(TaskDefine.TASK_TYPE_CREATESODIER_NUM, 0, 0);
     }
 
     //初始化主线任务
@@ -702,7 +767,7 @@ public class TaskProxy extends BasicProxy {
     public void initTaskAll() {
         initDayMission(new ArrayList<Common.TaskInfo>());
         for (int i = 1; i <= 29; i++) {
-            doaddcompleteness(i, 0, new PlayerReward(), 0);
+            doaddcompleteness(i, 0, 0);
         }
     }
 
@@ -710,9 +775,10 @@ public class TaskProxy extends BasicProxy {
      * 日常任务
      **********/
     public void initDayMission(List<Common.TaskInfo> taskInfos) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        long lastime = timerdbProxy.getLastOperatinTime(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
-        if (getTaskByTableTypeandTaskType(TaskDefine.TABLE_TASK_DAY).size() == 0 || GameUtils.getServerDate().getTime() >= lastime) {
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //   long lastime = timerdbProxy.getLastOperatinTime(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
+        int state = taskTimer.getRefdayState();
+        if (getTaskByTableTypeandTaskType(TaskDefine.TABLE_TASK_DAY).size() == 0 || state == UtilDefine.REWARD_STATE_NONE_GET) {
             List<Task> taskList = new ArrayList<Task>();
             List<Integer> list = randomDayMession(new ArrayList<Task>());
             for (int id : list) {
@@ -720,9 +786,10 @@ public class TaskProxy extends BasicProxy {
                 addTask(TaskDefine.TABLE_TASK_DAY, jsonObject1.getInt("stype"), id);
             }
             taskInfos.addAll(getTaskInfosByTasklist(taskList));
-            timerdbProxy.setNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 0);
-            timerdbProxy.setLastOperatinTime(TimerDefine.FRIEND_DAY_MESSION, 0, 0, DateUtil.getNextHour(GameUtils.getServerDate().getTime(), TimerDefine.TIMER_REFRESH_FOUR));
-            timerdbProxy.setAttrValue(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 1, 0);
+            taskTimer.setRefdayState(UtilDefine.REWARD_STATE_HAS_GET);
+            // timerdbProxy.setNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 0);
+            // timerdbProxy.setLastOperatinTime(TimerDefine.FRIEND_DAY_MESSION, 0, 0, DateUtil.getNextHour(GameUtils.getServerDate().getTime(), TimerDefine.TIMER_REFRESH_FOUR));
+            // timerdbProxy.setAttrValue(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 1, 0);
         }
     }
 
@@ -784,8 +851,9 @@ public class TaskProxy extends BasicProxy {
      **********/
 
     public void initDayActivity() {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        long lastime = timerdbProxy.getLastOperatinTime(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+      //  long lastime = 0;//timerdbProxy.getLastOperatinTime(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+        int state=taskTimer.getRefactivityState();
         List<JSONObject> defineList = ConfigDataProxy.getConfigAllInfo(DataDefine.DAYACTIVI);
         List<Task> list = getTaskByTableTypeandTaskType(TaskDefine.TABLE_TASK_ACTIVITY_DAY);
         if (list.size() == 0) {
@@ -793,8 +861,7 @@ public class TaskProxy extends BasicProxy {
                 addTask(TaskDefine.TABLE_TASK_ACTIVITY_DAY, jsonObject.getInt("stype"), jsonObject.getInt("ID"));
             }
         }
-        System.out.println(new Date(lastime) + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        if (GameUtils.getServerDate().getTime() >= lastime) {
+        if (state==UtilDefine.REWARD_STATE_NONE_GET) {
             for (Task task : list) {
                 task.setNum(0);
                 task.setState(0);
@@ -804,9 +871,10 @@ public class TaskProxy extends BasicProxy {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             int value = (int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_active);
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_active, value, LogDefine.LOST_DAYLIY_REFRESH);
-            timerdbProxy.setNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0, 0);
-            timerdbProxy.setLastOperatinTime(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0, DateUtil.getNextHour(GameUtils.getServerDate().getTime(), TimerDefine.TIMER_REFRESH_FOUR));
-            timerdbProxy.setAttrValue(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0, 1, 0);
+            taskTimer.setRefactivityState(UtilDefine.REWARD_STATE_HAS_GET);
+            //     timerdbProxy.setNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0, 0);
+            //  timerdbProxy.setLastOperatinTime(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0, DateUtil.getNextHour(GameUtils.getServerDate().getTime(), TimerDefine.TIMER_REFRESH_FOUR));
+            //   timerdbProxy.setAttrValue(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0, 1, 0);
         }
     }
 
@@ -828,14 +896,14 @@ public class TaskProxy extends BasicProxy {
         boolean falg = true;
         if (task.getTableType() == TaskDefine.TABLE_TASK_MAIN_LINE) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.MAINMISSION, task.getTastId());
-            if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_level) < jsonObject.getInt("opencond") || task.getIsget() == TaskDefine.TASK_STATUS_HASGET ) {
+            if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_level) < jsonObject.getInt("opencond") || task.getIsget() == TaskDefine.TASK_STATUS_HASGET) {
                 falg = false;
             }
         }
         return falg;
     }
 
-    public boolean iscanChangeTaskNum(Task task){
+    public boolean iscanChangeTaskNum(Task task) {
         boolean falg = true;
         if (task.getIsget() == TaskDefine.TASK_STATUS_HASGET || task.getIsget() == TaskDefine.TASK_STATUS_FINISH || task.getIsget() == TaskDefine.TASK_STATUS_DELETE) {
             falg = false;
@@ -845,7 +913,7 @@ public class TaskProxy extends BasicProxy {
 
     private Common.TaskInfo getTaskInfoByTask(Task task) {
         if (isCanAddTask(task)) {
-            Common.TaskInfo.Builder builder =Common.TaskInfo.newBuilder();
+            Common.TaskInfo.Builder builder = Common.TaskInfo.newBuilder();
             builder.setTableType(task.getTableType());
             builder.setTypeId(task.getTastId());
             builder.setNum(task.getNum());
@@ -857,7 +925,7 @@ public class TaskProxy extends BasicProxy {
     }
 
     private Common.TaskInfo getDelTaskInfoByTask(Task task) {
-        Common.TaskInfo.Builder builder =Common.TaskInfo.newBuilder();
+        Common.TaskInfo.Builder builder = Common.TaskInfo.newBuilder();
         builder.setTableType(task.getTableType());
         builder.setTypeId(task.getTastId());
         builder.setNum(task.getNum());
@@ -915,6 +983,16 @@ public class TaskProxy extends BasicProxy {
         return taskInfos;
     }
 
+    public List<Common.TaskInfo> getTaskInfosByTaskId(Set<Long> tasksSet) {
+        List<Common.TaskInfo> taskInfos = new ArrayList<>();
+        for (Task task : tasks){
+            if (tasksSet.contains(task.getId())){
+                taskInfos.add(getTaskInfoByTask(task));
+            }
+        }
+        return taskInfos;
+    }
+
     /*************
      * 协议
      ***********************/
@@ -953,8 +1031,8 @@ public class TaskProxy extends BasicProxy {
         if (task == null) {
             return ErrorCodeDefine.M190002_1;
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        if (timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0) >= 5) {
+        //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        if (taskTimer.getDaytaskNum() >= 5) {
             return ErrorCodeDefine.M190002_2;//不能接受任务了请重置
         }
         for (Task tas1 : getTaskByTableTypeandTaskType(TaskDefine.TABLE_TASK_DAY)) {
@@ -966,8 +1044,9 @@ public class TaskProxy extends BasicProxy {
         if (getTaskInfoByTask(task) != null) {
             builder.addTaskInfos(getTaskInfoByTask(task));
         }
-        timerdbProxy.addNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 1);
-        builder.setDayliynum(timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0));
+        taskTimer.setDaytaskNum(taskTimer.getDaytaskNum() + 1);
+        //  timerdbProxy.addNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 1);
+        builder.setDayliynum(taskTimer.getDaytaskNum());
         return 0;
     }
 
@@ -991,9 +1070,10 @@ public class TaskProxy extends BasicProxy {
         if (getTaskInfoByTask(task) != null) {
             builder.addTaskInfos(getTaskInfoByTask(task));
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        timerdbProxy.reduceNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 1);
-        builder.setDayliynum(timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0));
+        //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //  timerdbProxy.reduceNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 1);
+        taskTimer.setDaytaskNum(taskTimer.getDaytaskNum() - 1);
+        builder.setDayliynum(taskTimer.getDaytaskNum());
         return 0;
     }
 
@@ -1003,8 +1083,8 @@ public class TaskProxy extends BasicProxy {
         if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < 25) {
             return ErrorCodeDefine.M190002_4;
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        if (timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0) < 5) {
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        if (taskTimer.getDaytaskNum() < 5) {
             return ErrorCodeDefine.M190002_5;//还不能重置
         }
         if (getDayResetTimes() <= 0) {
@@ -1019,21 +1099,23 @@ public class TaskProxy extends BasicProxy {
         }
         builder.addAllTaskInfos(getTaskInfosByTasklist(taskList));*/
         builder.addAllTaskInfos(getTaskInfoBytableType(TaskDefine.TABLE_TASK_DAY));
-        timerdbProxy.setNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 0);
-        timerdbProxy.addNum(TimerDefine.DAY_TASK_REST, 0, 0, 1);
-        builder.setDayliynum(timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0));
+        //      timerdbProxy.setNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0, 0);
+        taskTimer.setDaytaskNum(0);
+        taskTimer.setRestTimes(taskTimer.getRestTimes() + 1);
+        //  timerdbProxy.addNum(TimerDefine.DAY_TASK_REST, 0, 0, 1);
+        builder.setDayliynum(taskTimer.getDaytaskNum());
         return 0;
     }
 
     //刷新任务
     private int refreshTask(M19.M190002.S2C.Builder builder) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         for (Task task : getTaskByTableTypeandTaskType(TaskDefine.TABLE_TASK_DAY)) {
             if (task.getState() == TaskDefine.TASK_STATUS_ACCEPT) {
                 return ErrorCodeDefine.M190002_7;//有任务在接受中
             }
         }
-        if (timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0) >= 5) {
+        if (taskTimer.getDaytaskNum() >= 5) {
             return ErrorCodeDefine.M190002_8;//
         }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
@@ -1047,7 +1129,7 @@ public class TaskProxy extends BasicProxy {
             JSONObject jsonObject1 = ConfigDataProxy.getConfigInfoFindById(DataDefine.DAYMISSION, id);
             addTask(TaskDefine.TABLE_TASK_DAY, jsonObject1.getInt("stype"), id);
         }
-        builder.setDayliynum(timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0));
+        builder.setDayliynum(taskTimer.getDaytaskNum());
         builder.addAllTaskInfos(getTaskInfoBytableType(TaskDefine.TABLE_TASK_DAY));
         return 0;
     }
@@ -1079,16 +1161,16 @@ public class TaskProxy extends BasicProxy {
         // playerProxy.addPowerValue(PlayerPowerDefine.POWER_exp, exp, LogDefine.GET_DAYLIY_TASK_DAYACTIVITY);
         reward.addPowerMap.put(PlayerPowerDefine.POWER_exp, exp);
         builder.addAllTaskInfos(getTaskInfoBytableType(TaskDefine.TABLE_TASK_DAY));
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        builder.setDayliynum(timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0));
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        builder.setDayliynum(taskTimer.getDaytaskNum());
         rewardProxy.getRewardToPlayer(reward, LogDefine.GET_DAYLIY_TASK_GETREWARD);
         return 0;
     }
 
 
     public int getDayActivity(PlayerReward reward, TaskActivityLog baseLog) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int num = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+        //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int num = taskTimer.getActivyTastId();//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
         if (num >= getMaxActivity()) {
             return ErrorCodeDefine.M190003_13;//
         }
@@ -1101,7 +1183,8 @@ public class TaskProxy extends BasicProxy {
             return ErrorCodeDefine.M190003_15;//
         }
         baseLog.setTypeId(num + 1);
-        timerdbProxy.addNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0, 1);
+        //   timerdbProxy.addNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0, 1);
+        taskTimer.setActivyTastId(taskTimer.getActivyTastId() + 1);
         JSONArray array = jsonObject.getJSONArray("fixreward");
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
         StringBuffer sb = new StringBuffer();
@@ -1129,8 +1212,8 @@ public class TaskProxy extends BasicProxy {
 
     //获得当前活跃领取id
     public int getActivityId() {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int num = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int num = taskTimer.getActivyTastId();// timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
         if (num >= getMaxActivity()) {
             return getMaxActivity();
         }
@@ -1142,20 +1225,20 @@ public class TaskProxy extends BasicProxy {
     public int getDayResetTimes() {
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
         int maxTimes = vipProxy.getVipNum(ActorDefine.VIP_DAYQUESTRESET);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int num = timerdbProxy.getTimerNum(TimerDefine.DAY_TASK_REST, 0, 0);
-        return maxTimes - num;
+        //    TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int num =taskTimer.getRestTimes() ;//timerdbProxy.getTimerNum(TimerDefine.DAY_TASK_REST, 0, 0);
+         return maxTimes - num;
     }
 
-    public M19.M190000.S2C.Builder getTaskUpdate(List<PlayerTask> list, PlayerReward reward) {
+    public M19.M190000.S2C.Builder getTaskUpdate(List<PlayerTask> list) {
         boolean falg = false;
         for (PlayerTask playerTask : list) {
-            boolean checkfalg = doaddcompleteness(playerTask.taskType, playerTask.addnum, reward, playerTask.codition);
+            boolean checkfalg = doaddcompleteness(playerTask.taskType, playerTask.addnum, playerTask.codition);
             if (checkfalg) {
                 falg = checkfalg;
             }
         }
-        if(falg==false){
+        if (falg == false) {
             return null;
         }
         M19.M190000.S2C.Builder builder = M19.M190000.S2C.newBuilder();
@@ -1166,37 +1249,36 @@ public class TaskProxy extends BasicProxy {
         if (taskInfos.size() > 0) {
             builder.addAllTaskInfos(taskInfos);
             builder.setRs(0);
-            TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-            builder.setDayliynum(timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0));
+            //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+            builder.setDayliynum(taskTimer.getDaytaskNum());
             return builder;
         }
         return null;
     }
 
-    public M19.M190000.S2C.Builder getTaskUpdate(int type, int add, PlayerReward reward) {
+    public void getTaskUpdate(int type, int add) {
         M19.M190000.S2C.Builder builder = M19.M190000.S2C.newBuilder();
         List<Common.TaskInfo> taskInfos = new ArrayList<Common.TaskInfo>();
-        boolean falg = doaddcompleteness(type, add, reward, 0);
+        boolean falg = doaddcompleteness(type, add, 0);
         if (falg == false) {
-            return null;
+            return;
         }
         taskInfos.addAll(getTaskInfoBytaskType(type));
         if (taskInfos.size() > 0) {
             builder.addAllTaskInfos(taskInfos);
             builder.setRs(0);
-            TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-            builder.setDayliynum(timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0));
-            return builder;
+            // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+            builder.setDayliynum(taskTimer.getDaytaskNum());
+            //  return builder;
         }
-        return null;
     }
 
     public M19.M190000.S2C.Builder getTaskInfoToClient() {
         M19.M190000.S2C.Builder builder = M19.M190000.S2C.newBuilder();
-        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //      TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         builder.addAllTaskInfos(getTaskInfos());
-        int dayilNum = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
-        int num = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+        int dayilNum = taskTimer.getDaytaskNum();// timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
+        int num = taskTimer.getActivyTastId();//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
         builder.setHasGetMaxId(num);
         builder.setDayActivityId(getActivityId());
         builder.setDayliynum(dayilNum);
@@ -1204,23 +1286,23 @@ public class TaskProxy extends BasicProxy {
         return builder;
     }
 
-    public Common.TaskInfoList getTaskInfoList(){
-        Common.TaskInfoList.Builder taskInfoList=Common.TaskInfoList.newBuilder();
-        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+    public Common.TaskInfoList getTaskInfoList() {
+        Common.TaskInfoList.Builder taskInfoList = Common.TaskInfoList.newBuilder();
+        //       TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         taskInfoList.addAllTaskInfos(getTaskInfos());
-        int dayilNum = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
-        int num = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+        int dayilNum = taskTimer.getDaytaskNum();//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
+        int num = taskTimer.getActivyTastId();//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
         taskInfoList.setHasGetMaxId(num);
         taskInfoList.setDayActivityId(getActivityId());
         taskInfoList.setDayliynum(dayilNum);
         taskInfoList.setRs(0);
-        return  taskInfoList.build();
+        return taskInfoList.build();
     }
 
     //获得任务提示数量
     public int getTaskTipNum() {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //    TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         int num = 0;
         for (Task task : tasks) {
             if (task.getTableType() == TaskDefine.TABLE_TASK_MAIN_LINE || task.getTableType() == TaskDefine.TABLE_TASK_DAY) {
@@ -1229,7 +1311,7 @@ public class TaskProxy extends BasicProxy {
                 }
             }
         }
-        int acnum = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
+        int acnum = taskTimer.getActivyTastId();//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
         JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.ACTIVEREWARD, acnum + 1);
         if (jsonObject != null && playerProxy.getPowerValue(PlayerPowerDefine.POWER_active) >= jsonObject.getInt("activeneed")) {
             num++;
@@ -1237,6 +1319,9 @@ public class TaskProxy extends BasicProxy {
         return num;
     }
 
-
+    @Override
+    public void fixedTimeEventHandler() {
+        restTaskTImer();
+    }
 }
 

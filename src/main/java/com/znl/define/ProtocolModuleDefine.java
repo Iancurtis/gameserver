@@ -65,6 +65,7 @@ public class  ProtocolModuleDefine {
     public static final int NET_M2_C20005 = 20005;
     /**
      * 事件日志请求
+     *
      */
     public static final int NET_M2_C20006 = 20006;
     /**
@@ -130,6 +131,15 @@ public class  ProtocolModuleDefine {
      * 获取最近信息**
      */
     public static final int NET_M2_C20400 = 20400;
+
+    /**
+     * 繁荣度时间校验**
+     */
+    public static final int NET_M2_C20500 = 20500;
+    /**
+     * 体力时间校验**
+     */
+    public static final int NET_M2_C20501 = 20501;
 
     /**
      * 系统相关模块**
@@ -249,6 +259,13 @@ public class  ProtocolModuleDefine {
      * 开启新副本
      */
     public static final int NET_M6_C60104 = 60104;
+
+
+    /**
+     * 极限副本扫荡倒计时
+     */
+    public static final int NET_M6_C60105 = 60105;
+
     /**
      * 军队模块**
      */
@@ -328,7 +345,6 @@ public class  ProtocolModuleDefine {
      * 改变防守队伍*
      */
     public static final int NET_M8_C80014 = 80014;
-
     /**
      * 放大镜
      */
@@ -338,6 +354,24 @@ public class  ProtocolModuleDefine {
      *刷新保护罩
      */
     public static final int NET_M8_C80016= 80016;
+    /**
+     * 驻军信息校验删除
+     */
+    public static final int NET_M8_C80103 = 80103;
+    /**
+     * 刷新新增驻军任务
+     */
+    public static final int NET_M8_C80104 = 80104;
+    /**
+     * 校验被攻击的通知并删除
+     */
+    public static final int NET_M8_C80107 = 80107;
+    /**
+     * 刷新与新增被攻击通知
+     */
+    public static final int NET_M8_C80108 = 80108;
+
+
     /**
      * 道具相关模块**
      */
@@ -522,8 +556,12 @@ public class  ProtocolModuleDefine {
     public static final int NET_M20_C200005 = 200005;//竞技场上次排名领取
     public static final int NET_M20_C200006 = 200006;//加速竞技场
     public static final int NET_M20_C200100 = 200100;//竞技场战报列表
-    public static final int NET_M20_C200101 = 200101;//查看战报详细信息,之后推送200100
-    public static final int NET_M20_C200102 = 200102;//删除个人战报,之后推送200100
+    public static final int NET_M20_C200101 = 200101;//查看战报详细信息,-------之后推送200100
+    public static final int NET_M20_C200102 = 200102;//删除个人战报,------之后推送200100
+    public static final int NET_M20_C200104 = 200104;//新增个人战报
+    public static final int NET_M20_C200105 = 200105;//更新全服战报
+    public static final int NET_M20_C200106 = 200106;//竞技场时间验证
+
     /**
      * ******排行榜模块************
      */
@@ -571,6 +609,8 @@ public class  ProtocolModuleDefine {
     public static final int NET_M23_C230007= 230007;//刷新单个活动内容
     public static final int NET_M23_C230008= 230008;//删除活动
     public static final int NET_M23_C230009= 230009;//增加一个限时活动
+    public static final int NET_M23_C230010= 230010;//检测一个普通活动是否开启
+    public static final int NET_M23_C230011= 230011;//检测一个限时活动是否开启
     /******cdkey*********/
     public static final int NET_M24 = 24;
     public static final int NET_M24_C240000 = 240000;//cdkey领取
@@ -595,6 +635,7 @@ public class  ProtocolModuleDefine {
     public static final int NET_M28_C280012 = 280012;//购买自动升级建筑
     public static final int NET_M28_C280013 = 280013;//自动升级建筑开关
     public static final int NET_M28_C280014 = 280014;//自动升级结束
+    public static final int NET_M28_C280015 = 280015;//资源产出校验
     /******计算战斗力独立模块*********/
     public static final int NET_M50 = 50;
 
@@ -608,5 +649,13 @@ public class  ProtocolModuleDefine {
     public static final int NET_M26_C260004 = 260004;//军师抽奖信息
     public static final int NET_M26_C260005 = 260005;//军师抽奖
     public static final int NET_M26_C260006 = 260006;//军师一键进阶
+
+    /******军团副本*********/
+    public static final int NET_M27 = 27;
+    public static final int NET_M27_C270000 = 270000;//军团副本信息
+    public static final int NET_M27_C270001 = 270001;//
+    public static final int NET_M27_C270002 = 270002;//军团副本询问
+    public static final int NET_M27_C270004 = 270004;//获得军团副本某一章节信息
+    public static final int NET_M27_C270003 = 270003;//领取宝箱
  }
 

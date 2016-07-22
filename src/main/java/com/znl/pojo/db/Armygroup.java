@@ -1,11 +1,9 @@
 package com.znl.pojo.db;
 
 import com.znl.base.BaseDbPojo;
+import com.znl.core.PlayerTeam;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Administrator on 2015/11/16.
@@ -37,6 +35,24 @@ public class Armygroup extends BaseDbPojo {
     private Set<Long> techs = new HashSet<>();//军团科技
     private String fiche="" ;//军团公告
     private long nextenlistiem;//下次招募时间
+    private Integer maxLegionDungeoid =0;//最高军团副本
+    private List<Integer> LegionDungeoidbox = new ArrayList<>();//每天可领宝箱
+
+    public List<Integer> getLegionDungeoidbox() {
+        return LegionDungeoidbox;
+    }
+
+    public void setLegionDungeoidbox(List<Integer> legionDungeoidbox) {
+        LegionDungeoidbox = legionDungeoidbox;
+    }
+
+    public Integer getMaxLegionDungeoid() {
+        return maxLegionDungeoid;
+    }
+
+    public void setMaxLegionDungeoid(Integer maxLegionDungeoid) {
+        this.maxLegionDungeoid = maxLegionDungeoid;
+    }
 
     private int tael = 0;
     private int iron = 0;

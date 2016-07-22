@@ -158,6 +158,7 @@ public class PowerRanksModule extends BasicModule {
         PlayerProxy playerProxy=getProxy(ActorDefine.PLAYER_PROXY_NAME);
         builder.addAllRankListInfo(playerProxy.getRankInfos());
         sendNetMsg(ActorDefine.RANKS_MODULE_ID, ProtocolModuleDefine.NET_M21_C210000, builder.build());
+        sendPushNetMsgToClient();
     }
 
     public void checkTimer() {

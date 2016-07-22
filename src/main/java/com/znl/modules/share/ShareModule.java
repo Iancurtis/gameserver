@@ -141,7 +141,7 @@ public class ShareModule extends BasicModule {
                     case 1: {//佣兵
                         SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
                         id = c2s.getTypeId();
-                        Common.SoldierInfo soldierInfo = soldierProxy.getSoldierInfo((int) id);
+                        Common.SoldierInfo soldierInfo = soldierProxy.getSoldierInfotoshare((int) id);
                         if (soldierInfo == null || soldierInfo.getNum() == 0) {
                             rs = ErrorCodeDefine.M250000_1;
                         } else {
@@ -330,6 +330,7 @@ public class ShareModule extends BasicModule {
 
 
         }
+        sendPushNetMsgToClient();
     }
 
 

@@ -11424,7 +11424,7 @@ public final class M8 {
    * Protobuf type {@code M8.M80003}
    *
    * <pre>
-   *任务部队列表
+   *服务端新增任务列表推送
    * </pre>
    */
   public static final class M80003 extends
@@ -12613,7 +12613,7 @@ public final class M8 {
      * Protobuf type {@code M8.M80003}
      *
      * <pre>
-     *任务部队列表
+     *服务端新增任务列表推送
      * </pre>
      */
     public static final class Builder extends
@@ -12729,6 +12729,2695 @@ public final class M8 {
     // @@protoc_insertion_point(class_scope:M8.M80003)
   }
 
+  public interface M80103OrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code M8.M80103}
+   *
+   * <pre>
+   *部队任务完成请求
+   * </pre>
+   */
+  public static final class M80103 extends
+      com.google.protobuf.GeneratedMessage
+      implements M80103OrBuilder {
+    // Use M80103.newBuilder() to construct.
+    private M80103(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private M80103(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final M80103 defaultInstance;
+    public static M80103 getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public M80103 getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private M80103(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.znl.proto.M8.internal_static_M8_M80103_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.znl.proto.M8.internal_static_M8_M80103_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.znl.proto.M8.M80103.class, com.znl.proto.M8.M80103.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<M80103> PARSER =
+        new com.google.protobuf.AbstractParser<M80103>() {
+      public M80103 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new M80103(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<M80103> getParserForType() {
+      return PARSER;
+    }
+
+    public interface S2COrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required int32 rs = 1;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      boolean hasRs();
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      int getRs();
+
+      // required fixed64 id = 2;
+      /**
+       * <code>required fixed64 id = 2;</code>
+       *
+       * <pre>
+       *部队完成的唯一ID
+       * </pre>
+       */
+      boolean hasId();
+      /**
+       * <code>required fixed64 id = 2;</code>
+       *
+       * <pre>
+       *部队完成的唯一ID
+       * </pre>
+       */
+      long getId();
+
+      // optional int32 alreadyTime = 3;
+      /**
+       * <code>optional int32 alreadyTime = 3;</code>
+       *
+       * <pre>
+       *已经经过的时间/已经获得的产量只有在时间校验失败才发
+       * </pre>
+       */
+      boolean hasAlreadyTime();
+      /**
+       * <code>optional int32 alreadyTime = 3;</code>
+       *
+       * <pre>
+       *已经经过的时间/已经获得的产量只有在时间校验失败才发
+       * </pre>
+       */
+      int getAlreadyTime();
+    }
+    /**
+     * Protobuf type {@code M8.M80103.S2C}
+     */
+    public static final class S2C extends
+        com.google.protobuf.GeneratedMessage
+        implements S2COrBuilder {
+      // Use S2C.newBuilder() to construct.
+      private S2C(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private S2C(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final S2C defaultInstance;
+      public static S2C getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public S2C getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private S2C(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 8: {
+                bitField0_ |= 0x00000001;
+                rs_ = input.readInt32();
+                break;
+              }
+              case 17: {
+                bitField0_ |= 0x00000002;
+                id_ = input.readFixed64();
+                break;
+              }
+              case 24: {
+                bitField0_ |= 0x00000004;
+                alreadyTime_ = input.readInt32();
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80103_S2C_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80103_S2C_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80103.S2C.class, com.znl.proto.M8.M80103.S2C.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<S2C> PARSER =
+          new com.google.protobuf.AbstractParser<S2C>() {
+        public S2C parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new S2C(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<S2C> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required int32 rs = 1;
+      public static final int RS_FIELD_NUMBER = 1;
+      private int rs_;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public boolean hasRs() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public int getRs() {
+        return rs_;
+      }
+
+      // required fixed64 id = 2;
+      public static final int ID_FIELD_NUMBER = 2;
+      private long id_;
+      /**
+       * <code>required fixed64 id = 2;</code>
+       *
+       * <pre>
+       *部队完成的唯一ID
+       * </pre>
+       */
+      public boolean hasId() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required fixed64 id = 2;</code>
+       *
+       * <pre>
+       *部队完成的唯一ID
+       * </pre>
+       */
+      public long getId() {
+        return id_;
+      }
+
+      // optional int32 alreadyTime = 3;
+      public static final int ALREADYTIME_FIELD_NUMBER = 3;
+      private int alreadyTime_;
+      /**
+       * <code>optional int32 alreadyTime = 3;</code>
+       *
+       * <pre>
+       *已经经过的时间/已经获得的产量只有在时间校验失败才发
+       * </pre>
+       */
+      public boolean hasAlreadyTime() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional int32 alreadyTime = 3;</code>
+       *
+       * <pre>
+       *已经经过的时间/已经获得的产量只有在时间校验失败才发
+       * </pre>
+       */
+      public int getAlreadyTime() {
+        return alreadyTime_;
+      }
+
+      private void initFields() {
+        rs_ = 0;
+        id_ = 0L;
+        alreadyTime_ = 0;
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasRs()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasId()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeInt32(1, rs_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeFixed64(2, id_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          output.writeInt32(3, alreadyTime_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(1, rs_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeFixed64Size(2, id_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(3, alreadyTime_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M8.M80103.S2C parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80103.S2C parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80103.S2C parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80103.S2C parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80103.S2C parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80103.S2C parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80103.S2C parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M8.M80103.S2C parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80103.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80103.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M8.M80103.S2C prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M8.M80103.S2C}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M8.M80103.S2COrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M8.internal_static_M8_M80103_S2C_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M8.internal_static_M8_M80103_S2C_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M8.M80103.S2C.class, com.znl.proto.M8.M80103.S2C.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M8.M80103.S2C.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          rs_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          id_ = 0L;
+          bitField0_ = (bitField0_ & ~0x00000002);
+          alreadyTime_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000004);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M8.internal_static_M8_M80103_S2C_descriptor;
+        }
+
+        public com.znl.proto.M8.M80103.S2C getDefaultInstanceForType() {
+          return com.znl.proto.M8.M80103.S2C.getDefaultInstance();
+        }
+
+        public com.znl.proto.M8.M80103.S2C build() {
+          com.znl.proto.M8.M80103.S2C result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M8.M80103.S2C buildPartial() {
+          com.znl.proto.M8.M80103.S2C result = new com.znl.proto.M8.M80103.S2C(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.rs_ = rs_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          result.id_ = id_;
+          if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+            to_bitField0_ |= 0x00000004;
+          }
+          result.alreadyTime_ = alreadyTime_;
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M8.M80103.S2C) {
+            return mergeFrom((com.znl.proto.M8.M80103.S2C)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M8.M80103.S2C other) {
+          if (other == com.znl.proto.M8.M80103.S2C.getDefaultInstance()) return this;
+          if (other.hasRs()) {
+            setRs(other.getRs());
+          }
+          if (other.hasId()) {
+            setId(other.getId());
+          }
+          if (other.hasAlreadyTime()) {
+            setAlreadyTime(other.getAlreadyTime());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasRs()) {
+            
+            return false;
+          }
+          if (!hasId()) {
+            
+            return false;
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M8.M80103.S2C parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M8.M80103.S2C) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required int32 rs = 1;
+        private int rs_ ;
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public boolean hasRs() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public int getRs() {
+          return rs_;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder setRs(int value) {
+          bitField0_ |= 0x00000001;
+          rs_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder clearRs() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          rs_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // required fixed64 id = 2;
+        private long id_ ;
+        /**
+         * <code>required fixed64 id = 2;</code>
+         *
+         * <pre>
+         *部队完成的唯一ID
+         * </pre>
+         */
+        public boolean hasId() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        /**
+         * <code>required fixed64 id = 2;</code>
+         *
+         * <pre>
+         *部队完成的唯一ID
+         * </pre>
+         */
+        public long getId() {
+          return id_;
+        }
+        /**
+         * <code>required fixed64 id = 2;</code>
+         *
+         * <pre>
+         *部队完成的唯一ID
+         * </pre>
+         */
+        public Builder setId(long value) {
+          bitField0_ |= 0x00000002;
+          id_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required fixed64 id = 2;</code>
+         *
+         * <pre>
+         *部队完成的唯一ID
+         * </pre>
+         */
+        public Builder clearId() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          id_ = 0L;
+          onChanged();
+          return this;
+        }
+
+        // optional int32 alreadyTime = 3;
+        private int alreadyTime_ ;
+        /**
+         * <code>optional int32 alreadyTime = 3;</code>
+         *
+         * <pre>
+         *已经经过的时间/已经获得的产量只有在时间校验失败才发
+         * </pre>
+         */
+        public boolean hasAlreadyTime() {
+          return ((bitField0_ & 0x00000004) == 0x00000004);
+        }
+        /**
+         * <code>optional int32 alreadyTime = 3;</code>
+         *
+         * <pre>
+         *已经经过的时间/已经获得的产量只有在时间校验失败才发
+         * </pre>
+         */
+        public int getAlreadyTime() {
+          return alreadyTime_;
+        }
+        /**
+         * <code>optional int32 alreadyTime = 3;</code>
+         *
+         * <pre>
+         *已经经过的时间/已经获得的产量只有在时间校验失败才发
+         * </pre>
+         */
+        public Builder setAlreadyTime(int value) {
+          bitField0_ |= 0x00000004;
+          alreadyTime_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional int32 alreadyTime = 3;</code>
+         *
+         * <pre>
+         *已经经过的时间/已经获得的产量只有在时间校验失败才发
+         * </pre>
+         */
+        public Builder clearAlreadyTime() {
+          bitField0_ = (bitField0_ & ~0x00000004);
+          alreadyTime_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M8.M80103.S2C)
+      }
+
+      static {
+        defaultInstance = new S2C(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M8.M80103.S2C)
+    }
+
+    public interface C2SOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required fixed64 id = 1;
+      /**
+       * <code>required fixed64 id = 1;</code>
+       *
+       * <pre>
+       *对应的唯一ID
+       * </pre>
+       */
+      boolean hasId();
+      /**
+       * <code>required fixed64 id = 1;</code>
+       *
+       * <pre>
+       *对应的唯一ID
+       * </pre>
+       */
+      long getId();
+    }
+    /**
+     * Protobuf type {@code M8.M80103.C2S}
+     */
+    public static final class C2S extends
+        com.google.protobuf.GeneratedMessage
+        implements C2SOrBuilder {
+      // Use C2S.newBuilder() to construct.
+      private C2S(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private C2S(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final C2S defaultInstance;
+      public static C2S getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public C2S getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private C2S(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 9: {
+                bitField0_ |= 0x00000001;
+                id_ = input.readFixed64();
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80103_C2S_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80103_C2S_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80103.C2S.class, com.znl.proto.M8.M80103.C2S.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<C2S> PARSER =
+          new com.google.protobuf.AbstractParser<C2S>() {
+        public C2S parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new C2S(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<C2S> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required fixed64 id = 1;
+      public static final int ID_FIELD_NUMBER = 1;
+      private long id_;
+      /**
+       * <code>required fixed64 id = 1;</code>
+       *
+       * <pre>
+       *对应的唯一ID
+       * </pre>
+       */
+      public boolean hasId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required fixed64 id = 1;</code>
+       *
+       * <pre>
+       *对应的唯一ID
+       * </pre>
+       */
+      public long getId() {
+        return id_;
+      }
+
+      private void initFields() {
+        id_ = 0L;
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasId()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeFixed64(1, id_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeFixed64Size(1, id_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M8.M80103.C2S parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80103.C2S parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80103.C2S parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80103.C2S parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80103.C2S parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80103.C2S parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80103.C2S parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M8.M80103.C2S parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80103.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80103.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M8.M80103.C2S prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M8.M80103.C2S}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M8.M80103.C2SOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M8.internal_static_M8_M80103_C2S_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M8.internal_static_M8_M80103_C2S_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M8.M80103.C2S.class, com.znl.proto.M8.M80103.C2S.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M8.M80103.C2S.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          id_ = 0L;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M8.internal_static_M8_M80103_C2S_descriptor;
+        }
+
+        public com.znl.proto.M8.M80103.C2S getDefaultInstanceForType() {
+          return com.znl.proto.M8.M80103.C2S.getDefaultInstance();
+        }
+
+        public com.znl.proto.M8.M80103.C2S build() {
+          com.znl.proto.M8.M80103.C2S result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M8.M80103.C2S buildPartial() {
+          com.znl.proto.M8.M80103.C2S result = new com.znl.proto.M8.M80103.C2S(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.id_ = id_;
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M8.M80103.C2S) {
+            return mergeFrom((com.znl.proto.M8.M80103.C2S)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M8.M80103.C2S other) {
+          if (other == com.znl.proto.M8.M80103.C2S.getDefaultInstance()) return this;
+          if (other.hasId()) {
+            setId(other.getId());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasId()) {
+            
+            return false;
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M8.M80103.C2S parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M8.M80103.C2S) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required fixed64 id = 1;
+        private long id_ ;
+        /**
+         * <code>required fixed64 id = 1;</code>
+         *
+         * <pre>
+         *对应的唯一ID
+         * </pre>
+         */
+        public boolean hasId() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required fixed64 id = 1;</code>
+         *
+         * <pre>
+         *对应的唯一ID
+         * </pre>
+         */
+        public long getId() {
+          return id_;
+        }
+        /**
+         * <code>required fixed64 id = 1;</code>
+         *
+         * <pre>
+         *对应的唯一ID
+         * </pre>
+         */
+        public Builder setId(long value) {
+          bitField0_ |= 0x00000001;
+          id_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required fixed64 id = 1;</code>
+         *
+         * <pre>
+         *对应的唯一ID
+         * </pre>
+         */
+        public Builder clearId() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          id_ = 0L;
+          onChanged();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M8.M80103.C2S)
+      }
+
+      static {
+        defaultInstance = new C2S(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M8.M80103.C2S)
+    }
+
+    private void initFields() {
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.znl.proto.M8.M80103 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M8.M80103 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80103 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M8.M80103 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80103 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M8.M80103 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80103 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.znl.proto.M8.M80103 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80103 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M8.M80103 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.znl.proto.M8.M80103 prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code M8.M80103}
+     *
+     * <pre>
+     *部队任务完成请求
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.znl.proto.M8.M80103OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80103_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80103_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80103.class, com.znl.proto.M8.M80103.Builder.class);
+      }
+
+      // Construct using com.znl.proto.M8.M80103.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.znl.proto.M8.internal_static_M8_M80103_descriptor;
+      }
+
+      public com.znl.proto.M8.M80103 getDefaultInstanceForType() {
+        return com.znl.proto.M8.M80103.getDefaultInstance();
+      }
+
+      public com.znl.proto.M8.M80103 build() {
+        com.znl.proto.M8.M80103 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.znl.proto.M8.M80103 buildPartial() {
+        com.znl.proto.M8.M80103 result = new com.znl.proto.M8.M80103(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.znl.proto.M8.M80103) {
+          return mergeFrom((com.znl.proto.M8.M80103)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.znl.proto.M8.M80103 other) {
+        if (other == com.znl.proto.M8.M80103.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.znl.proto.M8.M80103 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.znl.proto.M8.M80103) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:M8.M80103)
+    }
+
+    static {
+      defaultInstance = new M80103(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:M8.M80103)
+  }
+
+  public interface M80104OrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code M8.M80104}
+   *
+   * <pre>
+   *新增加一个任务
+   * </pre>
+   */
+  public static final class M80104 extends
+      com.google.protobuf.GeneratedMessage
+      implements M80104OrBuilder {
+    // Use M80104.newBuilder() to construct.
+    private M80104(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private M80104(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final M80104 defaultInstance;
+    public static M80104 getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public M80104 getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private M80104(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.znl.proto.M8.internal_static_M8_M80104_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.znl.proto.M8.internal_static_M8_M80104_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.znl.proto.M8.M80104.class, com.znl.proto.M8.M80104.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<M80104> PARSER =
+        new com.google.protobuf.AbstractParser<M80104>() {
+      public M80104 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new M80104(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<M80104> getParserForType() {
+      return PARSER;
+    }
+
+    public interface S2COrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required int32 rs = 1;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      boolean hasRs();
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      int getRs();
+
+      // required .M8.TaskTeamInfo taskTeamInfo = 3;
+      /**
+       * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 
+       * </pre>
+       */
+      boolean hasTaskTeamInfo();
+      /**
+       * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 
+       * </pre>
+       */
+      com.znl.proto.M8.TaskTeamInfo getTaskTeamInfo();
+      /**
+       * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 
+       * </pre>
+       */
+      com.znl.proto.M8.TaskTeamInfoOrBuilder getTaskTeamInfoOrBuilder();
+    }
+    /**
+     * Protobuf type {@code M8.M80104.S2C}
+     */
+    public static final class S2C extends
+        com.google.protobuf.GeneratedMessage
+        implements S2COrBuilder {
+      // Use S2C.newBuilder() to construct.
+      private S2C(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private S2C(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final S2C defaultInstance;
+      public static S2C getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public S2C getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private S2C(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 8: {
+                bitField0_ |= 0x00000001;
+                rs_ = input.readInt32();
+                break;
+              }
+              case 26: {
+                com.znl.proto.M8.TaskTeamInfo.Builder subBuilder = null;
+                if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                  subBuilder = taskTeamInfo_.toBuilder();
+                }
+                taskTeamInfo_ = input.readMessage(com.znl.proto.M8.TaskTeamInfo.PARSER, extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(taskTeamInfo_);
+                  taskTeamInfo_ = subBuilder.buildPartial();
+                }
+                bitField0_ |= 0x00000002;
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80104_S2C_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80104_S2C_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80104.S2C.class, com.znl.proto.M8.M80104.S2C.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<S2C> PARSER =
+          new com.google.protobuf.AbstractParser<S2C>() {
+        public S2C parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new S2C(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<S2C> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required int32 rs = 1;
+      public static final int RS_FIELD_NUMBER = 1;
+      private int rs_;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public boolean hasRs() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public int getRs() {
+        return rs_;
+      }
+
+      // required .M8.TaskTeamInfo taskTeamInfo = 3;
+      public static final int TASKTEAMINFO_FIELD_NUMBER = 3;
+      private com.znl.proto.M8.TaskTeamInfo taskTeamInfo_;
+      /**
+       * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 
+       * </pre>
+       */
+      public boolean hasTaskTeamInfo() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 
+       * </pre>
+       */
+      public com.znl.proto.M8.TaskTeamInfo getTaskTeamInfo() {
+        return taskTeamInfo_;
+      }
+      /**
+       * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 
+       * </pre>
+       */
+      public com.znl.proto.M8.TaskTeamInfoOrBuilder getTaskTeamInfoOrBuilder() {
+        return taskTeamInfo_;
+      }
+
+      private void initFields() {
+        rs_ = 0;
+        taskTeamInfo_ = com.znl.proto.M8.TaskTeamInfo.getDefaultInstance();
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasRs()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasTaskTeamInfo()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!getTaskTeamInfo().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeInt32(1, rs_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeMessage(3, taskTeamInfo_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(1, rs_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(3, taskTeamInfo_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M8.M80104.S2C parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80104.S2C parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80104.S2C parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80104.S2C parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80104.S2C parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80104.S2C parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80104.S2C parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M8.M80104.S2C parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80104.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80104.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M8.M80104.S2C prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M8.M80104.S2C}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M8.M80104.S2COrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M8.internal_static_M8_M80104_S2C_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M8.internal_static_M8_M80104_S2C_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M8.M80104.S2C.class, com.znl.proto.M8.M80104.S2C.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M8.M80104.S2C.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getTaskTeamInfoFieldBuilder();
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          rs_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          if (taskTeamInfoBuilder_ == null) {
+            taskTeamInfo_ = com.znl.proto.M8.TaskTeamInfo.getDefaultInstance();
+          } else {
+            taskTeamInfoBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000002);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M8.internal_static_M8_M80104_S2C_descriptor;
+        }
+
+        public com.znl.proto.M8.M80104.S2C getDefaultInstanceForType() {
+          return com.znl.proto.M8.M80104.S2C.getDefaultInstance();
+        }
+
+        public com.znl.proto.M8.M80104.S2C build() {
+          com.znl.proto.M8.M80104.S2C result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M8.M80104.S2C buildPartial() {
+          com.znl.proto.M8.M80104.S2C result = new com.znl.proto.M8.M80104.S2C(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.rs_ = rs_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          if (taskTeamInfoBuilder_ == null) {
+            result.taskTeamInfo_ = taskTeamInfo_;
+          } else {
+            result.taskTeamInfo_ = taskTeamInfoBuilder_.build();
+          }
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M8.M80104.S2C) {
+            return mergeFrom((com.znl.proto.M8.M80104.S2C)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M8.M80104.S2C other) {
+          if (other == com.znl.proto.M8.M80104.S2C.getDefaultInstance()) return this;
+          if (other.hasRs()) {
+            setRs(other.getRs());
+          }
+          if (other.hasTaskTeamInfo()) {
+            mergeTaskTeamInfo(other.getTaskTeamInfo());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasRs()) {
+            
+            return false;
+          }
+          if (!hasTaskTeamInfo()) {
+            
+            return false;
+          }
+          if (!getTaskTeamInfo().isInitialized()) {
+            
+            return false;
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M8.M80104.S2C parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M8.M80104.S2C) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required int32 rs = 1;
+        private int rs_ ;
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public boolean hasRs() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public int getRs() {
+          return rs_;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder setRs(int value) {
+          bitField0_ |= 0x00000001;
+          rs_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder clearRs() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          rs_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // required .M8.TaskTeamInfo taskTeamInfo = 3;
+        private com.znl.proto.M8.TaskTeamInfo taskTeamInfo_ = com.znl.proto.M8.TaskTeamInfo.getDefaultInstance();
+        private com.google.protobuf.SingleFieldBuilder<
+            com.znl.proto.M8.TaskTeamInfo, com.znl.proto.M8.TaskTeamInfo.Builder, com.znl.proto.M8.TaskTeamInfoOrBuilder> taskTeamInfoBuilder_;
+        /**
+         * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 
+         * </pre>
+         */
+        public boolean hasTaskTeamInfo() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        /**
+         * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 
+         * </pre>
+         */
+        public com.znl.proto.M8.TaskTeamInfo getTaskTeamInfo() {
+          if (taskTeamInfoBuilder_ == null) {
+            return taskTeamInfo_;
+          } else {
+            return taskTeamInfoBuilder_.getMessage();
+          }
+        }
+        /**
+         * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 
+         * </pre>
+         */
+        public Builder setTaskTeamInfo(com.znl.proto.M8.TaskTeamInfo value) {
+          if (taskTeamInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            taskTeamInfo_ = value;
+            onChanged();
+          } else {
+            taskTeamInfoBuilder_.setMessage(value);
+          }
+          bitField0_ |= 0x00000002;
+          return this;
+        }
+        /**
+         * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 
+         * </pre>
+         */
+        public Builder setTaskTeamInfo(
+            com.znl.proto.M8.TaskTeamInfo.Builder builderForValue) {
+          if (taskTeamInfoBuilder_ == null) {
+            taskTeamInfo_ = builderForValue.build();
+            onChanged();
+          } else {
+            taskTeamInfoBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000002;
+          return this;
+        }
+        /**
+         * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 
+         * </pre>
+         */
+        public Builder mergeTaskTeamInfo(com.znl.proto.M8.TaskTeamInfo value) {
+          if (taskTeamInfoBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) == 0x00000002) &&
+                taskTeamInfo_ != com.znl.proto.M8.TaskTeamInfo.getDefaultInstance()) {
+              taskTeamInfo_ =
+                com.znl.proto.M8.TaskTeamInfo.newBuilder(taskTeamInfo_).mergeFrom(value).buildPartial();
+            } else {
+              taskTeamInfo_ = value;
+            }
+            onChanged();
+          } else {
+            taskTeamInfoBuilder_.mergeFrom(value);
+          }
+          bitField0_ |= 0x00000002;
+          return this;
+        }
+        /**
+         * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 
+         * </pre>
+         */
+        public Builder clearTaskTeamInfo() {
+          if (taskTeamInfoBuilder_ == null) {
+            taskTeamInfo_ = com.znl.proto.M8.TaskTeamInfo.getDefaultInstance();
+            onChanged();
+          } else {
+            taskTeamInfoBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000002);
+          return this;
+        }
+        /**
+         * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 
+         * </pre>
+         */
+        public com.znl.proto.M8.TaskTeamInfo.Builder getTaskTeamInfoBuilder() {
+          bitField0_ |= 0x00000002;
+          onChanged();
+          return getTaskTeamInfoFieldBuilder().getBuilder();
+        }
+        /**
+         * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 
+         * </pre>
+         */
+        public com.znl.proto.M8.TaskTeamInfoOrBuilder getTaskTeamInfoOrBuilder() {
+          if (taskTeamInfoBuilder_ != null) {
+            return taskTeamInfoBuilder_.getMessageOrBuilder();
+          } else {
+            return taskTeamInfo_;
+          }
+        }
+        /**
+         * <code>required .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 
+         * </pre>
+         */
+        private com.google.protobuf.SingleFieldBuilder<
+            com.znl.proto.M8.TaskTeamInfo, com.znl.proto.M8.TaskTeamInfo.Builder, com.znl.proto.M8.TaskTeamInfoOrBuilder> 
+            getTaskTeamInfoFieldBuilder() {
+          if (taskTeamInfoBuilder_ == null) {
+            taskTeamInfoBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+                com.znl.proto.M8.TaskTeamInfo, com.znl.proto.M8.TaskTeamInfo.Builder, com.znl.proto.M8.TaskTeamInfoOrBuilder>(
+                    taskTeamInfo_,
+                    getParentForChildren(),
+                    isClean());
+            taskTeamInfo_ = null;
+          }
+          return taskTeamInfoBuilder_;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M8.M80104.S2C)
+      }
+
+      static {
+        defaultInstance = new S2C(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M8.M80104.S2C)
+    }
+
+    public interface C2SOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+    }
+    /**
+     * Protobuf type {@code M8.M80104.C2S}
+     */
+    public static final class C2S extends
+        com.google.protobuf.GeneratedMessage
+        implements C2SOrBuilder {
+      // Use C2S.newBuilder() to construct.
+      private C2S(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private C2S(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final C2S defaultInstance;
+      public static C2S getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public C2S getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private C2S(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80104_C2S_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80104_C2S_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80104.C2S.class, com.znl.proto.M8.M80104.C2S.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<C2S> PARSER =
+          new com.google.protobuf.AbstractParser<C2S>() {
+        public C2S parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new C2S(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<C2S> getParserForType() {
+        return PARSER;
+      }
+
+      private void initFields() {
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M8.M80104.C2S parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80104.C2S parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80104.C2S parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80104.C2S parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80104.C2S parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80104.C2S parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80104.C2S parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M8.M80104.C2S parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80104.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80104.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M8.M80104.C2S prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M8.M80104.C2S}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M8.M80104.C2SOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M8.internal_static_M8_M80104_C2S_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M8.internal_static_M8_M80104_C2S_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M8.M80104.C2S.class, com.znl.proto.M8.M80104.C2S.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M8.M80104.C2S.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M8.internal_static_M8_M80104_C2S_descriptor;
+        }
+
+        public com.znl.proto.M8.M80104.C2S getDefaultInstanceForType() {
+          return com.znl.proto.M8.M80104.C2S.getDefaultInstance();
+        }
+
+        public com.znl.proto.M8.M80104.C2S build() {
+          com.znl.proto.M8.M80104.C2S result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M8.M80104.C2S buildPartial() {
+          com.znl.proto.M8.M80104.C2S result = new com.znl.proto.M8.M80104.C2S(this);
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M8.M80104.C2S) {
+            return mergeFrom((com.znl.proto.M8.M80104.C2S)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M8.M80104.C2S other) {
+          if (other == com.znl.proto.M8.M80104.C2S.getDefaultInstance()) return this;
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M8.M80104.C2S parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M8.M80104.C2S) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M8.M80104.C2S)
+      }
+
+      static {
+        defaultInstance = new C2S(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M8.M80104.C2S)
+    }
+
+    private void initFields() {
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.znl.proto.M8.M80104 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M8.M80104 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80104 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M8.M80104 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80104 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M8.M80104 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80104 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.znl.proto.M8.M80104 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80104 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M8.M80104 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.znl.proto.M8.M80104 prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code M8.M80104}
+     *
+     * <pre>
+     *新增加一个任务
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.znl.proto.M8.M80104OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80104_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80104_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80104.class, com.znl.proto.M8.M80104.Builder.class);
+      }
+
+      // Construct using com.znl.proto.M8.M80104.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.znl.proto.M8.internal_static_M8_M80104_descriptor;
+      }
+
+      public com.znl.proto.M8.M80104 getDefaultInstanceForType() {
+        return com.znl.proto.M8.M80104.getDefaultInstance();
+      }
+
+      public com.znl.proto.M8.M80104 build() {
+        com.znl.proto.M8.M80104 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.znl.proto.M8.M80104 buildPartial() {
+        com.znl.proto.M8.M80104 result = new com.znl.proto.M8.M80104(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.znl.proto.M8.M80104) {
+          return mergeFrom((com.znl.proto.M8.M80104)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.znl.proto.M8.M80104 other) {
+        if (other == com.znl.proto.M8.M80104.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.znl.proto.M8.M80104 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.znl.proto.M8.M80104) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:M8.M80104)
+    }
+
+    static {
+      defaultInstance = new M80104(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:M8.M80104)
+  }
+
   public interface M80004OrBuilder
       extends com.google.protobuf.MessageOrBuilder {
   }
@@ -12837,6 +15526,50 @@ public final class M8 {
        * <code>required int32 rs = 1;</code>
        */
       int getRs();
+
+      // required fixed64 id = 2;
+      /**
+       * <code>required fixed64 id = 2;</code>
+       *
+       * <pre>
+       *完成唯一id 删除已有的列表
+       * </pre>
+       */
+      boolean hasId();
+      /**
+       * <code>required fixed64 id = 2;</code>
+       *
+       * <pre>
+       *完成唯一id 删除已有的列表
+       * </pre>
+       */
+      long getId();
+
+      // optional .M8.TaskTeamInfo taskTeamInfo = 3;
+      /**
+       * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+       * </pre>
+       */
+      boolean hasTaskTeamInfo();
+      /**
+       * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+       * </pre>
+       */
+      com.znl.proto.M8.TaskTeamInfo getTaskTeamInfo();
+      /**
+       * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+       * </pre>
+       */
+      com.znl.proto.M8.TaskTeamInfoOrBuilder getTaskTeamInfoOrBuilder();
     }
     /**
      * Protobuf type {@code M8.M80004.S2C}
@@ -12892,6 +15625,24 @@ public final class M8 {
               case 8: {
                 bitField0_ |= 0x00000001;
                 rs_ = input.readInt32();
+                break;
+              }
+              case 17: {
+                bitField0_ |= 0x00000002;
+                id_ = input.readFixed64();
+                break;
+              }
+              case 26: {
+                com.znl.proto.M8.TaskTeamInfo.Builder subBuilder = null;
+                if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                  subBuilder = taskTeamInfo_.toBuilder();
+                }
+                taskTeamInfo_ = input.readMessage(com.znl.proto.M8.TaskTeamInfo.PARSER, extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(taskTeamInfo_);
+                  taskTeamInfo_ = subBuilder.buildPartial();
+                }
+                bitField0_ |= 0x00000004;
                 break;
               }
             }
@@ -12950,8 +15701,68 @@ public final class M8 {
         return rs_;
       }
 
+      // required fixed64 id = 2;
+      public static final int ID_FIELD_NUMBER = 2;
+      private long id_;
+      /**
+       * <code>required fixed64 id = 2;</code>
+       *
+       * <pre>
+       *完成唯一id 删除已有的列表
+       * </pre>
+       */
+      public boolean hasId() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required fixed64 id = 2;</code>
+       *
+       * <pre>
+       *完成唯一id 删除已有的列表
+       * </pre>
+       */
+      public long getId() {
+        return id_;
+      }
+
+      // optional .M8.TaskTeamInfo taskTeamInfo = 3;
+      public static final int TASKTEAMINFO_FIELD_NUMBER = 3;
+      private com.znl.proto.M8.TaskTeamInfo taskTeamInfo_;
+      /**
+       * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+       * </pre>
+       */
+      public boolean hasTaskTeamInfo() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+       * </pre>
+       */
+      public com.znl.proto.M8.TaskTeamInfo getTaskTeamInfo() {
+        return taskTeamInfo_;
+      }
+      /**
+       * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+       *
+       * <pre>
+       *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+       * </pre>
+       */
+      public com.znl.proto.M8.TaskTeamInfoOrBuilder getTaskTeamInfoOrBuilder() {
+        return taskTeamInfo_;
+      }
+
       private void initFields() {
         rs_ = 0;
+        id_ = 0L;
+        taskTeamInfo_ = com.znl.proto.M8.TaskTeamInfo.getDefaultInstance();
       }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
@@ -12962,6 +15773,16 @@ public final class M8 {
           memoizedIsInitialized = 0;
           return false;
         }
+        if (!hasId()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (hasTaskTeamInfo()) {
+          if (!getTaskTeamInfo().isInitialized()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
+        }
         memoizedIsInitialized = 1;
         return true;
       }
@@ -12971,6 +15792,12 @@ public final class M8 {
         getSerializedSize();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           output.writeInt32(1, rs_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeFixed64(2, id_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          output.writeMessage(3, taskTeamInfo_);
         }
         getUnknownFields().writeTo(output);
       }
@@ -12984,6 +15811,14 @@ public final class M8 {
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           size += com.google.protobuf.CodedOutputStream
             .computeInt32Size(1, rs_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeFixed64Size(2, id_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(3, taskTeamInfo_);
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -13093,6 +15928,7 @@ public final class M8 {
         }
         private void maybeForceBuilderInitialization() {
           if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getTaskTeamInfoFieldBuilder();
           }
         }
         private static Builder create() {
@@ -13103,6 +15939,14 @@ public final class M8 {
           super.clear();
           rs_ = 0;
           bitField0_ = (bitField0_ & ~0x00000001);
+          id_ = 0L;
+          bitField0_ = (bitField0_ & ~0x00000002);
+          if (taskTeamInfoBuilder_ == null) {
+            taskTeamInfo_ = com.znl.proto.M8.TaskTeamInfo.getDefaultInstance();
+          } else {
+            taskTeamInfoBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000004);
           return this;
         }
 
@@ -13135,6 +15979,18 @@ public final class M8 {
             to_bitField0_ |= 0x00000001;
           }
           result.rs_ = rs_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          result.id_ = id_;
+          if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+            to_bitField0_ |= 0x00000004;
+          }
+          if (taskTeamInfoBuilder_ == null) {
+            result.taskTeamInfo_ = taskTeamInfo_;
+          } else {
+            result.taskTeamInfo_ = taskTeamInfoBuilder_.build();
+          }
           result.bitField0_ = to_bitField0_;
           onBuilt();
           return result;
@@ -13154,6 +16010,12 @@ public final class M8 {
           if (other.hasRs()) {
             setRs(other.getRs());
           }
+          if (other.hasId()) {
+            setId(other.getId());
+          }
+          if (other.hasTaskTeamInfo()) {
+            mergeTaskTeamInfo(other.getTaskTeamInfo());
+          }
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
         }
@@ -13162,6 +16024,16 @@ public final class M8 {
           if (!hasRs()) {
             
             return false;
+          }
+          if (!hasId()) {
+            
+            return false;
+          }
+          if (hasTaskTeamInfo()) {
+            if (!getTaskTeamInfo().isInitialized()) {
+              
+              return false;
+            }
           }
           return true;
         }
@@ -13216,6 +16088,208 @@ public final class M8 {
           rs_ = 0;
           onChanged();
           return this;
+        }
+
+        // required fixed64 id = 2;
+        private long id_ ;
+        /**
+         * <code>required fixed64 id = 2;</code>
+         *
+         * <pre>
+         *完成唯一id 删除已有的列表
+         * </pre>
+         */
+        public boolean hasId() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        /**
+         * <code>required fixed64 id = 2;</code>
+         *
+         * <pre>
+         *完成唯一id 删除已有的列表
+         * </pre>
+         */
+        public long getId() {
+          return id_;
+        }
+        /**
+         * <code>required fixed64 id = 2;</code>
+         *
+         * <pre>
+         *完成唯一id 删除已有的列表
+         * </pre>
+         */
+        public Builder setId(long value) {
+          bitField0_ |= 0x00000002;
+          id_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required fixed64 id = 2;</code>
+         *
+         * <pre>
+         *完成唯一id 删除已有的列表
+         * </pre>
+         */
+        public Builder clearId() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          id_ = 0L;
+          onChanged();
+          return this;
+        }
+
+        // optional .M8.TaskTeamInfo taskTeamInfo = 3;
+        private com.znl.proto.M8.TaskTeamInfo taskTeamInfo_ = com.znl.proto.M8.TaskTeamInfo.getDefaultInstance();
+        private com.google.protobuf.SingleFieldBuilder<
+            com.znl.proto.M8.TaskTeamInfo, com.znl.proto.M8.TaskTeamInfo.Builder, com.znl.proto.M8.TaskTeamInfoOrBuilder> taskTeamInfoBuilder_;
+        /**
+         * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+         * </pre>
+         */
+        public boolean hasTaskTeamInfo() {
+          return ((bitField0_ & 0x00000004) == 0x00000004);
+        }
+        /**
+         * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+         * </pre>
+         */
+        public com.znl.proto.M8.TaskTeamInfo getTaskTeamInfo() {
+          if (taskTeamInfoBuilder_ == null) {
+            return taskTeamInfo_;
+          } else {
+            return taskTeamInfoBuilder_.getMessage();
+          }
+        }
+        /**
+         * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+         * </pre>
+         */
+        public Builder setTaskTeamInfo(com.znl.proto.M8.TaskTeamInfo value) {
+          if (taskTeamInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            taskTeamInfo_ = value;
+            onChanged();
+          } else {
+            taskTeamInfoBuilder_.setMessage(value);
+          }
+          bitField0_ |= 0x00000004;
+          return this;
+        }
+        /**
+         * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+         * </pre>
+         */
+        public Builder setTaskTeamInfo(
+            com.znl.proto.M8.TaskTeamInfo.Builder builderForValue) {
+          if (taskTeamInfoBuilder_ == null) {
+            taskTeamInfo_ = builderForValue.build();
+            onChanged();
+          } else {
+            taskTeamInfoBuilder_.setMessage(builderForValue.build());
+          }
+          bitField0_ |= 0x00000004;
+          return this;
+        }
+        /**
+         * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+         * </pre>
+         */
+        public Builder mergeTaskTeamInfo(com.znl.proto.M8.TaskTeamInfo value) {
+          if (taskTeamInfoBuilder_ == null) {
+            if (((bitField0_ & 0x00000004) == 0x00000004) &&
+                taskTeamInfo_ != com.znl.proto.M8.TaskTeamInfo.getDefaultInstance()) {
+              taskTeamInfo_ =
+                com.znl.proto.M8.TaskTeamInfo.newBuilder(taskTeamInfo_).mergeFrom(value).buildPartial();
+            } else {
+              taskTeamInfo_ = value;
+            }
+            onChanged();
+          } else {
+            taskTeamInfoBuilder_.mergeFrom(value);
+          }
+          bitField0_ |= 0x00000004;
+          return this;
+        }
+        /**
+         * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+         * </pre>
+         */
+        public Builder clearTaskTeamInfo() {
+          if (taskTeamInfoBuilder_ == null) {
+            taskTeamInfo_ = com.znl.proto.M8.TaskTeamInfo.getDefaultInstance();
+            onChanged();
+          } else {
+            taskTeamInfoBuilder_.clear();
+          }
+          bitField0_ = (bitField0_ & ~0x00000004);
+          return this;
+        }
+        /**
+         * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+         * </pre>
+         */
+        public com.znl.proto.M8.TaskTeamInfo.Builder getTaskTeamInfoBuilder() {
+          bitField0_ |= 0x00000004;
+          onChanged();
+          return getTaskTeamInfoFieldBuilder().getBuilder();
+        }
+        /**
+         * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+         * </pre>
+         */
+        public com.znl.proto.M8.TaskTeamInfoOrBuilder getTaskTeamInfoOrBuilder() {
+          if (taskTeamInfoBuilder_ != null) {
+            return taskTeamInfoBuilder_.getMessageOrBuilder();
+          } else {
+            return taskTeamInfo_;
+          }
+        }
+        /**
+         * <code>optional .M8.TaskTeamInfo taskTeamInfo = 3;</code>
+         *
+         * <pre>
+         *完成后，对应的完成ID有改变的队伍数据才发 //（客户端通过type是否为0来判断是否是服务端发过来的更新数据）
+         * </pre>
+         */
+        private com.google.protobuf.SingleFieldBuilder<
+            com.znl.proto.M8.TaskTeamInfo, com.znl.proto.M8.TaskTeamInfo.Builder, com.znl.proto.M8.TaskTeamInfoOrBuilder> 
+            getTaskTeamInfoFieldBuilder() {
+          if (taskTeamInfoBuilder_ == null) {
+            taskTeamInfoBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+                com.znl.proto.M8.TaskTeamInfo, com.znl.proto.M8.TaskTeamInfo.Builder, com.znl.proto.M8.TaskTeamInfoOrBuilder>(
+                    taskTeamInfo_,
+                    getParentForChildren(),
+                    isClean());
+            taskTeamInfo_ = null;
+          }
+          return taskTeamInfoBuilder_;
         }
 
         // @@protoc_insertion_point(builder_scope:M8.M80004.S2C)
@@ -16806,6 +19880,24 @@ public final class M8 {
      * <code>required int32 iconId = 7;</code>
      */
     int getIconId();
+
+    // required fixed64 key = 8;
+    /**
+     * <code>required fixed64 key = 8;</code>
+     *
+     * <pre>
+     *客户端倒计时的唯一指定key
+     * </pre>
+     */
+    boolean hasKey();
+    /**
+     * <code>required fixed64 key = 8;</code>
+     *
+     * <pre>
+     *客户端倒计时的唯一指定key
+     * </pre>
+     */
+    long getKey();
   }
   /**
    * Protobuf type {@code M8.TeamNoticeInfo}
@@ -16891,6 +19983,11 @@ public final class M8 {
             case 56: {
               bitField0_ |= 0x00000040;
               iconId_ = input.readInt32();
+              break;
+            }
+            case 65: {
+              bitField0_ |= 0x00000080;
+              key_ = input.readFixed64();
               break;
             }
           }
@@ -17088,6 +20185,30 @@ public final class M8 {
       return iconId_;
     }
 
+    // required fixed64 key = 8;
+    public static final int KEY_FIELD_NUMBER = 8;
+    private long key_;
+    /**
+     * <code>required fixed64 key = 8;</code>
+     *
+     * <pre>
+     *客户端倒计时的唯一指定key
+     * </pre>
+     */
+    public boolean hasKey() {
+      return ((bitField0_ & 0x00000080) == 0x00000080);
+    }
+    /**
+     * <code>required fixed64 key = 8;</code>
+     *
+     * <pre>
+     *客户端倒计时的唯一指定key
+     * </pre>
+     */
+    public long getKey() {
+      return key_;
+    }
+
     private void initFields() {
       name_ = "";
       level_ = 0;
@@ -17096,6 +20217,7 @@ public final class M8 {
       y_ = 0;
       time_ = 0;
       iconId_ = 0;
+      key_ = 0L;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -17130,6 +20252,10 @@ public final class M8 {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!hasKey()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -17157,6 +20283,9 @@ public final class M8 {
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeInt32(7, iconId_);
+      }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        output.writeFixed64(8, key_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -17194,6 +20323,10 @@ public final class M8 {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(7, iconId_);
+      }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeFixed64Size(8, key_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -17325,6 +20458,8 @@ public final class M8 {
         bitField0_ = (bitField0_ & ~0x00000020);
         iconId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000040);
+        key_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 
@@ -17381,6 +20516,10 @@ public final class M8 {
           to_bitField0_ |= 0x00000040;
         }
         result.iconId_ = iconId_;
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+          to_bitField0_ |= 0x00000080;
+        }
+        result.key_ = key_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -17420,6 +20559,9 @@ public final class M8 {
         if (other.hasIconId()) {
           setIconId(other.getIconId());
         }
+        if (other.hasKey()) {
+          setKey(other.getKey());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -17450,6 +20592,10 @@ public final class M8 {
           return false;
         }
         if (!hasIconId()) {
+          
+          return false;
+        }
+        if (!hasKey()) {
           
           return false;
         }
@@ -17775,6 +20921,55 @@ public final class M8 {
       public Builder clearIconId() {
         bitField0_ = (bitField0_ & ~0x00000040);
         iconId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // required fixed64 key = 8;
+      private long key_ ;
+      /**
+       * <code>required fixed64 key = 8;</code>
+       *
+       * <pre>
+       *客户端倒计时的唯一指定key
+       * </pre>
+       */
+      public boolean hasKey() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>required fixed64 key = 8;</code>
+       *
+       * <pre>
+       *客户端倒计时的唯一指定key
+       * </pre>
+       */
+      public long getKey() {
+        return key_;
+      }
+      /**
+       * <code>required fixed64 key = 8;</code>
+       *
+       * <pre>
+       *客户端倒计时的唯一指定key
+       * </pre>
+       */
+      public Builder setKey(long value) {
+        bitField0_ |= 0x00000080;
+        key_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required fixed64 key = 8;</code>
+       *
+       * <pre>
+       *客户端倒计时的唯一指定key
+       * </pre>
+       */
+      public Builder clearKey() {
+        bitField0_ = (bitField0_ & ~0x00000080);
+        key_ = 0L;
         onChanged();
         return this;
       }
@@ -19092,6 +22287,2801 @@ public final class M8 {
     }
 
     // @@protoc_insertion_point(class_scope:M8.M80007)
+  }
+
+  public interface M80107OrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code M8.M80107}
+   *
+   * <pre>
+   *校验
+   * </pre>
+   */
+  public static final class M80107 extends
+      com.google.protobuf.GeneratedMessage
+      implements M80107OrBuilder {
+    // Use M80107.newBuilder() to construct.
+    private M80107(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private M80107(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final M80107 defaultInstance;
+    public static M80107 getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public M80107 getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private M80107(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.znl.proto.M8.internal_static_M8_M80107_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.znl.proto.M8.internal_static_M8_M80107_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.znl.proto.M8.M80107.class, com.znl.proto.M8.M80107.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<M80107> PARSER =
+        new com.google.protobuf.AbstractParser<M80107>() {
+      public M80107 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new M80107(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<M80107> getParserForType() {
+      return PARSER;
+    }
+
+    public interface S2COrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required int32 rs = 1;
+      /**
+       * <code>required int32 rs = 1;</code>
+       *
+       * <pre>
+       *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+       * </pre>
+       */
+      boolean hasRs();
+      /**
+       * <code>required int32 rs = 1;</code>
+       *
+       * <pre>
+       *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+       * </pre>
+       */
+      int getRs();
+
+      // required fixed64 key = 3;
+      /**
+       * <code>required fixed64 key = 3;</code>
+       *
+       * <pre>
+       *唯一key
+       * </pre>
+       */
+      boolean hasKey();
+      /**
+       * <code>required fixed64 key = 3;</code>
+       *
+       * <pre>
+       *唯一key
+       * </pre>
+       */
+      long getKey();
+
+      // optional int32 time = 4;
+      /**
+       * <code>optional int32 time = 4;</code>
+       */
+      boolean hasTime();
+      /**
+       * <code>optional int32 time = 4;</code>
+       */
+      int getTime();
+    }
+    /**
+     * Protobuf type {@code M8.M80107.S2C}
+     */
+    public static final class S2C extends
+        com.google.protobuf.GeneratedMessage
+        implements S2COrBuilder {
+      // Use S2C.newBuilder() to construct.
+      private S2C(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private S2C(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final S2C defaultInstance;
+      public static S2C getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public S2C getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private S2C(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 8: {
+                bitField0_ |= 0x00000001;
+                rs_ = input.readInt32();
+                break;
+              }
+              case 25: {
+                bitField0_ |= 0x00000002;
+                key_ = input.readFixed64();
+                break;
+              }
+              case 32: {
+                bitField0_ |= 0x00000004;
+                time_ = input.readInt32();
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80107_S2C_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80107_S2C_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80107.S2C.class, com.znl.proto.M8.M80107.S2C.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<S2C> PARSER =
+          new com.google.protobuf.AbstractParser<S2C>() {
+        public S2C parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new S2C(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<S2C> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required int32 rs = 1;
+      public static final int RS_FIELD_NUMBER = 1;
+      private int rs_;
+      /**
+       * <code>required int32 rs = 1;</code>
+       *
+       * <pre>
+       *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+       * </pre>
+       */
+      public boolean hasRs() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 rs = 1;</code>
+       *
+       * <pre>
+       *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+       * </pre>
+       */
+      public int getRs() {
+        return rs_;
+      }
+
+      // required fixed64 key = 3;
+      public static final int KEY_FIELD_NUMBER = 3;
+      private long key_;
+      /**
+       * <code>required fixed64 key = 3;</code>
+       *
+       * <pre>
+       *唯一key
+       * </pre>
+       */
+      public boolean hasKey() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required fixed64 key = 3;</code>
+       *
+       * <pre>
+       *唯一key
+       * </pre>
+       */
+      public long getKey() {
+        return key_;
+      }
+
+      // optional int32 time = 4;
+      public static final int TIME_FIELD_NUMBER = 4;
+      private int time_;
+      /**
+       * <code>optional int32 time = 4;</code>
+       */
+      public boolean hasTime() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional int32 time = 4;</code>
+       */
+      public int getTime() {
+        return time_;
+      }
+
+      private void initFields() {
+        rs_ = 0;
+        key_ = 0L;
+        time_ = 0;
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasRs()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasKey()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeInt32(1, rs_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeFixed64(3, key_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          output.writeInt32(4, time_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(1, rs_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeFixed64Size(3, key_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(4, time_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M8.M80107.S2C parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80107.S2C parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80107.S2C parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80107.S2C parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80107.S2C parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80107.S2C parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80107.S2C parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M8.M80107.S2C parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80107.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80107.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M8.M80107.S2C prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M8.M80107.S2C}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M8.M80107.S2COrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M8.internal_static_M8_M80107_S2C_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M8.internal_static_M8_M80107_S2C_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M8.M80107.S2C.class, com.znl.proto.M8.M80107.S2C.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M8.M80107.S2C.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          rs_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          key_ = 0L;
+          bitField0_ = (bitField0_ & ~0x00000002);
+          time_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000004);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M8.internal_static_M8_M80107_S2C_descriptor;
+        }
+
+        public com.znl.proto.M8.M80107.S2C getDefaultInstanceForType() {
+          return com.znl.proto.M8.M80107.S2C.getDefaultInstance();
+        }
+
+        public com.znl.proto.M8.M80107.S2C build() {
+          com.znl.proto.M8.M80107.S2C result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M8.M80107.S2C buildPartial() {
+          com.znl.proto.M8.M80107.S2C result = new com.znl.proto.M8.M80107.S2C(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.rs_ = rs_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          result.key_ = key_;
+          if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+            to_bitField0_ |= 0x00000004;
+          }
+          result.time_ = time_;
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M8.M80107.S2C) {
+            return mergeFrom((com.znl.proto.M8.M80107.S2C)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M8.M80107.S2C other) {
+          if (other == com.znl.proto.M8.M80107.S2C.getDefaultInstance()) return this;
+          if (other.hasRs()) {
+            setRs(other.getRs());
+          }
+          if (other.hasKey()) {
+            setKey(other.getKey());
+          }
+          if (other.hasTime()) {
+            setTime(other.getTime());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasRs()) {
+            
+            return false;
+          }
+          if (!hasKey()) {
+            
+            return false;
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M8.M80107.S2C parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M8.M80107.S2C) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required int32 rs = 1;
+        private int rs_ ;
+        /**
+         * <code>required int32 rs = 1;</code>
+         *
+         * <pre>
+         *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+         * </pre>
+         */
+        public boolean hasRs() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         *
+         * <pre>
+         *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+         * </pre>
+         */
+        public int getRs() {
+          return rs_;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         *
+         * <pre>
+         *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+         * </pre>
+         */
+        public Builder setRs(int value) {
+          bitField0_ |= 0x00000001;
+          rs_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         *
+         * <pre>
+         *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+         * </pre>
+         */
+        public Builder clearRs() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          rs_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // required fixed64 key = 3;
+        private long key_ ;
+        /**
+         * <code>required fixed64 key = 3;</code>
+         *
+         * <pre>
+         *唯一key
+         * </pre>
+         */
+        public boolean hasKey() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        /**
+         * <code>required fixed64 key = 3;</code>
+         *
+         * <pre>
+         *唯一key
+         * </pre>
+         */
+        public long getKey() {
+          return key_;
+        }
+        /**
+         * <code>required fixed64 key = 3;</code>
+         *
+         * <pre>
+         *唯一key
+         * </pre>
+         */
+        public Builder setKey(long value) {
+          bitField0_ |= 0x00000002;
+          key_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required fixed64 key = 3;</code>
+         *
+         * <pre>
+         *唯一key
+         * </pre>
+         */
+        public Builder clearKey() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          key_ = 0L;
+          onChanged();
+          return this;
+        }
+
+        // optional int32 time = 4;
+        private int time_ ;
+        /**
+         * <code>optional int32 time = 4;</code>
+         */
+        public boolean hasTime() {
+          return ((bitField0_ & 0x00000004) == 0x00000004);
+        }
+        /**
+         * <code>optional int32 time = 4;</code>
+         */
+        public int getTime() {
+          return time_;
+        }
+        /**
+         * <code>optional int32 time = 4;</code>
+         */
+        public Builder setTime(int value) {
+          bitField0_ |= 0x00000004;
+          time_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional int32 time = 4;</code>
+         */
+        public Builder clearTime() {
+          bitField0_ = (bitField0_ & ~0x00000004);
+          time_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M8.M80107.S2C)
+      }
+
+      static {
+        defaultInstance = new S2C(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M8.M80107.S2C)
+    }
+
+    public interface C2SOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required fixed64 key = 1;
+      /**
+       * <code>required fixed64 key = 1;</code>
+       *
+       * <pre>
+       *唯一key
+       * </pre>
+       */
+      boolean hasKey();
+      /**
+       * <code>required fixed64 key = 1;</code>
+       *
+       * <pre>
+       *唯一key
+       * </pre>
+       */
+      long getKey();
+    }
+    /**
+     * Protobuf type {@code M8.M80107.C2S}
+     */
+    public static final class C2S extends
+        com.google.protobuf.GeneratedMessage
+        implements C2SOrBuilder {
+      // Use C2S.newBuilder() to construct.
+      private C2S(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private C2S(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final C2S defaultInstance;
+      public static C2S getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public C2S getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private C2S(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 9: {
+                bitField0_ |= 0x00000001;
+                key_ = input.readFixed64();
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80107_C2S_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80107_C2S_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80107.C2S.class, com.znl.proto.M8.M80107.C2S.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<C2S> PARSER =
+          new com.google.protobuf.AbstractParser<C2S>() {
+        public C2S parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new C2S(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<C2S> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required fixed64 key = 1;
+      public static final int KEY_FIELD_NUMBER = 1;
+      private long key_;
+      /**
+       * <code>required fixed64 key = 1;</code>
+       *
+       * <pre>
+       *唯一key
+       * </pre>
+       */
+      public boolean hasKey() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required fixed64 key = 1;</code>
+       *
+       * <pre>
+       *唯一key
+       * </pre>
+       */
+      public long getKey() {
+        return key_;
+      }
+
+      private void initFields() {
+        key_ = 0L;
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasKey()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeFixed64(1, key_);
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeFixed64Size(1, key_);
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M8.M80107.C2S parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80107.C2S parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80107.C2S parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80107.C2S parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80107.C2S parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80107.C2S parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80107.C2S parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M8.M80107.C2S parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80107.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80107.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M8.M80107.C2S prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M8.M80107.C2S}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M8.M80107.C2SOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M8.internal_static_M8_M80107_C2S_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M8.internal_static_M8_M80107_C2S_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M8.M80107.C2S.class, com.znl.proto.M8.M80107.C2S.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M8.M80107.C2S.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          key_ = 0L;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M8.internal_static_M8_M80107_C2S_descriptor;
+        }
+
+        public com.znl.proto.M8.M80107.C2S getDefaultInstanceForType() {
+          return com.znl.proto.M8.M80107.C2S.getDefaultInstance();
+        }
+
+        public com.znl.proto.M8.M80107.C2S build() {
+          com.znl.proto.M8.M80107.C2S result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M8.M80107.C2S buildPartial() {
+          com.znl.proto.M8.M80107.C2S result = new com.znl.proto.M8.M80107.C2S(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.key_ = key_;
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M8.M80107.C2S) {
+            return mergeFrom((com.znl.proto.M8.M80107.C2S)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M8.M80107.C2S other) {
+          if (other == com.znl.proto.M8.M80107.C2S.getDefaultInstance()) return this;
+          if (other.hasKey()) {
+            setKey(other.getKey());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasKey()) {
+            
+            return false;
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M8.M80107.C2S parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M8.M80107.C2S) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required fixed64 key = 1;
+        private long key_ ;
+        /**
+         * <code>required fixed64 key = 1;</code>
+         *
+         * <pre>
+         *唯一key
+         * </pre>
+         */
+        public boolean hasKey() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required fixed64 key = 1;</code>
+         *
+         * <pre>
+         *唯一key
+         * </pre>
+         */
+        public long getKey() {
+          return key_;
+        }
+        /**
+         * <code>required fixed64 key = 1;</code>
+         *
+         * <pre>
+         *唯一key
+         * </pre>
+         */
+        public Builder setKey(long value) {
+          bitField0_ |= 0x00000001;
+          key_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required fixed64 key = 1;</code>
+         *
+         * <pre>
+         *唯一key
+         * </pre>
+         */
+        public Builder clearKey() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          key_ = 0L;
+          onChanged();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M8.M80107.C2S)
+      }
+
+      static {
+        defaultInstance = new C2S(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M8.M80107.C2S)
+    }
+
+    private void initFields() {
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.znl.proto.M8.M80107 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M8.M80107 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80107 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M8.M80107 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80107 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M8.M80107 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80107 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.znl.proto.M8.M80107 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80107 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M8.M80107 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.znl.proto.M8.M80107 prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code M8.M80107}
+     *
+     * <pre>
+     *校验
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.znl.proto.M8.M80107OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80107_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80107_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80107.class, com.znl.proto.M8.M80107.Builder.class);
+      }
+
+      // Construct using com.znl.proto.M8.M80107.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.znl.proto.M8.internal_static_M8_M80107_descriptor;
+      }
+
+      public com.znl.proto.M8.M80107 getDefaultInstanceForType() {
+        return com.znl.proto.M8.M80107.getDefaultInstance();
+      }
+
+      public com.znl.proto.M8.M80107 build() {
+        com.znl.proto.M8.M80107 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.znl.proto.M8.M80107 buildPartial() {
+        com.znl.proto.M8.M80107 result = new com.znl.proto.M8.M80107(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.znl.proto.M8.M80107) {
+          return mergeFrom((com.znl.proto.M8.M80107)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.znl.proto.M8.M80107 other) {
+        if (other == com.znl.proto.M8.M80107.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.znl.proto.M8.M80107 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.znl.proto.M8.M80107) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:M8.M80107)
+    }
+
+    static {
+      defaultInstance = new M80107(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:M8.M80107)
+  }
+
+  public interface M80108OrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code M8.M80108}
+   *
+   * <pre>
+   *新的被攻击任务
+   * </pre>
+   */
+  public static final class M80108 extends
+      com.google.protobuf.GeneratedMessage
+      implements M80108OrBuilder {
+    // Use M80108.newBuilder() to construct.
+    private M80108(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private M80108(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final M80108 defaultInstance;
+    public static M80108 getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public M80108 getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private M80108(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.znl.proto.M8.internal_static_M8_M80108_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.znl.proto.M8.internal_static_M8_M80108_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.znl.proto.M8.M80108.class, com.znl.proto.M8.M80108.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<M80108> PARSER =
+        new com.google.protobuf.AbstractParser<M80108>() {
+      public M80108 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new M80108(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<M80108> getParserForType() {
+      return PARSER;
+    }
+
+    public interface S2COrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required int32 rs = 1;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      boolean hasRs();
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      int getRs();
+
+      // repeated .M8.TeamNoticeInfo infos = 2;
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      java.util.List<com.znl.proto.M8.TeamNoticeInfo> 
+          getInfosList();
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      com.znl.proto.M8.TeamNoticeInfo getInfos(int index);
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      int getInfosCount();
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      java.util.List<? extends com.znl.proto.M8.TeamNoticeInfoOrBuilder> 
+          getInfosOrBuilderList();
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      com.znl.proto.M8.TeamNoticeInfoOrBuilder getInfosOrBuilder(
+          int index);
+    }
+    /**
+     * Protobuf type {@code M8.M80108.S2C}
+     */
+    public static final class S2C extends
+        com.google.protobuf.GeneratedMessage
+        implements S2COrBuilder {
+      // Use S2C.newBuilder() to construct.
+      private S2C(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private S2C(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final S2C defaultInstance;
+      public static S2C getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public S2C getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private S2C(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 8: {
+                bitField0_ |= 0x00000001;
+                rs_ = input.readInt32();
+                break;
+              }
+              case 18: {
+                if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                  infos_ = new java.util.ArrayList<com.znl.proto.M8.TeamNoticeInfo>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                infos_.add(input.readMessage(com.znl.proto.M8.TeamNoticeInfo.PARSER, extensionRegistry));
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            infos_ = java.util.Collections.unmodifiableList(infos_);
+          }
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80108_S2C_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80108_S2C_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80108.S2C.class, com.znl.proto.M8.M80108.S2C.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<S2C> PARSER =
+          new com.google.protobuf.AbstractParser<S2C>() {
+        public S2C parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new S2C(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<S2C> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required int32 rs = 1;
+      public static final int RS_FIELD_NUMBER = 1;
+      private int rs_;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public boolean hasRs() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public int getRs() {
+        return rs_;
+      }
+
+      // repeated .M8.TeamNoticeInfo infos = 2;
+      public static final int INFOS_FIELD_NUMBER = 2;
+      private java.util.List<com.znl.proto.M8.TeamNoticeInfo> infos_;
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      public java.util.List<com.znl.proto.M8.TeamNoticeInfo> getInfosList() {
+        return infos_;
+      }
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      public java.util.List<? extends com.znl.proto.M8.TeamNoticeInfoOrBuilder> 
+          getInfosOrBuilderList() {
+        return infos_;
+      }
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      public int getInfosCount() {
+        return infos_.size();
+      }
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      public com.znl.proto.M8.TeamNoticeInfo getInfos(int index) {
+        return infos_.get(index);
+      }
+      /**
+       * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+       */
+      public com.znl.proto.M8.TeamNoticeInfoOrBuilder getInfosOrBuilder(
+          int index) {
+        return infos_.get(index);
+      }
+
+      private void initFields() {
+        rs_ = 0;
+        infos_ = java.util.Collections.emptyList();
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasRs()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        for (int i = 0; i < getInfosCount(); i++) {
+          if (!getInfos(i).isInitialized()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeInt32(1, rs_);
+        }
+        for (int i = 0; i < infos_.size(); i++) {
+          output.writeMessage(2, infos_.get(i));
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(1, rs_);
+        }
+        for (int i = 0; i < infos_.size(); i++) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, infos_.get(i));
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M8.M80108.S2C parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80108.S2C parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80108.S2C parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80108.S2C parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80108.S2C parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80108.S2C parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80108.S2C parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M8.M80108.S2C parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80108.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80108.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M8.M80108.S2C prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M8.M80108.S2C}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M8.M80108.S2COrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M8.internal_static_M8_M80108_S2C_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M8.internal_static_M8_M80108_S2C_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M8.M80108.S2C.class, com.znl.proto.M8.M80108.S2C.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M8.M80108.S2C.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getInfosFieldBuilder();
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          rs_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          if (infosBuilder_ == null) {
+            infos_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            infosBuilder_.clear();
+          }
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M8.internal_static_M8_M80108_S2C_descriptor;
+        }
+
+        public com.znl.proto.M8.M80108.S2C getDefaultInstanceForType() {
+          return com.znl.proto.M8.M80108.S2C.getDefaultInstance();
+        }
+
+        public com.znl.proto.M8.M80108.S2C build() {
+          com.znl.proto.M8.M80108.S2C result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M8.M80108.S2C buildPartial() {
+          com.znl.proto.M8.M80108.S2C result = new com.znl.proto.M8.M80108.S2C(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.rs_ = rs_;
+          if (infosBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) == 0x00000002)) {
+              infos_ = java.util.Collections.unmodifiableList(infos_);
+              bitField0_ = (bitField0_ & ~0x00000002);
+            }
+            result.infos_ = infos_;
+          } else {
+            result.infos_ = infosBuilder_.build();
+          }
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M8.M80108.S2C) {
+            return mergeFrom((com.znl.proto.M8.M80108.S2C)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M8.M80108.S2C other) {
+          if (other == com.znl.proto.M8.M80108.S2C.getDefaultInstance()) return this;
+          if (other.hasRs()) {
+            setRs(other.getRs());
+          }
+          if (infosBuilder_ == null) {
+            if (!other.infos_.isEmpty()) {
+              if (infos_.isEmpty()) {
+                infos_ = other.infos_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+              } else {
+                ensureInfosIsMutable();
+                infos_.addAll(other.infos_);
+              }
+              onChanged();
+            }
+          } else {
+            if (!other.infos_.isEmpty()) {
+              if (infosBuilder_.isEmpty()) {
+                infosBuilder_.dispose();
+                infosBuilder_ = null;
+                infos_ = other.infos_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+                infosBuilder_ = 
+                  com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                     getInfosFieldBuilder() : null;
+              } else {
+                infosBuilder_.addAllMessages(other.infos_);
+              }
+            }
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasRs()) {
+            
+            return false;
+          }
+          for (int i = 0; i < getInfosCount(); i++) {
+            if (!getInfos(i).isInitialized()) {
+              
+              return false;
+            }
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M8.M80108.S2C parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M8.M80108.S2C) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required int32 rs = 1;
+        private int rs_ ;
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public boolean hasRs() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public int getRs() {
+          return rs_;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder setRs(int value) {
+          bitField0_ |= 0x00000001;
+          rs_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder clearRs() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          rs_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // repeated .M8.TeamNoticeInfo infos = 2;
+        private java.util.List<com.znl.proto.M8.TeamNoticeInfo> infos_ =
+          java.util.Collections.emptyList();
+        private void ensureInfosIsMutable() {
+          if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+            infos_ = new java.util.ArrayList<com.znl.proto.M8.TeamNoticeInfo>(infos_);
+            bitField0_ |= 0x00000002;
+           }
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M8.TeamNoticeInfo, com.znl.proto.M8.TeamNoticeInfo.Builder, com.znl.proto.M8.TeamNoticeInfoOrBuilder> infosBuilder_;
+
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public java.util.List<com.znl.proto.M8.TeamNoticeInfo> getInfosList() {
+          if (infosBuilder_ == null) {
+            return java.util.Collections.unmodifiableList(infos_);
+          } else {
+            return infosBuilder_.getMessageList();
+          }
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public int getInfosCount() {
+          if (infosBuilder_ == null) {
+            return infos_.size();
+          } else {
+            return infosBuilder_.getCount();
+          }
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public com.znl.proto.M8.TeamNoticeInfo getInfos(int index) {
+          if (infosBuilder_ == null) {
+            return infos_.get(index);
+          } else {
+            return infosBuilder_.getMessage(index);
+          }
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public Builder setInfos(
+            int index, com.znl.proto.M8.TeamNoticeInfo value) {
+          if (infosBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureInfosIsMutable();
+            infos_.set(index, value);
+            onChanged();
+          } else {
+            infosBuilder_.setMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public Builder setInfos(
+            int index, com.znl.proto.M8.TeamNoticeInfo.Builder builderForValue) {
+          if (infosBuilder_ == null) {
+            ensureInfosIsMutable();
+            infos_.set(index, builderForValue.build());
+            onChanged();
+          } else {
+            infosBuilder_.setMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public Builder addInfos(com.znl.proto.M8.TeamNoticeInfo value) {
+          if (infosBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureInfosIsMutable();
+            infos_.add(value);
+            onChanged();
+          } else {
+            infosBuilder_.addMessage(value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public Builder addInfos(
+            int index, com.znl.proto.M8.TeamNoticeInfo value) {
+          if (infosBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureInfosIsMutable();
+            infos_.add(index, value);
+            onChanged();
+          } else {
+            infosBuilder_.addMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public Builder addInfos(
+            com.znl.proto.M8.TeamNoticeInfo.Builder builderForValue) {
+          if (infosBuilder_ == null) {
+            ensureInfosIsMutable();
+            infos_.add(builderForValue.build());
+            onChanged();
+          } else {
+            infosBuilder_.addMessage(builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public Builder addInfos(
+            int index, com.znl.proto.M8.TeamNoticeInfo.Builder builderForValue) {
+          if (infosBuilder_ == null) {
+            ensureInfosIsMutable();
+            infos_.add(index, builderForValue.build());
+            onChanged();
+          } else {
+            infosBuilder_.addMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public Builder addAllInfos(
+            java.lang.Iterable<? extends com.znl.proto.M8.TeamNoticeInfo> values) {
+          if (infosBuilder_ == null) {
+            ensureInfosIsMutable();
+            super.addAll(values, infos_);
+            onChanged();
+          } else {
+            infosBuilder_.addAllMessages(values);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public Builder clearInfos() {
+          if (infosBuilder_ == null) {
+            infos_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+            onChanged();
+          } else {
+            infosBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public Builder removeInfos(int index) {
+          if (infosBuilder_ == null) {
+            ensureInfosIsMutable();
+            infos_.remove(index);
+            onChanged();
+          } else {
+            infosBuilder_.remove(index);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public com.znl.proto.M8.TeamNoticeInfo.Builder getInfosBuilder(
+            int index) {
+          return getInfosFieldBuilder().getBuilder(index);
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public com.znl.proto.M8.TeamNoticeInfoOrBuilder getInfosOrBuilder(
+            int index) {
+          if (infosBuilder_ == null) {
+            return infos_.get(index);  } else {
+            return infosBuilder_.getMessageOrBuilder(index);
+          }
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public java.util.List<? extends com.znl.proto.M8.TeamNoticeInfoOrBuilder> 
+             getInfosOrBuilderList() {
+          if (infosBuilder_ != null) {
+            return infosBuilder_.getMessageOrBuilderList();
+          } else {
+            return java.util.Collections.unmodifiableList(infos_);
+          }
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public com.znl.proto.M8.TeamNoticeInfo.Builder addInfosBuilder() {
+          return getInfosFieldBuilder().addBuilder(
+              com.znl.proto.M8.TeamNoticeInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public com.znl.proto.M8.TeamNoticeInfo.Builder addInfosBuilder(
+            int index) {
+          return getInfosFieldBuilder().addBuilder(
+              index, com.znl.proto.M8.TeamNoticeInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M8.TeamNoticeInfo infos = 2;</code>
+         */
+        public java.util.List<com.znl.proto.M8.TeamNoticeInfo.Builder> 
+             getInfosBuilderList() {
+          return getInfosFieldBuilder().getBuilderList();
+        }
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M8.TeamNoticeInfo, com.znl.proto.M8.TeamNoticeInfo.Builder, com.znl.proto.M8.TeamNoticeInfoOrBuilder> 
+            getInfosFieldBuilder() {
+          if (infosBuilder_ == null) {
+            infosBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+                com.znl.proto.M8.TeamNoticeInfo, com.znl.proto.M8.TeamNoticeInfo.Builder, com.znl.proto.M8.TeamNoticeInfoOrBuilder>(
+                    infos_,
+                    ((bitField0_ & 0x00000002) == 0x00000002),
+                    getParentForChildren(),
+                    isClean());
+            infos_ = null;
+          }
+          return infosBuilder_;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M8.M80108.S2C)
+      }
+
+      static {
+        defaultInstance = new S2C(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M8.M80108.S2C)
+    }
+
+    public interface C2SOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+    }
+    /**
+     * Protobuf type {@code M8.M80108.C2S}
+     */
+    public static final class C2S extends
+        com.google.protobuf.GeneratedMessage
+        implements C2SOrBuilder {
+      // Use C2S.newBuilder() to construct.
+      private C2S(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private C2S(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final C2S defaultInstance;
+      public static C2S getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public C2S getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private C2S(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80108_C2S_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80108_C2S_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80108.C2S.class, com.znl.proto.M8.M80108.C2S.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<C2S> PARSER =
+          new com.google.protobuf.AbstractParser<C2S>() {
+        public C2S parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new C2S(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<C2S> getParserForType() {
+        return PARSER;
+      }
+
+      private void initFields() {
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M8.M80108.C2S parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80108.C2S parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80108.C2S parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M8.M80108.C2S parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80108.C2S parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80108.C2S parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80108.C2S parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M8.M80108.C2S parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M8.M80108.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M8.M80108.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M8.M80108.C2S prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M8.M80108.C2S}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M8.M80108.C2SOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M8.internal_static_M8_M80108_C2S_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M8.internal_static_M8_M80108_C2S_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M8.M80108.C2S.class, com.znl.proto.M8.M80108.C2S.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M8.M80108.C2S.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M8.internal_static_M8_M80108_C2S_descriptor;
+        }
+
+        public com.znl.proto.M8.M80108.C2S getDefaultInstanceForType() {
+          return com.znl.proto.M8.M80108.C2S.getDefaultInstance();
+        }
+
+        public com.znl.proto.M8.M80108.C2S build() {
+          com.znl.proto.M8.M80108.C2S result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M8.M80108.C2S buildPartial() {
+          com.znl.proto.M8.M80108.C2S result = new com.znl.proto.M8.M80108.C2S(this);
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M8.M80108.C2S) {
+            return mergeFrom((com.znl.proto.M8.M80108.C2S)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M8.M80108.C2S other) {
+          if (other == com.znl.proto.M8.M80108.C2S.getDefaultInstance()) return this;
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M8.M80108.C2S parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M8.M80108.C2S) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M8.M80108.C2S)
+      }
+
+      static {
+        defaultInstance = new C2S(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M8.M80108.C2S)
+    }
+
+    private void initFields() {
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.znl.proto.M8.M80108 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M8.M80108 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80108 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M8.M80108 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80108 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M8.M80108 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80108 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.znl.proto.M8.M80108 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M8.M80108 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M8.M80108 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.znl.proto.M8.M80108 prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code M8.M80108}
+     *
+     * <pre>
+     *新的被攻击任务
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.znl.proto.M8.M80108OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M8.internal_static_M8_M80108_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M8.internal_static_M8_M80108_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M8.M80108.class, com.znl.proto.M8.M80108.Builder.class);
+      }
+
+      // Construct using com.znl.proto.M8.M80108.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.znl.proto.M8.internal_static_M8_M80108_descriptor;
+      }
+
+      public com.znl.proto.M8.M80108 getDefaultInstanceForType() {
+        return com.znl.proto.M8.M80108.getDefaultInstance();
+      }
+
+      public com.znl.proto.M8.M80108 build() {
+        com.znl.proto.M8.M80108 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.znl.proto.M8.M80108 buildPartial() {
+        com.znl.proto.M8.M80108 result = new com.znl.proto.M8.M80108(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.znl.proto.M8.M80108) {
+          return mergeFrom((com.znl.proto.M8.M80108)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.znl.proto.M8.M80108 other) {
+        if (other == com.znl.proto.M8.M80108.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.znl.proto.M8.M80108 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.znl.proto.M8.M80108) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:M8.M80108)
+    }
+
+    static {
+      defaultInstance = new M80108(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:M8.M80108)
   }
 
   public interface CollectInfoOrBuilder
@@ -33525,6 +39515,36 @@ public final class M8 {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_M8_M80003_C2S_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80103_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80103_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80103_S2C_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80103_S2C_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80103_C2S_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80103_C2S_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80104_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80104_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80104_S2C_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80104_S2C_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80104_C2S_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80104_C2S_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_M8_M80004_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -33589,6 +39609,36 @@ public final class M8 {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_M8_M80007_C2S_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80107_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80107_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80107_S2C_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80107_S2C_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80107_C2S_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80107_C2S_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80108_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80108_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80108_S2C_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80108_S2C_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M8_M80108_C2S_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M8_M80108_C2S_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_M8_CollectInfo_descriptor;
   private static
@@ -33768,37 +39818,47 @@ public final class M8 {
       "ementInfo\022\r\n\005exper\030\017 \001(\005\022\r\n\005state\030\020 \001(\005\022" +
       "\014\n\004icon\030\021 \001(\005\022\016\n\006startx\030\022 \001(\005\022\016\n\006starty\030" +
       "\023 \001(\005\"6\n\006M80003\032%\n\003S2C\022\036\n\004list\030\001 \003(\0132\020.M",
-      "8.TaskTeamInfo\032\005\n\003C2S\".\n\006M80004\032\021\n\003S2C\022\n" +
-      "\n\002rs\030\001 \002(\005\032\021\n\003C2S\022\n\n\002id\030\r \002(\006\"N\n\006M80005\032" +
-      "\'\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\t\n\001x\030\002 \001(\005\022\t\n\001y\030\003 \001(\005" +
-      "\032\033\n\003C2S\022\t\n\001x\030\001 \002(\005\022\t\n\001y\030\002 \002(\005\"V\n\006M80006\032" +
-      "\'\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\t\n\001x\030\002 \001(\005\022\t\n\001y\030\003 \001(\005" +
-      "\032#\n\003C2S\022\014\n\004name\030\001 \002(\t\022\016\n\006typeId\030\002 \002(\005\"m\n" +
-      "\016TeamNoticeInfo\022\014\n\004name\030\001 \002(\t\022\r\n\005level\030\002" +
-      " \002(\005\022\n\n\002id\030\003 \002(\005\022\t\n\001x\030\004 \002(\005\022\t\n\001y\030\005 \002(\005\022\014" +
-      "\n\004time\030\006 \002(\005\022\016\n\006iconId\030\007 \002(\005\"9\n\006M80007\032(" +
-      "\n\003S2C\022!\n\005infos\030\001 \003(\0132\022.M8.TeamNoticeInfo",
-      "\032\005\n\003C2S\"|\n\013CollectInfo\022\014\n\004name\030\001 \002(\t\022\r\n\005" +
-      "level\030\002 \002(\005\022\016\n\006iconId\030\003 \002(\005\022\t\n\001x\030\004 \002(\005\022\t" +
-      "\n\001y\030\005 \002(\005\022\020\n\010typelist\030\006 \003(\005\022\n\n\002id\030\007 \001(\006\022" +
-      "\014\n\004ower\030\010 \001(\005\"d\n\006M80008\0321\n\003S2C\022\n\n\002rs\030\001 \002" +
-      "(\005\022\036\n\005infos\030\002 \003(\0132\017.M8.CollectInfo\032\'\n\003C2" +
-      "S\022 \n\007colinfo\030\001 \002(\0132\017.M8.CollectInfo\"N\n\006M" +
-      "80009\0321\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\036\n\005infos\030\002 \003(\0132" +
-      "\017.M8.CollectInfo\032\021\n\003C2S\022\n\n\002id\030\001 \002(\006\"B\n\006M" +
-      "80010\0321\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\036\n\005infos\030\002 \003(\0132" +
-      "\017.M8.CollectInfo\032\005\n\003C2S\"8\n\006M80011\032\'\n\003S2C",
-      "\022\n\n\002rs\030\001 \002(\005\022\t\n\001x\030\002 \001(\005\022\t\n\001y\030\003 \001(\005\032\005\n\003C2" +
-      "S\"\\\n\006M80012\0325\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\t\n\001x\030\002 \001(" +
-      "\005\022\t\n\001y\030\003 \001(\005\022\014\n\004tiem\030\004 \001(\005\032\033\n\003C2S\022\t\n\001x\030\001" +
-      " \002(\005\022\t\n\001y\030\002 \002(\005\"`\n\006M80013\032\021\n\003S2C\022\n\n\002rs\030\001" +
-      " \002(\005\032C\n\003C2S\022\t\n\001x\030\001 \002(\005\022\t\n\001y\030\002 \002(\005\022&\n\004tea" +
-      "m\030\003 \003(\0132\030.Common.FightElementInfo\".\n\006M80" +
-      "014\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\021\n\003C2S\022\n\n\002id\030\r \002(" +
-      "\006\"c\n\006M80015\032<\n\003S2C\022\n\n\002rs\030\001 \002(\005\022)\n\016worldT" +
-      "ileInfos\030\002 \003(\0132\021.M8.WorldTileInfo\032\033\n\003C2S" +
-      "\022\t\n\001x\030\001 \002(\005\022\t\n\001y\030\002 \002(\005\"\"\n\006M80016\032\021\n\003S2C\022",
-      "\n\n\002rs\030\001 \002(\005\032\005\n\003C2SB\023\n\rcom.znl.protoB\002M8"
+      "8.TaskTeamInfo\032\005\n\003C2S\"O\n\006M80103\0322\n\003S2C\022\n" +
+      "\n\002rs\030\001 \002(\005\022\n\n\002id\030\002 \002(\006\022\023\n\013alreadyTime\030\003 " +
+      "\001(\005\032\021\n\003C2S\022\n\n\002id\030\001 \002(\006\"J\n\006M80104\0329\n\003S2C\022" +
+      "\n\n\002rs\030\001 \002(\005\022&\n\014taskTeamInfo\030\003 \002(\0132\020.M8.T" +
+      "askTeamInfo\032\005\n\003C2S\"b\n\006M80004\032E\n\003S2C\022\n\n\002r" +
+      "s\030\001 \002(\005\022\n\n\002id\030\002 \002(\006\022&\n\014taskTeamInfo\030\003 \001(" +
+      "\0132\020.M8.TaskTeamInfo\032\021\n\003C2S\022\n\n\002id\030\r \002(\006\"N" +
+      "\n\006M80005\032\'\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\t\n\001x\030\002 \001(\005\022\t" +
+      "\n\001y\030\003 \001(\005\032\033\n\003C2S\022\t\n\001x\030\001 \002(\005\022\t\n\001y\030\002 \002(\005\"V" +
+      "\n\006M80006\032\'\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\t\n\001x\030\002 \001(\005\022\t",
+      "\n\001y\030\003 \001(\005\032#\n\003C2S\022\014\n\004name\030\001 \002(\t\022\016\n\006typeId" +
+      "\030\002 \002(\005\"z\n\016TeamNoticeInfo\022\014\n\004name\030\001 \002(\t\022\r" +
+      "\n\005level\030\002 \002(\005\022\n\n\002id\030\003 \002(\005\022\t\n\001x\030\004 \002(\005\022\t\n\001" +
+      "y\030\005 \002(\005\022\014\n\004time\030\006 \002(\005\022\016\n\006iconId\030\007 \002(\005\022\013\n" +
+      "\003key\030\010 \002(\006\"9\n\006M80007\032(\n\003S2C\022!\n\005infos\030\001 \003" +
+      "(\0132\022.M8.TeamNoticeInfo\032\005\n\003C2S\"J\n\006M80107\032" +
+      ",\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\013\n\003key\030\003 \002(\006\022\014\n\004time\030" +
+      "\004 \001(\005\032\022\n\003C2S\022\013\n\003key\030\001 \002(\006\"E\n\006M80108\0324\n\003S" +
+      "2C\022\n\n\002rs\030\001 \002(\005\022!\n\005infos\030\002 \003(\0132\022.M8.TeamN" +
+      "oticeInfo\032\005\n\003C2S\"|\n\013CollectInfo\022\014\n\004name\030",
+      "\001 \002(\t\022\r\n\005level\030\002 \002(\005\022\016\n\006iconId\030\003 \002(\005\022\t\n\001" +
+      "x\030\004 \002(\005\022\t\n\001y\030\005 \002(\005\022\020\n\010typelist\030\006 \003(\005\022\n\n\002" +
+      "id\030\007 \001(\006\022\014\n\004ower\030\010 \001(\005\"d\n\006M80008\0321\n\003S2C\022" +
+      "\n\n\002rs\030\001 \002(\005\022\036\n\005infos\030\002 \003(\0132\017.M8.CollectI" +
+      "nfo\032\'\n\003C2S\022 \n\007colinfo\030\001 \002(\0132\017.M8.Collect" +
+      "Info\"N\n\006M80009\0321\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\036\n\005inf" +
+      "os\030\002 \003(\0132\017.M8.CollectInfo\032\021\n\003C2S\022\n\n\002id\030\001" +
+      " \002(\006\"B\n\006M80010\0321\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\036\n\005inf" +
+      "os\030\002 \003(\0132\017.M8.CollectInfo\032\005\n\003C2S\"8\n\006M800" +
+      "11\032\'\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\t\n\001x\030\002 \001(\005\022\t\n\001y\030\003 ",
+      "\001(\005\032\005\n\003C2S\"\\\n\006M80012\0325\n\003S2C\022\n\n\002rs\030\001 \002(\005\022" +
+      "\t\n\001x\030\002 \001(\005\022\t\n\001y\030\003 \001(\005\022\014\n\004tiem\030\004 \001(\005\032\033\n\003C" +
+      "2S\022\t\n\001x\030\001 \002(\005\022\t\n\001y\030\002 \002(\005\"`\n\006M80013\032\021\n\003S2" +
+      "C\022\n\n\002rs\030\001 \002(\005\032C\n\003C2S\022\t\n\001x\030\001 \002(\005\022\t\n\001y\030\002 \002" +
+      "(\005\022&\n\004team\030\003 \003(\0132\030.Common.FightElementIn" +
+      "fo\".\n\006M80014\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\021\n\003C2S\022\n" +
+      "\n\002id\030\r \002(\006\"c\n\006M80015\032<\n\003S2C\022\n\n\002rs\030\001 \002(\005\022" +
+      ")\n\016worldTileInfos\030\002 \003(\0132\021.M8.WorldTileIn" +
+      "fo\032\033\n\003C2S\022\t\n\001x\030\001 \002(\005\022\t\n\001y\030\002 \002(\005\"\"\n\006M8001" +
+      "6\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\005\n\003C2SB\023\n\rcom.znl.p",
+      "rotoB\002M8"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -33895,8 +39955,44 @@ public final class M8 {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80003_C2S_descriptor,
               new java.lang.String[] { });
-          internal_static_M8_M80004_descriptor =
+          internal_static_M8_M80103_descriptor =
             getDescriptor().getMessageTypes().get(7);
+          internal_static_M8_M80103_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80103_descriptor,
+              new java.lang.String[] { });
+          internal_static_M8_M80103_S2C_descriptor =
+            internal_static_M8_M80103_descriptor.getNestedTypes().get(0);
+          internal_static_M8_M80103_S2C_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80103_S2C_descriptor,
+              new java.lang.String[] { "Rs", "Id", "AlreadyTime", });
+          internal_static_M8_M80103_C2S_descriptor =
+            internal_static_M8_M80103_descriptor.getNestedTypes().get(1);
+          internal_static_M8_M80103_C2S_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80103_C2S_descriptor,
+              new java.lang.String[] { "Id", });
+          internal_static_M8_M80104_descriptor =
+            getDescriptor().getMessageTypes().get(8);
+          internal_static_M8_M80104_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80104_descriptor,
+              new java.lang.String[] { });
+          internal_static_M8_M80104_S2C_descriptor =
+            internal_static_M8_M80104_descriptor.getNestedTypes().get(0);
+          internal_static_M8_M80104_S2C_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80104_S2C_descriptor,
+              new java.lang.String[] { "Rs", "TaskTeamInfo", });
+          internal_static_M8_M80104_C2S_descriptor =
+            internal_static_M8_M80104_descriptor.getNestedTypes().get(1);
+          internal_static_M8_M80104_C2S_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80104_C2S_descriptor,
+              new java.lang.String[] { });
+          internal_static_M8_M80004_descriptor =
+            getDescriptor().getMessageTypes().get(9);
           internal_static_M8_M80004_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80004_descriptor,
@@ -33906,7 +40002,7 @@ public final class M8 {
           internal_static_M8_M80004_S2C_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80004_S2C_descriptor,
-              new java.lang.String[] { "Rs", });
+              new java.lang.String[] { "Rs", "Id", "TaskTeamInfo", });
           internal_static_M8_M80004_C2S_descriptor =
             internal_static_M8_M80004_descriptor.getNestedTypes().get(1);
           internal_static_M8_M80004_C2S_fieldAccessorTable = new
@@ -33914,7 +40010,7 @@ public final class M8 {
               internal_static_M8_M80004_C2S_descriptor,
               new java.lang.String[] { "Id", });
           internal_static_M8_M80005_descriptor =
-            getDescriptor().getMessageTypes().get(8);
+            getDescriptor().getMessageTypes().get(10);
           internal_static_M8_M80005_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80005_descriptor,
@@ -33932,7 +40028,7 @@ public final class M8 {
               internal_static_M8_M80005_C2S_descriptor,
               new java.lang.String[] { "X", "Y", });
           internal_static_M8_M80006_descriptor =
-            getDescriptor().getMessageTypes().get(9);
+            getDescriptor().getMessageTypes().get(11);
           internal_static_M8_M80006_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80006_descriptor,
@@ -33950,13 +40046,13 @@ public final class M8 {
               internal_static_M8_M80006_C2S_descriptor,
               new java.lang.String[] { "Name", "TypeId", });
           internal_static_M8_TeamNoticeInfo_descriptor =
-            getDescriptor().getMessageTypes().get(10);
+            getDescriptor().getMessageTypes().get(12);
           internal_static_M8_TeamNoticeInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_TeamNoticeInfo_descriptor,
-              new java.lang.String[] { "Name", "Level", "Id", "X", "Y", "Time", "IconId", });
+              new java.lang.String[] { "Name", "Level", "Id", "X", "Y", "Time", "IconId", "Key", });
           internal_static_M8_M80007_descriptor =
-            getDescriptor().getMessageTypes().get(11);
+            getDescriptor().getMessageTypes().get(13);
           internal_static_M8_M80007_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80007_descriptor,
@@ -33973,14 +40069,50 @@ public final class M8 {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80007_C2S_descriptor,
               new java.lang.String[] { });
+          internal_static_M8_M80107_descriptor =
+            getDescriptor().getMessageTypes().get(14);
+          internal_static_M8_M80107_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80107_descriptor,
+              new java.lang.String[] { });
+          internal_static_M8_M80107_S2C_descriptor =
+            internal_static_M8_M80107_descriptor.getNestedTypes().get(0);
+          internal_static_M8_M80107_S2C_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80107_S2C_descriptor,
+              new java.lang.String[] { "Rs", "Key", "Time", });
+          internal_static_M8_M80107_C2S_descriptor =
+            internal_static_M8_M80107_descriptor.getNestedTypes().get(1);
+          internal_static_M8_M80107_C2S_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80107_C2S_descriptor,
+              new java.lang.String[] { "Key", });
+          internal_static_M8_M80108_descriptor =
+            getDescriptor().getMessageTypes().get(15);
+          internal_static_M8_M80108_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80108_descriptor,
+              new java.lang.String[] { });
+          internal_static_M8_M80108_S2C_descriptor =
+            internal_static_M8_M80108_descriptor.getNestedTypes().get(0);
+          internal_static_M8_M80108_S2C_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80108_S2C_descriptor,
+              new java.lang.String[] { "Rs", "Infos", });
+          internal_static_M8_M80108_C2S_descriptor =
+            internal_static_M8_M80108_descriptor.getNestedTypes().get(1);
+          internal_static_M8_M80108_C2S_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M8_M80108_C2S_descriptor,
+              new java.lang.String[] { });
           internal_static_M8_CollectInfo_descriptor =
-            getDescriptor().getMessageTypes().get(12);
+            getDescriptor().getMessageTypes().get(16);
           internal_static_M8_CollectInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_CollectInfo_descriptor,
               new java.lang.String[] { "Name", "Level", "IconId", "X", "Y", "Typelist", "Id", "Ower", });
           internal_static_M8_M80008_descriptor =
-            getDescriptor().getMessageTypes().get(13);
+            getDescriptor().getMessageTypes().get(17);
           internal_static_M8_M80008_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80008_descriptor,
@@ -33998,7 +40130,7 @@ public final class M8 {
               internal_static_M8_M80008_C2S_descriptor,
               new java.lang.String[] { "Colinfo", });
           internal_static_M8_M80009_descriptor =
-            getDescriptor().getMessageTypes().get(14);
+            getDescriptor().getMessageTypes().get(18);
           internal_static_M8_M80009_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80009_descriptor,
@@ -34016,7 +40148,7 @@ public final class M8 {
               internal_static_M8_M80009_C2S_descriptor,
               new java.lang.String[] { "Id", });
           internal_static_M8_M80010_descriptor =
-            getDescriptor().getMessageTypes().get(15);
+            getDescriptor().getMessageTypes().get(19);
           internal_static_M8_M80010_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80010_descriptor,
@@ -34034,7 +40166,7 @@ public final class M8 {
               internal_static_M8_M80010_C2S_descriptor,
               new java.lang.String[] { });
           internal_static_M8_M80011_descriptor =
-            getDescriptor().getMessageTypes().get(16);
+            getDescriptor().getMessageTypes().get(20);
           internal_static_M8_M80011_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80011_descriptor,
@@ -34052,7 +40184,7 @@ public final class M8 {
               internal_static_M8_M80011_C2S_descriptor,
               new java.lang.String[] { });
           internal_static_M8_M80012_descriptor =
-            getDescriptor().getMessageTypes().get(17);
+            getDescriptor().getMessageTypes().get(21);
           internal_static_M8_M80012_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80012_descriptor,
@@ -34070,7 +40202,7 @@ public final class M8 {
               internal_static_M8_M80012_C2S_descriptor,
               new java.lang.String[] { "X", "Y", });
           internal_static_M8_M80013_descriptor =
-            getDescriptor().getMessageTypes().get(18);
+            getDescriptor().getMessageTypes().get(22);
           internal_static_M8_M80013_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80013_descriptor,
@@ -34088,7 +40220,7 @@ public final class M8 {
               internal_static_M8_M80013_C2S_descriptor,
               new java.lang.String[] { "X", "Y", "Team", });
           internal_static_M8_M80014_descriptor =
-            getDescriptor().getMessageTypes().get(19);
+            getDescriptor().getMessageTypes().get(23);
           internal_static_M8_M80014_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80014_descriptor,
@@ -34106,7 +40238,7 @@ public final class M8 {
               internal_static_M8_M80014_C2S_descriptor,
               new java.lang.String[] { "Id", });
           internal_static_M8_M80015_descriptor =
-            getDescriptor().getMessageTypes().get(20);
+            getDescriptor().getMessageTypes().get(24);
           internal_static_M8_M80015_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80015_descriptor,
@@ -34124,7 +40256,7 @@ public final class M8 {
               internal_static_M8_M80015_C2S_descriptor,
               new java.lang.String[] { "X", "Y", });
           internal_static_M8_M80016_descriptor =
-            getDescriptor().getMessageTypes().get(21);
+            getDescriptor().getMessageTypes().get(25);
           internal_static_M8_M80016_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M8_M80016_descriptor,

@@ -2,16 +2,14 @@ package com.znl.proxy;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
+import com.sun.prism.ReadbackRenderTarget;
 import com.znl.GameMainServer;
 import com.znl.base.BaseDbPojo;
 import com.znl.base.BasicProxy;
 import com.znl.core.PlayerTeam;
 import com.znl.define.*;
 import com.znl.msg.GameMsg;
-import com.znl.pojo.db.FormationMember;
-import com.znl.pojo.db.PerformTasks;
-import com.znl.pojo.db.TeamNotice;
-import com.znl.pojo.db.Timerdb;
+import com.znl.pojo.db.*;
 import com.znl.proto.Common;
 import com.znl.proto.M8;
 import com.znl.utils.GameUtils;
@@ -38,7 +36,7 @@ public class PerformTasksProxy extends BasicProxy {
 //            formationMember.save();
             formationMember.finalize();
         }
-        for(TeamNotice tn : teamNotices){
+        for (TeamNotice tn : teamNotices) {
             tn.finalize();
         }
     }
@@ -49,23 +47,22 @@ public class PerformTasksProxy extends BasicProxy {
     }
 
 
-    public PerformTasksProxy(Set<Long> performTask, Set<Long> teamNotice,String areaKey) {
+    public PerformTasksProxy(Player player, String areaKey) {
         this.areaKey = areaKey;
-        for (Long id : performTask) {
-            PerformTasks performTk = BaseDbPojo.get(id, PerformTasks.class,areaKey);
+        for (Long id : player.getPerformTaskSet()) {
+            PerformTasks performTk = BaseDbPojo.get(id, PerformTasks.class, areaKey);
             performTasks.add(performTk);
             for (Long memberId : performTk.getMembersSet()) {
-                FormationMember member = BaseDbPojo.get(memberId, FormationMember.class,areaKey);
+                FormationMember member = BaseDbPojo.get(memberId, FormationMember.class, areaKey);
                 memberHashMap.put(memberId, member);
             }
         }
-        for (Long id : teamNotice) {
-            TeamNotice notice = BaseDbPojo.get(id, TeamNotice.class,areaKey);
-            if(notice!=null) {
+        for (Long id : player.getTeamNoticeSet()) {
+            TeamNotice notice = BaseDbPojo.get(id, TeamNotice.class, areaKey);
+            if (notice != null) {
                 teamNotices.add(notice);
-            }else{
-                PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-                playerProxy.removeTeamNotice(id);
+            } else {
+                player.removeTeamNotice(id);
             }
         }
     }
@@ -74,21 +71,21 @@ public class PerformTasksProxy extends BasicProxy {
     public List<M8.TeamNoticeInfo> getAllTeamNoticeInfo() {
         checkTeamNotices();
         List<M8.TeamNoticeInfo> res = new ArrayList<>();
-        for (TeamNotice teamNotice :teamNotices ) {
+        for (TeamNotice teamNotice : teamNotices) {
             res.add(getTeamNoticeInfo(teamNotice));
         }
         return res;
     }
-    private List<TeamNotice>  getNoticeByType(int type){
-        List<TeamNotice> list=new ArrayList<TeamNotice>();
+
+    private List<TeamNotice> getNoticeByType(int type) {
+        List<TeamNotice> list = new ArrayList<TeamNotice>();
         for (TeamNotice teamNotice : teamNotices) {
-            if(teamNotice.getType()==type){
+            if (teamNotice.getType() == type) {
                 list.add(teamNotice);
             }
         }
         return list;
     }
-
 
 
     public M8.TeamNoticeInfo getTeamNoticeInfo(TeamNotice teamNotice) {
@@ -105,10 +102,11 @@ public class PerformTasksProxy extends BasicProxy {
         builder.setTime((int) ((teamNotice.getArriveTime() - now) / 1000));
         builder.setX(teamNotice.getX());
         builder.setY(teamNotice.getY());
+        builder.setKey(teamNotice.getId());
         return builder.build();
     }
 
-    public void addTeamNotices(TeamNotice teamNotice,  PlayerProxy playerProxy) {
+    public void addTeamNotices(TeamNotice teamNotice, PlayerProxy playerProxy) {
         teamNotices.add(teamNotice);
         playerProxy.addTeamNotice(teamNotice.getId());
     }
@@ -129,7 +127,7 @@ public class PerformTasksProxy extends BasicProxy {
         }
     }
 
-    public void clearPerformTasks(){
+    public void clearPerformTasks() {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         List<PerformTasks> removeList = new ArrayList<>();
         for (PerformTasks task : performTasks) {
@@ -143,8 +141,8 @@ public class PerformTasksProxy extends BasicProxy {
                     memberHashMap.remove(id);
                     member.del();
                 }
-                if (task.getType() == TaskDefine.PERFORM_TASK_DIGGING){
-                    sendFunctionLog(FunctionIdDefine.TASK_TEAM_REMOVE_FUNCTION_ID,task.getType(),0,0,"clearPerformTasks");
+                if (task.getType() == TaskDefine.PERFORM_TASK_DIGGING) {
+                    sendFunctionLog(FunctionIdDefine.TASK_TEAM_REMOVE_FUNCTION_ID, task.getType(), 0, 0, "clearPerformTasks");
                 }
                 task.del();
                 playerProxy.reducePerformTaskfromPlayer(task.getId());
@@ -192,12 +190,12 @@ public class PerformTasksProxy extends BasicProxy {
         checkPerformTask(playerProxy);
     }
 
-    public void setLoad(PerformTasks task,long load,String functionName){
+    public void setLoad(PerformTasks task, long load, String functionName) {
         task.setLoad(load);
         pushPerformTaskToChangeList(task);
-        if (load == 0){
+        if (load == 0) {
             //记录行为日志，有队伍的载重被置0了
-            sendFunctionLog(FunctionIdDefine.TASK_TEAM_LOAD_SET_ZERO_FUNCTION_ID,task.getType(),0,0,functionName);
+            sendFunctionLog(FunctionIdDefine.TASK_TEAM_LOAD_SET_ZERO_FUNCTION_ID, task.getType(), 0, 0, functionName);
         }
     }
 
@@ -226,10 +224,10 @@ public class PerformTasksProxy extends BasicProxy {
         }
     }
 
-    public int getTaskNumforTip(){
-        int num=0;
-        for(PerformTasks task : performTasks){
-            if(task.getType()!= TaskDefine.PERFORM_TASK_OTHERHELPBACK){
+    public int getTaskNumforTip() {
+        int num = 0;
+        for (PerformTasks task : performTasks) {
+            if (task.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
                 num++;
             }
         }
@@ -249,10 +247,10 @@ public class PerformTasksProxy extends BasicProxy {
             teamNotices.remove(delNotice);
             playerProxy.removeTeamNotice(delNotice.getId());
         }
-        deleteDiggingTask(x,y,time,playerProxy);
+        deleteDiggingTask(x, y, time, playerProxy);
     }
 
-    public void removeTeamNotice( long time, PlayerProxy playerProxy) {
+    public void removeTeamNotice(long time, PlayerProxy playerProxy) {
         TeamNotice delNotice = null;
         for (TeamNotice notice : teamNotices) {
             if (notice.getArriveTime() == time) {
@@ -265,7 +263,7 @@ public class PerformTasksProxy extends BasicProxy {
             teamNotices.remove(delNotice);
             playerProxy.removeTeamNotice(delNotice.getId());
         }
-        deleteDiggingTask(time,playerProxy);
+        deleteDiggingTask(time, playerProxy);
     }
 
     private LinkedList<PerformTasks> changePerformTasks = new LinkedList<>();
@@ -299,8 +297,8 @@ public class PerformTasksProxy extends BasicProxy {
     /**
      * 创建执行任务
      */
-    public PerformTasks createPerformTasks(int type, String name, int level, int X, int Y, long timeer, Set<Long> formatmembers, long capacity, long load, int product,PlayerProxy playerProxy ,int icon,int starX,int starY,Map<Integer, Long> map) {
-        PerformTasks tasks = BaseDbPojo.create(PerformTasks.class,areaKey);
+    public PerformTasks createPerformTasks(int type, String name, int level, int X, int Y, long timeer, Set<Long> formatmembers, long capacity, long load, int product, PlayerProxy playerProxy, int icon, int starX, int starY, Map<Integer, Long> map) {
+        PerformTasks tasks = BaseDbPojo.create(PerformTasks.class, areaKey);
         tasks.setPlayerId(playerProxy.getPlayerId());
         tasks.setState(TaskDefine.PERFORM_TASK_STATE_TODO);
         tasks.setName(name);
@@ -312,7 +310,7 @@ public class PerformTasksProxy extends BasicProxy {
         tasks.setBeginTime(GameUtils.getServerDate().getTime());
         tasks.setTimeer(timeer);
 //        tasks.setLoad(load);
-        setLoad(tasks,load,"createPerformTasks");
+        setLoad(tasks, load, "createPerformTasks");
         for (Long mbId : formatmembers) {
             tasks.addMembersId(mbId);
         }
@@ -320,7 +318,7 @@ public class PerformTasksProxy extends BasicProxy {
         tasks.setStartY(starY);
         tasks.setProduct(product);
         tasks.setIcon(icon);
-        if(map.get(PlayerPowerDefine.POWER_command)!=null) {
+        if (map.get(PlayerPowerDefine.POWER_command) != null) {
             tasks.setMaxSoilderNum(map.get(PlayerPowerDefine.POWER_command));
         }
         tasks.save();
@@ -329,17 +327,17 @@ public class PerformTasksProxy extends BasicProxy {
         return tasks;
     }
 
-    private void sendMsgToWorldNode(int x,int y,Object msg, PlayerProxy playerProxy){
-        String path = ActorDefine.AREA_SERVER_PRE_PATH+ GameMainServer.getLogicAreaIdByAreaId(playerProxy.getAreaId())+"/"+ActorDefine.WORLD_SERVICE_NAME+ "/" +x+"_"+y;
+    private void sendMsgToWorldNode(int x, int y, Object msg, PlayerProxy playerProxy) {
+        String path = ActorDefine.AREA_SERVER_PRE_PATH + GameMainServer.getLogicAreaIdByAreaId(playerProxy.getAreaId()) + "/" + ActorDefine.WORLD_SERVICE_NAME + "/" + x + "_" + y;
         ActorSelection worldNode = GameMainServer.system().actorSelection(path);
         worldNode.tell(msg, ActorRef.noSender());
     }
 
-    private void checkPerformTask( PlayerProxy playerProxy) {
+    private void checkPerformTask(PlayerProxy playerProxy) {
         long now = GameUtils.getServerDate().getTime();
         List<PerformTasks> removeList = new ArrayList<>();
         for (PerformTasks task : performTasks) {
-            if (task.getType() != TaskDefine.PERFORM_TASK_GOHELP && task.getType() != TaskDefine.PERFORM_TASK_DIGGING && task.getType() != TaskDefine.PERFORM_TASK_HELPBACK && task.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK || task.getTimeer()==0) {
+            if (task.getType() != TaskDefine.PERFORM_TASK_GOHELP && task.getType() != TaskDefine.PERFORM_TASK_DIGGING && task.getType() != TaskDefine.PERFORM_TASK_HELPBACK && task.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK || task.getTimeer() == 0) {
                 if (now >= task.getTimeer() && task.getType() != TaskDefine.PERFORM_TASK_DIGGING) {
                     removeList.add(task);
                 }
@@ -347,9 +345,9 @@ public class PerformTasksProxy extends BasicProxy {
 //                int total = (int) ((now / 1000 - task.getBeginTime() /1000)*task.getProduct());
                 if (task.getLoad() == 0) {
                     removeList.add(task);
-                    if(task.getType() == TaskDefine.PERFORM_TASK_DIGGING){
+                    if (task.getType() == TaskDefine.PERFORM_TASK_DIGGING) {
                         //删除后向世界请求一次校验，如果是误删除的还要给他加回来
-                        sendMsgToWorldNode(task.getWorldTileX(),task.getWorldTileY(),new GameMsg.CheckDeleteDiggingTask(playerProxy.getPlayerId()),playerProxy);
+                        sendMsgToWorldNode(task.getWorldTileX(), task.getWorldTileY(), new GameMsg.CheckDeleteDiggingTask(playerProxy.getPlayerId()), playerProxy);
                     }
                 }
             }
@@ -363,8 +361,8 @@ public class PerformTasksProxy extends BasicProxy {
                     memberHashMap.remove(id);
                     member.del();
                 }
-                if (task.getType() == TaskDefine.PERFORM_TASK_DIGGING){
-                    sendFunctionLog(FunctionIdDefine.TASK_TEAM_REMOVE_FUNCTION_ID,task.getType(),0,0,"checkPerformTask");
+                if (task.getType() == TaskDefine.PERFORM_TASK_DIGGING) {
+                    sendFunctionLog(FunctionIdDefine.TASK_TEAM_REMOVE_FUNCTION_ID, task.getType(), 0, 0, "checkPerformTask");
                 }
                 task.del();
                 playerProxy.reducePerformTaskfromPlayer(task.getId());
@@ -373,16 +371,18 @@ public class PerformTasksProxy extends BasicProxy {
     }
 
     public boolean checkTaskSize() {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int num=0;
-        for(PerformTasks tasks :performTasks){
-            if(tasks.getType()!=TaskDefine.PERFORM_TASK_OTHERHELPBACK){
+
+        // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+     /*   TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int num = 0;
+        for (PerformTasks tasks : performTasks) {
+            if (tasks.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
                 num++;
             }
         }
-        if (timerdbProxy.getPerformTaskLesNum() <= num) {
+       /* if (timerdbProxy.getPerformTaskLesNum() <= num) {
             return false;
-        }
+        }*/
         return true;
     }
 
@@ -396,6 +396,21 @@ public class PerformTasksProxy extends BasicProxy {
         return list;
     }
 
+    /**
+     * 通过任务id获取相应的任务
+     *
+     * @param id
+     * @return getTaskTeamInfo(task)
+     */
+    public M8.TaskTeamInfo getTaskTeamInfoById(long id) {
+        for (PerformTasks task : this.performTasks) {
+            if (task.getId() == id) {
+                return getTaskTeamInfo(task);
+            }
+        }
+        return null;
+    }
+
     public M8.TaskTeamInfo getTaskTeamInfo(PerformTasks task) {
         M8.TaskTeamInfo.Builder builder = M8.TaskTeamInfo.newBuilder();
         long now = GameUtils.getServerDate().getTime();
@@ -405,7 +420,7 @@ public class PerformTasksProxy extends BasicProxy {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         List<Integer> openPost = playerProxy.getPlayerFightPost();
         builder.setMaxSoldierNum((int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_command) * openPost.size());
-        if(task.getType()==TaskDefine.PERFORM_TASK_OTHERHELPBACK){
+        if (task.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
             builder.setMaxSoldierNum((int) task.getMaxSoilderNum());
         }
         builder.setName(task.getName());
@@ -433,7 +448,7 @@ public class PerformTasksProxy extends BasicProxy {
             builder.setProduct(task.getProduct());
         } else {
             builder.setAlreadyTime((int) (now / 1000 - task.getBeginTime() / 1000));
-            if((now / 1000 - task.getBeginTime()/1000)<0){
+            if ((now / 1000 - task.getBeginTime() / 1000) < 0) {
                 builder.setAlreadyTime(0);
             }
             builder.setTotalTime((int) (task.getTimeer() / 1000 - task.getBeginTime() / 1000));
@@ -459,35 +474,39 @@ public class PerformTasksProxy extends BasicProxy {
         pushPerformTaskToChangeList(tasks);
     }
 
-    public void changeTaskType(int x,int y, long time,int type){
-     for(PerformTasks tasks: performTasks){
-         if(tasks.getWorldTileX() == x && tasks.getWorldTileY()== y && time== tasks.getTimeer()){
-             tasks.setType(type);
-             tasks.save();
-         }
-     }
-    }
-
-    public void chanbeginttime(long time){
-        for(PerformTasks tasks: performTasks){
-            if(time== tasks.getTimeer()){
-                tasks.setBeginTime(time);
+    public long changeTaskType(int x, int y, long time, int type) {
+        for (PerformTasks tasks : performTasks) {
+            if (tasks.getWorldTileX() == x && tasks.getWorldTileY() == y && time == tasks.getTimeer()) {
+                tasks.setType(type);
                 tasks.save();
+                return tasks.getId();
             }
         }
+        return 0;
+    }
+
+    public long chanbeginttime(long time) {
+        for (PerformTasks tasks : performTasks) {
+            if (time == tasks.getTimeer()) {
+                tasks.setBeginTime(time);
+                tasks.save();
+                return tasks.getId();
+            }
+        }
+        return 0;
     }
 
 
     public long addPerformTaskForOffLine(int type, String name, int level, int X, int Y,
                                          long timeer, List<PlayerTeam> teams, DungeoProxy dungeoProxy,
-                                         int product, long playerId,PlayerProxy playerProxy,int icon,
-                                         int starX,int starY,Map<Integer, Long> map){
+                                         int product, long playerId, PlayerProxy playerProxy, int icon,
+                                         int starX, int starY, Map<Integer, Long> map) {
         Set<Long> formatmembers = new HashSet<>();
         for (PlayerTeam team : teams) {
             int post = (int) team.getValue(SoldierDefine.NOR_POWER_INDEX);
             int typeId = (int) team.getValue(SoldierDefine.NOR_POWER_TYPE_ID);
             int num = (int) team.getValue(SoldierDefine.NOR_POWER_NUM);
-            FormationMember member = BaseDbPojo.create(FormationMember.class,areaKey);
+            FormationMember member = BaseDbPojo.create(FormationMember.class, areaKey);
             member.setNum(num);
             member.setBaseNum(num);
             member.setTypeId(typeId);
@@ -505,12 +524,12 @@ public class PerformTasksProxy extends BasicProxy {
             int num = (int) team.getValue(SoldierDefine.NOR_POWER_NUM);
             load += teamLoad * (1 + loadRate / 10000.0) * num;
         }
-        long addLoad=0l;
-        if(map.get(PlayerPowerDefine.NOR_POWER_loadRate)!=null){
-            addLoad=   map.get(PlayerPowerDefine.NOR_POWER_loadRate);
+        long addLoad = 0l;
+        if (map.get(PlayerPowerDefine.NOR_POWER_loadRate) != null) {
+            addLoad = map.get(PlayerPowerDefine.NOR_POWER_loadRate);
         }
-        load= (long) (load*(1+(addLoad/10000.0)));
-        PerformTasks tasks = createPerformTasks(type, name, level, X, Y, timeer, formatmembers, capacity, load, product,playerProxy,icon,starX,starY,map);
+        load = (long) (load * (1 + (addLoad / 10000.0)));
+        PerformTasks tasks = createPerformTasks(type, name, level, X, Y, timeer, formatmembers, capacity, load, product, playerProxy, icon, starX, starY, map);
         if (getGameProxy() != null) {
             checkPerformTask(playerProxy);
         }
@@ -522,15 +541,15 @@ public class PerformTasksProxy extends BasicProxy {
      */
     public long addPerformTask(int type, String name, int level, int X, int Y,
                                long timeer, List<PlayerTeam> teams, DungeoProxy dungeoProxy,
-                               int product, long playerId,PlayerProxy playerProxy,int icon,
-                               int starX,int starY) {
+                               int product, long playerId, PlayerProxy playerProxy, int icon,
+                               int starX, int starY) {
 
         Set<Long> formatmembers = new HashSet<>();
         for (PlayerTeam team : teams) {
             int post = (int) team.getValue(SoldierDefine.NOR_POWER_INDEX);
             int typeId = (int) team.getValue(SoldierDefine.NOR_POWER_TYPE_ID);
             int num = (int) team.getValue(SoldierDefine.NOR_POWER_NUM);
-            FormationMember member = BaseDbPojo.create(FormationMember.class,areaKey);
+            FormationMember member = BaseDbPojo.create(FormationMember.class, areaKey);
             member.setNum(num);
             member.setBaseNum(num);
             member.setTypeId(typeId);
@@ -542,7 +561,7 @@ public class PerformTasksProxy extends BasicProxy {
         }
         long capacity = dungeoProxy.countSoldierCapacity(teams);
         long load = dungeoProxy.getTeamLoad(teams);
-        PerformTasks tasks = createPerformTasks(type, name, level, X, Y, timeer, formatmembers, capacity, load, product,playerProxy,icon,starX,starY,new HashMap<Integer,Long>());
+        PerformTasks tasks = createPerformTasks(type, name, level, X, Y, timeer, formatmembers, capacity, load, product, playerProxy, icon, starX, starY, new HashMap<Integer, Long>());
         if (getGameProxy() != null) {
             checkPerformTask(playerProxy);
         }
@@ -568,7 +587,7 @@ public class PerformTasksProxy extends BasicProxy {
         point.add((long) tasks.getWorldTileY());
         point.add(tasks.getTimeer());
         point.add((long) tasks.getType());
-        point.add((long)tasks.getProduct());
+        point.add((long) tasks.getProduct());
 //        tasks.setLoad(0); //先不删除，等node那边返回删除指令
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         checkPerformTask(playerProxy);
@@ -602,8 +621,8 @@ public class PerformTasksProxy extends BasicProxy {
         if (tasks.getType() == TaskDefine.PERFORM_TASK_DIGGING) {
             return callBackDiggingTeam(tasks, point);
         }
-        if(tasks.getType()==TaskDefine.PERFORM_TASK_OTHERHELPBACK){
-            if(tasks.getTimeer()!=tasks.getBeginTime()){
+        if (tasks.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
+            if (tasks.getTimeer() != tasks.getBeginTime()) {
                 return ErrorCodeDefine.M80004_3;
             }
         }
@@ -612,18 +631,18 @@ public class PerformTasksProxy extends BasicProxy {
         int second = (int) ((tasks.getTimeer() - now) / 1000);
         int gold = resFunBuildProxy.speedCost(second);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < gold &&tasks.getType() != TaskDefine.PERFORM_TASK_HELPBACK&&tasks.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
+        if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < gold && tasks.getType() != TaskDefine.PERFORM_TASK_HELPBACK && tasks.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
             return ErrorCodeDefine.M80004_2;
         }
-        if(tasks.getType() != TaskDefine.PERFORM_TASK_HELPBACK&&tasks.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
+        if (tasks.getType() != TaskDefine.PERFORM_TASK_HELPBACK && tasks.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, gold, LogDefine.LOST_TASK_BUY_QUICK);
         }
-        if(tasks.getType()==TaskDefine.PERFORM_TASK_OTHERHELPBACK){
-            setLoad(tasks,0,"buyQuickFinishPerformTask");
+        if (tasks.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
+            setLoad(tasks, 0, "buyQuickFinishPerformTask");
 //            tasks.setLoad(0);
         }
         //直接把玩家的队伍删除了
-        if (tasks.getType() == TaskDefine.PERFORM_TASK_ATTACK || tasks.getType() == TaskDefine.PERFORM_TASK_GOHELP || tasks.getType() == TaskDefine.PERFORM_TASK_HELPBACK ) {
+        if (tasks.getType() == TaskDefine.PERFORM_TASK_ATTACK || tasks.getType() == TaskDefine.PERFORM_TASK_GOHELP || tasks.getType() == TaskDefine.PERFORM_TASK_HELPBACK) {
             point.add((long) tasks.getWorldTileX());
             point.add((long) tasks.getWorldTileY());
         } else if (tasks.getType() == TaskDefine.PERFORM_TASK_RETURN || tasks.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
@@ -634,15 +653,15 @@ public class PerformTasksProxy extends BasicProxy {
         }
         point.add(tasks.getTimeer());
         point.add((long) tasks.getType());
-        if(tasks.getType() != TaskDefine.PERFORM_TASK_GOHELP && tasks.getType() != TaskDefine.PERFORM_TASK_HELPBACK && tasks.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK ) {
+        if (tasks.getType() != TaskDefine.PERFORM_TASK_GOHELP && tasks.getType() != TaskDefine.PERFORM_TASK_HELPBACK && tasks.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
             tasks.setTimeer(0);
         }
-        point.add((long)tasks.getProduct());
+        point.add((long) tasks.getProduct());
         checkPerformTask(playerProxy);
         return 0;
     }
 
-    public void deleteDiggingTask(int x, int y,PlayerProxy playerProxy) {
+    public long deleteDiggingTask(int x, int y, PlayerProxy playerProxy) {
         PerformTasks task = null;
         for (PerformTasks performTask : performTasks) {
             if (performTask.getWorldTileX() == x && performTask.getWorldTileY() == y) {
@@ -652,41 +671,42 @@ public class PerformTasksProxy extends BasicProxy {
             }
         }
         if (task != null) {
-            setLoad(task,0,"deleteDiggingTask3");
+            setLoad(task, 0, "deleteDiggingTask3");
 //            task.setLoad(0);
 //            pushPerformTaskToChangeList(task);
         }
         checkPerformTask(playerProxy);
+        return task.getId();
     }
 
-    public void deleteDiggingTask(int x, int y,long time,PlayerProxy playerProxy) {
+    public void deleteDiggingTask(int x, int y, long time, PlayerProxy playerProxy) {
         PerformTasks task = null;
         for (PerformTasks performTask : performTasks) {
-            if (performTask.getWorldTileX() == x && performTask.getWorldTileY() == y&& performTask.getTimeer()==time) {
-                if (performTask.getType() == TaskDefine.PERFORM_TASK_GOHELP || performTask.getType() == TaskDefine.PERFORM_TASK_HELPBACK  || performTask.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK ) {
+            if (performTask.getWorldTileX() == x && performTask.getWorldTileY() == y && performTask.getTimeer() == time) {
+                if (performTask.getType() == TaskDefine.PERFORM_TASK_GOHELP || performTask.getType() == TaskDefine.PERFORM_TASK_HELPBACK || performTask.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
                     task = performTask;
                 }
             }
         }
         if (task != null) {
-            setLoad(task,0,"deleteDiggingTask4");
+            setLoad(task, 0, "deleteDiggingTask4");
 //            task.setLoad(0);
             pushPerformTaskToChangeList(task);
         }
         checkPerformTask(playerProxy);
     }
 
-    public void deleteDiggingTask(long time,PlayerProxy playerProxy) {
+    public void deleteDiggingTask(long time, PlayerProxy playerProxy) {
         PerformTasks task = null;
         for (PerformTasks performTask : performTasks) {
-            if (performTask.getTimeer()==time) {
-                if (performTask.getType() == TaskDefine.PERFORM_TASK_GOHELP || performTask.getType() == TaskDefine.PERFORM_TASK_HELPBACK  || performTask.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK ) {
+            if (performTask.getTimeer() == time) {
+                if (performTask.getType() == TaskDefine.PERFORM_TASK_GOHELP || performTask.getType() == TaskDefine.PERFORM_TASK_HELPBACK || performTask.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
                     task = performTask;
                 }
             }
         }
         if (task != null) {
-            setLoad(task,0,"deleteDiggingTask2");
+            setLoad(task, 0, "deleteDiggingTask2");
 //            task.setLoad(0);
             pushPerformTaskToChangeList(task);
         }
@@ -694,20 +714,21 @@ public class PerformTasksProxy extends BasicProxy {
     }
 
 
-    public void deleteFormTask(long time,PlayerProxy playerProxy) {
+    public long deleteFormTask(long time, PlayerProxy playerProxy) {
         PerformTasks task = null;
         for (PerformTasks performTask : performTasks) {
-            if (performTask.getTimeer()==time) {
-                if (performTask.getType() == TaskDefine.PERFORM_TASK_GOHELP || performTask.getType() == TaskDefine.PERFORM_TASK_HELPBACK  || performTask.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK ) {
+            if (performTask.getTimeer() == time) {
+                if (performTask.getType() == TaskDefine.PERFORM_TASK_GOHELP || performTask.getType() == TaskDefine.PERFORM_TASK_HELPBACK || performTask.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
                     task = performTask;
+                    return task.getId();
                 }
             }
         }
         if (task != null) {
-            setLoad(task,0,"deleteFormTask");
+            setLoad(task, 0, "deleteFormTask");
 //            task.setLoad(0);
-            if (task.getType() == TaskDefine.PERFORM_TASK_DIGGING){
-                sendFunctionLog(FunctionIdDefine.TASK_TEAM_REMOVE_FUNCTION_ID,task.getType(),0,0,"deleteFormTask");
+            if (task.getType() == TaskDefine.PERFORM_TASK_DIGGING) {
+                sendFunctionLog(FunctionIdDefine.TASK_TEAM_REMOVE_FUNCTION_ID, task.getType(), 0, 0, "deleteFormTask");
             }
             task.del();
             pushPerformTaskToChangeList(task);
@@ -716,6 +737,7 @@ public class PerformTasksProxy extends BasicProxy {
             playerProxy.reducePerformTaskfromPlayer(task.getId());
         }
         checkPerformTask(playerProxy);
+        return 0;
     }
 
     public List<String> getDigList() {
@@ -729,7 +751,7 @@ public class PerformTasksProxy extends BasicProxy {
         return list;
     }
 
-    public void updateDiggingTask(List<PlayerTeam> teams, int x, int y, long load) {
+    public long updateDiggingTask(List<PlayerTeam> teams, int x, int y, long load) {
         PerformTasks task = null;
         for (PerformTasks performTask : performTasks) {
             if (performTask.getWorldTileX() == x && performTask.getWorldTileY() == y) {
@@ -739,7 +761,7 @@ public class PerformTasksProxy extends BasicProxy {
             }
         }
         if (task != null) {
-            setLoad(task,load,"updateDiggingTask");
+            setLoad(task, load, "updateDiggingTask");
 //            task.setLoad(load);
             //刷新防守成员
             for (PlayerTeam team : teams) {
@@ -758,23 +780,24 @@ public class PerformTasksProxy extends BasicProxy {
         }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         checkPerformTask(playerProxy);
+        return task.getId();
     }
 
-    public int changerHelp(long id){
-        PerformTasks performTasks=getPerformTaskById(id);
-        if(performTasks==null){
-            return  ErrorCodeDefine.M80014_1;
+    public int changerHelp(long id) {
+        PerformTasks performTasks = getPerformTaskById(id);
+        if (performTasks == null) {
+            return ErrorCodeDefine.M80014_1;
         }
-        if(performTasks.getType()!=TaskDefine.PERFORM_TASK_OTHERHELPBACK){
-            return  ErrorCodeDefine.M80014_2;
+        if (performTasks.getType() != TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
+            return ErrorCodeDefine.M80014_2;
         }
-        if(performTasks.getTimeer() != performTasks.getBeginTime()){
-            return  ErrorCodeDefine.M80014_3;
+        if (performTasks.getTimeer() != performTasks.getBeginTime()) {
+            return ErrorCodeDefine.M80014_3;
         }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        if(playerProxy.getPlayer().getUsedefine()==id){
+        if (playerProxy.getPlayer().getUsedefine() == id) {
             playerProxy.getPlayer().setUsedefine(0l);
-        }else {
+        } else {
             playerProxy.getPlayer().setUsedefine(performTasks.getId());
         }
         playerProxy.getPlayer().save();
@@ -788,28 +811,30 @@ public class PerformTasksProxy extends BasicProxy {
         return performTasks.size();
     }
 
-    private PerformTasks getTaskByTime(long time){
-        for(PerformTasks tasks : performTasks){
-            if(tasks.getTimeer()==time){
+    private PerformTasks getTaskByTime(long time) {
+        for (PerformTasks tasks : performTasks) {
+            if (tasks.getTimeer() == time) {
                 return tasks;
             }
         }
         return null;
     }
 
-    /****检查是否需要扣除防守阵型（减佣兵的时候调用）****/
-    public void checkDefendTroop(DungeoProxy dungeoProxy,  List<PlayerTeam> teams, long time) {
+    /****
+     * 检查是否需要扣除防守阵型（减佣兵的时候调用）
+     ****/
+    public long checkDefendTroop(DungeoProxy dungeoProxy, List<PlayerTeam> teams, long time) {
         PerformTasks task = getTaskByTime(time);
         if (task == null) {
-            return;
+            return 0;
         }
         for (PlayerTeam team : teams) {
             //没有开启自动补充的话就直接扣除就好啦
             int nowNum = (int) team.getValue(SoldierDefine.NOR_POWER_NUM);
             int index = (int) team.getValue(SoldierDefine.NOR_POWER_INDEX);
             for (Long id : task.getMembersSet()) {
-                FormationMember member =memberHashMap.get(id);
-                if (index - 20 == member.getPost() || index - 20 == member.getPost()-10 ) {
+                FormationMember member = memberHashMap.get(id);
+                if (index - 20 == member.getPost() || index - 20 == member.getPost() - 10) {
                     member.setNum(nowNum);
                     member.setBaseNum(nowNum);
                     if (nowNum <= 0) {
@@ -821,17 +846,145 @@ public class PerformTasksProxy extends BasicProxy {
                 member.save();
             }
         }
-        long capiry=dungeoProxy.countSoldierCapacity(teams);
+        long capiry = dungeoProxy.countSoldierCapacity(teams);
         task.setCapacity(capiry);
         task.save();
+        return task.getId();
     }
-    public int getguardNum(){
-        int num=0;
-        for(PerformTasks tasks: performTasks){
-            if(tasks.getType()==TaskDefine.PERFORM_TASK_OTHERHELPBACK){
+
+    public int getguardNum() {
+        int num = 0;
+        for (PerformTasks tasks : performTasks) {
+            if (tasks.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
                 num++;
             }
         }
         return num;
     }
+
+    /**
+     * 校验过期时间是否与服务器时间符合
+     *
+     * @param taskId
+     * @return rs
+     */
+    public int checkIsTimeOut(long taskId) {
+        int rs = 0;
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        if (getTaskById(taskId) != null) {
+            PerformTasks tasks = getTaskById(taskId);
+            int timeer = (int) (tasks.getTimeer() / 1000);
+            long timee=tasks.getTimeer();
+             if (GameUtils.checkTime(timeer)||timee==tasks.getBeginTime()) {
+                checkPerformTask(playerProxy);
+                return rs;
+            } else {
+                rs = ErrorCodeDefine.M80103_2;
+                return rs;
+            }
+        }
+        return rs;
+    }
+
+    /**
+     * 根据ID获取task
+     *
+     * @param taskId
+     * @return task
+     */
+    public PerformTasks getTaskById(long taskId) {
+        for (PerformTasks tasks : this.performTasks) {
+            if (tasks.getId() == taskId) {
+                return tasks;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据到达时间获取taskid
+     *
+     * @param time
+     * @return id
+     */
+    public long getTaskIdByTime(long time) {
+        for (PerformTasks tasks : this.performTasks) {
+            if (tasks.getTimeer() == time) {
+                return tasks.getId();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 通过key获得TeamNotice
+     *
+     * @param key
+     * @return TeamNotice
+     */
+    public TeamNotice getTeamNoticeByKey(long key) {
+        for (TeamNotice teamNotice : teamNotices) {
+            if (teamNotice.getId() == key) {
+                return teamNotice;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 检查被攻击的到达时间是否与服务器时间吻合
+     *
+     * @param key
+     * @return rs
+     */
+    public int checkTeamNoticeTimeOut(long key) {
+        int rs = 0;
+        TeamNotice teamNotice = getTeamNoticeByKey(key);
+        if (teamNotice != null && key == teamNotice.getId()) {
+            int timeer = (int) (teamNotice.getArriveTime() / 1000);
+            if (GameUtils.checkTime(timeer)) {
+                checkTeamNotices();
+                return rs;
+            } else {
+                rs = ErrorCodeDefine.M80107_2;
+                return rs;
+            }
+        }
+        return rs;
+    }
+
+
+    /**
+     * 通过坐标点获取TeamNotice
+     *
+     * @param x
+     * @param y
+     * @return id
+     */
+    public long getTeamNoticeByXY(int x, int y) {
+        for (TeamNotice notice : teamNotices) {
+            if (notice.getX() == x && notice.getY() == y) {
+                return notice.getId();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 通过time获取TeamNotice
+     *
+     * @param time
+     * @return id
+     */
+    public long getTeamNoticeByTime(long time) {
+        TeamNotice teamNotice = null;
+        for (TeamNotice notice : teamNotices) {
+            if (notice.getArriveTime() == time) {
+                teamNotice = notice;
+                return teamNotice.getId();
+            }
+        }
+        return 0;
+    }
+
 }

@@ -15,7 +15,7 @@ import com.znl.pojo.db.Report
 import com.znl.pojo.db.set.{ArenaReportSetDb, TeamDateSetDb, ArenaLastRankSetDb, ArenaRankSetDb}
 import com.znl.proto.Common.FightElementInfo
 import com.znl.proto.{M21, M7, M20}
-import com.znl.proxy.{ConfigDataProxy, TimerdbProxy, DbProxy}
+import com.znl.proxy.{ConfigDataProxy, DbProxy}
 import com.znl.service.map.{WorldTile, WorldBlock}
 import com.znl.service.trigger.{TriggerType, TriggerEvent}
 import com.znl.template.ReportTemplate
@@ -235,8 +235,8 @@ class ArenaService(areaKey: String) extends Actor with ActorLogging with Service
       ongetArenaRank(playeridlist,cmd)
     case AddServerArenaReport(report : Report) =>
       onAddServerArenaReport(report)
-    case GetAllServerArenaReport() =>
-      onGetAllServerArenaReport()
+    case GetAllServerArenaReport(cmd :Int) =>
+      onGetAllServerArenaReport(cmd :Int)
     case GetOneServerArenaReport(id : Long) =>
       onGetOneServerArenaReport(id)
     case EachHourNotice() =>
@@ -271,8 +271,8 @@ class ArenaService(areaKey: String) extends Actor with ActorLogging with Service
     sender() ! GetOneServerArenaReportBack(res)
   }
 
-  def onGetAllServerArenaReport(): Unit ={
-    sender() ! GetAllServerArenaReportBack(reportList)
+  def onGetAllServerArenaReport(cmd :Int): Unit ={
+    sender() ! GetAllServerArenaReportBack(reportList,cmd)
   }
 
   def onAddServerArenaReport(r : Report): Unit ={

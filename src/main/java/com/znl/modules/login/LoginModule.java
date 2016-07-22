@@ -106,13 +106,15 @@ public class LoginModule extends BasicModule  {
         sendLog(eventLog);
 
         sendNetMsg(ProtocolModuleDefine.NET_M1, ProtocolModuleDefine.NET_M1_C10002, M1.M10002.S2C.newBuilder().setRs(0).build());
+        sendMsg();
     }
 
     //发送给客户端，登录成功
     private void sendClientLoginResult(int rs){
         M1.M10000.S2C s2c = M1.M10000.S2C.newBuilder().setRs(rs).build();  //直接告诉客户端登录成功了，客户端做相应的逻辑，等服务器正在登陆成功后，主动推送20000协议
         pushNetMsg(ProtocolModuleDefine.NET_M1, ProtocolModuleDefine.NET_M1_C10000, s2c); //不要用send
-        sendPushNetMsgToClient();
+      //  sendPushNetMsgToClient();
+        sendMsg();
     }
 
 
@@ -184,8 +186,9 @@ public class LoginModule extends BasicModule  {
         if(player == null){  //创建角色
             CustomerLogger.info("======没有角色===========");
             rs = 0;
-            sendClientLoginResult(rs);
+           // sendClientLoginResult(rs);
             player = createEmptyPlayer(accountName,cache);
+            sendClientLoginResult(rs);
         }else{
             //TODO 这里要做一层判断，是否被禁号了
 
@@ -198,7 +201,7 @@ public class LoginModule extends BasicModule  {
                     player.setBanActDate(0);
                 }
             }
-            sendClientLoginResult(rs);  //直接就先判断，快速通知客户端状态
+  //          sendClientLoginResult(rs);  //直接就先判断，快速通知客户端状态
 
             if(rs < 0){  //登录失败
                 loginFail(player);
@@ -213,7 +216,7 @@ public class LoginModule extends BasicModule  {
                 loginSuccess(player,gameProxy,cache);
             }
         }
-
+        sendClientLoginResult(rs);  //直接就先判断，快速通知客户端状态
         if(rs >= ErrorCodeDefine.M100001_1) {  //登录成功
             cache.setPlayerId(player.getId());
             isInit = true;
@@ -251,6 +254,7 @@ public class LoginModule extends BasicModule  {
 //        DbProxy.tell(new GameMsg.AddPlayerByAccountName(accountName, playerId, areaKey), self());
 
         GameProxy gameProxy = new GameProxy(player,cache);
+        this.setGameProxy(gameProxy); //  新加的
         SoldierProxy soldierProxy = gameProxy.getProxy(ActorDefine.SOLDIER_PROXY_NAME);
 
 //        soldierProxy.creatSoldier(SoldierDefine.DEFAULT_SOLDIER_TYPE_ID,SoldierDefine.DEFAULT_SOLDIER_NUM,playerId);
@@ -311,8 +315,8 @@ public class LoginModule extends BasicModule  {
     }
 
     private void loginSuccess(Player player, GameProxy gameProxy,PlayerCache cache){
-        TimerdbProxy timerdbProxy=gameProxy.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        timerdbProxy.initTimer();
+       // TimerdbProxy timerdbProxy=gameProxy.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+       // timerdbProxy.initTimer();
 //        ResFunBuildProxy resFunBuildProxy=gameProxy.getProxy(ActorDefine.RESFUNBUILD_PROXY_NAME);
 //        resFunBuildProxy.initResFuBuild(new ArrayList<List<Integer>>());
         NewBuildProxy newBuildProxy = gameProxy.getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
@@ -412,11 +416,11 @@ public class LoginModule extends BasicModule  {
             }
         }
         // 新号加玩家免战buff
-        M3.M30000.S2C.Builder builder = M3.M30000.S2C.newBuilder();
-        builder.setType(0);
-        pushNetMsg(ProtocolModuleDefine.NET_M3, ProtocolModuleDefine.NET_M3_C30000, builder.build());
-        sendPushNetMsgToClient();
-         ItemBuffProxy itemBuffProxy=gameProxy.getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
+//        M3.M30000.S2C.Builder builder = M3.M30000.S2C.newBuilder();
+//        builder.setType(0);
+//        pushNetMsg(ProtocolModuleDefine.NET_M3, ProtocolModuleDefine.NET_M3_C30000, builder.build());
+//        sendPushNetMsgToClient();
+        ItemBuffProxy itemBuffProxy=gameProxy.getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
         long overTime = (GameUtils.getServerDate().getTime())+(120*TimerDefine.BUFF_MSEL);
         itemBuffProxy.addItemBuff(3121,ItemDefine.ITEM_REWARD_AVOID_WAR, PlayerPowerDefine.NOR_POWER_protect_date,1,120,1);
         playerProxy.setProtectOverDate(overTime);

@@ -9,7 +9,6 @@ import com.znl.base.BasicModule;
 import com.znl.core.PlayerReward;
 import com.znl.define.*;
 import com.znl.msg.GameMsg;
-import com.znl.pojo.db.Timerdb;
 import com.znl.proto.*;
 import com.znl.proxy.*;
 import com.znl.service.WorldService;
@@ -42,7 +41,6 @@ public class CapacityModule extends BasicModule {
                 diff.setValue(_capacity);
                 builder.addDiffs(diff.build());
                 pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, builder.build());
-                sendPushNetMsgToClient();
                 PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
                 GameMsg.AddPlayerToRank msg = new GameMsg.AddPlayerToRank(playerProxy.getPlayerId(), soldierProxy.getHighestCapacity(), PowerRanksDefine.POWERRANK_TYPE_CAPACITY);
                 sendServiceMsg(ActorDefine.POWERRANKS_SERVICE_NAME, msg);
@@ -51,10 +49,8 @@ public class CapacityModule extends BasicModule {
                     tellMsgToArmygroupNode(armymsg, playerProxy.getArmGrouId());
                 }
                 PlayerReward reward = new PlayerReward();
-                M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_CREATESODIER_NUM, 0, reward);
-                if(builder19!=null) {
-                    sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
-                }
+                taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_CREATESODIER_NUM, 0);
+                sendPushNetMsgToClient();
             }
         }else if(anyRef instanceof GameMsg.LoginInitCapacity){
             SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
@@ -71,17 +67,18 @@ public class CapacityModule extends BasicModule {
                         }
                         pushNetMsg(ProtocolModuleDefine.NET_M2,ProtocolModuleDefine.NET_M2_C20002,sendDifferent(powerList));
                     }
-                    M4.M40000.S2C.Builder builder = M4.M40000.S2C.newBuilder().addAllSoldiers(soldierInfos);
-                    pushNetMsg(ProtocolModuleDefine.NET_M4,ProtocolModuleDefine.NET_M4_C40000,builder.build());
+                    M2.M20007.S2C.Builder builder = M2.M20007.S2C.newBuilder().addAllSoldierList(soldierInfos);
+                    pushNetMsg(ProtocolModuleDefine.NET_M2,ProtocolModuleDefine.NET_M2_C20007,builder.build());
                     PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
                     performTasksProxy.clearPerformTasks();
                     performTasksProxy.clearTeamNotice();
                     sendPushNetMsgToClient();
                 }
+                sendModuleMsg(ActorDefine.MAP_MODULE_NAME,new GameMsg.SendTeamTaskInfo());
             }
             soldierProxy.loginInitPowerValue();
             self().tell(new GameMsg.CountCapacity(), ActorRef.noSender());
-            sendModuleMsg(ActorDefine.MAP_MODULE_NAME,new GameMsg.SendTeamTaskInfo());
+
             fixSoldier = true;
         }
     }

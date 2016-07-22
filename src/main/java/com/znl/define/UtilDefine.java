@@ -15,4 +15,7 @@ public class UtilDefine {
     public final static  double RUN_UNDER=10000.0;
 
 
+    //领取状态
+    public final static  int REWARD_STATE_NONE_GET=0;//未领取
+    public final static  int REWARD_STATE_HAS_GET=1;//以领取
 }

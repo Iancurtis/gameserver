@@ -142,8 +142,6 @@ public class ItemModule extends BasicModule {
                 ResFunBuildProxy resFunBuildProxy=getProxy(ActorDefine.RESFUNBUILD_PROXY_NAME);
                 resFunBuildProxy.changetAutoBuildState(1);
             }
-            GameMsg.CheckAllTimerAndSend30000 message=new GameMsg.CheckAllTimerAndSend30000();
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message);
             //阵型
             sendModuleMsg(ActorDefine.TROOP_MODULE_NAME, new GameMsg.CheckBaseDefendFormation());
             if (reward.soldierMap.size() > 0){
@@ -160,7 +158,7 @@ public class ItemModule extends BasicModule {
                 sendDifferent(poweerlist);
             }
         }
-
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet90007Event(Request request) {
@@ -183,6 +181,7 @@ public class ItemModule extends BasicModule {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, build20007);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90007, builder.build());
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet90003Event(Request request) {
@@ -247,6 +246,7 @@ public class ItemModule extends BasicModule {
             }
 
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -260,6 +260,7 @@ public class ItemModule extends BasicModule {
         }
          builder.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90005, builder.build());
+        sendPushNetMsgToClient();
     }
 
 
@@ -295,6 +296,7 @@ public class ItemModule extends BasicModule {
             chat.legionName = playerProxy.getLegionName();
             sendModuleMsg(ActorDefine.CHAT_MODULE_NAME,new GameMsg.sendAChat(chat));
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -330,6 +332,26 @@ public class ItemModule extends BasicModule {
     }
 
 
+    /**
+     * //buff倒计时完成后请求
+     * @param request
+     */
+    private void OnTriggerNet90002Event(Request request) {
+        M9.M90002.C2S c2S=request.getValue();
+        int itemId=c2S.getItemId();//道具ID，道具Buff的唯一ID
+        ItemBuffProxy itemBuffProxy=getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
+        M9.M90002.S2C.Builder builder90002=M9.M90002.S2C.newBuilder();
+        M9.M90003.S2C.Builder builder90003=M9.M90003.S2C.newBuilder();
+        itemBuffProxy.checkBufferIsOverTime(itemId,builder90002,builder90003);
+        System.err.println("+++++++++++++检测buff返回:"+builder90002.getRs());
+        System.err.println("+++++++++++++检测下一个buff返回:"+builder90003.getItemBuffInfoList().size());
+        pushNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90002, builder90002.build());
+        if(!builder90003.getItemBuffInfoList().isEmpty()){
+            //刷新新的buffer
+            pushNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90003, builder90003.build());
+        }
+        sendPushNetMsgToClient();
+    }
 
     /**
      * 重复协议请求处理
@@ -337,7 +359,11 @@ public class ItemModule extends BasicModule {
      */
     @Override
     public void repeatedProtocalHandler(int cmd) {
-
+        //检测itemBuff是否过期
+        if(cmd==ProtocolModuleDefine.NET_M9_C90002){
+            //返回itemBuff列表
+            OnTriggerNet90003Event(null);
+        }
     }
 
 }

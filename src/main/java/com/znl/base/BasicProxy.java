@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import com.znl.GameMainServer;
 import com.znl.define.ActorDefine;
+import com.znl.define.DataDefine;
 import com.znl.define.FunctionIdDefine;
 import com.znl.log.CustomerLogger;
 import com.znl.log.admin.tbllog_function;
@@ -12,11 +13,15 @@ import com.znl.msg.ShareMsg;
 import com.znl.pojo.db.Equip;
 import com.znl.pojo.db.Report;
 import com.znl.proto.M25;
+import com.znl.proxy.ConfigDataProxy;
 import com.znl.proxy.GameProxy;
 import com.znl.proxy.PlayerProxy;
 import com.znl.utils.GameUtils;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,6 +60,27 @@ abstract public class BasicProxy{
   }
 
   protected abstract void init();
+
+  protected void refurceExpandPowerMap(){
+    ConcurrentHashMap<Integer,Long> map  = new ConcurrentHashMap<>(expandPowerMap);
+    init();
+    List<JSONObject> sendPowers = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.RESOURCE, "isshow", 1);
+
+    //比较重置前和重置后的两个map，取出有不一样的通知到playerProxy
+    for (JSONObject key :sendPowers){
+      int power = key.getInt("ID");
+      PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+      if (expandPowerMap.contains(power) && !map.contains(power)){
+        playerProxy.addPowerToChangePower(power);
+      }else if(!expandPowerMap.contains(power) && map.contains(power)){
+        playerProxy.addPowerToChangePower(power);
+      }else  if (expandPowerMap.contains(power) && map.contains(power)){
+        if(map.get(key).longValue() != expandPowerMap.get(key)){
+          playerProxy.addPowerToChangePower(power);
+        }
+      }
+    }
+  }
 
   private Queue<BaseDbPojo> dbPojoQueue = new LinkedList<>();
   //保存要入库的数据
@@ -189,4 +215,28 @@ abstract public class BasicProxy{
     ActorSelection armyGroupNode = GameMainServer.system().actorSelection(path);
     armyGroupNode.tell(msg, ActorRef.noSender());
   }
+
+  /**
+   * 4点钟刷新事件
+   * 需要处理的记得重写此方法
+   */
+  public void fixedTimeEventHandler(){
+
+  }
+
+  /**
+   * 每天零点事件
+   */
+  public void zeroTimerEventHandler(){
+
+  }
+
+  /**
+   * 每次成功登录之后的事件处理
+   */
+  public  void afterLoginEvent(){
+
+  }
+
+
 }

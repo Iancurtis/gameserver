@@ -14,6 +14,8 @@ public class BattleDefine {
     public static final int BATTLE_TYPE_WORLD = 4;
     /*世界战斗防守*/
     public static final int BATTLE_TYPE_WORLD_DEFEND = 5;
+    /*军团副本战斗*/
+    public static final int BATTLE_TYPE_ARMYGROUP_DEFEND = 6;
     /*冒险类型*/
     public static final int ADVANTRUE_TYPE_EQUIP = 1;//装备探险
     public static final int ADVANTRUE_TYPE_ORNDANCE = 2;//配件探险

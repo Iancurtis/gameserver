@@ -9,6 +9,7 @@ import com.znl.define.ProtocolModuleDefine;
 import com.znl.framework.socket.Request;
 import com.znl.msg.GameMsg;
 import com.znl.proto.Common;
+import com.znl.proto.M2;
 import com.znl.proto.M4;
 import com.znl.proxy.GameProxy;
 import com.znl.proxy.SoldierProxy;
@@ -79,12 +80,14 @@ public class SoldierModule  extends BasicModule {
             //阵型
             sendModuleMsg(ActorDefine.TROOP_MODULE_NAME,new GameMsg.CheckBaseDefendFormation());
         }
+        sendPushNetMsgToClient();
     }
 
     private void sendRefuceSoldierInfo(List<Common.SoldierInfo> soldierInfos){
-        M4.M40000.S2C.Builder builder = M4.M40000.S2C.newBuilder();
-        builder.addAllSoldiers(soldierInfos);
-        sendNetMsg(ActorDefine.SOLDIER_MODULE_ID,ProtocolModuleDefine.NET_M4_C40000,builder.build());
+        M2.M20007.S2C.Builder builder = M2.M20007.S2C.newBuilder();
+        builder.addAllSoldierList(soldierInfos);
+        sendNetMsg(ActorDefine.SOLDIER_MODULE_ID,ProtocolModuleDefine.NET_M2_C20007,builder.build());
+        sendPushNetMsgToClient();
     }
 
     /**

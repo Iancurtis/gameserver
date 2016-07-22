@@ -13,7 +13,7 @@ public class  TimerDefine {
  public static final int ADVENCE_REFRESH= 2;//副本探险次数
  public static final int BUILDING_LEVEL_UP= 3;//建筑升级
  public static final int DEFAULT_BOOM_RECOVER = 4;//恢复繁荣度
- public static final int DEFAULT_GET_PRESTIGE = 5;//登录领取声望.
+ public static final int DEFAULT_GET_PRESTIGE = 5;//登录领取声望
  public static final int TIMER_TYPE_RESOUCE = 6;//资源产出定时器
  public static final int FRIEND_BLESS = 7; //好友祝福获得体力
  public static final int BUY_ENERGY = 8; //购买体力
@@ -53,7 +53,8 @@ public class  TimerDefine {
  public static final int ACTIVITY_DEL_FREETIME= 43;//下一个活动删除刷新时间  0表示没活动删除了
  public static final int ACTIVITY_ADD_FREETIME= 44;//下一个活动要增加的的时间  0表示没活动增加了
  public static final int JUNSHILOTTERY= 45;//军师抽奖
-
+ public static final int ARMYGROUP_REFRESH= 46;//军团副本挑战次数
+ public static final int ARMYGROUP_DUNGEO_REFRESH= 47;//军团副本没日刷新
 /*****手动充值的定时器类型*****/
  public final static List<Integer> TIMER_REFRESH_BYHAND = Arrays.asList(1,5,14,21);
 
@@ -95,5 +96,8 @@ public class  TimerDefine {
  public static final int CHANGE_TIMER_INIT_TYPE_BUY_TIME = 3;
 
  /*********下午4点触发*********/
- public static final int TIMER_16 = 16;
+ public static final int TIMER_TEST = -1;
+ public static final int TIMER_1M = 2;//每分钟触发
+ public static final int TIMER_1H = 3;//每小时触发
+ public static final int TIMER_4PM = 14;//每天下午四点
 }

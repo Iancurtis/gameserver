@@ -1,12 +1,10 @@
 package com.znl.proxy;
 
-import com.google.gson.JsonObject;
 import com.znl.base.BaseDbPojo;
 import com.znl.base.BasicProxy;
 import com.znl.define.*;
-import com.znl.framework.socket.CodecContext;
+import com.znl.log.CustomerLogger;
 import com.znl.pojo.db.ItemBuff;
-import com.znl.proto.M3;
 import com.znl.proto.M9;
 import com.znl.utils.GameUtils;
 import org.apache.mina.util.ConcurrentHashSet;
@@ -46,7 +44,7 @@ public class ItemBuffProxy extends BasicProxy {
                 changeBuff.offer(itemBuff);
             }
         }
-        init();
+        refurceExpandPowerMap();
     }
 
     public void saveItemBuff() {
@@ -94,7 +92,6 @@ public class ItemBuffProxy extends BasicProxy {
     public void createItemBuff(int itemId, int type, int powerId, int value, int times, int num) {
         GameProxy gameProxy = super.getGameProxy();
         PlayerProxy playerProxy = gameProxy.getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = gameProxy.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         ItemBuff itemBuff = BaseDbPojo.create(ItemBuff.class,areaKey);
         long beginTime = GameUtils.getServerDate().getTime();
         JSONObject jsonObject=ConfigDataProxy.getConfigInfoFindById(DataDefine.ITEM_BUFF_FACE, powerId);
@@ -109,7 +106,6 @@ public class ItemBuffProxy extends BasicProxy {
         for(ItemBuff itemBuff1:del){
             itemBuffs.remove(itemBuff1);
             itemBuff1.del();
-            timerdbProxy.delTimer(TimerDefine.ITEM_BUFF,itemBuff1.getType(),itemBuff1.getPowerId());
             if (changeBuff.contains(itemBuff1)) {
                 changeBuff.remove(itemBuff1);
             }
@@ -149,9 +145,7 @@ public class ItemBuffProxy extends BasicProxy {
                             if (delpowerId != ib.getPowerId()) {
                                 ItemBuff delinfo = getBuffByPowerId(delpowerId);
                                 if (delinfo != null) {
-                                    //long oldtime = delinfo.getEndTime()-delinfo.getBeginTime();
                                     if (delinfo.getPowerId() == delpowerId && delinfo.getType() == type && delinfo.getValue() == delvalue) {
-                                        timerdbProxy.delTimer(TimerDefine.ITEM_BUFF, delinfo.getType(), delinfo.getPowerId());
                                         playerProxy.reduceItemBuffFormPlayer(delinfo.getId());
                                         itemBuffs.remove(delinfo);
                                         delinfo.del();
@@ -161,22 +155,15 @@ public class ItemBuffProxy extends BasicProxy {
                                     }
                                 }
                             }
-
                             System.err.println(powerId + " //TODO 外观 old buff" + id);
                         }
                     }
-                    init();
+                    refurceExpandPowerMap();
                     /**end*********************外观替换**/
                     ib.setItemId(itemId);
                     System.err.println(powerId + " //TODO 外观 new buff" + itemId);
                 }
                 /********相同power，相同效果，时间累加**********/
-                long isExsit = timerdbProxy.addTimer(TimerDefine.ITEM_BUFF, 0, (int) ((ib.getEndTime() - ib.getBeginTime()) / 1000), TimerDefine.TIMER_REFRESH_NONE, ib.getType(), ib.getPowerId(), playerProxy);
-                if (isExsit == 0) {
-                    long lesTime = timerdbProxy.getTimerlesTime(TimerDefine.ITEM_BUFF, ib.getType(), ib.getPowerId());
-                    lesTime += (times * 60) * num;
-                    timerdbProxy.setLesTime(TimerDefine.ITEM_BUFF, ib.getType(), ib.getPowerId(), (int) (lesTime));
-                }
             } else {
                 itemBuff.setBeginTime(beginTime);
                 itemBuff.setEndTime(beginTime + (times * TimerDefine.BUFF_MSEL) * num);
@@ -188,20 +175,14 @@ public class ItemBuffProxy extends BasicProxy {
         } else {/********* 道具buff ********/
             if (ib != null) {//道具相同的情况
                 if (ib.getPowerId() == powerId && ib.getValue() == value) {//效果一样，
-                    ib.setEndTime(ib.getEndTime() + (times * TimerDefine.BUFF_MSEL) * num);
+                   // ib.setEndTime(ib.getEndTime() + (times * TimerDefine.BUFF_MSEL) * num);
+                    itemBuff.setEndTime(beginTime+15000);
                     ib.save();
                     /********相同power，相同效果，时间累加**********/
-                    long isExsit = timerdbProxy.addTimer(TimerDefine.ITEM_BUFF, 0,
-                            (int) ((ib.getEndTime() - ib.getBeginTime()) / 1000), TimerDefine.TIMER_REFRESH_NONE,
-                            ib.getType(), ib.getPowerId(), playerProxy);
-                    if (isExsit == 0) {
-                        long lesTime = timerdbProxy.getTimerlesTime(TimerDefine.ITEM_BUFF, ib.getType(), ib.getPowerId());
-                        lesTime += (times * 60) * num;
-                        timerdbProxy.setLesTime(TimerDefine.ITEM_BUFF, ib.getType(), ib.getPowerId(), (int) (lesTime));
-                    }
                 } else {//效果不一样
                     itemBuff.setBeginTime(ib.getEndTime());
-                    itemBuff.setEndTime(ib.getEndTime() + (times * TimerDefine.BUFF_MSEL) * num);
+                   // itemBuff.setEndTime(ib.getEndTime() + (times * TimerDefine.BUFF_MSEL) * num);
+                    itemBuff.setEndTime(beginTime+15000);
                     itemBuffs.add(itemBuff);
                     itemBuff.save();
                     playerProxy.addItemBuff(itemBuff.getId());
@@ -209,12 +190,13 @@ public class ItemBuffProxy extends BasicProxy {
             } else {
                 itemBuff.setBeginTime(beginTime);
                 itemBuff.setEndTime(beginTime + (times * TimerDefine.BUFF_MSEL) * num);
+                itemBuff.setEndTime(beginTime+15000);
                 itemBuffs.add(itemBuff);
                 itemBuff.save();
                 playerProxy.addItemBuff(itemBuff.getId());
             }
         }
-        init();
+        refurceExpandPowerMap();
     }
 
     /***
@@ -222,22 +204,14 @@ public class ItemBuffProxy extends BasicProxy {
      */
     public void addItemBuff(int itemId, int type, int powerId, int value, int times, int num) {
         createItemBuff(itemId, type, powerId, value, times, num);
-        GameProxy gameProxy = super.getGameProxy();
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = gameProxy.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         long beginTime = GameUtils.getServerDate().getTime();
         ItemBuff itbuf = getBuffByPowerId(powerId);
         if (itbuf != null) {
             if (itbuf.getBeginTime() <= beginTime && itbuf.getEndTime() > beginTime) {
-                long lesTime = itbuf.getEndTime() - itbuf.getBeginTime();
-                long isExsit = timerdbProxy.addTimer(TimerDefine.ITEM_BUFF, 0, (int) (lesTime / 1000), TimerDefine.TIMER_REFRESH_NONE, itbuf.getType(), itbuf.getPowerId(), playerProxy);
-                if (isExsit != 0) {
-                    timerdbProxy.setLesTime(TimerDefine.ITEM_BUFF, itbuf.getType(), itbuf.getPowerId(), (int) (lesTime / 1000));
-                    timerdbProxy.setLastOperatinTime(TimerDefine.ITEM_BUFF, itbuf.getType(), itbuf.getPowerId(), beginTime);
                     itbuf.setState(1); //开启定时器，设置状态为1，正在使用效果
                     itbuf.save();
-                    init();
-                }
+                    refurceExpandPowerMap();
                 //免战buff
                 if (powerId == PlayerPowerDefine.NOR_POWER_protect_date) {
                     long addtime=times * TimerDefine.BUFF_MSEL*num;
@@ -259,10 +233,9 @@ public class ItemBuffProxy extends BasicProxy {
      * 时间过期,清除buff
      * overdue 过期时间
      */
-    public void overTimeClearBuff(long overdue,List<M3.TimeInfo> m3info) {
+    public void overTimeClearBuff(long overdue) {
         isPushBuff = false;
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         List<ItemBuff> delList = new ArrayList<ItemBuff>();
         for (ItemBuff itembuff : itemBuffs) {
             if (itembuff.getEndTime() <= overdue) { //过期的删掉
@@ -278,8 +251,6 @@ public class ItemBuffProxy extends BasicProxy {
         if (delList.size() > 0) {
             for (int i = 0; i < delList.size(); i++) {
                 ItemBuff itembuff = delList.get(i);
-                M3.TimeInfo info = timerdbProxy.delTimer(TimerDefine.ITEM_BUFF, itembuff.getType(), itembuff.getPowerId());
-                timerdbProxy.addTimeDbToList(info,m3info);
                 playerProxy.reduceItemBuffFormPlayer(itembuff.getId());
                 itemBuffs.remove(itembuff);
                 itembuff.del();
@@ -291,35 +262,18 @@ public class ItemBuffProxy extends BasicProxy {
         for (ItemBuff itembuff : itemBuffs) {
             long beginTime = GameUtils.getServerDate().getTime();
             if (itembuff.getBeginTime() <= overdue && itembuff.getEndTime() > overdue) { //开始执行可以执行的
-                long lesTime = itembuff.getEndTime() - itembuff.getBeginTime();
-                long isExsit = timerdbProxy.addTimer(TimerDefine.ITEM_BUFF, 0,
-                        (int) (lesTime / 1000), TimerDefine.TIMER_REFRESH_NONE,
-                        itembuff.getType(), itembuff.getPowerId(), playerProxy);
-                if (isExsit != 0) {
-                    M3.TimeInfo info = timerdbProxy.setLastOperatinTime(TimerDefine.ITEM_BUFF, itembuff.getType(), itembuff.getPowerId(), beginTime);
-                    timerdbProxy.addTimeDbToList(info,m3info);
                     itembuff.setState(1); //开启定时器，设置状态为1，正在使用效果
                     itembuff.save();
                     isPushBuff = true;
-                } else {
-                    long lastOptTime = timerdbProxy.getLastOperatinTime(TimerDefine.ITEM_BUFF, itembuff.getType(), itembuff.getPowerId());
-                    long passTime = beginTime - lastOptTime;
-                    if (passTime < lesTime) {
-                        M3.TimeInfo info = timerdbProxy.setLesTime(TimerDefine.ITEM_BUFF, itembuff.getType(), itembuff.getPowerId(), (int) Math.ceil((lesTime - passTime) / 1000.0));
-                        timerdbProxy.addTimeDbToList(info,m3info);
-                    }
-                }
+            }
+
         }
-        }
-        init();
     }
 
 
     public void delBuffer(int powerId){
         ItemBuff itembuff=getBuffByPowerId(powerId);
         if(itembuff!=null) {
-            TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-            timerdbProxy.delTimer(TimerDefine.ITEM_BUFF, itembuff.getType(), itembuff.getPowerId());
             PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
             playerProxy.reduceItemBuffFormPlayer(itembuff.getId());
             itemBuffs.remove(itembuff);
@@ -328,7 +282,7 @@ public class ItemBuffProxy extends BasicProxy {
                 changeBuff.remove(itembuff);
             }
         }
-        init();
+        refurceExpandPowerMap();
     }
 
     /**
@@ -346,12 +300,12 @@ public class ItemBuffProxy extends BasicProxy {
     /**
      * 返回离过期时间最近的一个buff
      */
-    public long getWillBeOverdueBuff(long orverTime,List<M3.TimeInfo> m3info) {
+    public long getWillBeOverdueBuff(long orverTime) {
         long now=GameUtils.getServerDate().getTime();
         if(orverTime>now){
             return now;
         }
-        overTimeClearBuff(orverTime,m3info);
+        overTimeClearBuff(orverTime);
         long minTime = GameUtils.getServerDate().getTime();
         for (ItemBuff ibf : itemBuffs) {
             if (minTime == -1) {
@@ -381,7 +335,8 @@ public class ItemBuffProxy extends BasicProxy {
                 builder.setPowerId(itemBuff.getPowerId());
                 builder.setValue(itemBuff.getValue());
                 builder.setTime((int) ((itemBuff.getEndTime() - itemBuff.getBeginTime()) / 1000));
-                System.err.println(itemBuff.getPowerId()+"发给客户端bufer时间"+((itemBuff.getEndTime() - itemBuff.getBeginTime()) / 1000));
+                System.err.println(itemBuff.getPowerId() + "发给客户端bufer时间" + ((itemBuff.getEndTime() - itemBuff.getBeginTime()) / 1000));
+                builder.setRemainTime((int)(itemBuff.getEndTime() - GameUtils.getServerDate().getTime()) / 1000);//剩余时间
                 itemBuffList.add(builder.build());
             }
         }
@@ -418,6 +373,85 @@ public class ItemBuffProxy extends BasicProxy {
             }
         }
         return 0;
+    }
+
+
+    /**
+     * 90002
+     * message S2C{
+            required int32 rs = 1;//0:成功(已过期：remainTime=null;没有过期: 已过期：remainTime>0);-1：buffer不存在;
+            required int32 itemId = 2;
+            optional int32 remainTime = 6;
+        }
+     * 检测buff是否已经倒计时完
+     * @param itemId 道具id
+     * @return
+     */
+    public void checkBufferIsOverTime(int itemId,M9.M90002.S2C.Builder builder9002,M9.M90003.S2C.Builder builder9003){
+        builder9002.setRs(0);
+        builder9002.setItemId(itemId);
+        ItemBuff itemBuff=null;
+        for(ItemBuff buff:itemBuffs){
+            if(buff.getItemId()==itemId){
+                itemBuff=buff;
+                break;
+            }
+        }
+        if(itemBuff==null){
+            builder9002.setRs(ErrorCodeDefine.M90002_2);
+        }else{
+            if(GameUtils.getServerDate().getTime()>=itemBuff.getEndTime()){
+                builder9002.setRemainTime(0);
+                int powerId=itemBuff.getPowerId();
+                //移除过期的
+                itemBuffs.remove(itemBuff);
+                //拿到powerId相同的下一个ItemBffer，如果存在发给前端
+                ItemBuff nextBuff= getBuffByPowerId(powerId);
+                if(nextBuff!=null&&nextBuff.getState()==0&&nextBuff.getEndTime()>GameUtils.getServerDate().getTime()){
+                    M9.ItemBuffInfo.Builder builderInfo = M9.ItemBuffInfo.newBuilder();
+                    builder9003.setRs(0);
+                    builderInfo.setItemId(itemBuff.getItemId());
+                    builderInfo.setType(itemBuff.getType());
+                    builderInfo.setPowerId(itemBuff.getPowerId());
+                    builderInfo.setValue(itemBuff.getValue());
+                    builderInfo.setTime((int) ((itemBuff.getEndTime() - itemBuff.getBeginTime()) / 1000));
+                    builderInfo.setRemainTime((int) (itemBuff.getEndTime() - GameUtils.getServerDate().getTime()) / 1000);//剩余时间
+                    builder9003.addItemBuffInfo(builderInfo);
+                    nextBuff.setState(1);
+                    nextBuff.save();
+                }
+            }else{
+                long remianTime=itemBuff.getEndTime()-GameUtils.getServerDate().getTime();
+                builder9002.setRemainTime((int)remianTime/1000);//重新返回剩余时间给前端
+            }
+        }
+    }
+
+    /**
+     * 登录检测buffer的过期
+     */
+    @Override
+    public void afterLoginEvent() {
+        try {
+            long serverTime=GameUtils.getServerDate().getTime();
+            Iterator<ItemBuff>iterator=itemBuffs.iterator();
+            while (iterator.hasNext()){
+                ItemBuff buff=iterator.next();
+                if(serverTime>=buff.getEndTime()){
+                    int powerId=buff.getPowerId();
+                    iterator.remove();
+                    //找出相同类型的buff并且设置生效
+                    ItemBuff itemBuff= getBuffByPowerId(powerId);
+                    if(itemBuff!=null&&itemBuff.getState()==0&&itemBuff.getEndTime()>serverTime){
+                        itemBuff.setState(1);
+                        itemBuff.save();
+                    }
+
+                }
+            }
+        }catch (Exception e){
+            CustomerLogger.error("afterLoginEvent error:",e);
+        }
     }
 
 }

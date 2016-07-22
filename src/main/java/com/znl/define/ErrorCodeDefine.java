@@ -34,6 +34,10 @@ public class ErrorCodeDefine {
 
     public static final int M20006_1 = -1;  //今日好友祝福10已经上限
 
+    public static final int M20007_1 = -1;  //获取佣兵失败
+    public static final int M20007_2 = -2;  //金币不足，无法修复
+    public static final int M20007_3 = -3;  //宝石不足，无法修复
+
     public static final int M20008_1 = -1;  //角色名称重复
     public static final int M20008_2 = -2;  //中文角色名称长度为2~6个汉字
     public static final int M20008_3 = -3;  //英文角色名称长度为4~12个字母
@@ -64,12 +68,6 @@ public class ErrorCodeDefine {
     public static final int M20016_2 = -2;//该功能还没开启
 
     public static final int M20301_1 = -1;//你已领取过新手礼包了
-
-    //M4
-    public static final int M40002_1 = -1;  //获取佣兵失败
-    public static final int M40002_2 = -2;  //金币不足，无法修复
-    public static final int M40002_3 = -3;  //宝石不足，无法修复
-
 
     //M6
     public static final int M60001_1 = -1;//该章节尚未开启
@@ -200,6 +198,11 @@ public class ErrorCodeDefine {
     public static final int M80014_2 = -2;//不是驻军部队
     public static final int M80014_3 = -3;//驻军还没到达不能操作
 
+    public static final int M80103_1 = -1;//任务列表清空
+    public static final int M80103_2 = -2;//时间校验失败,发送剩余时间
+
+    public static final int M80107_1=-1;//被攻击通知列表清空
+    public static final int M80107_2=-2;//时间校验出错，发送剩余时间
 
     public static final int M90001_1 = -1;//道具不存在
     public static final int M90001_2 = -2;//获取配置信息失败
@@ -210,6 +213,9 @@ public class ErrorCodeDefine {
     public static final int M90001_7 = -7;//造句足够无需用金币
     public static final int M90001_8 = -8;//不存在的玩家
     public static final int M90001_9 = -9;//不正确的使用方式
+
+    public static final int M90002_1 = -1;//buffer持续时间还有，无法执行删除
+    public static final int M90002_2 = -2;//buffer不存在
 
     public static final int M90006_1 = -1;//到据不存在
     public static final int M90006_2 = -2;//喇叭长度太长
@@ -488,6 +494,8 @@ public class ErrorCodeDefine {
     public static final int M200005_1 = -1;//今天已经领取过了
     public static final int M200005_2 = -2;//还未上榜
 
+    public static final int M200101_1 = -1;//邮件不存在
+
 
     public static final int M200006_1 = -1;//可以挑战无需加速
     public static final int M200006_2 = -2;//加速所需金币不足
@@ -650,13 +658,18 @@ public class ErrorCodeDefine {
     public static final int M260002_3 = -3;//元宝不足
     public static final int M260002_4 = -4;//道具不足
 
-    public static final int M260003_1 = -1;//该军师没有可以分解的
-
+    public static final int M260003_1 = -1;//该军师没有可以分解的000
 
 
     public static final int M260005_1 = -1;//抽奖所需资源不足
     public static final int M260005_2 = -2;//读取配置失败
     public static final int M260005_3 = -3;//军师府上限
+
+    public static final int M2700002_1 = -1;//请先通关上一一关
+    public static final int M2700002_2 = -2;//该副本正在被挑战中
+    public static final int M2700002_3 = -3;//挑战次数不足
+
+    public static final int M2700003_1 = -3;//宝箱已领取
 
     public static final int M2800001_1 = -1;//获取配置信息失败
     public static final int M2800001_2 = -2;//该建筑已经在升级了
@@ -681,7 +694,6 @@ public class ErrorCodeDefine {
     public static final int M2800002_1 = -1;//获取配置信息失败
     public static final int M2800002_2 = -2;//该建筑并没有在升级中
     public static final int M2800002_3 = -3;//升级时间未到
-
 
 
     public static final int M2800003_1 = -1;//建筑不存在

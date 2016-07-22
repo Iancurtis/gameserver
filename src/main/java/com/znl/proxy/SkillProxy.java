@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Administrator on 2015/11/26.
@@ -41,6 +42,8 @@ public class SkillProxy extends BasicProxy {
             }
         }
     }
+
+
 
     public SkillProxy(Set<Long> skillIds,String areaKey){
         this.areaKey = areaKey;
@@ -86,7 +89,7 @@ public class SkillProxy extends BasicProxy {
                 changeSkills.offer(skill);
             }
         }
-        init();
+        refurceExpandPowerMap();
     }
 
     /**
@@ -244,7 +247,7 @@ public class SkillProxy extends BasicProxy {
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, ActorDefine.MIN_RESET_SKILL,LogDefine.LOST_SKILL_RESET);
             itemlist.add(ItemDefine.SKILLBOOK_ID);
             itemProxy.addItem(ItemDefine.SKILLBOOK_ID,allSkillBook,LogDefine.GET_RESET_SKILL);
-            init();
+            refurceExpandPowerMap();
             return 0;
         }
     }

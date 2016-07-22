@@ -46,24 +46,6 @@ public final class Common {
      * </pre>
      */
     long getValue();
-
-    // optional int32 showValue = 3;
-    /**
-     * <code>optional int32 showValue = 3;</code>
-     *
-     * <pre>
-     *增加或者减少的数值，大于0的时候客户端才使用
-     * </pre>
-     */
-    boolean hasShowValue();
-    /**
-     * <code>optional int32 showValue = 3;</code>
-     *
-     * <pre>
-     *增加或者减少的数值，大于0的时候客户端才使用
-     * </pre>
-     */
-    int getShowValue();
   }
   /**
    * Protobuf type {@code Common.AttrDifInfo}
@@ -128,11 +110,6 @@ public final class Common {
             case 16: {
               bitField0_ |= 0x00000002;
               value_ = input.readInt64();
-              break;
-            }
-            case 24: {
-              bitField0_ |= 0x00000004;
-              showValue_ = input.readInt32();
               break;
             }
           }
@@ -223,34 +200,9 @@ public final class Common {
       return value_;
     }
 
-    // optional int32 showValue = 3;
-    public static final int SHOWVALUE_FIELD_NUMBER = 3;
-    private int showValue_;
-    /**
-     * <code>optional int32 showValue = 3;</code>
-     *
-     * <pre>
-     *增加或者减少的数值，大于0的时候客户端才使用
-     * </pre>
-     */
-    public boolean hasShowValue() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional int32 showValue = 3;</code>
-     *
-     * <pre>
-     *增加或者减少的数值，大于0的时候客户端才使用
-     * </pre>
-     */
-    public int getShowValue() {
-      return showValue_;
-    }
-
     private void initFields() {
       typeid_ = 0;
       value_ = 0L;
-      showValue_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -278,9 +230,6 @@ public final class Common {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt64(2, value_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(3, showValue_);
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -297,10 +246,6 @@ public final class Common {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(2, value_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, showValue_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -426,8 +371,6 @@ public final class Common {
         bitField0_ = (bitField0_ & ~0x00000001);
         value_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000002);
-        showValue_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -464,10 +407,6 @@ public final class Common {
           to_bitField0_ |= 0x00000002;
         }
         result.value_ = value_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.showValue_ = showValue_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -489,9 +428,6 @@ public final class Common {
         }
         if (other.hasValue()) {
           setValue(other.getValue());
-        }
-        if (other.hasShowValue()) {
-          setShowValue(other.getShowValue());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -622,55 +558,6 @@ public final class Common {
       public Builder clearValue() {
         bitField0_ = (bitField0_ & ~0x00000002);
         value_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      // optional int32 showValue = 3;
-      private int showValue_ ;
-      /**
-       * <code>optional int32 showValue = 3;</code>
-       *
-       * <pre>
-       *增加或者减少的数值，大于0的时候客户端才使用
-       * </pre>
-       */
-      public boolean hasShowValue() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional int32 showValue = 3;</code>
-       *
-       * <pre>
-       *增加或者减少的数值，大于0的时候客户端才使用
-       * </pre>
-       */
-      public int getShowValue() {
-        return showValue_;
-      }
-      /**
-       * <code>optional int32 showValue = 3;</code>
-       *
-       * <pre>
-       *增加或者减少的数值，大于0的时候客户端才使用
-       * </pre>
-       */
-      public Builder setShowValue(int value) {
-        bitField0_ |= 0x00000004;
-        showValue_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int32 showValue = 3;</code>
-       *
-       * <pre>
-       *增加或者减少的数值，大于0的时候客户端才使用
-       * </pre>
-       */
-      public Builder clearShowValue() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        showValue_ = 0;
         onChanged();
         return this;
       }
@@ -1315,42 +1202,6 @@ public final class Common {
      * </pre>
      */
     int getPowerList(int index);
-
-    // required int32 attack = 4;
-    /**
-     * <code>required int32 attack = 4;</code>
-     *
-     * <pre>
-     *攻击
-     * </pre>
-     */
-    boolean hasAttack();
-    /**
-     * <code>required int32 attack = 4;</code>
-     *
-     * <pre>
-     *攻击
-     * </pre>
-     */
-    int getAttack();
-
-    // required int32 hp = 5;
-    /**
-     * <code>required int32 hp = 5;</code>
-     *
-     * <pre>
-     *总血量
-     * </pre>
-     */
-    boolean hasHp();
-    /**
-     * <code>required int32 hp = 5;</code>
-     *
-     * <pre>
-     *总血量
-     * </pre>
-     */
-    int getHp();
   }
   /**
    * Protobuf type {@code Common.SoldierInfo}
@@ -1436,16 +1287,6 @@ public final class Common {
                 powerList_.add(input.readInt32());
               }
               input.popLimit(limit);
-              break;
-            }
-            case 32: {
-              bitField0_ |= 0x00000004;
-              attack_ = input.readInt32();
-              break;
-            }
-            case 40: {
-              bitField0_ |= 0x00000008;
-              hp_ = input.readInt32();
               break;
             }
           }
@@ -1574,60 +1415,10 @@ public final class Common {
       return powerList_.get(index);
     }
 
-    // required int32 attack = 4;
-    public static final int ATTACK_FIELD_NUMBER = 4;
-    private int attack_;
-    /**
-     * <code>required int32 attack = 4;</code>
-     *
-     * <pre>
-     *攻击
-     * </pre>
-     */
-    public boolean hasAttack() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>required int32 attack = 4;</code>
-     *
-     * <pre>
-     *攻击
-     * </pre>
-     */
-    public int getAttack() {
-      return attack_;
-    }
-
-    // required int32 hp = 5;
-    public static final int HP_FIELD_NUMBER = 5;
-    private int hp_;
-    /**
-     * <code>required int32 hp = 5;</code>
-     *
-     * <pre>
-     *总血量
-     * </pre>
-     */
-    public boolean hasHp() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>required int32 hp = 5;</code>
-     *
-     * <pre>
-     *总血量
-     * </pre>
-     */
-    public int getHp() {
-      return hp_;
-    }
-
     private void initFields() {
       typeid_ = 0;
       num_ = 0;
       powerList_ = java.util.Collections.emptyList();
-      attack_ = 0;
-      hp_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1639,14 +1430,6 @@ public final class Common {
         return false;
       }
       if (!hasNum()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasAttack()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasHp()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -1665,12 +1448,6 @@ public final class Common {
       }
       for (int i = 0; i < powerList_.size(); i++) {
         output.writeInt32(3, powerList_.get(i));
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(4, attack_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeInt32(5, hp_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -1697,14 +1474,6 @@ public final class Common {
         }
         size += dataSize;
         size += 1 * getPowerListList().size();
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, attack_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, hp_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1832,10 +1601,6 @@ public final class Common {
         bitField0_ = (bitField0_ & ~0x00000002);
         powerList_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000004);
-        attack_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000008);
-        hp_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -1877,14 +1642,6 @@ public final class Common {
           bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.powerList_ = powerList_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.attack_ = attack_;
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-          to_bitField0_ |= 0x00000008;
-        }
-        result.hp_ = hp_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1917,12 +1674,6 @@ public final class Common {
           }
           onChanged();
         }
-        if (other.hasAttack()) {
-          setAttack(other.getAttack());
-        }
-        if (other.hasHp()) {
-          setHp(other.getHp());
-        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -1933,14 +1684,6 @@ public final class Common {
           return false;
         }
         if (!hasNum()) {
-          
-          return false;
-        }
-        if (!hasAttack()) {
-          
-          return false;
-        }
-        if (!hasHp()) {
           
           return false;
         }
@@ -2154,104 +1897,6 @@ public final class Common {
       public Builder clearPowerList() {
         powerList_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000004);
-        onChanged();
-        return this;
-      }
-
-      // required int32 attack = 4;
-      private int attack_ ;
-      /**
-       * <code>required int32 attack = 4;</code>
-       *
-       * <pre>
-       *攻击
-       * </pre>
-       */
-      public boolean hasAttack() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>required int32 attack = 4;</code>
-       *
-       * <pre>
-       *攻击
-       * </pre>
-       */
-      public int getAttack() {
-        return attack_;
-      }
-      /**
-       * <code>required int32 attack = 4;</code>
-       *
-       * <pre>
-       *攻击
-       * </pre>
-       */
-      public Builder setAttack(int value) {
-        bitField0_ |= 0x00000008;
-        attack_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required int32 attack = 4;</code>
-       *
-       * <pre>
-       *攻击
-       * </pre>
-       */
-      public Builder clearAttack() {
-        bitField0_ = (bitField0_ & ~0x00000008);
-        attack_ = 0;
-        onChanged();
-        return this;
-      }
-
-      // required int32 hp = 5;
-      private int hp_ ;
-      /**
-       * <code>required int32 hp = 5;</code>
-       *
-       * <pre>
-       *总血量
-       * </pre>
-       */
-      public boolean hasHp() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
-      }
-      /**
-       * <code>required int32 hp = 5;</code>
-       *
-       * <pre>
-       *总血量
-       * </pre>
-       */
-      public int getHp() {
-        return hp_;
-      }
-      /**
-       * <code>required int32 hp = 5;</code>
-       *
-       * <pre>
-       *总血量
-       * </pre>
-       */
-      public Builder setHp(int value) {
-        bitField0_ |= 0x00000010;
-        hp_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required int32 hp = 5;</code>
-       *
-       * <pre>
-       *总血量
-       * </pre>
-       */
-      public Builder clearHp() {
-        bitField0_ = (bitField0_ & ~0x00000010);
-        hp_ = 0;
         onChanged();
         return this;
       }
@@ -13894,41 +13539,40 @@ public final class Common {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014Common.proto\022\006Common\"?\n\013AttrDifInfo\022\016\n" +
-      "\006typeid\030\001 \002(\005\022\r\n\005value\030\002 \002(\003\022\021\n\tshowValu" +
-      "e\030\003 \001(\005\")\n\010AttrInfo\022\016\n\006typeid\030\001 \002(\005\022\r\n\005v" +
-      "alue\030\002 \002(\003\"Y\n\013SoldierInfo\022\016\n\006typeid\030\001 \002(" +
-      "\005\022\013\n\003num\030\002 \002(\005\022\021\n\tpowerList\030\003 \003(\005\022\016\n\006att" +
-      "ack\030\004 \002(\005\022\n\n\002hp\030\005 \002(\005\"\'\n\010ItemInfo\022\016\n\006typ" +
-      "eid\030\001 \002(\005\022\013\n\003num\030\002 \002(\005\"L\n\013AdviserInfo\022\016\n" +
-      "\006typeId\030\001 \002(\005\022\013\n\003num\030\002 \002(\005\022\020\n\010fightnum\030\003" +
-      " \002(\005\022\016\n\006quilty\030\004 \001(\005\"8\n\nRewardInfo\022\r\n\005po" +
-      "wer\030\001 \002(\005\022\016\n\006typeid\030\002 \001(\005\022\013\n\003num\030\003 \002(\005\"=",
-      "\n\020FightElementInfo\022\016\n\006typeid\030\001 \002(\005\022\013\n\003nu" +
-      "m\030\002 \002(\005\022\014\n\004post\030\003 \002(\005\"\210\001\n\tEquipInfo\022\n\n\002i" +
-      "d\030\001 \002(\006\022\016\n\006typeid\030\002 \002(\005\022\r\n\005level\030\003 \002(\005\022\013" +
-      "\n\003exp\030\004 \002(\005\022\020\n\010position\030\005 \002(\005\022\014\n\004type\030\006 " +
-      "\002(\005\022\017\n\007quality\030\007 \002(\005\022\022\n\nupproperty\030\010 \002(\005" +
-      "\"0\n\021OrdnancePieceInfo\022\016\n\006typeid\030\001 \002(\005\022\013\n" +
-      "\003num\030\002 \002(\005\"\236\001\n\014OrdnanceInfo\022\n\n\002id\030\001 \002(\006\022" +
-      "\016\n\006typeid\030\002 \002(\005\022\020\n\010strgthlv\030\003 \002(\005\022\017\n\007rem" +
-      "oulv\030\004 \002(\005\022\014\n\004type\030\005 \002(\005\022\017\n\007quality\030\006 \002(" +
-      "\005\022\014\n\004part\030\007 \002(\005\022\020\n\010position\030\010 \002(\005\022\020\n\010str",
-      "ength\030\t \002(\005\"\244\001\n\013DungeonInfo\022\n\n\002rs\030\001 \002(\005\022" +
-      "$\n\teventInfo\030\002 \003(\0132\021.Common.EventInfo\022\r\n" +
-      "\005boxes\030\003 \003(\005\022\014\n\004star\030\004 \001(\005\022\021\n\ttotalStar\030" +
-      "\005 \001(\005\022\020\n\010dungeoId\030\006 \001(\005\022\r\n\005times\030\007 \001(\005\022\022" +
-      "\n\ntimesTotal\030\010 \001(\005\"_\n\tEventInfo\022\n\n\002id\030\001 " +
-      "\002(\005\022\014\n\004star\030\002 \002(\005\022)\n\014monsterInfos\030\003 \003(\0132" +
-      "\023.Common.MonsterInfo\022\r\n\005force\030\004 \002(\005\"4\n\013M" +
-      "onsterInfo\022\n\n\002id\030\001 \002(\005\022\014\n\004post\030\002 \002(\005\022\013\n\003" +
-      "num\030\003 \002(\005\"Y\n\010TaskInfo\022\021\n\ttableType\030\001 \002(\005" +
-      "\022\016\n\006typeId\030\002 \002(\005\022\013\n\003num\030\003 \001(\003\022\r\n\005state\030\004",
-      " \001(\005\022\016\n\006accept\030\005 \001(\005\"~\n\014TaskInfoList\022#\n\t" +
-      "taskInfos\030\001 \003(\0132\020.Common.TaskInfo\022\021\n\tday" +
-      "liynum\030\002 \001(\005\022\025\n\rdayActivityId\030\003 \001(\005\022\n\n\002r" +
-      "s\030\004 \002(\005\022\023\n\013hasGetMaxId\030\005 \001(\005B\027\n\rcom.znl." +
-      "protoB\006Common"
+      "\n\014Common.proto\022\006Common\",\n\013AttrDifInfo\022\016\n" +
+      "\006typeid\030\001 \002(\005\022\r\n\005value\030\002 \002(\003\")\n\010AttrInfo" +
+      "\022\016\n\006typeid\030\001 \002(\005\022\r\n\005value\030\002 \002(\003\"=\n\013Soldi" +
+      "erInfo\022\016\n\006typeid\030\001 \002(\005\022\013\n\003num\030\002 \002(\005\022\021\n\tp" +
+      "owerList\030\003 \003(\005\"\'\n\010ItemInfo\022\016\n\006typeid\030\001 \002" +
+      "(\005\022\013\n\003num\030\002 \002(\005\"L\n\013AdviserInfo\022\016\n\006typeId" +
+      "\030\001 \002(\005\022\013\n\003num\030\002 \002(\005\022\020\n\010fightnum\030\003 \002(\005\022\016\n" +
+      "\006quilty\030\004 \001(\005\"8\n\nRewardInfo\022\r\n\005power\030\001 \002" +
+      "(\005\022\016\n\006typeid\030\002 \001(\005\022\013\n\003num\030\003 \002(\005\"=\n\020Fight" +
+      "ElementInfo\022\016\n\006typeid\030\001 \002(\005\022\013\n\003num\030\002 \002(\005",
+      "\022\014\n\004post\030\003 \002(\005\"\210\001\n\tEquipInfo\022\n\n\002id\030\001 \002(\006" +
+      "\022\016\n\006typeid\030\002 \002(\005\022\r\n\005level\030\003 \002(\005\022\013\n\003exp\030\004" +
+      " \002(\005\022\020\n\010position\030\005 \002(\005\022\014\n\004type\030\006 \002(\005\022\017\n\007" +
+      "quality\030\007 \002(\005\022\022\n\nupproperty\030\010 \002(\005\"0\n\021Ord" +
+      "nancePieceInfo\022\016\n\006typeid\030\001 \002(\005\022\013\n\003num\030\002 " +
+      "\002(\005\"\236\001\n\014OrdnanceInfo\022\n\n\002id\030\001 \002(\006\022\016\n\006type" +
+      "id\030\002 \002(\005\022\020\n\010strgthlv\030\003 \002(\005\022\017\n\007remoulv\030\004 " +
+      "\002(\005\022\014\n\004type\030\005 \002(\005\022\017\n\007quality\030\006 \002(\005\022\014\n\004pa" +
+      "rt\030\007 \002(\005\022\020\n\010position\030\010 \002(\005\022\020\n\010strength\030\t" +
+      " \002(\005\"\244\001\n\013DungeonInfo\022\n\n\002rs\030\001 \002(\005\022$\n\teven",
+      "tInfo\030\002 \003(\0132\021.Common.EventInfo\022\r\n\005boxes\030" +
+      "\003 \003(\005\022\014\n\004star\030\004 \001(\005\022\021\n\ttotalStar\030\005 \001(\005\022\020" +
+      "\n\010dungeoId\030\006 \001(\005\022\r\n\005times\030\007 \001(\005\022\022\n\ntimes" +
+      "Total\030\010 \001(\005\"_\n\tEventInfo\022\n\n\002id\030\001 \002(\005\022\014\n\004" +
+      "star\030\002 \002(\005\022)\n\014monsterInfos\030\003 \003(\0132\023.Commo" +
+      "n.MonsterInfo\022\r\n\005force\030\004 \002(\005\"4\n\013MonsterI" +
+      "nfo\022\n\n\002id\030\001 \002(\005\022\014\n\004post\030\002 \002(\005\022\013\n\003num\030\003 \002" +
+      "(\005\"Y\n\010TaskInfo\022\021\n\ttableType\030\001 \002(\005\022\016\n\006typ" +
+      "eId\030\002 \002(\005\022\013\n\003num\030\003 \001(\003\022\r\n\005state\030\004 \001(\005\022\016\n" +
+      "\006accept\030\005 \001(\005\"~\n\014TaskInfoList\022#\n\ttaskInf",
+      "os\030\001 \003(\0132\020.Common.TaskInfo\022\021\n\tdayliynum\030" +
+      "\002 \001(\005\022\025\n\rdayActivityId\030\003 \001(\005\022\n\n\002rs\030\004 \002(\005" +
+      "\022\023\n\013hasGetMaxId\030\005 \001(\005B\027\n\rcom.znl.protoB\006" +
+      "Common"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -13940,7 +13584,7 @@ public final class Common {
           internal_static_Common_AttrDifInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Common_AttrDifInfo_descriptor,
-              new java.lang.String[] { "Typeid", "Value", "ShowValue", });
+              new java.lang.String[] { "Typeid", "Value", });
           internal_static_Common_AttrInfo_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_Common_AttrInfo_fieldAccessorTable = new
@@ -13952,7 +13596,7 @@ public final class Common {
           internal_static_Common_SoldierInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Common_SoldierInfo_descriptor,
-              new java.lang.String[] { "Typeid", "Num", "PowerList", "Attack", "Hp", });
+              new java.lang.String[] { "Typeid", "Num", "PowerList", });
           internal_static_Common_ItemInfo_descriptor =
             getDescriptor().getMessageTypes().get(3);
           internal_static_Common_ItemInfo_fieldAccessorTable = new

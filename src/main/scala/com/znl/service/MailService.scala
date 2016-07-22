@@ -234,6 +234,14 @@ class MailService(areaKey: String) extends Actor with ActorLogging with ServiceT
       val report2 = createReport(template, battleId, template.getDefendId)
       sendArenaReportToPlayer(report2)
       tellService(context, ActorDefine.ARENA_SERVICE_NAME, AddServerArenaReport(report1))
+      val attacksimple:SimplePlayer=PlayerService.getSimplePlayer(template.getAttackId,areaKey)
+      val defendsimple:SimplePlayer=PlayerService.getSimplePlayer(template.getDefendId,areaKey)
+      if(attacksimple!=null&&attacksimple.online){
+        sendMsgPlayerModule(context,attacksimple.getAccountName,ActorDefine.ARENA_MODULE_NAME,addNewReport(report1.getId))
+      }
+      if(defendsimple!=null&&defendsimple.online){
+        sendMsgPlayerModule(context,defendsimple.getAccountName,ActorDefine.ARENA_MODULE_NAME,addNewReport(report2.getId))
+      }
     } else {
       //      if (template.getFirstHand == 0){
       //        template.setFirstHand(1)

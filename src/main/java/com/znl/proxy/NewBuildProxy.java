@@ -133,8 +133,10 @@ public class NewBuildProxy extends BasicProxy {
         rfb.setState(state);
         playerProxy.addResFunBuildToPlayer(rfb.getId());
         rfb.save();
+        if(level>0){
         //增加繁荣度
         playerProxy.upBuilderOrCreate(smallType, level);
+        }
         rfbs.add(rfb);
         return rfb.getId();
     }
@@ -541,6 +543,17 @@ public class NewBuildProxy extends BasicProxy {
         return level;
     }
 
+    //获得某种类型建筑数量
+    public int getBuildTypeNum(int buildType) {
+        int num = 0;
+        for (ResFunBuilding rfb : rfbs) {
+            if (rfb.getSmallType() == buildType && rfb.getLevel() > 0) {
+                num++;
+            }
+        }
+        return num;
+    }
+
     /**
      * buildingLevelUp()
      *  请求建筑升级，执行倒计时
@@ -730,6 +743,12 @@ public class NewBuildProxy extends BasicProxy {
                 }
             }
         }
+        playerProxy.upBuilderOrCreate(buildType, level+1);
+        //增加相关任务条件
+        TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDING_LV,1,0);
+        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDING_NUM,1,0);
+        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDLEVEUP_TIMES,1,0);
         return 0;
     }
 
@@ -1478,21 +1497,26 @@ public class NewBuildProxy extends BasicProxy {
             case ResFunBuildDefine.BUILDE_TYPE_TANK:
             case ResFunBuildDefine.BUILDE_TYPE_RREFIT:{
                 rewardProxy.addSoldierToReward(reward, production.getTypeId(), production.getNum());
+                rewardProxy.getRewardToPlayer(reward,LogDefine.GET_BUILD_PRODUCTION);
+                TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_CREATESODIER_NUM,production.getNum(),0);
                 break;
             }
             case ResFunBuildDefine.BUILDE_TYPE_SCIENCE:{
                 TechnologyProxy technologyProxy = getGameProxy().getProxy(ActorDefine.TECHNOLOGY_PROXY_NAME);
                 technologyProxy.addTechinologyLeve(production.getTypeId());
+                TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_SCIENCELV_TIMES,1,0);
                 break;
             }
             case ResFunBuildDefine.BUILDE_TYPE_CREATEROOM:{
                 rewardProxy.addItemToReward(reward, production.getTypeId(), production.getNum());
+                rewardProxy.getRewardToPlayer(reward,LogDefine.GET_BUILD_PRODUCTION);
                 break;
             }
             default:
                 return ErrorCodeDefine.M280007_3;
         }
-        rewardProxy.getRewardToPlayer(reward,LogDefine.GET_BUILD_PRODUCTION);
         //删除生产队伍，并让下一个开始
         finishProduction(production,GameUtils.getServerTime());
         return 0;
@@ -1517,6 +1541,8 @@ public class NewBuildProxy extends BasicProxy {
             case ResFunBuildDefine.BUILDE_TYPE_SCIENCE:{
                 TechnologyProxy technologyProxy = getGameProxy().getProxy(ActorDefine.TECHNOLOGY_PROXY_NAME);
                 technologyProxy.addTechinologyLeve(production.getTypeId());
+                TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_SCIENCELV_TIMES,1,0);
                 break;
             }
             case ResFunBuildDefine.BUILDE_TYPE_CREATEROOM:{
@@ -1624,7 +1650,9 @@ public class NewBuildProxy extends BasicProxy {
             }
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, cost, LogDefine.LOST_BUILDING_SPEEDPRODUCTION);
             //删除生产队伍，并让下一个开始
-            finishProduction(production,GameUtils.getServerTime());
+//            finishProduction(production,GameUtils.getServerTime());
+            production.setFinishTime(0);
+            doProductionFinish(buildType, index, order, reward);
         } else {
             ItemProxy itemProxy = getGameProxy().getProxy(ActorDefine.ITEM_PROXY_NAME);
             //道具加速
@@ -1650,7 +1678,9 @@ public class NewBuildProxy extends BasicProxy {
             if (reducetime > time) {
                 //完成了
                 //删除生产队伍，并让下一个开始
-                finishProduction(production,GameUtils.getServerTime());
+//                finishProduction(production,GameUtils.getServerTime());
+                production.setFinishTime(0);
+                doProductionFinish(buildType, index, order, reward);
             }else {
                 rs = time - reducetime;
                 production.setFinishTime(GameUtils.getServerTime()+rs);

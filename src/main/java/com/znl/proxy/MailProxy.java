@@ -39,6 +39,8 @@ public class MailProxy  extends BasicProxy {
         }
     }
 
+    Set<Long> arenaReporttemp=new HashSet<Long>(); //全服战报缓存
+
     @Override
     protected void init() {
 
@@ -205,8 +207,30 @@ public class MailProxy  extends BasicProxy {
         List<M20.ShortInfos> res = new ArrayList<>();
         for (Report report : list){
             res.add(getArenaReoprtShortInfo(report));
+            arenaReporttemp.add(report.getId());
         }
         return res;
+    }
+
+
+    //获得新的全服竞技场战报做更新
+    public List<M20.ShortInfos> getServerArenaReportShortInfoNew(List<Report> list){
+        List<M20.ShortInfos> res = new ArrayList<>();
+        for (Report report : list){
+            if(!arenaReporttemp.contains(report.getId())) {
+                res.add(getArenaReoprtShortInfo(report));
+                arenaReporttemp.add(report.getId());
+            }
+        }
+        return res;
+    }
+
+    public M20.ShortInfos getReportShinfoByid(long id){
+        Report report=getReportById(id);
+        if(report==null){
+            return null;
+        }
+        return  getArenaReoprtShortInfo(report);
     }
 
     public List<M20.ShortInfos> getAllArenaReoprtShortInfo(){

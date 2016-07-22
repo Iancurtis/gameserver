@@ -452,7 +452,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       val player: Player = BaseDbPojo.getOfflineDbPojo(targetSimple.getId, classOf[Player], areaKey)
       val list: util.Set[java.lang.Long] = player.getHelpteams
       list.add(0l)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val dungeoProxy: DungeoProxy = new DungeoProxy(new util.HashSet[lang.Long](), areaKey)
       val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
       player.setGardNum(performTasksProxy.getguardNum())
@@ -492,7 +492,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       sendMsgPlayerModule(context, simple.getAccountName, ActorDefine.TASK_MODULE_NAME, GameMsg.getOrePoint(simple, myaccontName))
     } else {
       val player: Player = BaseDbPojo.getOfflineDbPojo(simple.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val list: util.List[String] = performTasksProxy.getDigList
       sendMsgPlayerModule(context, myaccontName, ActorDefine.MAP_MODULE_NAME, GameMsg.getOrePointback(simple, list))
     }

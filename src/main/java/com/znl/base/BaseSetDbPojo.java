@@ -1,5 +1,6 @@
 package com.znl.base;
 
+import com.znl.GameMainServer;
 import com.znl.log.CustomerLogger;
 import com.znl.msg.GameMsg;
 import com.znl.proxy.DbProxy;
@@ -45,6 +46,12 @@ public class BaseSetDbPojo {
 
 
     private String areaKey = "";
+
+    public int getLogAreaId(){
+        int logAreaId = GameMainServer.getLogAreaIdByAreaKey(areaKey);
+        return logAreaId;
+    }
+
     protected Map<String, Long> setMap = new ConcurrentHashMap<>();
 
     public void init() { //初始化
@@ -189,11 +196,20 @@ public class BaseSetDbPojo {
         DbProxy.tell(new GameMsg.UpdateSetDbPojoElement(this, key, value));
     }
 
+    public void updateAllElmentToDb(){
+        for (String key : setMap.keySet()){
+            updateElementToDb(key,setMap.get(key));
+        }
+    }
+
     private void delElementToDb(String key) {
         setMap.remove(key);
         DbProxy.tell(new GameMsg.DelSetDbPojoElement(this, key));
     }
 
+    public String getClassName(){
+        return GameUtils.getClassName(this);
+    }
 
     public String getAreaKey() {
         return areaKey;

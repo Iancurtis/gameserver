@@ -1,28 +1,25 @@
 package com.znl.service
 
 import java.io.IOException
-import java.{lang, util}
+import java.util
 
 import akka.actor.SupervisorStrategy.Resume
 import akka.actor._
 import com.znl.GameMainServer
-import com.znl.base.{BaseSetDbPojo, BaseDbPojo}
+import com.znl.base.{BaseDbPojo, BaseSetDbPojo}
 import com.znl.core.{PlayerTroop, SimplePlayer}
 import com.znl.define._
-import com.znl.framework.http.HttpMessage
 import com.znl.framework.socket.Request
 import com.znl.log.CustomerLogger
 import com.znl.log.admin.tbllog_online
-import com.znl.msg.{PushShareMsg, ShareMsg, GameMsg}
 import com.znl.msg.GameMsg._
-import com.znl.pojo.db.{Timerdb, Player}
+import com.znl.msg.{GameMsg, PushShareMsg, ShareMsg}
+import com.znl.pojo.db.Player
 import com.znl.pojo.db.set._
-import com.znl.proto.M25
 import com.znl.proxy._
 import com.znl.service.actor.PlayerActor
 import com.znl.service.trigger.{TriggerEvent, TriggerType}
-import com.znl.template.ChargeTemplate
-import com.znl.utils.{DateUtil, GameUtils}
+import com.znl.utils.GameUtils
 import org.apache.mina.core.session.IoSession
 import org.json.JSONObject
 
@@ -156,10 +153,8 @@ object PlayerService {
       }
       val playerProxy : PlayerProxy = new PlayerProxy(p,areaKey)
       playerProxy.setSimplePlayer(simplePlayer)
-      val timerProxy: TimerdbProxy = new TimerdbProxy(p.getTimerdbSet,areaKey)
       val systemProxy: SystemProxy = new SystemProxy(areaKey)
-      systemProxy.checkBoomTimer(timerProxy,playerProxy,null,null)
-      timerProxy.saveTimers()
+      systemProxy.checkBoomTimer(playerProxy)
     }
 
   }
@@ -393,6 +388,8 @@ class PlayerService(areaKey : String) extends Actor with ActorLogging with Servi
       sendMsgToPlayerChatModule(simplePlayer.getAccountName,GameMsg.trumpeNotity(playerId,name,mess,retype))
     }
   }
+
+
 
 
   def updateEachHourNotice() ={
@@ -779,9 +776,8 @@ class PlayerService(areaKey : String) extends Actor with ActorLogging with Servi
       }
       val playerProxy : PlayerProxy = new PlayerProxy(p,areaKey)
       playerProxy.setSimplePlayer(simplePlayer)
-      val timerProxy: TimerdbProxy = new TimerdbProxy(p.getTimerdbSet,areaKey)
       val systemProxy: SystemProxy = new SystemProxy(areaKey)
-      systemProxy.checkBoomTimer(timerProxy,playerProxy,null,null)
+      systemProxy.checkBoomTimer(playerProxy)
     }
 
   }
@@ -797,8 +793,8 @@ class PlayerService(areaKey : String) extends Actor with ActorLogging with Servi
         //直接修改数据库，同时扔到离线队列里去
         val player = BaseDbPojo.getOfflineDbPojo(id, classOf[Player],areaKey)
         if(player!=null ){
-          val timerdb : Timerdb=BaseDbPojo.get(player.getFriendbleestimeId,classOf[Timerdb],areaKey)
-          val nowTime:Long=GameUtils.getServerDate().getTime
+        //  val timerdb : Timerdb=BaseDbPojo.get(player.getFriendbleestimeId,classOf[Timerdb],areaKey)
+        /*  val nowTime:Long=GameUtils.getServerDate().getTime
           if(timerdb!=null&& DateUtil.isCanGet(nowTime, timerdb.getLasttime, TimerDefine.TIMER_REFRESH_FOUR)){
             //执行刷新
             timerdb.setLasttime(nowTime)
@@ -807,21 +803,18 @@ class PlayerService(areaKey : String) extends Actor with ActorLogging with Servi
             player.setGetBlessSet(new util.HashSet[lang.Long]())
             timerdb.save()
             player.save()
-          }
+          }*/
         }
         if(player != null && player.getBeBlessSet.size()  < FriendDefine.MAX_DAY_GET_BLESS_NUM){
           player.addBeBlesser(blesser)
           player.save()
         }
-
-        if(player != null){
-          var simplePlayer = new SimplePlayer()
-          simplePlayer = GameUtils.player2SimplePlayer(player, simplePlayer)
-          PlayerService.getOfflineMap(areaKey).put(id, simplePlayer)   //到数据库里面拿的话，证明该玩家已经离线的了，缓存起来
-          player.finalize()
+        var simplePlayer = new SimplePlayer()
+        simplePlayer = GameUtils.player2SimplePlayer(player, simplePlayer)
+        PlayerService.getOfflineMap(areaKey).put(id, simplePlayer)   //到数据库里面拿的话，证明该玩家已经离线的了，缓存起来
+        player.finalize()
         }
-      }
-    })
+      })
   }
 
 

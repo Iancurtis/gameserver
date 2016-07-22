@@ -4,7 +4,9 @@ import com.znl.GameMainServer;
 import com.znl.base.BasicProxy;
 import com.znl.core.PlayerCache;
 import com.znl.define.ActorDefine;
+import com.znl.define.TimerDefine;
 import com.znl.pojo.db.Player;
+import com.znl.utils.GameUtils;
 import org.jboss.netty.util.internal.ConcurrentHashMap;
 
 import java.util.Map;
@@ -18,6 +20,15 @@ public class GameProxy {
 
     public GameProxy(Player player, PlayerCache cache) {
         initProxys(player, cache);
+        //判断是否已经4点重置了数据
+        if(GameUtils.hasNotResetDataHandler(player.getResetDataTime(), 4)){
+            fixedTimeHandler();
+        }
+        //判断是否已经0点重置了数据
+        if(GameUtils.hasNotResetDataHandler(player.getZeroTime(), 0)){
+            zeroTimeHandler();
+        }
+        afterLoginEvent();
     }
 
     public void finalize() {
@@ -55,11 +66,6 @@ public class GameProxy {
         ItemProxy itemProxy = new ItemProxy(player.getItemSet(),areaKey);
         itemProxy.setGameProxy(this);
         proxyMap.put(ActorDefine.ITEM_PROXY_NAME, itemProxy);
-
-
-        TimerdbProxy timerdbProxy = new TimerdbProxy(player.getTimerdbSet(),areaKey);
-        timerdbProxy.setGameProxy(this);
-        proxyMap.put(ActorDefine.TIMERDB_PROXY_NAME, timerdbProxy);
 
         DungeoProxy dungeoProxy = new DungeoProxy(player.getDungeoSet(),areaKey);
         dungeoProxy.setGameProxy(this);
@@ -107,7 +113,7 @@ public class GameProxy {
         skillProxy.setGameProxy(this);
         proxyMap.put(ActorDefine.SKILL_PROXY_NAME, skillProxy);
 
-        PerformTasksProxy performTasksProxy = new PerformTasksProxy(player.getPerformTaskSet(),player.getTeamNoticeSet(),areaKey);
+        PerformTasksProxy performTasksProxy = new PerformTasksProxy(player,areaKey);
         performTasksProxy.setGameProxy(this);
         proxyMap.put(ActorDefine.PERFORMTASKS_PROXY_NAME, performTasksProxy);
 
@@ -127,7 +133,7 @@ public class GameProxy {
         systemProxy.setGameProxy(this);
         proxyMap.put(ActorDefine.SYSTEM_PROXY_NAME, systemProxy);
 
-        TaskProxy taskProxy = new TaskProxy(player.getTaskSet(),areaKey);
+        TaskProxy taskProxy = new TaskProxy(player,areaKey);
         taskProxy.setGameProxy(this);
         proxyMap.put(ActorDefine.TASK_PROXY_NAME, taskProxy);
 
@@ -139,11 +145,11 @@ public class GameProxy {
         vipProxy.setGameProxy(this);
         proxyMap.put(ActorDefine.VIP_PROXY_NAME, vipProxy);
 
-        ArenaProxy arenaProxy = new ArenaProxy(areaKey);
+        ArenaProxy arenaProxy = new ArenaProxy(player,areaKey);
         arenaProxy.setGameProxy(this);
         proxyMap.put(ActorDefine.ARENA_PROXY_NAME, arenaProxy);
 
-        ArmyGroupProxy armyGroupProxy = new ArmyGroupProxy(areaKey);
+        ArmyGroupProxy armyGroupProxy = new ArmyGroupProxy(player,areaKey);
         armyGroupProxy.setGameProxy(this);
         proxyMap.put(ActorDefine.ARMYGROUP_PROXY_NAME, armyGroupProxy);
 
@@ -183,4 +189,32 @@ public class GameProxy {
         }
         return value;
     }
+
+    /**
+     * 每天4点事件
+     */
+    public void fixedTimeHandler(){
+        for(BasicProxy proxy:proxyMap.values()){
+            proxy.fixedTimeEventHandler();
+        }
+    }
+
+    /**
+     * 每天零点事件
+     */
+    public void zeroTimeHandler(){
+        for(BasicProxy proxy:proxyMap.values()){
+            proxy.zeroTimerEventHandler();
+        }
+    }
+
+    /**
+     * 每次成功登录之后事件
+     */
+    public void afterLoginEvent(){
+        for(BasicProxy proxy:proxyMap.values()){
+            proxy.afterLoginEvent();
+        }
+    }
+
 }

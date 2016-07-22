@@ -4,16 +4,11 @@ import akka.actor.Props;
 import akka.japi.Creator;
 import com.znl.base.BasicModule;
 import com.znl.core.PlayerReward;
-import com.znl.define.ActorDefine;
-import com.znl.define.ErrorCodeDefine;
-import com.znl.define.ProtocolModuleDefine;
-import com.znl.define.TimerDefine;
+import com.znl.core.PlayerTask;
+import com.znl.define.*;
 import com.znl.framework.socket.Request;
 import com.znl.proto.M28;
-import com.znl.proxy.GameProxy;
-import com.znl.proxy.NewBuildProxy;
-import com.znl.proxy.PlayerProxy;
-import com.znl.proxy.RewardProxy;
+import com.znl.proxy.*;
 import com.znl.utils.GameUtils;
 
 import java.util.ArrayList;
@@ -66,6 +61,7 @@ public class NewBuildModule extends BasicModule {
         M28.M280001.S2C.Builder builder = M28.M280001.S2C.newBuilder();
         builder.addAllBuildingShortInfos(res);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280001, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //请求完成升级 包括建造（0级升1级）完成成功后，客户端做对应的逻辑
@@ -93,6 +89,7 @@ public class NewBuildModule extends BasicModule {
         M28.M280002.S2C.Builder builder = M28.M280002.S2C.newBuilder();
         builder.addAllBuildingShortInfos(res);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280002, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //取消建筑升级
@@ -107,6 +104,7 @@ public class NewBuildModule extends BasicModule {
         builder.setBuildingType(buildType);
         builder.setIndex(index);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280003, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //建筑加速升级
@@ -131,6 +129,7 @@ public class NewBuildModule extends BasicModule {
         if (reward.haveReward()){
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
 
     //野外建筑拆除
@@ -143,6 +142,7 @@ public class NewBuildModule extends BasicModule {
         builder.setIndex(index);
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280005, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //建筑生产 包括 兵营，校场，工匠坊，科技
@@ -167,6 +167,7 @@ public class NewBuildModule extends BasicModule {
         if (reward.haveReward()){
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet280007Event(Request request) {
@@ -196,6 +197,7 @@ public class NewBuildModule extends BasicModule {
         if (reward.haveReward()){
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
 
     //取消生产
@@ -220,6 +222,7 @@ public class NewBuildModule extends BasicModule {
         if (reward.haveReward()){
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
 
     //加速生产
@@ -251,6 +254,7 @@ public class NewBuildModule extends BasicModule {
         if (reward.haveReward()){
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
 
     //客户端自己判断是否可以购买VIP购买建筑位，且计算出价格
@@ -272,6 +276,7 @@ public class NewBuildModule extends BasicModule {
             }
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280011, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //购买自动升级建筑
@@ -293,6 +298,7 @@ public class NewBuildModule extends BasicModule {
             }
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280012, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //自动升级建筑开关
@@ -313,6 +319,7 @@ public class NewBuildModule extends BasicModule {
             builder.setAutoRemainTime(0);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280013, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //完成自动升级建筑 升级建筑倒计时已经结束
@@ -331,6 +338,17 @@ public class NewBuildModule extends BasicModule {
             playerProxy.setAutoBuildStateendtime(0l);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280014, builder.build());
+        sendPushNetMsgToClient();
+    }
+
+    //资源产出校验
+    private void OnTriggerNet280015Event(Request request) {
+        SystemProxy systemProxy=getProxy(ActorDefine.SYSTEM_PROXY_NAME);
+        M28.M280015.S2C.Builder builder = M28.M280015.S2C.newBuilder();
+        systemProxy.checkResouse();
+        builder.setRs(0);
+        sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280015, builder.build());
+        sendPushNetMsgToClient();
     }
 
     /**

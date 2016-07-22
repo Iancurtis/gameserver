@@ -8,6 +8,7 @@ import com.znl.base.BasicModule;
 import com.znl.core.PlayerCache;
 import com.znl.core.PlayerReward;
 import com.znl.core.PlayerTask;
+import com.znl.core.PlayerTeam;
 import com.znl.define.*;
 import com.znl.framework.socket.Request;
 import com.znl.log.*;
@@ -17,7 +18,7 @@ import com.znl.pojo.db.set.RoleNameSetDb;
 import com.znl.proto.*;
 import com.znl.proxy.*;
 import com.znl.service.PowerRanksService;
-import com.znl.utils.GameUtils;
+import com.znl.service.ArmyGroupService;import com.znl.utils.GameUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import scala.Tuple2;
@@ -51,8 +52,6 @@ public class RoleModule extends BasicModule {
     public void onReceiveOtherMsg(Object object) {
         if (object instanceof GameMsg.InitSendRoleInfo) {
             initSendRoleInfo();
-        } else if (object instanceof GameMsg.RefrshTip) {
-            OnTriggerNet20200Event(null);
         } else if (object instanceof GameMsg.addAtivity) {
             int val = ((GameMsg.addAtivity) object).value();
             int expendvalue = ((GameMsg.addAtivity) object).expandCondition();
@@ -60,8 +59,6 @@ public class RoleModule extends BasicModule {
             ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             activityProxy.addActivityConditionValue(type, val, playerProxy, expendvalue);
-            GameMsg.RefrshTip msg=new GameMsg.RefrshTip();
-            sendModuleMsg(ActorDefine.ROLE_MODULE_NAME,msg);
         } else if (object instanceof GameMsg.BanPlayerChat) {
             int time = ((GameMsg.BanPlayerChat) object).time();
             int status = ((GameMsg.BanPlayerChat) object).status();
@@ -109,8 +106,9 @@ public class RoleModule extends BasicModule {
             //通知前端有新宝箱增加
             pushNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230005, legionShareRecBuilder);
             sendPushNetMsgToClient();
-            GameMsg.RefrshTip msg = new GameMsg.RefrshTip();
-            sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, msg);
+        }else if(object instanceof GameMsg.refreshLegionDungeoTimes){
+            Map<Integer, List<PlayerTeam>> dungeoinfo = ((GameMsg.refreshLegionDungeoTimes) object).dungeoinfo();
+            onrefreshLegionDungeoTimes(dungeoinfo);
         }
 
     }
@@ -127,8 +125,8 @@ public class RoleModule extends BasicModule {
     //初始化发送角色信息，第一次创建playerActor才会发送
     private void initSendRoleInfo() {
         OnTriggerNet20000Event(null);
-        sendPushNetMsgToClient();
         sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.LoginInitCapacity());
+        sendPushNetMsgToClient();
     }
 
 
@@ -154,10 +152,11 @@ public class RoleModule extends BasicModule {
         NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
         EquipProxy equipProxy=getProxy(ActorDefine.EQUIP_PROXY_NAME);
         SystemProxy systemProxy=getProxy(ActorDefine.SYSTEM_PROXY_NAME);
+        LotterProxy lotterProxy=getGameProxy().getProxy(ActorDefine.LOTTER_PROXY_NAME);
         FormationProxy formationProxy = getProxy(ActorDefine.FORMATION_PROXY_NAME);
         TaskProxy taskProxy=getProxy(ActorDefine.TASK_PROXY_NAME);
         SkillProxy skillProxy = this.getProxy(ActorDefine.SKILL_PROXY_NAME);
-        //ItemBuffProxy itemBuffProxy = getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
+        ItemBuffProxy itemBuffProxy = getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
         PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
         MailProxy mailProxy = getProxy(ActorDefine.MAIL_PROXY_NAME);
         ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
@@ -193,8 +192,11 @@ public class RoleModule extends BasicModule {
                         .setNewGift(playerProxy.getHaveNewGift())
                         .setFameState(prestate)
                         .setEngryprice(playerProxy.askBuyEnergy())
-                        //  .addAllRemainlist(playerProxy.getRemainList())
-                        .build()
+                        .setBoomRefTime(playerProxy.boom2foolTime())
+                        .setEnergyRefTime(playerProxy.getEnergyRefTime())
+                        .addTanbaoFrees(lotterProxy.getFreTaobaoLotterTimes(LotterDefine.NORMAL_TANBAO))
+                        .addTanbaoFrees(lotterProxy.getFreTaobaoLotterTimes(LotterDefine.HIGEST_TANBAO))
+                                .build()
                 )
                 .addAllSoldierList(soldiers)
                 .addAllItemList(itemProxy.getAllItemInfos())
@@ -207,11 +209,12 @@ public class RoleModule extends BasicModule {
                 .addAllInfo(formationProxy.getFormationInfos())
                 .setTaskList(taskProxy.getTaskInfoList())
                 .addAllSkillInfos(skillProxy.getAllSkillInfo())
-               // .addAllItemBuffInfo(itemBuffProxy.sendItemBuffInfoToClient())
+               .addAllItemBuffInfo(itemBuffProxy.sendItemBuffInfoToClient())
                 .addAllList(performTasksProxy.getAllTaskTeamInfoList())
+                .addAllInfos(performTasksProxy.getAllTeamNoticeInfo())
                 .addAllMails(mails)
                 .addAllActivitys(activityProxy.getAllActivityList())
-                .addAllLimitActivitys(activityProxy.getAllLimitActivityInfo())
+                .addAllLimitActivitys(activityProxy.getAllLimitActivityInfo().getActivitysList())
                 .addAllAdviserinfo(adviserProxy.getAllAdviserInfo())
                 .addAllSoldiers(soldierProxy.getAllLostSoldierInfos())
                 .addAllCostInfos(adviserProxy.getCostInfo())
@@ -233,7 +236,15 @@ public class RoleModule extends BasicModule {
             activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_VIPPEOPLE_NUM, lv, playerProxy, num);
         }
         activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ENERY_EVERYDAY,0,playerProxy,0);
+        systemProxy.checkResouse();
+
+        //清空一下power，避免重复发送了
+        playerProxy.getChangePower();
+        taskProxy.getNeedPushTasks();
+        activityProxy.getNeedSendActivitys();
+        sendPushNetMsgToClient();
 //        sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME,new GameMsg.RefTimerSet(TimerDefine.CHANGE_TIMER_INIT_TYPE_LOGIN));
+        sendPushNetMsgToClient();
     }
 
     private void sendPreAutoReward(int preId) {
@@ -241,129 +252,98 @@ public class RoleModule extends BasicModule {
         builder.setRs(0);
         builder.setPreid(preId);
         pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20017, builder.build());
-        sendPushNetMsgToClient();
     }
 
     //军衔升级
     private void OnTriggerNet20001Event(Request request) {
-        try {
-            CustomerLogger.info("-------onReceiveAddMilitaryReq-----------------");
-            PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            int rs = playerProxy.addMilitaryHandle();
-            M2.M20001.S2C.Builder builder = M2.M20001.S2C.newBuilder();
-            builder.setRs(rs);
-            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20001, builder.build());
-            if (rs == 0) {
-                TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-                PlayerReward reward19 = new PlayerReward();
-                M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_JUNXIAN_LV, 1, reward19);
-                if (builder19 != null) {
-                    sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward19));
-                }
-                //日志记录
-                int level = (int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_militaryRank);
-                JSONObject militaryInfo = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.MILITARYRANK, "ID", level - 1);
-                MilitaryLog log = new MilitaryLog(level, militaryInfo.getInt("crysneed"), militaryInfo.getInt("prestige"));
-                sendLog(log);
-                sendFuntctionLog(FunctionIdDefine.MILITARY_RANK_FUNCTION_ID);
-            }
-        } catch (Exception e) {
-            CustomerLogger.error("OnTriggerNet20001Event时出现错误", e);
-            e.printStackTrace();
+        PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        int rs = playerProxy.addMilitaryHandle();
+        M2.M20001.S2C.Builder builder = M2.M20001.S2C.newBuilder();
+        builder.setRs(rs);
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20001, builder.build());
+        if (rs == 0) {
+            TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+            taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_JUNXIAN_LV, 1);
+            //日志记录
+            int level = (int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_militaryRank);
+            JSONObject militaryInfo = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.MILITARYRANK, "ID", level - 1);
+            MilitaryLog log = new MilitaryLog(level, militaryInfo.getInt("crysneed"), militaryInfo.getInt("prestige"));
+            sendLog(log);
+            sendFuntctionLog(FunctionIdDefine.MILITARY_RANK_FUNCTION_ID);
         }
+        sendPushNetMsgToClient();
     }
 
     //购买繁荣度
     public void OnTriggerNet20003Event(Request request) {
-        try {
-            CustomerLogger.info("-------onReceiveBuyBoomReq-----------------");
-            PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            List<BoomLog> log = new ArrayList<BoomLog>();
-            int rs = playerProxy.buyBoom(log);
-            M2.M20003.S2C.Builder builder = M2.M20003.S2C.newBuilder();
-            builder.setRs(rs);
-            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20003, builder.build());
-            //日志记录
-            if (rs == 0) {
-                for (BoomLog lg : log) {
-                    sendLog(lg);
-                }
-                sendFuntctionLog(FunctionIdDefine.BUY_BOOM_FUNCTION_ID);
+        PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        List<BoomLog> log = new ArrayList<BoomLog>();
+        int rs = playerProxy.buyBoom(log);
+        M2.M20003.S2C.Builder builder = M2.M20003.S2C.newBuilder();
+        builder.setRs(rs);
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20003, builder.build());
+        //日志记录
+        if (rs == 0) {
+            for (BoomLog lg : log) {
+                sendLog(lg);
             }
-        } catch (Exception e) {
-            CustomerLogger.error("OnTriggerNet20003Event时出现错误", e);
-            e.printStackTrace();
         }
+        sendPushNetMsgToClient();
     }
 
     //统率升级
     public void OnTriggerNet20004Event(Request request) {
-        try {
-            M2.M20004.C2S c2s = request.getValue();
-            int type = c2s.getType();
-            PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            List<Integer> itemList = new ArrayList<Integer>();
-            int rs = playerProxy.upCommandLv(type, itemList);
-            M2.M20004.S2C.Builder builder = M2.M20004.S2C.newBuilder();
-            builder.setRs(rs);
-            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20004, builder.build());
-            if (rs == 0) {
-                SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
-            }
-            if (type == ActorDefine.DEFINE_UPLV_CMBOOK) {//统帅书升级
-                GameMsg.SystemTimer message = new GameMsg.SystemTimer();
-//                sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message); //2016/04/11屏蔽发送
-                if (itemList.size() > 0) {
-                    RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
-                    M2.M20007.S2C msg = rewardProxy.getItemListClientInfo(itemList);
-                    sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, msg);
-                }
-            }
-            //日志记录
-            if (rs == 0) {
-                CommandLog log;
-                if (type == ActorDefine.DEFINE_UPLV_CMBOOK) {
-                    log = new CommandLog((int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_commandLevel), 0, 1);
-                } else {
-                    log = new CommandLog((int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_commandLevel), ActorDefine.MAX_UPCOMMD_GOLD, 0);
-                }
-                sendLog(log);
-                sendFuntctionLog(FunctionIdDefine.UP_COMMAND_LV_FUNCTION_ID);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        M2.M20004.C2S c2s = request.getValue();
+        int type = c2s.getType();
+        PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        List<Integer> itemList = new ArrayList<Integer>();
+        int rs = playerProxy.upCommandLv(type, itemList);
+        M2.M20004.S2C.Builder builder = M2.M20004.S2C.newBuilder();
+        builder.setRs(rs);
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20004, builder.build());
+        if (rs == 0) {
+            SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
         }
+        if (type == ActorDefine.DEFINE_UPLV_CMBOOK) {//统帅书升级
+            if (itemList.size() > 0) {
+                RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
+                M2.M20007.S2C msg = rewardProxy.getItemListClientInfo(itemList);
+                sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, msg);
+            }
+        }
+        //日志记录
+        if (rs == 0) {
+            CommandLog log;
+            if (type == ActorDefine.DEFINE_UPLV_CMBOOK) {
+                log = new CommandLog((int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_commandLevel), 0, 1);
+            } else {
+                log = new CommandLog((int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_commandLevel), ActorDefine.MAX_UPCOMMD_GOLD, 0);
+            }
+            sendLog(log);
+            sendFuntctionLog(FunctionIdDefine.UP_COMMAND_LV_FUNCTION_ID);
+        }
+        sendPushNetMsgToClient();
     }
 
     //授勋声望
     public void OnTriggerNet20005Event(Request request) {
-        try {
-            CustomerLogger.info("-------onReceiveGetPrestigeInfoReq-----------------");
-            M2.M20005.C2S c2s = request.getValue();
-            int type = c2s.getType();
-            PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            M2.M20005.S2C.Builder builder = M2.M20005.S2C.newBuilder();
-            int rs = playerProxy.medalGetPrestige(type, builder);
-            builder.setRs(rs);
-            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20005, builder.build());
-            if (rs == 0) {
-                TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-                PlayerReward reward = new PlayerReward();
-                M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_SHENGWANG_LV, 1, reward);
-                if (builder19 != null) {
-                    sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
-                }
-                //日志记录
-                JSONObject medalInfo = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.PRESTIGE_GIVE, "type", type);
-                int prestigeNum = medalInfo.getInt("prestige");
-                PrestigeLog log = new PrestigeLog((int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_prestigeLevel), prestigeNum, GameUtils.getServerDateStr());
-                sendLog(log);
-
-            }
-        } catch (Exception e) {
-            CustomerLogger.error("-------OnTriggerNet20005Event出现错误！！-----------------");
-            e.printStackTrace();
+        M2.M20005.C2S c2s = request.getValue();
+        int type = c2s.getType();
+        PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        M2.M20005.S2C.Builder builder = M2.M20005.S2C.newBuilder();
+        int rs = playerProxy.medalGetPrestige(type, builder);
+        builder.setRs(rs);
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20005, builder.build());
+        if (rs == 0) {
+            TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+            taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_SHENGWANG_LV, 1);
+            //日志记录
+            JSONObject medalInfo = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.PRESTIGE_GIVE, "type", type);
+            int prestigeNum = medalInfo.getInt("prestige");
+            PrestigeLog log = new PrestigeLog((int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_prestigeLevel), prestigeNum, GameUtils.getServerDateStr());
+            sendLog(log);
         }
+        sendPushNetMsgToClient();
     }
 
     //创建角色 需要判断名称是否重复及进行长度校验
@@ -423,69 +403,56 @@ public class RoleModule extends BasicModule {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20012, builder12.build());
             // sendModuleMsg(ActorDefine.TROOP_MODULE_NAME,new GameMsg.AutoPushToArena());
         }
+        sendPushNetMsgToClient();
     }
 
     //打开领取声望
     public void OnTriggerNet20010Event(Request request) {
-        try {
-            PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            M2.M20010.C2S c2s = request.getValue();
-            int state = c2s.getState();
-            M2.M20010.S2C.Builder builder = M2.M20010.S2C.newBuilder();
-            int rs = playerProxy.isGetTadayPrestige();
-            if (state == 0) {
-                builder.setRs(0);
-                builder.setState(rs);
-            } else if (state == 1) {
-                builder.setRs(rs);
-            }
-            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20010, builder.build());
-        } catch (Exception e) {
-            e.printStackTrace();
+        PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        M2.M20010.C2S c2s = request.getValue();
+        int state = c2s.getState();
+        M2.M20010.S2C.Builder builder = M2.M20010.S2C.newBuilder();
+        int rs = playerProxy.isGetTadayPrestige();
+        if (state == 0) {
+            builder.setRs(0);
+            builder.setState(rs);
+        } else if (state == 1) {
+            builder.setRs(rs);
         }
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20010, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //请求是否可以购买体力
     public void OnTriggerNet20013Event(Request request) {
-        try {
-            PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            M2.M20013.S2C.Builder builder = M2.M20013.S2C.newBuilder();
-            int rs = playerProxy.askBuyEnergy();
-            builder.setPrice(rs);
-            if (rs > 0) {
-                rs = 0;
-            }
-            builder.setRs(rs);
-            if (request == null) {
-                sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20013, builder.build());
-            } else {
-                pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20013, builder.build());
-                sendPushNetMsgToClient();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        M2.M20013.S2C.Builder builder = M2.M20013.S2C.newBuilder();
+        int rs = playerProxy.askBuyEnergy();
+        builder.setPrice(rs);
+        if (rs > 0) {
+            rs = 0;
         }
+        builder.setRs(rs);
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20013, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //购买体力
     public void OnTriggerNet20011Event(Request request) {
-        try {
-            PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            M2.M20011.S2C.Builder builder = M2.M20011.S2C.newBuilder();
-            List<EnergyLog> log = new ArrayList<EnergyLog>();
-            int rs = playerProxy.buyEnergy(log);
-            builder.setRs(rs);
-            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20011, builder.build());
-            //日志记录
-            if (rs == 0) {
-                for (EnergyLog lg : log) {
-                    sendLog(lg);
-                }
-
+        PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        M2.M20011.S2C.Builder builder = M2.M20011.S2C.newBuilder();
+        List<EnergyLog> log = new ArrayList<EnergyLog>();
+        int rs = playerProxy.buyEnergy(log);
+        builder.setRs(rs);
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20011, builder.build());
+        //日志记录
+        if (rs == 0) {
+            for (EnergyLog lg : log) {
+                sendLog(lg);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
         }
+        sendPushNetMsgToClient();
     }
 
     //设置头像，挂件
@@ -505,6 +472,7 @@ public class RoleModule extends BasicModule {
             updateMySimplePlayerData();
         }
         sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20012, builder.build());
+        sendPushNetMsgToClient();
     }
 
     //领取30天登录奖励
@@ -519,8 +487,8 @@ public class RoleModule extends BasicModule {
         M2.M20015.S2C.Builder builder = M2.M20015.S2C.newBuilder();
         int type = 0;
         int rs = 0;
-        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int num = timerdbProxy.getTimerNum(TimerDefine.LOGIN_LOTTERY, 0, 0);
+       // TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int num =playerProxy.getPlayer().getEverylottery();//timerdbProxy.getTimerNum(TimerDefine.LOGIN_LOTTERY, 0, 0);
         try {
             if (dayNum == 0) {//请求可不可领
                 if (playerProxy.getRewardNum().size() <= 0 && playerProxy.getLoginDayNum() >= ActorDefine.LOGIN_DAY_NUM) {
@@ -547,7 +515,6 @@ public class RoleModule extends BasicModule {
                     sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20015, builder.build());
                 }else{
                     pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20015, builder.build());
-                    sendPushNetMsgToClient();
                 }
             } else {//领取情况
                 if (playerProxy.getRewardNum().size() == 0 && playerProxy.getLoginDayNum() >= ActorDefine.LOGIN_DAY_NUM) {
@@ -580,6 +547,7 @@ public class RoleModule extends BasicModule {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        sendPushNetMsgToClient();
     }
 
     //每日登录抽奖
@@ -590,9 +558,9 @@ public class RoleModule extends BasicModule {
         PlayerReward reward = new PlayerReward();
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
         M2.M20016.S2C.Builder builder = M2.M20016.S2C.newBuilder();
-        TimerdbProxy timerProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        timerProxy.addTimer(TimerDefine.LOGIN_LOTTERY, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, 0, 0, playerProxy);
-        int num = timerProxy.getTimerNum(TimerDefine.LOGIN_LOTTERY, 0, 0);
+     //   TimerdbProxy timerProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+     //   timerProxy.addTimer(TimerDefine.LOGIN_LOTTERY, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, 0, 0, playerProxy);
+        int num =playerProxy.getPlayer().getEverylottery();// timerProxy.getTimerNum(TimerDefine.LOGIN_LOTTERY, 0, 0);
         int rs = 0;
         if (type == 0) {//请求
             if (num >= 1) {
@@ -623,6 +591,7 @@ public class RoleModule extends BasicModule {
         }
         //阵型
         sendModuleMsg(ActorDefine.TROOP_MODULE_NAME, new GameMsg.CheckBaseDefendFormation());
+        sendPushNetMsgToClient();
     }
 
     //提示
@@ -634,8 +603,8 @@ public class RoleModule extends BasicModule {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20200, builder.build());
         } else {
             pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20200, builder.build());
-            sendPushNetMsgToClient();
         }
+        sendPushNetMsgToClient();
     }
 
     //通知
@@ -649,6 +618,7 @@ public class RoleModule extends BasicModule {
         setlist.addAll(list);
         playerProxy.setRemainList(setlist);
         sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20300, builder.build());
+        sendPushNetMsgToClient();
     }
 
 
@@ -664,6 +634,7 @@ public class RoleModule extends BasicModule {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
             sendFuntctionLog(FunctionIdDefine.GET_NEW_GIFT_FUNCTION_ID);
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -681,6 +652,24 @@ public class RoleModule extends BasicModule {
         sendServiceMsg(ActorDefine.MAIL_SERVICE_NAME, new GameMsg.getlaterInfo(set, builder));
     }
 
+    //繁荣度时间推送
+    private void OnTriggerNet20500Event(Request request) {
+        PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20500, playerProxy.getBommTimeInfo());
+        sendPushNetMsgToClient();
+    }
+
+    //体力定时器校验
+   private void OnTriggerNet20501Event(Request request){
+        PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        M2.M20501.S2C.Builder builder = M2.M20501.S2C.newBuilder();
+        builder.setRs(0);
+        builder.setEnergyRefTime(playerProxy.getEnergyRefTime());
+       sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20501, builder.build());
+       sendPushNetMsgToClient();
+    }
+
+
     private void tellMsgToArmygroupNode(Object mess, Long id) {
         context().actorSelection("../../../" + ActorDefine.ARMYGROUP_SERVICE_NAME + "/" + ActorDefine.ARMYGROUPNODE + id).tell(mess, self());
     }
@@ -693,4 +682,61 @@ public class RoleModule extends BasicModule {
     public void repeatedProtocalHandler(int cmd) {
 
     }
-}
+
+ //刷新军团副本挑战次数，已领取宝箱，4点在线玩家军团副本列表刷新
+    private void onrefreshLegionDungeoTimes(Map<Integer, List<PlayerTeam>> dungeoinfo){
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        playerProxy.getPlayer().setArmygroupdungeotimes(ActorDefine.LEGION_DUNGEO_CHANGE_TIME);
+        List<Integer> list = new ArrayList<Integer>();
+        playerProxy.getPlayer().setGetbox(list);
+
+        DungeoProxy dungeoProxy = new DungeoProxy();
+        List<M27.EventInfo> eventInfoList = new ArrayList<>();
+        for(int i: dungeoinfo.keySet()){
+            List<M27.MonsterInfo> monsterInfoList = new ArrayList<>();
+            for(PlayerTeam playerTeam :dungeoinfo.get(i))
+            {
+                M27.MonsterInfo.Builder monsterInfo = M27.MonsterInfo.newBuilder();
+                monsterInfo.setId((int)playerTeam.powerMap.get(SoldierDefine.NOR_POWER_TYPE_ID));
+                monsterInfo.setNum((int)playerTeam.powerMap.get(SoldierDefine.NOR_POWER_NUM));
+                monsterInfo.setPost((int)playerTeam.powerMap.get(SoldierDefine.NOR_POWER_INDEX)-20);
+                monsterInfoList.add(monsterInfo.build());
+            }
+            int haveBox=0;
+            M27.EventInfo.Builder eventInfo = M27.EventInfo.newBuilder();
+            JSONObject json = ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent,i);
+            eventInfo.setChapter(json.getInt("chapter"));
+            eventInfo.setId(i);
+            eventInfo.setCurProgress(10000);
+            eventInfo.setHaveBox(haveBox);
+            eventInfo.addAllMonsterInfos(monsterInfoList);
+            eventInfoList.add(eventInfo.build());
+        }
+
+        M27.M270000.S2C.Builder builder = M27.M270000.S2C.newBuilder();
+        List<M27.DungeonInfo> res = new ArrayList<>();
+        List<JSONObject> son= ConfigDataProxy.getConfigAllInfo(DataDefine.LegionCapter);
+        M27.DungeonInfo.Builder dungeoInfo = M27.DungeonInfo.newBuilder();
+        for(JSONObject object:son){
+            int j=0;
+            List<JSONObject> List =ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.LegionEvent,"chapter",object.getInt("ID"));
+            if(object.getInt("ID")==1){
+                dungeoInfo.setOpenFlag(1);
+            }else{
+                dungeoInfo.setOpenFlag(0);
+            }
+            dungeoInfo.setId(object.getInt("ID"));
+            dungeoInfo.setCurCapterCount(List.size());
+            dungeoInfo.setMaxCapterCount(List.size());
+            dungeoInfo.setCurBoxCount(j);
+            dungeoInfo.setMaxBoxCount(j);
+            res.add(dungeoInfo.build());
+        }
+        builder.setRs(0);
+        builder.setCurCount(playerProxy.getPlayer().getArmygroupdungeotimes());
+        builder.setTotalCount(DungeonDefine.LEGION_DUNGEO);
+        builder.addAllDungeonInfos(res);
+        builder.addAllEventInfos(eventInfoList);
+        pushNetMsg(ProtocolModuleDefine.NET_M27, ProtocolModuleDefine.NET_M27_C270000, builder.build());
+        sendPushNetMsgToClient();
+    }}

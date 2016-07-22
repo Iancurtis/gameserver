@@ -97,7 +97,7 @@ public class TechnologyProxy extends BasicProxy {
                 changeTechnology.offer(technology);
             }
         }
-        init();
+        refurceExpandPowerMap();
     }
 
 
@@ -114,7 +114,7 @@ public class TechnologyProxy extends BasicProxy {
         playerProxy.addTechnologyToPlayer(tech.getId());
         tech.save();
         technologies.add(tech);
-        init();
+        refurceExpandPowerMap();
         return tech.getId();
     }
 
@@ -187,7 +187,7 @@ public class TechnologyProxy extends BasicProxy {
     public int technologyLevelUp(int buildType, int index, int typeId, int num, List<BaseLog> baseLogs) {
 
         GameProxy gameProxy = super.getGameProxy();
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = gameProxy.getProxy(ActorDefine.PLAYER_PROXY_NAME);
         VipProxy vipProxy = gameProxy.getProxy(ActorDefine.VIP_PROXY_NAME);
         int hadWaitQueue = vipProxy.getVipNum(ActorDefine.VIP_WAITQUEUE) + ResFunBuildDefine.MIN_WAITQUEUE;
@@ -210,12 +210,12 @@ public class TechnologyProxy extends BasicProxy {
                 return ErrorCodeDefine.M100006_19;//声望等级不够
             } else if (prestigeLv == 0 && museumLevel == 0) {
                 return ErrorCodeDefine.M100006_20;//已是最高级
-            } else if (timerdbProxy.getCreateingNum(index) >= hadWaitQueue) {
-                return ErrorCodeDefine.M100006_9;//队列已满
-            }
-            if (timerdbProxy.sienceIsCanLevel(index, typeId) == false) {
-                return ErrorCodeDefine.M100006_26;//
-            }
+            } //else if (timerdbProxy.getCreateingNum(index) >= hadWaitQueue) {
+                //return ErrorCodeDefine.M100006_9;//队列已满
+         //   }
+            //if (timerdbProxy.sienceIsCanLevel(index, typeId) == false) {
+              //  return ErrorCodeDefine.M100006_26;//
+           // }
             for (int i = 0; i < needArray.length(); i++) {
                 JSONArray jarray = needArray.getJSONArray(i);
                 int power = jarray.getInt(0);
@@ -258,17 +258,17 @@ public class TechnologyProxy extends BasicProxy {
                 lessTime = (int) Math.ceil(lessTime / (1 + power / 100.0));
             }
 
-            int order = timerdbProxy.getCreateBigNum(index);
-            long timeId = timerdbProxy.addTimer(TimerDefine.BUILD_CREATE, num, lessTime, TimerDefine.TIMER_REFRESH_NONE, index, order + 1, playerProxy);
-            timerdbProxy.setAttrValue(timeId, 1, typeId);
-            timerdbProxy.setAttrValue(timeId, 2, lessTime);
+           // int order = timerdbProxy.getCreateBigNum(index);
+          //  long timeId = timerdbProxy.addTimer(TimerDefine.BUILD_CREATE, num, lessTime, TimerDefine.TIMER_REFRESH_NONE, index, order + 1, playerProxy);
+          //  timerdbProxy.setAttrValue(timeId, 1, typeId);
+         //   timerdbProxy.setAttrValue(timeId, 2, lessTime);
             long timeadd = (long) lessTime * 1000;
             //TODO 资源类科技 需以后做判断
             if (ResFunBuildDefine.RESOURCESCIENCE.contains(jsonObj.getInt("scienceType"))){
                 timeadd = (long) Math.ceil(timeadd * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_RESOURCE_SCIECE_SPEED)) / 100.0);
             }
-            long lasttime = timerdbProxy.getLastCreateTime(index, order) + (timeadd);
-            timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_CREATE, index, order + 1, lasttime);
+         //   long lasttime = timerdbProxy.getLastCreateTime(index, order) + (timeadd);
+       //     timerdbProxy.setLastOperatinTime(TimerDefine.BUILD_CREATE, index, order + 1, lasttime);
             BuildingLog buildingLog=new BuildingLog(buildType,index,LogDefine.BUILDINGPRODUCT,typeId,1,resFunProxy.getResFuBuildLevelBysmallType(buildType,index));
             baseLogs.add(buildingLog);
             return 0;
@@ -285,7 +285,7 @@ public class TechnologyProxy extends BasicProxy {
             int level = technology.getLevel();
             technology.setLevel(level + 1);
             technology.save();
-            init();
+            refurceExpandPowerMap();
         }
     }
 

@@ -102,6 +102,8 @@ class MySqlActor(mysql_ip : String, mysql_db : String, mysql_user : String, mysq
     case UpdateToMysql(table : String, id : Long, json : String, logAreaId : Int) =>
 //      gameDbServer ! UpdateToMysql(table, id, json)
       onUpdateToMysql(table, id, json,logAreaId)
+    case UpdateSetToMysql(table : String,key : String,value : Long, logAreaId : Int) =>
+      onUpdateSetToMysql(table,key,value,logAreaId)
     case DelToMysql(table : String, id : Long, logAreaId : Int) =>
 //      gameDbServer ! onDelToMysql(table, id)
       onDelToMysql(table, id,logAreaId)
@@ -179,6 +181,12 @@ class MySqlActor(mysql_ip : String, mysql_db : String, mysql_user : String, mysq
 //    executeUpdate(sql)a
   }
 
+  def onUpdateSetToMysql(table : String,key : String,value : Long, logAreaId : Int): Unit ={
+    val formatStr = "replace into %s(set_key, set_value) values (\"%s\", "+value+");"
+    val sql : String = formatStr.format("GcolGame"+logAreaId+"."+table, key)
+    pushQueue(table,sql)
+  }
+
   def onUpdateToMysql(table : String, id : Long, json : String, logAreaId : Int) ={
 //    val formatStr = "update %s set data='%s' where json_extract(data, '$.id') = %d;"
 //    val sql : String = formatStr.format(table, json, id)
@@ -200,7 +208,6 @@ class MySqlActor(mysql_ip : String, mysql_db : String, mysql_user : String, mysq
     val queryList = new util.ArrayList[String]()
 
     val time = System.currentTimeMillis()
-    System.out.println(time)
     try{
       val conn = getConnection()
       val pstmt  = conn.prepareStatement(sql)

@@ -4,7 +4,7 @@
  "3" : {"ID" : 3 ,"type" : 3 ,"seciencelv" : 2 ,"effect" : [[5,100]]  },
  "4" : {"ID" : 4 ,"type" : 4 ,"seciencelv" : 3 ,"effect" : [[6,100]]  },
  "5" : {"ID" : 5 ,"type" : 5 ,"seciencelv" : 4 ,"effect" : [[7,100]]  },
- "6" : {"ID" : 6 ,"type" : 6 ,"seciencelv" : 5 ,"effect" : [[68,100],[74,100]]  },
+ "6" : {"ID" : 6 ,"type" : 6 ,"seciencelv" : 5 ,"effect" : [[68,1],[74,1]]  },
  "7" : {"ID" : 7 ,"type" : 7 ,"seciencelv" : 6 ,"effect" : [[26,100]]  },
  "8" : {"ID" : 8 ,"type" : 8 ,"seciencelv" : 7 ,"effect" : [[27,100]]  },
  "9" : {"ID" : 9 ,"type" : 9 ,"seciencelv" : 8 ,"effect" : [[75,1]]  },

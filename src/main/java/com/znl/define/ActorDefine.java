@@ -209,6 +209,9 @@ public class ActorDefine {
     public static final int CAPACITY_MODULE_ID = ProtocolModuleDefine.NET_M50;
     public static final String CAPACITY_MODULE_NAME = "capacity";
 
+    public static final int LEGION_DUNGEO_MODULE_ID = ProtocolModuleDefine.NET_M27;
+    public static final String LEGION_DUNGEO_MODULE_NAME = "legiondungeo";
+
     public static final int MAX_NUM = 2100000000;
     public static final int MAX_ENERGY = 20; //体力上限
     public static final int MAX_UPCOMMD_RATE = 1000; //统帅升级成功概率1000为底
@@ -320,4 +323,10 @@ public class ActorDefine {
 
     /******繁荣度******/
     public static final int BOOM_MAX_POOR = 600;//繁荣度废墟界限
+
+    /******体力******/
+    public static int  ENERGY_LIMIT = 20;//体力上限（不包含元宝购买）
+
+   /******军团副本******/
+    public static final int LEGION_DUNGEO_CHANGE_TIME = 5;//军团副本挑战次数
 }

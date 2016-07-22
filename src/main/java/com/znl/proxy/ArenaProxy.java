@@ -5,25 +5,24 @@ import com.znl.base.BasicProxy;
 import com.znl.core.*;
 import com.znl.define.*;
 import com.znl.msg.GameMsg;
-import com.znl.pojo.db.Armygroup;
-import com.znl.proto.Common;
+import com.znl.pojo.db.Arena;
+import com.znl.pojo.db.Player;
 import com.znl.proto.M20;
 import com.znl.proto.M7;
 import com.znl.utils.GameUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.omg.CORBA.Object;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by Administrator on 2015/10/28.
  */
 public class ArenaProxy extends BasicProxy {
 
+    public  Arena arean;
 
     @Override
     public void shutDownProxy() {
@@ -35,8 +34,17 @@ public class ArenaProxy extends BasicProxy {
 
     }
 
-    public ArenaProxy(String areaKey) {
+    public ArenaProxy(Player player,String areaKey) {
         this.areaKey = areaKey;
+        this.arean= BaseDbPojo.get(player.getArenaId(), Arena.class, areaKey);
+        if(this.arean==null){
+            Arena arena = BaseDbPojo.create(Arena.class, areaKey);
+            arena.setPlayerId(player.getAreaId());
+            arena.save();
+            player.setArenaId(arena.getId());
+            player.save();
+            this.arean=arena;
+        }
     }
 
     public Long changeArenaId = 0l;
@@ -206,8 +214,8 @@ public class ArenaProxy extends BasicProxy {
                 return ErrorCodeDefine.M200001_7;//数据有异常
             }
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int challangeTimes = timerdbProxy.getTimerNum(TimerDefine.ARENA_TIMES, 0, 0);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int challangeTimes = this.arean.getChallengetimes();
         if (simplePlayer.getArenaTroop().getPlayerTeams().get(0).getValue(SoldierDefine.NOR_POWER_TYPE_AURAS) == null) {
             return -5;//数据有异常
         }
@@ -220,8 +228,9 @@ public class ArenaProxy extends BasicProxy {
         if (simplePlayer.getArenaTroop().getPlayerTeams().size() == 0) {
             return ErrorCodeDefine.M200001_3;
         }
-        long lastime = timerdbProxy.getLastOperatinTime(TimerDefine.ARENA_FIGHT, 0, 0);
-        if (lastime > GameUtils.getServerDate().getTime()) {
+        long betweenTime =getRemainBattleTime();//上次操作时间
+
+        if (betweenTime>0) {
             return ErrorCodeDefine.M200001_5;//时间未到
         }
         DungeoProxy dungeoProxy = getGameProxy().getProxy(ActorDefine.DUNGEO_PROXY_NAME);
@@ -241,9 +250,6 @@ public class ArenaProxy extends BasicProxy {
         }
         rivalName = rival.getName();
         rivalId = rival.getId();
-//        for(PlayerTeam team : rivaltems){
-//            team.reset=true;
-//        }
         mytems = simplePlayer.getArenaTroop().getPlayerTeams();
         changeArenaId = rival.getId();
         sendFunctionLog(FunctionIdDefine.ASK_FIGHT_FUNCTION_ID, simplePlayer.getId(), rival.getId(), 0);
@@ -253,14 +259,16 @@ public class ArenaProxy extends BasicProxy {
 
     //增加竞技场挑战次数
     public int addArenaFightTimes() {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int bunum = timerdbProxy.getTimerNum(TimerDefine.ARENA_ADD_TIMES, 0, 0);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //int bunum = timerdbProxy.getTimerNum(TimerDefine.ARENA_ADD_TIMES, 0, 0);
+        int bunum = this.arean.getBuytimes();//已经购买的挑战次数
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
         int mastimes = vipProxy.getVipNum(ActorDefine.VIP_ARENABUY);
         if (bunum > mastimes) {
             return ErrorCodeDefine.M200003_1;
         }
-        int hasnum = timerdbProxy.getTimerNum(TimerDefine.ARENA_TIMES, 0, 0);
+        int hasnum =this.arean.getChallengetimes();//挑战次数
+        //int hasnum = timerdbProxy.getTimerNum(TimerDefine.ARENA_TIMES, 0, 0);
        /* if (ArenaDefine.FIGHTTIME - hasnum > 0) {
             return ErrorCodeDefine.M200003_3;
         }*/
@@ -269,9 +277,14 @@ public class ArenaProxy extends BasicProxy {
         if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < jsonObject.getInt("goldprice")) {
             return ErrorCodeDefine.M200003_2;
         }
+        //购买次数加1
+        this.arean.setBuytimes(this.arean.getBuytimes()+1);
+        //已经挑战次数减1
+        this.arean.setChallengetimes(this.arean.getChallengetimes()-1);
         playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, jsonObject.getInt("goldprice"), LogDefine.LOST_BUY_FIGHT_TIMES);
-        timerdbProxy.addNum(TimerDefine.ARENA_ADD_TIMES, 0, 0, 1);
-        timerdbProxy.reduceNum(TimerDefine.ARENA_TIMES, 0, 0, 1);
+        this.arean.save();
+        // timerdbProxy.addNum(TimerDefine.ARENA_ADD_TIMES, 0, 0, 1);
+        //timerdbProxy.reduceNum(TimerDefine.ARENA_TIMES, 0, 0, 1);
         sendFunctionLog(FunctionIdDefine.ADD_ARENA_FIGHT_TIMES_FUNCTION_ID, jsonObject.getInt("goldprice"), 0, 0);
         return 0;
     }
@@ -325,9 +338,10 @@ public class ArenaProxy extends BasicProxy {
 
     //领取竞技场排名奖励
     public int getLaskArenaReward(int rank, PlayerReward reward) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int state = timerdbProxy.getTimerNum(TimerDefine.LASTARENAREWAED, 0, 0);
-        if (state > 0) {
+        // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //int state = timerdbProxy.getTimerNum(TimerDefine.LASTARENAREWAED, 0, 0);
+        int state =this.arean.getLastReward();//0不可领取 1可领取
+        if (state>0) {
             return ErrorCodeDefine.M200005_1;
         }
         if (rank == -1) {
@@ -355,17 +369,19 @@ public class ArenaProxy extends BasicProxy {
             sb.append(",");
         }
         rewardProxy.getRewardToPlayer(reward, LogDefine.GET_ARENA_LASTREWARD);
-        timerdbProxy.addNum(TimerDefine.LASTARENAREWAED, 0, 0, 1);
+        // timerdbProxy.addNum(TimerDefine.LASTARENAREWAED, 0, 0, 1);
+        this.arean.setLastReward(1);//设置不可领取
+        this.arean.save();
         sendFunctionLog(FunctionIdDefine.GET_LAST_TIME_ARENA_RANKING_FUNCTION_ID, rank, 0, 0, sb.toString());
         return 0;
     }
 
 
     public int removefightTime() {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        long lastime = timerdbProxy.getLastOperatinTime(TimerDefine.ARENA_FIGHT, 0, 0);
-        long needTime = lastime - GameUtils.getServerDate().getTime();
-        if (needTime < 0) {
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        long betweenTime =GameUtils.getServerDate().getTime()-this.arean.getLastOperateTime();//上次操作时间
+        long needTime=ArenaDefine.ARENA_TIME_WAIT-betweenTime;
+        if (needTime<=0) {
             return ErrorCodeDefine.M200006_1;
         }
         ResFunBuildProxy resFunBuildProxy = getGameProxy().getProxy(ActorDefine.RESFUNBUILD_PROXY_NAME);
@@ -375,9 +391,95 @@ public class ArenaProxy extends BasicProxy {
             return ErrorCodeDefine.M200006_2;
         }
         playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, cost, LogDefine.LOST_SPEED_ARENA);
-        timerdbProxy.setLastOperatinTime(TimerDefine.ARENA_FIGHT, 0, 0, GameUtils.getServerDate().getTime());
+        //timerdbProxy.setLastOperatinTime(TimerDefine.ARENA_FIGHT, 0, 0, GameUtils.getServerDate().getTime());
+        this.arean.setLastOperateTime(0);
+        this.arean.save();
         sendFunctionLog(FunctionIdDefine.EXPEDITE_ARENA_FUNCTION_ID, cost, 0, 0);
         return 0;
+    }
+
+    /**
+     * 获得剩余挑战时间
+     * @return
+     */
+    public int getRemainBattleTime(){
+        long betweenTime =(GameUtils.getServerDate().getTime()-this.arean.getLastOperateTime());//上次操作时间
+        long needTime=ArenaDefine.ARENA_TIME_WAIT-betweenTime;
+        if(needTime<=0){
+            return 0;
+        }else{
+            return (int)needTime/1000;
+        }
+    }
+
+
+    /**
+     * 获得下次要刷新的时间
+     * @return
+     */
+    public static int getNextFreshTime(){
+        long nextTime=0;
+        long zero=timeDifference("24:00:00");
+        long fixedFour=timeDifference("04:00:00");
+        if(fixedFour>0&&zero>0){
+            //表示还没到04点
+            nextTime=fixedFour/1000;
+        }else if(fixedFour==0&&zero>0){
+            nextTime=zero/1000;
+        }
+        return (int)nextTime+2;//加两秒容差
+    }
+
+    /**
+     * 当前时间和传进来的时候比较时间差
+     * @param ptime
+     * @return
+     */
+    public static long timeDifference(String ptime){
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date1 = new Date();
+            //当前时间年月日
+            String currDateTime = sf.format(date1);
+
+            String ptimes  = currDateTime+" "+ptime;
+            sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date pdate =  sf.parse(ptimes);
+            long time=pdate.getTime()-date1.getTime();
+            if(time>0){
+                return time;
+            }else{
+                return 0l;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0l;
+    }
+
+    /**
+     * 保存
+     */
+    public void saveArena(){
+        this.arean.save();
+    }
+
+    /**
+     * 4点重置
+     */
+    @Override
+    public void fixedTimeEventHandler() {
+        this.arean.setChallengetimes(0);
+        this.arean.setBuytimes(0);
+        saveArena();
+    }
+
+    /**
+     * 零点事件
+     */
+    @Override
+    public void zeroTimerEventHandler() {
+       this.arean.setLastReward(0);saveArena();
     }
 
 }

@@ -20,4 +20,8 @@ public class LotterDefine {
     //军师抽奖类型
     public final static int JUBSHI_LOTTERY_GOLD =1;//金币抽奖
     public final static int JUBSHI_LOTTERY_RESOURSE =2;//资源抽奖
+
+
+    public final static int NORMAL_TANBAO =1;//普通探宝
+    public final static int HIGEST_TANBAO =2;//高级探宝
 }

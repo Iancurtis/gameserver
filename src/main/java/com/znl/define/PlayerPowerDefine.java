@@ -212,4 +212,5 @@ public class PlayerPowerDefine {
 
     public static HashMap<Integer,String> NameMap = new HashMap<>();
     public static HashMap<Integer,String> ExtendPowerMap = new HashMap<>();
+
 }

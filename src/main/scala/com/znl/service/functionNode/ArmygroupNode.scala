@@ -2,20 +2,20 @@ package com.znl.service.functionNode
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.{Calendar, Date}
-import java.{lang, util}
+import java.{util, lang}
 
 import akka.actor.{Actor, ActorContext, ActorLogging, Props}
 import com.znl.GameMainServer
 import com.znl.base.{BaseLog, BaseSetDbPojo, BaseDbPojo}
-import com.znl.core.{PowerRanks, Situation, SimplePlayer}
+import com.znl.core._
 import com.znl.define._
 import com.znl.log.CustomerLogger
 import com.znl.log.admin.tbllog_activityrank
 import com.znl.msg.GameMsg
 import com.znl.msg.GameMsg._
 import com.znl.pojo.db._
-import com.znl.pojo.db.set.{SituationDateSetDb, TeamDateSetDb}
-import com.znl.proto.M22
+import com.znl.pojo.db.set.{LegionDungeoTeamSetDb, SituationDateSetDb, TeamDateSetDb}
+import com.znl.proto.{Common, M22}
 import com.znl.proto.M22.{LegionCustomJobShortInfo, LegionMemberInfo}
 import com.znl.proxy._
 import com.znl.service.PlayerService
@@ -29,6 +29,7 @@ import scala.language.postfixOps
 
 object ArmygroupNode {
   def props(armygroup: Armygroup, areakey: String) = Props(classOf[ArmygroupNode], armygroup, areakey)
+  //val ArmygroupDungeoMap: util.Map[Integer,Armygroup] = new util.HashMap[Integer,Armygroup]()
 }
 
 class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with ActorLogging {
@@ -36,6 +37,37 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
   val techsMap: util.Map[Integer, ArmyGroupTech] = new util.HashMap[Integer, ArmyGroupTech]()
   val situationmap: util.Map[Integer, util.List[Situation]] = new util.HashMap[Integer, util.List[Situation]]()
   val simples: util.List[SimplePlayer] = new util.ArrayList[SimplePlayer]()
+  var ArmygroupDungeoMax:  Integer= 0
+  var Dungeolist: util.List[Integer] = new util.ArrayList[Integer]()
+  var armygroupdungeoinfo:util.Map[Integer, util.List[PlayerTeam]] = new util.HashMap[Integer, util.List[PlayerTeam]]()
+  var attackDungeolist: util.List[Integer] = new util.ArrayList[Integer]()
+
+/*
+//以下为军团副本测试数据
+  attackDungeolist.clear();
+
+  Dungeolist.add(1)
+  Dungeolist.add(2)
+  Dungeolist.add(9)
+  Dungeolist.add(4)
+  Dungeolist.add(7)
+  Dungeolist.add(15)
+  Dungeolist.add(20)
+
+  val dungeoDb:LegionDungeoTeamSetDb =new LegionDungeoTeamSetDb()
+  val playertroop:PlayerTroop = new PlayerTroop()
+  val  dungeoproxy:DungeoProxy = new DungeoProxy()
+  val son: util.List[JSONObject] = ConfigDataProxy.getConfigAllInfo(DataDefine.LegionEvent)
+  for(json <- son){
+    armygroupdungeoinfo.put(json.getInt("ID"),dungeoproxy.createArmyGroupDungeoMonsterList(json.getInt("ID")))
+  }
+
+  armygroup.setLegionDungeoidbox(Dungeolist)
+
+  ArmygroupDungeoMax = 20
+  armygroup.setMaxLegionDungeoid(ArmygroupDungeoMax)*/
+
+
 
   import scala.collection.JavaConversions._
 
@@ -140,7 +172,20 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
       onlegionenlist(playerId)
     case addLegionShareRecord(playerId :Long,chargeId:Int,createTime:Int,sharedPlayerName:String) =>
       doAddLegionShareRecord(playerId,chargeId,createTime,sharedPlayerName)
+    /*case getArmyGroupDungeoInfo(dungeoid:Int) =>
+      ongetArmyGroupDungeoInfo(dungeoid)
+    case iscanattackArmyGroupDungeo(dungeoid:Int) =>
+      oniscanattackArmyGroupDungeo(dungeoid)
+    case addPuppetList(acname:String,battleType: Int, eventId: Int, cmd: Int, team: util.List[PlayerTeam], saveTraffic: Int) =>
+      onaddungeolist(acname,battleType,eventId,cmd,team,saveTraffic)
+    case changeArmyGroupDungeoInfo(sort:Integer) =>
+      onchangeArmyGroupDungeoInfo(sort)
+    case allarmygroupdungeoinfo()  =>
+      onallarmygroupdungeoinfo()
+    case changeGroupDungeomonsterInfo(dungeoId:Int,monsterlist:util.List[PlayerTeam]) =>
+      onchangeGroupDungeoInfo(dungeoId,monsterlist)*/
     case _ =>
+
   }
   def checkACTimer() {
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE)
@@ -1334,6 +1379,17 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     val actor = context.actorSelection("../../" + ActorDefine.CHAT_SERVICE_NAME)
     actor ! CreateLegionChatNode(armygroup.getId)
     initSituation()
+
+    val son: util.List[JSONObject] = ConfigDataProxy.getConfigAllInfo(DataDefine.LegionEvent)
+    val playertroop:PlayerTroop = new PlayerTroop()
+    val  dungeoproxy:DungeoProxy = new DungeoProxy()
+    for(json <- son){
+    if(BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).getTeamData(armygroup.getId, json.getInt("ID")) == null){
+      playertroop.setPlayerTeams(dungeoproxy.createArmyGroupDungeoMonsterList(json.getInt("ID")))
+      BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).addTeamDate(playertroop, armygroup.getId, json.getInt("ID"))
+      armygroupdungeoinfo.put(json.getInt("ID"),dungeoproxy.createArmyGroupDungeoMonsterList(json.getInt("ID")))
+    }
+   }
   }
 
 
@@ -1374,6 +1430,16 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
       }
       if (armygroup != null) {
         armygroup.save()
+      }
+    }
+    val son: util.List[JSONObject] = ConfigDataProxy.getConfigAllInfo(DataDefine.LegionEvent)
+    val playertroop:PlayerTroop = new PlayerTroop()
+    for (info <- armygroupdungeoinfo.keySet()) {
+      for (json <- son) {
+        if (info == json.getInt(("ID")) && armygroupdungeoinfo.get(info) != BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).getTeamData(armygroup.getId, json.getInt("ID")).getPlayerTeams) {
+          playertroop.setPlayerTeams(armygroupdungeoinfo.get(info))
+          BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).addTeamDate(playertroop, armygroup.getId, json.getInt("ID"))
+        }
       }
     }
   }
@@ -2125,6 +2191,9 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
       refreshZero()
       refreshActiVitily()
       initfiveMap()
+      refreshArmygroupdungeo()
+      refreshMenbersDungeoTimes()
+      refreshArmygroupdungeoinfo()
     }
     if (hour == 12) {
       refreshShop()
@@ -2135,6 +2204,47 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     armygroup.save()
   }
 
+  //重置军团副本
+  def refreshArmygroupdungeoinfo(): Unit ={
+    val dungeoDb:LegionDungeoTeamSetDb =new LegionDungeoTeamSetDb()
+    val playertroop:PlayerTroop = new PlayerTroop()
+    val  dungeoproxy:DungeoProxy = new DungeoProxy()
+    val son: util.List[JSONObject] = ConfigDataProxy.getConfigAllInfo(DataDefine.LegionEvent)
+    for(json <- son){
+      playertroop.setPlayerTeams(dungeoproxy.createArmyGroupDungeoMonsterList(json.getInt("ID")))
+      BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).addTeamDate(playertroop, armygroup.getId, json.getInt("ID"))
+      armygroupdungeoinfo.put(json.getInt("ID"),dungeoproxy.createArmyGroupDungeoMonsterList(json.getInt("ID")))
+    }
+  }
+
+  //刷新每日通关军团副本
+  def refreshArmygroupdungeo(): Unit ={
+    Dungeolist.clear()
+    attackDungeolist.clear()
+    armygroup.setLegionDungeoidbox(Dungeolist)
+  }
+  //刷新玩家每日挑战军团副本次数 及 4点刷新（在线玩家）军团副本列表信息---即270000推送
+  def refreshMenbersDungeoTimes(): Unit ={
+    //TODO  该方法需优化
+    var dungeoinfo:util.Map[Integer, util.List[PlayerTeam]] = new util.HashMap[Integer, util.List[PlayerTeam]]()
+    for(infos <- armygroupdungeoinfo.keySet()){
+      dungeoinfo.put(infos,armygroupdungeoinfo.get(infos))
+    }
+    var list: util.List[Integer] = new util.ArrayList[Integer]()
+    for(men <- menbers ){
+      val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(men.getPlayerId, areakey)
+      if (simplePlayer != null ) {
+        if (simplePlayer.online == true) {
+          sendMsgToRoleModule(simplePlayer.getAccountName, refreshLegionDungeoTimes(men.getPlayerId,dungeoinfo))
+        } else {
+          val player = BaseDbPojo.getOfflineDbPojo(men.getPlayerId, classOf[Player], areakey)
+          player.setArmygroupdungeotimes(ActorDefine.LEGION_DUNGEO_CHANGE_TIME)
+          player.setGetbox(list)
+          player.save()
+        }
+      }
+    }
+  }
   def refreshZero(): Unit = {
     for (men <- menbers) {
       men.setIsgetwelfare(0)
@@ -2435,13 +2545,84 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
       }
     }
   }
+/*
+  //添加每日通关军团副本
+  def onchangeArmyGroupDungeoInfo(sort:Integer) = {
+    if (!Dungeolist.contains(sort)) {
+      Dungeolist.add(sort)
+      armygroup.setLegionDungeoidbox(Dungeolist)
+    }
+    if(sort > ArmygroupDungeoMax ){
+      ArmygroupDungeoMax = sort
+      armygroup.setMaxLegionDungeoid(ArmygroupDungeoMax)
+    }
 
+  }
+  //更新军团副本信息
+  def onchangeGroupDungeoInfo(dungeoId:java.lang.Integer,monsterlist:util.List[PlayerTeam]): Unit ={
+    for(infos <- armygroupdungeoinfo.keySet()){
+      if(infos == dungeoId && armygroupdungeoinfo.get(infos) != monsterlist ){
+        armygroupdungeoinfo.put(infos,monsterlist)
+      }
+    }
+    if(attackDungeolist.contains(dungeoId)){
+      attackDungeolist.remove(dungeoId)
+    }
+  }
+
+  //判断是否可打
+ def oniscanattackArmyGroupDungeo(dungeoid:Int): Unit ={
+    var flag:Boolean = false
+    //attackDungeolist.synchronized{
+      if(!attackDungeolist.contains(dungeoid)){
+        flag = true
+      }
+      sender() ! iscanattackArmyGroupDungeore(flag)
+    //}
+
+  }
+
+  //获取军团副本信息(monster)
+   def onaddungeolist(acname:String,battleType: Int, eventId: Int, cmd: Int, team: util.List[PlayerTeam], saveTraffic: Int): Unit ={
+    attackDungeolist.add(eventId)
+    for(infos <- armygroupdungeoinfo.keySet()){
+       if(infos == eventId){
+         sendMsgDungeoModule(acname,returnarmygroupinfos(battleType,eventId,cmd,team,saveTraffic,armygroupdungeoinfo.get(infos)))
+       }
+     }
+
+   }
+  //获取章节副本信息
+  def ongetArmyGroupDungeoInfo(dungeoid:Int): Unit ={
+    var dungeoinfo:util.Map[Integer, util.List[PlayerTeam]] = new util.HashMap[Integer, util.List[PlayerTeam]]()
+    for(infos <- armygroupdungeoinfo.keySet()){
+      var json: JSONObject= ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent,infos.toLong)
+      if(dungeoid ==  json.getInt("chapter")){
+         dungeoinfo.put(infos,armygroupdungeoinfo.get(infos))
+      }
+    }
+    sender() ! ArmyGroupDungeoInfo(dungeoid,dungeoinfo)
+  }
+  //270000协议 获取副本信息
+  def onallarmygroupdungeoinfo(): Unit ={
+    var dungeoinfo:util.Map[Integer, util.List[PlayerTeam]] = new util.HashMap[Integer, util.List[PlayerTeam]]()
+    for(infos <- armygroupdungeoinfo.keySet()){
+        dungeoinfo.put(infos,armygroupdungeoinfo.get(infos))
+      }
+    sender() !reallarmygroupdungeoinfo(dungeoinfo)
+  }
+*/
   //通知到service
   def tellService(serviceName: String, msg: AnyRef) = {
     context.actorSelection("../../" + serviceName) ! msg
   }
   def sendMsgToRoleModule(accountName: String, msg: AnyRef) = {
     val actor = context.actorSelection("../../" + ActorDefine.PLAYER_SERVICE_NAME + "/" + accountName + "/" + ActorDefine.ROLE_MODULE_NAME)
+    actor ! msg
+  }
+
+  def sendMsgDungeoModule(accountName: String, msg: AnyRef) = {
+    val actor = context.actorSelection("../../" + ActorDefine.PLAYER_SERVICE_NAME + "/" + accountName + "/" + ActorDefine.DUNGEO_MODULE_NAME)
     actor ! msg
   }
 
@@ -2454,6 +2635,7 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
   def sendLog(log: BaseLog) = {
     tellService(ActorDefine.ADMIN_LOG_SERVICE_NAME, SendAdminLog(log, ActorDefine.ADMIN_LOG_ACTION_INSERT, "", 0))
   }
+
 }
 
 

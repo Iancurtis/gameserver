@@ -297,10 +297,10 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
       //      log.warning("!!!警告！！这个数据没有被缓存起来！！")
     }
 
-    if (saveFieldMap.containsKey(dataKey)) {
-      DbServer.removeSaveDataMap(dataKey)
-      saveFieldMap.remove(dataKey)
-    }
+//    if (saveFieldMap.containsKey(dataKey)) {
+//      DbServer.removeSaveDataMap(dataKey)
+//      saveFieldMap.remove(dataKey)
+//    }
   }
 
   def getDbPojo(id: Long, pojoClass: Class[_]) = {
@@ -416,8 +416,10 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
                 jc.expireAt(key, action.getExpireAt * 1000L)
               }
               val dataKey = getDataKey(action.getId, action.getPojoClassName)
-              dataMap.remove(dataKey)
-//              log.info("-----------------SaveDB data----------------------:" + key + " time:" + " value:" + map + " " + (System.currentTimeMillis() - time))
+//              dataMap.remove(dataKey)
+              DbServer.removeSaveDataMap(dataKey)
+              log.error("-----------------SaveDB data----------------------:" + key + " time:" + " value:" + map + " " + (System.currentTimeMillis() - time))
+              log.info("-----------------SaveDB data----------------------:" + key + " time:" + " value:" + map + " " + (System.currentTimeMillis() - time))
             } else if (action.getType.equals(DbActionType.DEL)) {
               val key = action.getKey
               jc.del(key)
@@ -594,7 +596,7 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
     jc.zadd(db_set_key, value, key)
 
     //保存到mysql
-
+    mysqlActor ! UpdateSetToMysql(setDbPojo.getClassName, key, value,setDbPojo.getLogAreaId)
   }
 
   def onDelSetDbPojoElement(setDbPojo: BaseSetDbPojo, key : String): Unit ={

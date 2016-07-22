@@ -47,7 +47,7 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
 
   override def preStart() = {
 
-    BaseSetDbPojo.getSetDbPojo(classOf[ArmGroupSetDb], areaKey)
+//    BaseSetDbPojo.getSetDbPojo(classOf[ArmGroupSetDb], areaKey)
 
     import context.dispatcher
     context.system.scheduler.schedule(0 milliseconds, 10 seconds, context.self, OnServerTrigger())

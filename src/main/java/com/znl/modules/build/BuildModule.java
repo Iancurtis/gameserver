@@ -157,7 +157,6 @@ public class BuildModule extends BasicModule {
                 builder.setRs(rs);
                 if (rs == 0) {
                     builder.setBuildingInfo(resFunBuildProxy.getBuildingInfo(buildType, index));
-                    sendTimer(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100001, builder, powerlist,buildType, index);
                     BuildingLog baseLog = new BuildingLog(index, buildType, LogDefine.BUILDINGLEVEL, 0, 0, resFunBuildProxy.getResFuBuildLevelBysmallType(buildType, index));
                     sendLog(baseLog);
                 } else {
@@ -168,7 +167,6 @@ public class BuildModule extends BasicModule {
             builder.setRs(rs);
             if (rs == 0 || isAutoLv == 1) {
                 builder.setBuildingInfo(resFunBuildProxy.getBuildingInfo(buildType, index));
-                sendTimer(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100001, builder, powerlist,buildType, index);
                 BuildingLog baseLog = new BuildingLog(index, buildType, LogDefine.BUILDINGLEVEL, 0, 0, resFunBuildProxy.getResFuBuildLevelBysmallType(buildType, index));
                 sendLog(baseLog);
 //                sendFuntctionLog(FunctionIdDefine.GET_BUILDING_INFO_FUNCTION_ID);
@@ -191,7 +189,7 @@ public class BuildModule extends BasicModule {
         int rs = resFunBuildProxy.cancelLevelCreate(buildType, index, order, reward);
         builder.setRs(rs);
         builder.setBuildingInfo(resFunBuildProxy.getBuildingInfo(buildType, index));
-        checkPlayerPowerValues(request.getPowerMap());
+//        checkPlayerPowerValues(request.getPowerMap());
         if (rs == 0) {
             RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
             M2.M20007.S2C message1 = rewardProxy.getRewardClientInfo(reward);
@@ -199,9 +197,6 @@ public class BuildModule extends BasicModule {
             sendFuntctionLog(FunctionIdDefine.CANCEL_BUILDING_UPGRADE_FUNCTION_ID, buildType, index, order);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100003, builder.build());
-        if (rs == 0) {
-            sendTimer();
-        }
     }
 
     private void OnTriggerNet100004Event(Request request) {
@@ -242,14 +237,8 @@ public class BuildModule extends BasicModule {
                 playerTasks.add(new PlayerTask(TaskDefine.TASK_TYPE_BUILDLEVEUP_TIMES, 0, 1));
                 updateMySimplePlayerData();
             }
-            GameMsg.SystemTimer message = new GameMsg.SystemTimer();
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message);
             TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-            PlayerReward reward19 = new PlayerReward();
-            M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(playerTasks, reward19);
-            if(builder19!=null) {
-                sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward19));
-            }
+            taskProxy.getTaskUpdate(playerTasks);
             for (BaseLog baseLog : baseLogs) {
                 sendLog(baseLog);
             }
@@ -259,8 +248,6 @@ public class BuildModule extends BasicModule {
                 sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.CountCapacity());
             }
 
-            //2016/04/11 通知SystemModule有定时器的到期时间改变了，要重新刷新一次到点的Set了
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME,new GameMsg.RefTimerSet(TimerDefine.CHANGE_TIMER_INIT_TYPE_BUY_TIME));
         }
         sendNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100004, builder.build());
 
@@ -302,8 +289,6 @@ public class BuildModule extends BasicModule {
         builder.setRs(rs);
         if (rs == 0) {
             builder.setBuildingInfo(resFunBuildProxy.getBuildingInfo(builtype, index));
-            sendTimer(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100006, builder, new ArrayList<Integer>(),builtype, index);
-
         } else {
             sendNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100006, builder.build());
         }
@@ -328,10 +313,7 @@ public class BuildModule extends BasicModule {
             if(ResFunBuildDefine.BUILDE_TYPE_SCIENCE==builtype){
                 TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
                 PlayerReward reward19000 = new PlayerReward();
-                M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_SCIENCELV_TIMES, 1, reward19000);
-                if(builder19!=null) {
-                    sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward19000));
-                }
+                taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_SCIENCELV_TIMES, 1);
             }
             sendFuntctionLog(FunctionIdDefine.DISMANT_PRODUCE_FUNCTION_ID, builtype, typeId, num);
         }
@@ -355,12 +337,11 @@ public class BuildModule extends BasicModule {
         }
         if (rs == 0) {
             sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, new GameMsg.RefeshItemBuff());
-            GameMsg.SystemTimer message = new GameMsg.SystemTimer();
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message);
             updateMySimplePlayerData();
             sendNoticeToPushService(TipDefine.NOTICE_TYPE_CREATESOLDIER);
             sendNoticeToPushService(TipDefine.NOTICE_TYPE_SCIENCELEVEL);
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -384,17 +365,9 @@ public class BuildModule extends BasicModule {
                 shopLog(itemId, reward.addItemMap.get(itemId), id);
             }
         }
+        sendPushNetMsgToClient();
     }
 
-    public void sendTimer(int cn, int cmd, Object obj, List<Integer> powerlist,int buildType, int index) {
-        GameMsg.BuildTimer message = new GameMsg.BuildTimer(cn, cmd, obj, powerlist,buildType,index);
-        sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message);
-    }
-
-    public void sendTimer() {
-        GameMsg.SystemTimer message = new GameMsg.SystemTimer();
-        sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message);
-    }
 
     //请求购买建筑位
     private void OnTriggerNet100009Event(Request request) {
@@ -427,8 +400,6 @@ public class BuildModule extends BasicModule {
         sendNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100010, builder.build());
         if (rs == 0) {
             resFunBuildProxy.changetAutoBuildState(1);
-            GameMsg.CheckAllTimerAndSend30000 msg = new GameMsg.CheckAllTimerAndSend30000();
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, msg);
         }
     }
 
@@ -445,11 +416,6 @@ public class BuildModule extends BasicModule {
             builder.setType(2);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100011, builder.build());
-        if (rs == 0) {
-            //发送定时器
-            GameMsg.CheckAllTimerAndSend30000 msg = new GameMsg.CheckAllTimerAndSend30000();
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, msg);
-        }
     }
 
     //设置定时器的状态
@@ -463,11 +429,6 @@ public class BuildModule extends BasicModule {
         builder.setType(state);
         sendNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100012, builder.build());
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        if (rs == 0) {
-            //发送定时器
-            GameMsg.CheckAllTimerAndSend30000 msg = new GameMsg.CheckAllTimerAndSend30000();
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, msg);
-        }
     }
 
     /**
@@ -502,9 +463,9 @@ public class BuildModule extends BasicModule {
 
     //通过某个类型发送通知
     public void sendNoticeToPushService(int type) {
-        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        List<Notice> notices = timerdbProxy.getNoticeByType(type);
-        sendServiceMsg(ActorDefine.PUSH_SERVICE_NAME, new GameMsg.addNoticelist(notices, type));
+        //TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+     //   List<Notice> notices = timerdbProxy.getNoticeByType(type);
+      //  sendServiceMsg(ActorDefine.PUSH_SERVICE_NAME, new GameMsg.addNoticelist(notices, type));
     }
     /**
      * 重复协议请求处理

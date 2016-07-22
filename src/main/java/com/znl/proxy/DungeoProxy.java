@@ -10,9 +10,9 @@ import com.znl.define.*;
 import com.znl.msg.GameMsg;
 import com.znl.pojo.db.Dungeo;
 import com.znl.pojo.db.Mail;
-import com.znl.pojo.db.Timerdb;
 import com.znl.proto.Common;
 import com.znl.proto.M6;
+import com.znl.template.MailTemplate;
 import com.znl.utils.GameUtils;
 import com.znl.utils.SortUtil;
 import org.apache.mina.util.ConcurrentHashSet;
@@ -86,6 +86,11 @@ public class DungeoProxy extends BasicProxy {
             }
 
         }
+    }
+
+
+    public DungeoProxy() {
+
     }
 
     public List<Integer> getAllDungeoId() {
@@ -275,8 +280,9 @@ public class DungeoProxy extends BasicProxy {
                 builder.setTimesTotal(20);
             } else {
                 dungeoDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.ADVENTURE, dungeo.getDungeoId());
-                TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-                builder.setTimes(timerdbProxy.getAdventureTimesById(dungeo.getDungeoId()));
+                //  TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+                //    builder.setTimes(timerdbProxy.getAdventureTimesById(dungeo.getDungeoId()));
+                builder.setTimes(getRistbuyTimes(dungeo.getDungeoId()));
                 builder.setTimesTotal(dungeoDefine.getInt("time"));
             }
             int totalstar = dungeoDefine.getInt("starNum");
@@ -302,8 +308,9 @@ public class DungeoProxy extends BasicProxy {
                 builder.setTimesTotal(20);
             } else {
                 dungeoDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.ADVENTURE, dungeo.getDungeoId());
-                TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-                builder.setTimes(timerdbProxy.getAdventureTimesById(dungeo.getDungeoId()));
+                //TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+                //  builder.setTimes(timerdbProxy.getAdventureTimesById(dungeo.getDungeoId()));
+                builder.setTimes(getRistChangeTimes(dungeo.getDungeoId()));
                 builder.setTimesTotal(dungeoDefine.getInt("time"));
             }
             int totalstar = dungeoDefine.getInt("starNum");
@@ -383,13 +390,13 @@ public class DungeoProxy extends BasicProxy {
 //                }
                 builder.setStar(getEventIndexStar(i, dungeo));
                 JSONObject monsterGroup = getMonsterGroup(eventDefine.getInt("monstergroup"));
-              //  builder.setForce(monsterGroup.getInt("force"));
+             //   builder.setForce(monsterGroup.getInt("force"));
                 //获取6个槽位的怪物
                 for (int index = 1; index <= 6; index++) {
                     JSONArray pos = monsterGroup.getJSONArray("position" + index);
                     int size = pos.length();
                     if (size > 1) {
-                     //   builder.addMonsterInfos(getMonsterInfo(pos.getInt(0), pos.getInt(1), index));
+                        // builder.addMonsterInfos(getMonsterInfo(pos.getInt(0), pos.getInt(1), index));
                     }
                 }
                 res.add(builder.build());
@@ -425,7 +432,14 @@ public class DungeoProxy extends BasicProxy {
         return getMonsterList(monsterGroupId);
     }
 
-    public List<PlayerTeam> getMonsterList(int groupId) {
+    //军团副本每日4点刷新(270004计算血量百分比也会用到改方法)
+    public List<PlayerTeam> createArmyGroupDungeoMonsterList(int eventId) {
+        JSONObject eventDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent, eventId);
+        int monsterGroupId = eventDefine.getInt("monstergroup");
+        return getMonsterList(monsterGroupId);
+    }
+
+     public List<PlayerTeam> getMonsterList(int groupId) {
         List<PlayerTeam> monsters = new ArrayList<>();
         JSONObject monsterGroup = getMonsterGroup(groupId);
         //获取6个槽位的怪物
@@ -613,6 +627,11 @@ public class DungeoProxy extends BasicProxy {
                     return ErrorCodeDefine.M60002_18;
                 }
             }
+            //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+            int lestimes = getRistChangeTimes(eventDefine.getInt("chapter"));
+            if (lestimes <= 0) {
+                return ErrorCodeDefine.M60002_6;
+            }
         }
        /* EquipProxy equipProxy=getGameProxy().getProxy(ActorDefine.EQUIP_PROXY_NAME);
         if(equipProxy.getEquipBagLesFree()<=0){
@@ -625,10 +644,7 @@ public class DungeoProxy extends BasicProxy {
         if (battleType == BattleDefine.BATTLE_TYPE_DUNGEON && playerProxy.getPowerValue(PlayerPowerDefine.POWER_energy) <= 0) {
             return ErrorCodeDefine.M60002_5;
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        if (battleType == BattleDefine.BATTLE_TYPE_ADVANTRUE && timerdbProxy.getAdventureTimesById(eventDefine.getInt("chapter")) <= 0) {
-            return ErrorCodeDefine.M60002_6;
-        }
+
         int dungeoId = eventDefine.getInt("chapter");
         Dungeo dungeo = getDungeoById(dungeoId);
         if (dungeo == null) {
@@ -671,7 +687,8 @@ public class DungeoProxy extends BasicProxy {
             if (playerProxy.getPlayer().getGetLimitChangeId() != eventDefine.getInt("sort")) {
                 return ErrorCodeDefine.M60002_15;
             }
-            if (3 - timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_TIMES, 0, 0) <= 0) {
+
+            if (DungeonDefine.DEOGEO_LIMIT_CHANGE - playerProxy.getPlayer().getDungeolimitchange() <= 0) {
                 return ErrorCodeDefine.M60002_16;
             }
         }
@@ -1038,9 +1055,9 @@ public class DungeoProxy extends BasicProxy {
                 builder.setTotalStar(-1);
             } else {
                 //在计数器里面补充次数time
-                TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-                builder.setCount(timerdbProxy.getAdventureTimesById(dungeoId));
-                //builder.setCount(5);
+                // TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+                // builder.setCount(timerdbProxy.getAdventureTimesById(dungeoId));
+                builder.setCount(getRistChangeTimes(define.getInt("type")));
                 builder.setTotalCount(define.getInt("time"));
                 builder.setLen(-1);
                 List<Integer> boxList = getRistDungeoBoxByDungeoId(dungeoId);
@@ -1058,8 +1075,8 @@ public class DungeoProxy extends BasicProxy {
     }
 
 
-    public M6.dungeonlist getdungeonlist(){
-        M6.dungeonlist.Builder builder=M6.dungeonlist.newBuilder();
+    public M6.dungeonlist getdungeonlist() {
+        M6.dungeonlist.Builder builder = M6.dungeonlist.newBuilder();
         List<M6.DungeoInfo> res = new ArrayList<>();
         for (Integer dungeoId : getAllDungeoId()) {
             M6.DungeoInfo info = getDungeoInfo(dungeoId);
@@ -1123,6 +1140,25 @@ public class DungeoProxy extends BasicProxy {
     }
 
     /**
+     * 打开军团副本宝箱
+     */
+    public int openArmygroupDungeoBox(int dungeoId, PlayerReward reward) {
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        if(playerProxy.getPlayer().getGetbox().contains(dungeoId)){
+            return ErrorCodeDefine.M2700003_1;
+        }else{
+        JSONObject json =  ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent, dungeoId);
+        RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
+        rewardProxy.getPlayerRewardByFixReward(json.getInt("dropid"), reward);
+        rewardProxy.getRewardToPlayer(reward, LogDefine.GET_LEGION_DUNGEO);
+        List<Integer> boxlist =  playerProxy.getPlayer().getGetbox();
+        boxlist.add(dungeoId);
+        playerProxy.getPlayer().setGetbox(boxlist);
+        return 0;
+        }
+    }
+
+    /**
      * 购买冒险次数
      */
     public int buyAdvanceTimes(int id) {
@@ -1134,12 +1170,12 @@ public class DungeoProxy extends BasicProxy {
         if (id == BattleDefine.ADVANTRUE_TYPE_ORNDANCE) {
             actype = ActivityDefine.ACTIVITY_CONDITION_EQUIP_BUYADDVACES_RETURN_GOLD;
         }
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        timerdbProxy.addTimer(TimerDefine.BUY_ADVANCE_TIMES, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, id, 0, playerProxy);
+        //timerdbProxy.addTimer(TimerDefine.BUY_ADVANCE_TIMES, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, id, 0, playerProxy);
         int resetTimes = vipProxy.getVipNum(ActorDefine.VIP_FITRESET);//可买次数
-        int resetedNum = timerdbProxy.getTimerNum(TimerDefine.BUY_ADVANCE_TIMES, id, 0);//已买了次数
+        int resetedNum = getRistHasbuyTimes(id);// timerdbProxy.getTimerNum(TimerDefine.BUY_ADVANCE_TIMES, id, 0);//已买了次数
         int maxVIPLv = vipProxy.getMaxVIPLv();
         JSONObject info = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.VIPDATA, "level", maxVIPLv);
         int maxBuy = 0;
@@ -1172,8 +1208,10 @@ public class DungeoProxy extends BasicProxy {
         }
 
         playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, needGold, LogDefine.LOST_RISK_TIMES);
-        timerdbProxy.addAdvanceTiems(id, DungeonDefine.ADVANCE_TIMES);
-        timerdbProxy.addNum(TimerDefine.BUY_ADVANCE_TIMES, id, 0, 1);
+        // timerdbProxy.addAdvanceTiems(id, DungeonDefine.ADVANCE_TIMES);
+        //  timerdbProxy.addNum(TimerDefine.BUY_ADVANCE_TIMES, id, 0, 1);
+        addRistbuyTimes(id,1);
+        addRistChangeTimes(id, DungeonDefine.ADVANCE_TIMES);
         sendFunctionLog(FunctionIdDefine.BUY_ADVANCE_TIMES_FUNCTION_ID, needGold, id, 0);
         return 0;
     }
@@ -1184,10 +1222,10 @@ public class DungeoProxy extends BasicProxy {
      * @return
      */
     public int needGold(int dungeoId) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        timerdbProxy.addTimer(TimerDefine.BUY_ADVANCE_TIMES, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, dungeoId, 0, playerProxy);
-        int resetedNum = timerdbProxy.getTimerNum(TimerDefine.BUY_ADVANCE_TIMES, dungeoId, 0);//已买了次数
+        // timerdbProxy.addTimer(TimerDefine.BUY_ADVANCE_TIMES, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, dungeoId, 0, playerProxy);
+        int resetedNum = getRistHasbuyTimes(dungeoId); //timerdbProxy.getTimerNum(TimerDefine.BUY_ADVANCE_TIMES, dungeoId, 0);//已买了次数
         int needGold = 0;
         if (resetedNum >= 5) {
             needGold = DungeonDefine.BUY_ADVANCE_TIMES_FIX_EXPEND;
@@ -1205,12 +1243,13 @@ public class DungeoProxy extends BasicProxy {
      * 请求购买冒险次数
      */
     public int askBuyTimes(int id) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        timerdbProxy.addTimer(TimerDefine.BUY_ADVANCE_TIMES, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, id, 0, playerProxy);
+        //   timerdbProxy.addTimer(TimerDefine.BUY_ADVANCE_TIMES, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, id, 0, playerProxy);
         int resetTimes = vipProxy.getVipNum(ActorDefine.VIP_FITRESET);//可买次数
-        int resetedNum = timerdbProxy.getTimerNum(TimerDefine.BUY_ADVANCE_TIMES, id, 0);//已买了次数
+
+        int resetedNum = getRistHasbuyTimes(id) ;// timerdbProxy.getTimerNum(TimerDefine.BUY_ADVANCE_TIMES, id, 0);//已买了次数
         int maxVIPLv = vipProxy.getMaxVIPLv();
         JSONObject info = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.VIPDATA, "level", maxVIPLv);
         int maxBuy = 0;
@@ -1256,8 +1295,8 @@ public class DungeoProxy extends BasicProxy {
 
     public int limitRest() {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        if (1 - timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_REST, 0, 0) <= 0) {
+        //   TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        if (DungeonDefine.DEOGEO_LIMIT_REST - playerProxy.getPlayer().getDungeolimitrest() <= 0) {
             return ErrorCodeDefine.M60101_1;
         }
         if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_energy) < 5) {
@@ -1265,21 +1304,24 @@ public class DungeoProxy extends BasicProxy {
         }
         playerProxy.getPlayer().setGetLimitChangeId(1);
         playerProxy.reducePowerValue(PlayerPowerDefine.POWER_energy, 5, LogDefine.LOST_LIMIT_CHANGE);
-        timerdbProxy.addNum(TimerDefine.LIMIT_CHANGET_REST, 0, 0, 1);
-        timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_TIMES, 0, 0, 0);
-        timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, 0);
+        //   timerdbProxy.addNum(TimerDefine.LIMIT_CHANGET_REST, 0, 0, 1);
+        playerProxy.getPlayer().setDungeolimitrest(1);
+        // timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_TIMES, 0, 0, 0);
+        playerProxy.getPlayer().setDungeolimitchange(0);
+        // timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, 0);
+        playerProxy.getPlayer().setDungeolimitmoptimes(0);
         return 0;
     }
 
     public int checkmopp() {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         int max = playerProxy.getPlayer().getLimitChangeMaxId();
-        int num = timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
+        int num = playerProxy.getPlayer().getDungeolimitmoptimes();//timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
         if (num == 0) {
             return 0;
         }
-        long time = (timerdbProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0) - GameUtils.getServerDate().getTime()) / 1000;
+        long time = (playerProxy.getPlayer().getDungeolimitmop() - GameUtils.getServerDate().getTime()) / 1000;// (timerdbProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0) - GameUtils.getServerDate().getTime()) / 1000;
         if (time > 0) {
             int checktimes = (int) time / 30;
             if ((int) time % 30 > 0) {
@@ -1296,10 +1338,10 @@ public class DungeoProxy extends BasicProxy {
     //获得扫荡的reward
     public void getMopReward(PlayerReward reward) {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
         int nowId = playerProxy.getPlayer().getGetLimitChangeId();
-        int num = timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
+        int num = playerProxy.getPlayer().getDungeolimitmoptimes();// timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
         for (; num < nowId; num++) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.ADVENTURE_EVENT, "chapter", 4, "sort", num);
             JSONArray fixjson = jsonObject.getJSONArray("fixdrop");
@@ -1326,38 +1368,43 @@ public class DungeoProxy extends BasicProxy {
 
     public int startMop() {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         int max = playerProxy.getPlayer().getLimitChangeMaxId();
         int nowId = playerProxy.getPlayer().getGetLimitChangeId();
-        long time = (timerdbProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0) - GameUtils.getServerDate().getTime()) / 1000;
+        long time = (playerProxy.getPlayer().getDungeolimitmop() - GameUtils.getServerDate().getTime()) / 1000;//(timerdbProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0) - GameUtils.getServerDate().getTime()) / 1000;
         if (time > 0) {
             return ErrorCodeDefine.M60102_1;
         }
         if (playerProxy.getPlayer().getGetLimitChangeId() == playerProxy.getPlayer().getLimitChangeMaxId()) {
             return ErrorCodeDefine.M60102_2;
         }
-        timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, nowId);
+        //  timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, nowId);
+        playerProxy.getPlayer().setDungeolimitmoptimes(nowId);
         int needtime = (max - nowId) * 30 * 1000;
-        timerdbProxy.setLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, GameUtils.getServerDate().getTime() + needtime);
+        //    timerdbProxy.setLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, GameUtils.getServerDate().getTime() + needtime);
+        playerProxy.getPlayer().setDungeolimitmop(GameUtils.getServerDate().getTime() + needtime);
         return 0;
     }
 
 
     public int stopMop(PlayerReward reward) {
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int num = timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
+        //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        int num = playerProxy.getPlayer().getDungeolimitmoptimes();// timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
         if (num == 0) {
             return ErrorCodeDefine.M60103_1;
         }
-        long time = (timerdbProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0) - GameUtils.getServerDate().getTime()) / 1000;
+        long time = (playerProxy.getPlayer().getDungeolimitmop() - GameUtils.getServerDate().getTime()) / 1000;// (timerdbProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0) - GameUtils.getServerDate().getTime()) / 1000;
         if (time < 0) {
             return ErrorCodeDefine.M60103_1;
         }
         getMopReward(reward);
         rewardProxy.getRewardToPlayer(reward, LogDefine.GET_LIMITCHANGE_MOP);
-        timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, 0);
-        timerdbProxy.setLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, GameUtils.getServerDate().getTime());
+        playerProxy.getPlayer().setDungeolimitmop(GameUtils.getServerDate().getTime());
+        playerProxy.getPlayer().setDungeolimitmoptimes(0);
+        //   timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, 0);
+        //  timerdbProxy.setLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, GameUtils.getServerDate().getTime());
         return 0;
     }
 
@@ -1427,17 +1474,62 @@ public class DungeoProxy extends BasicProxy {
         return 0;
     }
 
+
+    //极限副本扫荡时间
+    public M6.M60105.S2C getMopTimeInfo() {
+        checkMop();
+        M6.M60105.S2C.Builder builder = M6.M60105.S2C.newBuilder();
+        builder.setRs(0);
+        builder.setMoptime(getcheckMopTime());
+        return builder.build();
+    }
+
+
+    //扫荡校验
+    public int getcheckMopTime() {
+        //TimerdbProxy timerProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //    long lasttime = timerProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
+
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        long lasttime = playerProxy.getPlayer().getDungeolimitmop();
+        int num = playerProxy.getPlayer().getDungeolimitmoptimes();//timerProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
+        long time = lasttime - GameUtils.getServerDate().getTime();
+        if (num >= 1) {
+            long timenum = time / 30 / 1000;
+            if (time < 0) {
+                timenum = 0;
+            }
+            int maxid = playerProxy.getLimitChangeMaxId();
+            playerProxy.setLimitChangeNowId((int) (maxid - timenum));
+        }
+        if (num != 0 && time <= 0) {
+            DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
+            PlayerReward reward = new PlayerReward();
+            dungeoProxy.getMopReward(reward);
+            List<Integer[]> list = dungeoProxy.rewardtoList(reward);
+            MailTemplate template = new MailTemplate("扫荡奖励邮件", "扫荡奖励邮件", 0, "系统邮件", ChatAndMailDefine.MAIL_TYPE_SYSTEM);
+            template.setAttachments(list);
+            sendMailServiceMsg(new GameMsg.ReceiveMailNotice(template));
+            playerProxy.getPlayer().setDungeolimitmoptimes(0);
+        }
+        if (time <= 0) {
+            time = 0;
+        }
+        return (int) (time / 1000);
+        // timerProxy.setLesTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0, (int) time / 1000);
+    }
+
     private void checkMop() {
-        TimerdbProxy timerProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        long lasttime = timerProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
-        int num = timerProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
+        //  TimerdbProxy timerProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        long lasttime = playerProxy.getPlayer().getDungeolimitmop();//timerProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
+        int num = playerProxy.getPlayer().getDungeolimitmoptimes();//timerProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0);
         long time = lasttime - GameUtils.getServerDate().getTime();
         if (num != 1) {
             long timenum = time / 30 / 1000;
             if (time <= 0) {
                 timenum = 0;
             }
-            PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             int maxid = playerProxy.getLimitChangeMaxId();
             playerProxy.setLimitChangeNowId((int) (maxid - timenum));
         }
@@ -1475,6 +1567,88 @@ public class DungeoProxy extends BasicProxy {
                 }*/
                 team.init();
             }
+        }
+    }
+
+    //获得冒险副本剩余挑战次数
+    public int getRistChangeTimes(int dungeoid) {
+        Dungeo dungeo = getRistDungeoById(dungeoid);
+        if (dungeo == null) {
+            return 0;
+        }
+        JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ADVENTURE, "type", dungeoid);
+        if (jsonObject == null) {
+            return 0;
+        }
+      return jsonObject.getInt("time")-dungeo.getChangetimes();
+    }
+
+    //增加冒险副本挑战次数
+    public void addRistChangeTimes(int dungeoid, int times) {
+        Dungeo dungeo = getRistDungeoById(dungeoid);
+        if (dungeo == null) {
+            return ;
+        }
+       int hatimes=dungeo.getChangetimes();
+        dungeo.setChangetimes(hatimes-times);
+        pushDungeoToChangeList(dungeo);
+    }
+
+    //减少冒险副本挑战次数
+    public void reduceRistChangeTimes(int dungeoid, int times) {
+        Dungeo dungeo = getRistDungeoById(dungeoid);
+        if (dungeo == null) {
+            return ;
+        }
+        int hatimes=dungeo.getChangetimes();
+        dungeo.setChangetimes(hatimes+times);
+        pushDungeoToChangeList(dungeo);
+    }
+
+    //获得冒险副本剩余挑战购买次数
+    public int getRistbuyTimes(int dungeoid) {
+        Dungeo dungeo = getRistDungeoById(dungeoid);
+        if (dungeo == null) {
+            return 0;
+        }
+        JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ADVENTURE, "type", dungeoid);
+        if (jsonObject == null) {
+            return 0;
+        }
+
+        VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
+        int resetTimes = vipProxy.getVipNum(ActorDefine.VIP_FITRESET);//可买次数
+        return resetTimes-dungeo.getBuytimes();
+    }
+
+
+    //获得冒险副本剩余挑战购买次数
+    public int getRistHasbuyTimes(int dungeoid) {
+        Dungeo dungeo = getRistDungeoById(dungeoid);
+        if (dungeo == null) {
+            return 0;
+        }
+
+        return dungeo.getBuytimes();
+    }
+
+    //增加冒险副本挑战购买次数
+    public void addRistbuyTimes(int dungeoid, int times) {
+        Dungeo dungeo = getRistDungeoById(dungeoid);
+        if (dungeo == null) {
+            return ;
+        }
+       int oldtimes=dungeo.getBuytimes();
+        dungeo.setBuytimes(oldtimes+times);
+        pushDungeoToChangeList(dungeo);
+    }
+
+    @Override
+    public void fixedTimeEventHandler() {
+        for (Dungeo dungeo : ristDungeos) {
+            dungeo.setChangetimes(0);
+            dungeo.setBuytimes(0);
+            dungeo.save();
         }
     }
 }

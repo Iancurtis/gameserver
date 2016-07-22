@@ -11,23 +11,28 @@ import com.znl.log.admin.tbllog_box;
 import com.znl.log.admin.tbllog_fb;
 import com.znl.log.admin.tbllog_pvp;
 import com.znl.msg.GameMsg;
+import com.znl.pojo.db.Dungeo;
 import com.znl.pojo.db.set.LimitDungeonFastSetDb;
 import com.znl.pojo.db.set.TeamDateSetDb;
 import com.znl.proto.*;
 import com.znl.proxy.*;
+import com.znl.service.ArmyGroupService;
 import com.znl.template.ReportTemplate;
 import com.znl.utils.GameUtils;
 import com.znl.utils.SortUtil;
+import org.apache.avro.generic.GenericData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.*;
 
 /**
  * Created by Administrator on 2015/11/10.
  */
 public class DungeoModule extends BasicModule {
-
+    int monsterHp=0;
     public static Props props(final GameProxy gameProxy) {
         return Props.create(new Creator<DungeoModule>() {
             private static final long serialVersionUID = 1L;
@@ -59,8 +64,6 @@ public class DungeoModule extends BasicModule {
         } else if (object instanceof GameMsg.ClientEndHandle) {
             int battleId = ((GameMsg.ClientEndHandle) object).battleId();
             clientEndBattleHandle(battleId);
-            GameMsg.RefrshTip msg = new GameMsg.RefrshTip();
-            sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, msg);
         } else if (object instanceof GameMsg.GetAllArenaRankSuceess) {
             Map<Long, Integer> ranks = ((GameMsg.GetAllArenaRankSuceess) object).arenMap();
             String cmd = ((GameMsg.GetAllArenaRankSuceess) object).cmd();
@@ -77,9 +80,9 @@ public class DungeoModule extends BasicModule {
             DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
             M6.M60100.S2C.Builder builder = ((GameMsg.getLimitChangetInfoBack) object).builder();
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-            builder.setBackCount(1 - timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_REST, 0, 0));
-            builder.setFightCount(3 - timerdbProxy.getTimerNum(TimerDefine.LIMIT_CHANGET_TIMES, 0, 0));
+         //   TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+             builder.setBackCount(DungeonDefine.DEOGEO_LIMIT_REST - playerProxy.getPlayer().getDungeolimitrest());
+             builder.setFightCount(DungeonDefine.DEOGEO_LIMIT_CHANGE -playerProxy.getPlayer().getDungeolimitchange());
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.ADVENTURE_EVENT, "chapter", 4, "sort", playerProxy.getPlayer().getGetLimitChangeId());
             if (jsonObject == null) {
                 builder.setId(1);
@@ -105,12 +108,14 @@ public class DungeoModule extends BasicModule {
                 builder.setMaxId(0);
             }
             builder.setRs(0);
-            long time = (timerdbProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0) - GameUtils.getServerDate().getTime()) / 1000;
+           // long time = (timerdbProxy.getLastOperatinTime(TimerDefine.LIMIT_CHANGET_MOPPING, 0, 0) - GameUtils.getServerDate().getTime()) / 1000;
+            long time=(playerProxy.getPlayer().getDungeolimitmop()- GameUtils.getServerDate().getTime())/1000;
             if (time > 0) {
                 builder.setIsmop(1);
             } else {
                 builder.setIsmop(0);
             }
+             builder.setMoptime(dungeoProxy.getcheckMopTime());
             pushNetMsg(ProtocolModuleDefine.NET_M6, ProtocolModuleDefine.NET_M6_C60100, builder.build());
             sendPushNetMsgToClient();
         } else if (object instanceof GameMsg.AddLimitchangeBattleProtoBack) {
@@ -120,7 +125,15 @@ public class DungeoModule extends BasicModule {
             BaseSetDbPojo.getSetDbPojo(LimitDungeonFastSetDb.class, playerProxy.getAreaKey()).addLimitDungeonSet(order, id, playerProxy.getPlayerId(), GameUtils.getServerDate().getTime());
             GameMsg.AddLimitchangeNearList adnmsg = new GameMsg.AddLimitchangeNearList(id, order, playerProxy.getPlayerId());
             sendServiceMsg(ActorDefine.POWERRANKS_SERVICE_NAME, adnmsg);
-        }
+        }/* else if (object instanceof GameMsg.returnarmygroupinfos){
+            int battleType =((GameMsg.returnarmygroupinfos) object).battleType();
+            int eventId =((GameMsg.returnarmygroupinfos) object).eventId();
+            int cmd =((GameMsg.returnarmygroupinfos) object).cmd();
+            int saveTraffic =((GameMsg.returnarmygroupinfos) object).saveTraffic();
+            List<PlayerTeam> monsterlist = ((GameMsg.returnarmygroupinfos) object).infoslist();
+            List<PlayerTeam> fightteams = ((GameMsg.returnarmygroupinfos) object).team();
+            PuppetList(battleType, eventId,cmd, saveTraffic ,monsterlist ,fightteams);
+        }*/
     }
 
     private void doGetPlayerSimpleInfo(List<SimplePlayer> simplePlayers, String cmd, PlayerBattle battle) {
@@ -183,7 +196,7 @@ public class DungeoModule extends BasicModule {
     private void reduceEnergy(int logtype) {
         boolean sendTimer = false;
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+     //   TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         long preEnergy = playerProxy.getPowerValue(PlayerPowerDefine.POWER_energy);
         playerProxy.reducePowerValue(PlayerPowerDefine.POWER_energy, 1, logtype);
         long afterEnergy = playerProxy.getPowerValue(PlayerPowerDefine.POWER_energy);
@@ -191,18 +204,16 @@ public class DungeoModule extends BasicModule {
             sendTimer = true;
             int type = TimerDefine.DEFAULT_ENERGY_RECOVER;
             int times = TimerDefine.DEFAULT_TIME_RECOVER;
-            timerdbProxy.addTimer(type, 0, times, TimerDefine.TIMER_REFRESH_NONE, 0, 0, playerProxy);
-            if (timerdbProxy.getTimerlesTime(type, 0, 0) == 0) {
-                timerdbProxy.setLesTime(type, 0, 0, (int) Math.ceil(times / 1000.0));
-            }
+      //      timerdbProxy.addTimer(type, 0, times, TimerDefine.TIMER_REFRESH_NONE, 0, 0, playerProxy);
+    //        if (timerdbProxy.getTimerlesTime(type, 0, 0) == 0) {
+        //        timerdbProxy.setLesTime(type, 0, 0, (int) Math.ceil(times / 1000.0));
+        //    }
         }
-        if (sendTimer) {
+   //     if (sendTimer) {
             SystemProxy systemProxy = getProxy(ActorDefine.SYSTEM_PROXY_NAME);
             List<M3.TimeInfo> m3info = new ArrayList<>();
             PlayerReward reward = new PlayerReward();
-            GameMsg.SystemTimer message = new GameMsg.SystemTimer();
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message);
-        }
+     //   }
     }
 
     private void clientEndBattleHandle(int battleId) {
@@ -231,13 +242,18 @@ public class DungeoModule extends BasicModule {
             }
             if (tastType != 0) {
                 TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-                PlayerReward reward = new PlayerReward();
-                M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(tastType, 1, reward);
-                if (builder19 != null) {
-                    sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
-                }
             }
-        }
+        } //任务逻辑
+        /*else if(battle.type == BattleDefine.BATTLE_TYPE_ARMYGROUP_DEFEND){
+            TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+            PlayerReward reward = new PlayerReward();
+            tastType =TaskDefine.TASK_TYPE_UNIONARENA_LV;
+            M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(tastType, 1, reward);
+            if (builder19 != null) {
+                sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
+            }
+
+        }*/
         boolean openNewDungeo = false;
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         int level = playerProxy.getLevel();
@@ -259,15 +275,17 @@ public class DungeoModule extends BasicModule {
                         //发送任务完成
                         TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
                         PlayerReward reward = new PlayerReward();
-                        List<PlayerTask> playerTasks = new ArrayList<PlayerTask>();
-                        playerTasks.add(new PlayerTask(TaskDefine.TASK_TYPE_WINGATE_ID, dungeoId, 0));
-                        if (battle.type == BattleDefine.BATTLE_TYPE_DUNGEON) {
-                            playerTasks.add(new PlayerTask(TaskDefine.TASK_TYPE_BEATGATE_TIMES, 0, 1));
-                        }
-                        M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(playerTasks, reward);
-                        if (builder19 != null) {
-                            sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
-                        }
+//                        List<PlayerTask> playerTasks = new ArrayList<>();
+//                        playerTasks.add(new PlayerTask(TaskDefine.TASK_TYPE_WINGATE_ID, dungeoId, 0));
+//                        if (battle.type == BattleDefine.BATTLE_TYPE_DUNGEON) {
+//                            playerTasks.add(new PlayerTask(TaskDefine.TASK_TYPE_BEATGATE_TIMES, 0, 1));
+//                        }
+//                        M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(playerTasks, reward);
+//                        if (builder19 != null) {
+//                            sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
+//                        }
+                        taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_BEATGATE_TIMES,1);
+                        taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_WINGATE_ID,dungeoId);
                         if (openNewDungeo) {
                             JSONObject dungeoDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.DUNGEO, dungeoId);
                             JSONObject nextDungeo = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.DUNGEO, "sort", dungeoDefine.getInt("sort") + 1);
@@ -284,18 +302,17 @@ public class DungeoModule extends BasicModule {
                     ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
                     playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
                     activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ZHENGFU_GUANQIA_TIMES, 1, playerProxy, 0);
-                    GameMsg.RefrshTip msg = new GameMsg.RefrshTip();
-                    sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, msg);
                     break;
                 }
                 case BattleDefine.BATTLE_TYPE_ADVANTRUE: {
                     DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
-                    TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+                 //   TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
                     RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
                     JSONObject eventDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.ADVENTURE_EVENT, battle.infoType);
                     if (dungeoProxy.isPass(battle, eventDefine)) {
                         if (eventDefine.getInt("chapter") != 4) {
-                            timerdbProxy.reduceAdvanceTiems(eventDefine.getInt("chapter"));
+                          // timerdbProxy.reduceAdvanceTiems(eventDefine.getInt("chapter"));
+                            dungeoProxy.reduceRistChangeTimes(eventDefine.getInt("chapter"),1);
                         } else {
                             //TODO 极限副本
                             playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
@@ -319,7 +336,8 @@ public class DungeoModule extends BasicModule {
                             }
                             if (eventDefinenext != null) {
                                 playerProxy.getPlayer().setGetLimitChangeId(eventDefine.getInt("sort") + 1);
-                                timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_TIMES, 0, 0, 0);
+                               // timerdbProxy.setNum(TimerDefine.LIMIT_CHANGET_TIMES, 0, 0, 0);
+                                playerProxy.getPlayer().setDungeolimitchange(0);
                             }
 
                         }
@@ -337,14 +355,12 @@ public class DungeoModule extends BasicModule {
                         PlayerReward reward = new PlayerReward();
                         List<PlayerTask> playerTasks = new ArrayList<PlayerTask>();
                         playerTasks.add(new PlayerTask(TaskDefine.TASK_TYPE_WINGATE_ID, dungeoId, 0));
-                        M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(playerTasks, reward);
-                        if (builder19 != null) {
-                            sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
-                        }
+                        taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_WINGATE_ID, dungeoId);
 
                     } else {
                         if (eventDefine.getInt("chapter") == 4) {
-                            timerdbProxy.addNum(TimerDefine.LIMIT_CHANGET_TIMES, 0, 0, 1);
+                            //timerdbProxy.addNum(TimerDefine.LIMIT_CHANGET_TIMES, 0, 0, 1);
+                            playerProxy.getPlayer().setDungeolimitchange(playerProxy.getPlayer().getDungeolimitchange()+1);
                         }
                     }
 
@@ -362,17 +378,16 @@ public class DungeoModule extends BasicModule {
                     ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
                     playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
                     activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_HIT_GUANQIA_TIMES, 1, playerProxy, 0);
-                    GameMsg.RefrshTip msg = new GameMsg.RefrshTip();
-                    sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, msg);
                     break;
                 }
                 case BattleDefine.BATTLE_TYPE_ARENA: {
-                    TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+                    //TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
                     // TODO  增加挑战次数 刷新挑战时间  增加连胜次数       更新对手的连胜次数    改变排名
                     //增加挑战次数 刷新挑战时间
-                    timerdbProxy.addNum(TimerDefine.ARENA_TIMES, 0, 0, 1);
+                //    timerdbProxy.addNum(TimerDefine.ARENA_TIMES, 0, 0, 1);
                     // 改变排名 增加连胜次数       更新对手的连胜次数
                     ArenaProxy arenaProxy = getProxy(ActorDefine.ARENA_PROXY_NAME);
+                    arenaProxy.arean.setChallengetimes(arenaProxy.arean.getChallengetimes()+1);//增加挑战次数
                     battle.defendId = arenaProxy.changeArenaId;
                     arenaProxy.result = battle.battleResult;
                     GameMsg.GetSimplePlayerBysection msgwin = new GameMsg.GetSimplePlayerBysection(arenaProxy.changeArenaId, playerProxy.getPlayerId(), ArenaDefine.CMD_CHANGE_WINTIMES, battle);
@@ -387,16 +402,15 @@ public class DungeoModule extends BasicModule {
                         ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
                         activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_BEAR_ARNENA_WINTITIMES_EVERYDAY, 1, playerProxy, 0);
                         sendReport(battle, 0, rewardProxy.reward2String(battle.reward));
-                        GameMsg.RefrshTip rmsg = new GameMsg.RefrshTip();
-                        sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, rmsg);
                     } else {
-                        timerdbProxy.setLastOperatinTime(TimerDefine.ARENA_FIGHT, 0, 0, GameUtils.getServerDate().getTime() + ArenaDefine.ARENA_TIME_WAIT);
-                        GameMsg.SystemTimer message = new GameMsg.SystemTimer();
-                        sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, message);
+                        //冷却时间
+                        arenaProxy.arean.setLastOperateTime(GameUtils.getServerDate().getTime());
                         GameMsg.sendAreaInfo msginfo = new GameMsg.sendAreaInfo();
                         sendModuleMsg(ActorDefine.ARENA_MODULE_NAME, msginfo);
                         sendReport(battle, 1, rewardProxy.reward2String(battle.reward));
+
                     }
+                    arenaProxy.saveArena();
                     M2.M20007.S2C msg20007 = rewardProxy.getRewardClientInfo(battle.reward);
                     pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, msg20007);
                     List<Integer> list = new ArrayList<>();
@@ -405,11 +419,7 @@ public class DungeoModule extends BasicModule {
                     pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20002, different);
                     rewardProxy.getRewardToPlayer(battle.reward, LogDefine.GET_AREAN_FIGHT);
                     TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-                    PlayerReward reward = new PlayerReward();
-                    M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_ARENAFIGHT_TIMES, 1, reward);
-                    if (builder19 != null) {
-                        sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
-                    }
+                    taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_ARENAFIGHT_TIMES, 1);
                     int state = 1;
                     if (battle.battleResult == false) {
                         state = 2;
@@ -420,6 +430,23 @@ public class DungeoModule extends BasicModule {
                     sendLog(pvplog);
                     break;
                 }
+                /*case BattleDefine.BATTLE_TYPE_ARMYGROUP_DEFEND:{//军团副本挑战
+                    DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
+                    //TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+                    RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
+                    JSONObject eventDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent, battle.infoType);
+
+                    rewardProxy.getRewardToPlayer(battle.reward, LogDefine.GET_LEGION_DUNGEO);
+                    //TODO 任务完成逻辑
+                    /*TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+                    PlayerReward reward = new PlayerReward();
+                    List<PlayerTask> playerTasks = new ArrayList<PlayerTask>();
+                    playerTasks.add(new PlayerTask(TaskDefine.TASK_TYPE_WINGATE_ID, dungeoId, 0));
+                    M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(playerTasks, reward);
+                    if (builder19 != null) {
+                        sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
+                    }
+                }*/
                 default: {
                     break;
                 }
@@ -432,34 +459,22 @@ public class DungeoModule extends BasicModule {
             List<Common.SoldierInfo> infos = new ArrayList<>();
             for (Integer soldierId : ids) {
                 infos.add(soldierProxy.getSoldierInfo(soldierId));
-//                battle.reward.soldierMap.put(soldierId, 0);
+                battle.reward.soldierMap.put(soldierId,0);
             }
-            pushNetMsg(ProtocolModuleDefine.NET_M4, ProtocolModuleDefine.NET_M4_C40000, M4.M40000.S2C.newBuilder().addAllSoldiers(infos).build());
+//            pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, M2.M20007.S2C.newBuilder().addAllSoldierList(infos).build());
         }
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
-        List<Integer> power = new ArrayList<>();
-
-        //检查各个power值，发送different
-        power.add(PlayerPowerDefine.POWER_energy);
-        power.add(PlayerPowerDefine.NOR_POWER_highestCapacity);
-        power.add(PlayerPowerDefine.POWER_active);
-        power.addAll(battle.reward.addPowerMap.keySet());
         M2.M20007.S2C message = rewardProxy.getRewardClientInfo(battle.reward);
         pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, message);
         int newlevel = playerProxy.getLevel();
         if (newlevel != level) {
-            power.add(PlayerPowerDefine.POWER_level);
-            power.add(PlayerPowerDefine.POWER_command);
             GameMsg.changeMenberLevel groupmsg = new GameMsg.changeMenberLevel(playerProxy.getPlayerId(), playerProxy.getLevel());
             tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId());
         }
-        sendPowerDiff(power);
-        sendPushNetMsgToClient();
         if (dungeoInfo != null) {
             pushNetMsg(ProtocolModuleDefine.NET_M6, ProtocolModuleDefine.NET_M6_C60001, dungeoInfo);
         }
         if (battle.cmd == ProtocolModuleDefine.NET_M6_C60005) {//执行挂机逻辑
-            power.add(PlayerPowerDefine.POWER_tael);
             autoDungeoHandle(battle, deadNums, ids);
             sendFuntctionLog(FunctionIdDefine.ON_HOOK_FUNCTION_ID, battle.infoType, 0, 0);
         } else {
@@ -506,7 +521,7 @@ public class DungeoModule extends BasicModule {
         builder.setContinue(0);
         DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
         int rs = dungeoProxy.fightEventAsk(battle.infoType, battle.type, false);
-        if (rs < 0) {
+            if (rs < 0) {
             if (battle.type == BattleDefine.BATTLE_TYPE_DUNGEON) {
                 if (rs == ErrorCodeDefine.M60002_5) {
                     builder.setContinue(1);
@@ -520,7 +535,7 @@ public class DungeoModule extends BasicModule {
         if (price < 0) {
             builder.setContinue(2);
             sendModuleMsg(ActorDefine.SOLDIER_MODULE_NAME, new GameMsg.FixSoldierList());
-            pushNetMsg(ProtocolModuleDefine.NET_M4, ProtocolModuleDefine.NET_M4_C40000, M4.M40000.S2C.newBuilder().addAllSoldiers(soldierProxy.getSoldierInfosInlost()).build());
+            pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, M2.M20007.S2C.newBuilder().addAllSoldierList(soldierProxy.getSoldierInfosInlost()).build());
         } else {
             builder.setCostTael(price);
         }
@@ -554,15 +569,192 @@ public class DungeoModule extends BasicModule {
             builder.setResult(0);
         }
         pushNetMsg(ActorDefine.DUNGEO_MODULE_ID, ProtocolModuleDefine.NET_M6_C60005, builder.build());
-        GameMsg.RefrshTip msg = new GameMsg.RefrshTip();
-        sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, msg);
+        sendPushNetMsgToClient();
     }
 
 
     private void serverEndBattleHandle(PlayerBattle battle) {
         int battleType = battle.type;
         battle.rs = 0;
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         switch (battleType) {
+            /*case BattleDefine.BATTLE_TYPE_ARMYGROUP_DEFEND: {
+                boolean result = battle.battleResult;
+                JSONObject eventDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent, battle.infoType);
+                if (eventDefine == null) {
+                    sendErrorBattle(-1);
+                    return;
+                }
+                //以下为通关处理
+                if (result == true) {
+                    //生成未到背包的奖励
+                    RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
+                    DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
+                    JSONArray fixarraychan = null;
+                    JSONArray fixarraykill = null;
+                    fixarraychan = eventDefine.getJSONArray("fixchandrop");//挑战固定掉落
+                    fixarraykill = eventDefine.getJSONArray("fixkilldrop");//击杀固定奖励
+                    for (int i = 0; i < fixarraychan.length(); i++) {
+                        rewardProxy.getPlayerRewardByFixReward(fixarraychan.getInt(i), battle.reward);
+                    }
+                    for (int i = 0; i < fixarraykill.length(); i++) {
+                        rewardProxy.getPlayerRewardByFixReward(fixarraykill.getInt(i), battle.reward);
+                        JSONObject json = ConfigDataProxy.getConfigInfoFindById(DataDefine.FIX_REWARD,fixarraykill.getInt(i));
+                        ArmyGroupService.armymap().get(playerProxy.getArmGrouId()).setBuild(
+                                ArmyGroupService.armymap().get(playerProxy.getArmGrouId()).getBuild()+json.getInt("num"));
+                    }
+                    //经验计算（打掉血量百分比乘以 读表“exp”）
+                    int newhp =0;
+                    for(PlayerTeam playerTeam:battle.monsterList){
+                        newhp+= (int) playerTeam.powerMap.get(SoldierDefine.POWER_hp);
+                    }
+                    double hp=monsterHp - newhp;
+                    int dhp = 0;
+                    for (PlayerTeam oldplayerTeam : dungeoProxy.createArmyGroupDungeoMonsterList(battle.infoType)) {
+                        dhp += (int)oldplayerTeam.powerMap.get(SoldierDefine.POWER_hp);
+                    }
+                    double oldhp=dhp;
+                    double pre = hp / oldhp;
+                    double exp = Math.ceil(eventDefine.getInt("allexp")*pre);
+                    long addpower = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_exprate);
+                    exp = (double) Math.ceil(exp * (1 + (addpower / 100.0)));
+                    if (exp > 0) {
+                        if (battle.reward.addPowerMap.containsKey(PlayerPowerDefine.POWER_exp)) {
+                            exp += battle.reward.addPowerMap.get(PlayerPowerDefine.POWER_exp);
+                        }
+                        battle.reward.addPowerMap.put(PlayerPowerDefine.POWER_exp, (int) exp);
+                    }
+                    //更新通关副本信息
+                    GameMsg.changeArmyGroupDungeoInfo groupmsg = new GameMsg.changeArmyGroupDungeoInfo(battle.infoType);
+                    tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId());
+                    //写入行为日志，副本胜利
+                    //sendFuntctionLog(FunctionIdDefine.FIGHT_EVENT_ASK_FUNCTION_ID, battle.infoType, rateRewardId, 1);
+
+                    //推送客户端更新monster信息及更新玩家挑战次数
+                    M27.M270004.S2C.Builder builder = M27.M270004.S2C.newBuilder();
+                    //M27.EventInfo.Builder eventInfo = M27.EventInfo.newBuilder();
+                    List<M27.EventInfo> eventInfoList = new ArrayList<>();
+                    List<M27.MonsterInfo> monsterInfoList = new ArrayList<>();
+                    for(PlayerTeam playerTeam :battle.monsterList)
+                    {
+                        M27.MonsterInfo.Builder monsterInfo = M27.MonsterInfo.newBuilder();
+                        monsterInfo.setId((int)playerTeam.powerMap.get(SoldierDefine.NOR_POWER_TYPE_ID));
+                        monsterInfo.setNum((int)playerTeam.powerMap.get(SoldierDefine.NOR_POWER_NUM));
+                        monsterInfo.setPost((int)playerTeam.powerMap.get(SoldierDefine.NOR_POWER_INDEX)-20);
+                        monsterInfoList.add(monsterInfo.build());
+                    }
+                    int p =0;
+                    M27.EventInfo.Builder eventInfo = M27.EventInfo.newBuilder();
+                    eventInfo.setChapter(eventDefine.getInt("chapter"));
+                    eventInfo.setId(battle.infoType);
+                    eventInfo.setCurProgress(p);
+                    eventInfo.setHaveBox(1);
+                    eventInfo.addAllMonsterInfos(monsterInfoList);
+                    eventInfoList.add(eventInfo.build());
+                    //次数
+                    if(playerProxy.getPlayer().getArmygroupdungeotimes()!=0) {
+                        playerProxy.getPlayer().setArmygroupdungeotimes(playerProxy.getPlayer().getArmygroupdungeotimes() - 1);
+                    }
+
+                    builder.setRs(0);
+                    builder.setId(eventDefine.getInt("chapter"));
+                    builder.addAllEventInfos(eventInfoList);
+
+                    int curCount=0;
+                    if(playerProxy.getPlayer().getArmygroupdungeotimes()==0){
+                        curCount =-1;
+                    }else{
+                        curCount = playerProxy.getPlayer().getArmygroupdungeotimes();
+                    }
+                    builder.setCurCount(curCount);
+                    pushNetMsg(ProtocolModuleDefine.NET_M27, ProtocolModuleDefine.NET_M27_C270004, builder.build());
+                    sendPushNetMsgToClient();
+                } else {//未通关
+                    RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
+                    DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
+                    JSONArray fixarraychan = null;
+                    fixarraychan = eventDefine.getJSONArray("fixchandrop");//挑战固定掉落
+                    for (int i = 0; i < fixarraychan.length(); i++) {
+                        rewardProxy.getPlayerRewardByFixReward(fixarraychan.getInt(i), battle.reward);
+                    }
+                    //经验计算（打掉血量百分比乘以 读表“exp”）
+                    int newhp =0;
+                    for(PlayerTeam playerTeam:battle.monsterList){
+                        newhp+= (int) playerTeam.powerMap.get(SoldierDefine.POWER_hp);
+                    }
+                    double hp=monsterHp - newhp;
+                    int dhp = 0;
+                    for (PlayerTeam oldplayerTeam : dungeoProxy.createArmyGroupDungeoMonsterList(battle.infoType)) {
+                        dhp += (int)oldplayerTeam.powerMap.get(SoldierDefine.POWER_hp);
+                    }
+                    double oldhp=dhp;
+                    double pre = hp / oldhp;
+                    double exp = Math.ceil(eventDefine.getInt("allexp")*pre);
+                    long addpower = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_exprate);
+                    exp = (double) Math.ceil(exp * (1 + (addpower / 100.0)));
+                    if (exp > 0) {
+                        if (battle.reward.addPowerMap.containsKey(PlayerPowerDefine.POWER_exp)) {
+                            exp += battle.reward.addPowerMap.get(PlayerPowerDefine.POWER_exp);
+                        }
+                        battle.reward.addPowerMap.put(PlayerPowerDefine.POWER_exp, (int) exp);
+                    }
+
+
+                    //推送客户端更新monster信息及更新玩家挑战次数
+                    M27.M270004.S2C.Builder builder = M27.M270004.S2C.newBuilder();
+                    //M27.EventInfo.Builder eventInfo = M27.EventInfo.newBuilder();
+                    List<M27.EventInfo> eventInfoList = new ArrayList<>();
+                    List<M27.MonsterInfo> monsterInfoList = new ArrayList<>();
+                    for(PlayerTeam playerTeam :battle.monsterList)
+                    {
+                        M27.MonsterInfo.Builder monsterInfo = M27.MonsterInfo.newBuilder();
+                        monsterInfo.setId((int)playerTeam.powerMap.get(SoldierDefine.NOR_POWER_TYPE_ID));
+                        monsterInfo.setNum((int)playerTeam.powerMap.get(SoldierDefine.NOR_POWER_NUM));
+                        monsterInfo.setPost((int)playerTeam.powerMap.get(SoldierDefine.NOR_POWER_INDEX)-20);
+                        monsterInfoList.add(monsterInfo.build());
+                    }
+                        int p =0;
+                        int h = 0;
+                        int op = 0;
+                        for (PlayerTeam playerTeam :battle.monsterList) {
+                            h += (int) playerTeam.powerMap.get(SoldierDefine.POWER_hp);
+                        }
+                        for (PlayerTeam oldplayerTeam : dungeoProxy.createArmyGroupDungeoMonsterList(battle.infoType)) {
+                            op += (int) oldplayerTeam.powerMap.get(SoldierDefine.POWER_hp);
+                        }
+                        double present = (double) h / (double)op;
+                        p =(int)(present*10000);
+                    M27.EventInfo.Builder eventInfo = M27.EventInfo.newBuilder();
+                    eventInfo.setChapter(eventDefine.getInt("chapter"));
+                    eventInfo.setId(battle.infoType);
+                    eventInfo.setCurProgress(p);
+                    eventInfo.setHaveBox(0);
+                    eventInfo.addAllMonsterInfos(monsterInfoList);
+                    eventInfoList.add(eventInfo.build());
+                    //次数
+                    if(playerProxy.getPlayer().getArmygroupdungeotimes()!=0) {
+                        playerProxy.getPlayer().setArmygroupdungeotimes(playerProxy.getPlayer().getArmygroupdungeotimes() - 1);
+                    }
+
+                    builder.setRs(0);
+                    builder.setId(eventDefine.getInt("chapter"));
+                    builder.addAllEventInfos(eventInfoList);
+
+                    int curCount=0;
+                    if(playerProxy.getPlayer().getArmygroupdungeotimes()==0){
+                        curCount =-1;
+                    }else{
+                        curCount = playerProxy.getPlayer().getArmygroupdungeotimes();
+                    }
+                    builder.setCurCount(curCount);
+                    pushNetMsg(ProtocolModuleDefine.NET_M27, ProtocolModuleDefine.NET_M27_C270004, builder.build());
+                    sendPushNetMsgToClient();
+                }
+                //更新战斗后的monster信息
+                GameMsg.changeGroupDungeomonsterInfo groupmsg = new GameMsg.changeGroupDungeomonsterInfo(battle.infoType,battle.monsterList);
+                tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId());
+                break;
+            }*/
             case BattleDefine.BATTLE_TYPE_DUNGEON: {
                 ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
                 boolean result = battle.battleResult;
@@ -594,7 +786,6 @@ public class DungeoModule extends BasicModule {
                         rateRewardId = array.getInt(i);
                     }
                     int exp = eventDefine.getInt("exp");
-                    PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
                     long addpower = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_exprate);
                     exp = (int) Math.ceil(exp * (1 + (addpower / 100.0)));
                     exp = (int) Math.ceil(exp * (100 + activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_FIGHT_GUANQIA_ADDEXP)) / 100.0);
@@ -627,7 +818,6 @@ public class DungeoModule extends BasicModule {
                         rewardProxy.getPlayerRewardByRandFullContent(array.getInt(i), battle.reward);
                         rateRewardId = array.getInt(i);
                     }
-                    PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
                     int exp = eventDefine.getInt("exp");
                     long addpower = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_exprate);
                     exp = (int) Math.ceil(exp * (1 + (addpower / 100.0)));
@@ -655,7 +845,6 @@ public class DungeoModule extends BasicModule {
                 break;
             }
             case BattleDefine.BATTLE_TYPE_ARENA: {
-                PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
                 // 打包奖励
                 ArenaProxy arenaProxy = getProxy(ActorDefine.ARENA_PROXY_NAME);
                 battle.defendId = arenaProxy.changeArenaId;
@@ -754,6 +943,13 @@ public class DungeoModule extends BasicModule {
                 battle.defendName = arenaProxy.rivalName;
                 break;
             }
+           /* case BattleDefine.BATTLE_TYPE_ARMYGROUP_DEFEND: {
+                JSONObject eventDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent, id);
+                battle.bgIcon = eventDefine.getInt("fightbg");
+                /*GameMsg.getArmyGroupDungeoInfo message = new GameMsg.getArmyGroupDungeoInfo(id);
+                tellMsgToArmygroupNode(message,playerProxy.getPlayer().getArmygroupId());
+                break;
+            }*/
             default:
                 sendErrorBattle(-1);
                 return;
@@ -772,6 +968,28 @@ public class DungeoModule extends BasicModule {
         GameMsg.ReqPuppetList message = new GameMsg.ReqPuppetList(battle);
         sendModuleMsg(ActorDefine.BATTLE_MODULE_NAME, message);
     }
+
+    private void PuppetList(int battleType,int eventId,int cmd,int saveTraffic ,List<PlayerTeam> monsterList ,List<PlayerTeam> teams) {
+        PlayerBattle battle = new PlayerBattle();
+        BattleProxy battleProxy = getProxy(ActorDefine.BATTLE_PROXY_NAME);
+        battleProxy.getBattleBirthBuff(teams, monsterList);
+        DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
+        battle.totalCapacity = dungeoProxy.countSoldierCapacity(teams);
+        battle.monsterList = monsterList;
+        int hp=0;
+        for(PlayerTeam team:monsterList){//dungeolist 是战斗前的怪物列表
+            hp+=(int)team.powerMap.get(SoldierDefine.POWER_hp);
+        }
+        monsterHp=hp;
+        battle.soldierList = teams;
+        battle.type = battleType;
+        battle.infoType = eventId;
+        battle.cmd = cmd;
+        battle.saveTraffic = saveTraffic;
+        GameMsg.ReqPuppetList message = new GameMsg.ReqPuppetList(battle);
+        sendModuleMsg(ActorDefine.BATTLE_MODULE_NAME, message);
+    }
+
 
     private void showBattListInfo(List<PlayerTeam> soldierList) {
         for (PlayerTeam team : soldierList) {
@@ -869,8 +1087,8 @@ public class DungeoModule extends BasicModule {
                 builder.setTimesTotal(20);
             } else {
                 dungeoDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.ADVENTURE, dungeoId);
-                TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-                builder.setTimes(timerdbProxy.getAdventureTimesById(dungeoId));
+             //   TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+                 builder.setTimes(dungeoProxy.getRistChangeTimes(dungeoId));
                 builder.setTimesTotal(dungeoDefine.getInt("time"));
             }
             int totalStar = dungeoDefine.getInt("starNum");
@@ -895,9 +1113,10 @@ public class DungeoModule extends BasicModule {
             builder.setTotalStar(-1);
         } else {
             //在计数器里面补充次数time
-            TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-            builder.setCount(timerdbProxy.getAdventureTimesById(dungeoId));
-            //builder.setCount(5);
+        //    TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+          //  builder.setCount(timerdbProxy.getAdventureTimesById(dungeoId));
+            builder.setCount(dungeoProxy.getRistChangeTimes(dungeoId));
+     //       builder.setCount(5);
             builder.setTotalCount(define.getInt("time"));
             builder.setLen(-1);
             List<Integer> boxList = dungeoProxy.getRistDungeoBoxByDungeoId(dungeoId);
@@ -973,6 +1192,7 @@ public class DungeoModule extends BasicModule {
         int id = c2s.getId();
         M6.M60001.S2C mess = sendDungeoInfo(id);
         sendNetMsg(ProtocolModuleDefine.NET_M6, ProtocolModuleDefine.NET_M6_C60001, mess);
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet60002Event(Request request) {
@@ -990,6 +1210,7 @@ public class DungeoModule extends BasicModule {
              */
             fbLog(eventId, eventId, 0);
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet60003Event(Request request) {
@@ -1016,6 +1237,7 @@ public class DungeoModule extends BasicModule {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
             sendNetMsg(ProtocolModuleDefine.NET_M6, ProtocolModuleDefine.NET_M6_C60006, sendDungeoListById(dungeoId));
         }
+        sendPushNetMsgToClient();
     }
 
     private int getDungeoInfo(List<M6.EventInfo> infos, Integer dungeoId) {
@@ -1057,11 +1279,12 @@ public class DungeoModule extends BasicModule {
      **/
     private void OnTriggerNet60004Event(Request request) {
         DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
-        TimerdbProxy tdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+      //  TimerdbProxy tdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         M6.M60004.C2S c2s = request.getValue();
         int dungeonId = c2s.getDungeoId();
         int type = c2s.getType();
-        int letTimes = tdbProxy.getAdventureTimesById(dungeonId);
+       // int letTimes = tdbProxy.getAdventureTimesById(dungeonId);
+        int letTimes=dungeoProxy.getRistChangeTimes(dungeonId);
         M6.M60004.S2C.Builder s2c = M6.M60004.S2C.newBuilder();
         int rs = 0;
         if (type == DungeonDefine.BUY_ADVANCE_TIMES_TYPE_ASK) { //请求购买
@@ -1070,8 +1293,7 @@ public class DungeoModule extends BasicModule {
         } else if (type == DungeonDefine.BUY_ADVANCE_TIMES_TYPE_BUY) { //购买
             rs = dungeoProxy.buyAdvanceTimes(dungeonId);
             if (rs == 0) {
-                s2c.setAdvanceTimes(letTimes + DungeonDefine.ADVANCE_TIMES);//剩余的冒险数+购买的次数
-
+               s2c.setAdvanceTimes(letTimes + DungeonDefine.ADVANCE_TIMES);//剩余的冒险数+购买的次数
             } else {
                 s2c.setAdvanceTimes(letTimes);
             }
@@ -1080,12 +1302,13 @@ public class DungeoModule extends BasicModule {
         s2c.setRs(rs);
         s2c.setMoney(needGold);
         s2c.setType(type);
-        s2c.setAdvanceTimes(tdbProxy.getAdventureTimesById(dungeonId));
+        s2c.setAdvanceTimes(dungeoProxy.getRistChangeTimes(dungeonId));
         s2c.setDungeoId(dungeonId);
         sendNetMsg(ProtocolModuleDefine.NET_M6, ProtocolModuleDefine.NET_M6_C60004, s2c.build());
         if (rs >= 0) {
             sendNetMsg(ActorDefine.DUNGEO_MODULE_ID, ProtocolModuleDefine.NET_M6_C60006, sendDungeoListById(dungeonId));
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet60005Event(Request request) {
@@ -1108,9 +1331,9 @@ public class DungeoModule extends BasicModule {
             if (price < 0) {
                 rs = ErrorCodeDefine.M60005_20;
             } else {
-                M4.M40000.S2C.Builder soldierInfo = M4.M40000.S2C.newBuilder();
-                soldierInfo.addAllSoldiers(infos);
-                sendNetMsg(ProtocolModuleDefine.NET_M4, ProtocolModuleDefine.NET_M4_C40000, soldierInfo.build());
+                M2.M20007.S2C.Builder soldierInfo = M2.M20007.S2C.newBuilder();
+                soldierInfo.addAllSoldierList(infos);
+                sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, soldierInfo.build());
                 if (infos.size() > 0) {
                     sendModuleMsg(ActorDefine.SOLDIER_MODULE_NAME, new GameMsg.FixSoldierList());
                 }
@@ -1125,6 +1348,7 @@ public class DungeoModule extends BasicModule {
         }
         GameMsg.AutoFightDungeo mess = new GameMsg.AutoFightDungeo(dungeoType, eventId, fightElementInfos);
         sendModuleMsg(ActorDefine.BATTLE_MODULE_NAME, mess);
+        sendPushNetMsgToClient();
     }
 
 
@@ -1142,6 +1366,7 @@ public class DungeoModule extends BasicModule {
             GameMsg.getLimitChangetInfo msg = new GameMsg.getLimitChangetInfo(builder, playerProxy.getPlayerId(), playerProxy.getPlayer().getGetLimitChangeId());
             sendServiceMsg(ActorDefine.POWERRANKS_SERVICE_NAME, msg);
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -1158,6 +1383,7 @@ public class DungeoModule extends BasicModule {
             sendServiceMsg(ActorDefine.POWERRANKS_SERVICE_NAME, msg);
             sendFuntctionLog(FunctionIdDefine.RESET_LIMIT_DARE_FUNCTION_ID);
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet60102Event(Request request) {
@@ -1168,10 +1394,17 @@ public class DungeoModule extends BasicModule {
         sendNetMsg(ProtocolModuleDefine.NET_M6, ProtocolModuleDefine.NET_M6_C60102, builder.build());
         if (rs == 0) {
             OnTriggerNet60100Event(null);
-            GameMsg.CheckAllTimerAndSend30000 msg = new GameMsg.CheckAllTimerAndSend30000();
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, msg);
             sendFuntctionLog(FunctionIdDefine.START_MOP_FUNCTION_ID);
+            sendNetMsg(ProtocolModuleDefine.NET_M6, ProtocolModuleDefine.NET_M6_C60105, dungeoProxy.getMopTimeInfo());
         }
+        sendPushNetMsgToClient();
+    }
+
+
+    private void OnTriggerNet60105Event(Request request) {
+        DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
+        sendNetMsg(ProtocolModuleDefine.NET_M6, ProtocolModuleDefine.NET_M6_C60105, dungeoProxy.getMopTimeInfo());
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet60103Event(Request request) {
@@ -1190,7 +1423,9 @@ public class DungeoModule extends BasicModule {
             M2.M20007.S2C rewardbuild = rewardProxy.getRewardClientInfo(reward);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardbuild);
             sendFuntctionLog(FunctionIdDefine.STOP_MOP_FUNCTION_ID);
+            sendNetMsg(ProtocolModuleDefine.NET_M6, ProtocolModuleDefine.NET_M6_C60105, dungeoProxy.getMopTimeInfo());
         }
+        sendPushNetMsgToClient();
     }
 
     /**

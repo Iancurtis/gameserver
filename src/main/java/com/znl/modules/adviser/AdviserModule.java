@@ -49,6 +49,7 @@ public class AdviserModule extends BasicModule {
         s2c.setRs(0);
         s2c.addAllAdviserinfo(adviserProxy.getAllAdviserInfo());
         sendNetMsg(ProtocolModuleDefine.NET_M26, ProtocolModuleDefine.NET_M26_C260000, s2c.build());
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet260001Event(Request request) {
@@ -65,6 +66,7 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet260002Event(Request request) {
@@ -80,6 +82,7 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -96,6 +99,7 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
 
 
@@ -106,7 +110,7 @@ public class AdviserModule extends BasicModule {
         builder.addAllCostInfos(adviserProxy.getCostInfo());
         builder.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M26, ProtocolModuleDefine.NET_M26_C260004,builder.build() );
-
+        sendPushNetMsgToClient();
     }
 
 
@@ -126,6 +130,7 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet260006Event(Request request) {
@@ -141,6 +146,7 @@ public class AdviserModule extends BasicModule {
             RewardProxy rewardProxy=getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,rewardProxy.getRewardClientInfo(reward));
         }
+        sendPushNetMsgToClient();
     }
     /**
      * 重复协议请求处理

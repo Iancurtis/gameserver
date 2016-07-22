@@ -26,4 +26,11 @@ public class DungeonDefine {
     /*购买类型，1:获取元宝的数目 2:购买请求*/
     public static final int BUY_ADVANCE_TIMES_TYPE_ASK = 1;
     public static final int BUY_ADVANCE_TIMES_TYPE_BUY = 2;
+
+    /*西域远征*/
+    public static final int DEOGEO_LIMIT_REST = 1;//重置默认次数
+    public static final int DEOGEO_LIMIT_CHANGE = 3;//挑战次数默认
+    public static final int DEOGEO_LIMIT_MOP = 1;//扫荡次数默认
+    // /*军团副本*/
+    public static final int LEGION_DUNGEO = 5;//军团副本相关操作参数
 }

@@ -113,7 +113,7 @@ public class MailModule  extends BasicModule {
         playerProxy.addReport(report);
         MailProxy mailProxy = getProxy(ActorDefine.MAIL_PROXY_NAME);
         Long id = mailProxy.createArenaReport(report);
-        sendModuleMsg(ActorDefine.ARENA_MODULE_NAME,new GameMsg.NewArenaReportNotify());
+      //  sendModuleMsg(ActorDefine.ARENA_MODULE_NAME,new GameMsg.NewArenaReportNotify());
     }
 
     private void getNewReportNotify(Report report){
@@ -133,8 +133,7 @@ public class MailModule  extends BasicModule {
         }else {
             sendPushNetMsgToClient();
         }
-        GameMsg.RefrshTip msg = new GameMsg.RefrshTip();
-        sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, msg);
+
     }
 
     private void getNewMailNotify(MailTemplate mailTemplate){
@@ -151,8 +150,6 @@ public class MailModule  extends BasicModule {
             pushNetMsg(ActorDefine.MAIL_MODULE_ID, ProtocolModuleDefine.NET_M16_C160000, getMailListToClientMess());
         }
         sendPushNetMsgToClient();
-        GameMsg.RefrshTip msg = new GameMsg.RefrshTip();
-        sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, msg);
     }
 
     private void getSimpleInfoHandle(List<SimplePlayer> simplePlayers, String cmd) {
@@ -219,6 +216,7 @@ public class MailModule  extends BasicModule {
         }
         //阵型
         sendModuleMsg(ActorDefine.TROOP_MODULE_NAME,new GameMsg.CheckBaseDefendFormation());
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet160005Event(Request request) {
@@ -238,6 +236,7 @@ public class MailModule  extends BasicModule {
         builder.setRs(rs);
         builder.addAllIdlist(ids);
         sendNetMsg(ActorDefine.MAIL_MODULE_ID, ProtocolModuleDefine.NET_M16_C160004, builder.build());
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet160003Event(Request request) {
@@ -264,6 +263,7 @@ public class MailModule  extends BasicModule {
         MailProxy mailProxy = getProxy(ActorDefine.MAIL_PROXY_NAME);
         mailProxy.checkMailFullHandle();
         sendNetMsg(ActorDefine.MAIL_MODULE_ID,ProtocolModuleDefine.NET_M16_C160002,sendNewMailNotifyToClient());
+        sendPushNetMsgToClient();
     }
 
     private M16.M160002.S2C sendNewMailNotifyToClient() {
@@ -286,6 +286,7 @@ public class MailModule  extends BasicModule {
         builder.setRs(rs);
         builder.setInfo(info.build());
         sendNetMsg(ActorDefine.MAIL_MODULE_ID,ProtocolModuleDefine.NET_M16_C160001,builder.build());
+        sendPushNetMsgToClient();
         /**
          *tbllog_mail 查看邮件日志
          */
@@ -308,6 +309,7 @@ public class MailModule  extends BasicModule {
         mailProxy.checkMailFullHandle();
         sendNetMsg(ActorDefine.MAIL_MODULE_ID,ProtocolModuleDefine.NET_M16_C160000,getMailListToClientMess());
         sendFuntctionLog(FunctionIdDefine.GET_MAIL_LIST_FUNCTION_ID);
+        sendPushNetMsgToClient();
     }
 
     /**

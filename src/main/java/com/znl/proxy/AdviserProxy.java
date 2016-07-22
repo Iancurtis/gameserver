@@ -136,7 +136,7 @@ public class AdviserProxy extends BasicProxy {
             createAdviser(typeId, num);
         }
         adviserLog(1, typeId, num, logtype,getAdviserNumBytypeId(typeId));
-        init();
+        refurceExpandPowerMap();
     }
 
     private int getAdviserNumBytypeId(int typeId){
@@ -180,7 +180,7 @@ public class AdviserProxy extends BasicProxy {
             pushAdviserToChangeList(adviser);
         }
         adviserLog(0, typeId, num, logtype,getAdviserNumBytypeId(typeId));
-        init();
+        refurceExpandPowerMap();
     }
 
     private void createAdviser(int typeId, int num) {
@@ -558,6 +558,7 @@ public class AdviserProxy extends BasicProxy {
 
     //军师抽奖
     public int adviserLotter(int type, int num, PlayerReward reward, M26.M260005.S2C.Builder builder) {
+        PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         JSONObject jsonrule = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.CounsellorRule, "type", type);
         if (jsonrule == null) {
             return ErrorCodeDefine.M260005_2;
@@ -566,10 +567,14 @@ public class AdviserProxy extends BasicProxy {
             return ErrorCodeDefine.M260005_3;
         }
         int lotterId = jsonrule.getInt("rewardId");
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        int times = timerdbProxy.getTimerNum(TimerDefine.JUNSHILOTTERY, type, 0);
+      //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        int times =0;
+        if(type==LotterDefine.JUBSHI_LOTTERY_GOLD){
+            times=playerProxy.getjunshigoldTimes();
+        }else{
+            times=playerProxy.getjunshiresouceTimes();
+        }
         int price = getCost(type, times, num);
-        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.CounsellorPrice, "type", type);
         int power = jsonObject.getInt("pricetype");
         if (playerProxy.getPowerValue(power) < price) {
@@ -589,7 +594,11 @@ public class AdviserProxy extends BasicProxy {
             addAdviser(typeId, getnum, LogDefine.GET_ADVISER_LOTTERY);
             rewardProxy.addCounsellorToReward(reward, typeId, getnum);
         }
-        timerdbProxy.addNum(TimerDefine.JUNSHILOTTERY, type, 0, num);
+        if(type==LotterDefine.JUBSHI_LOTTERY_GOLD){
+          playerProxy.addjunshigoldTimes(num);
+        }else{
+         playerProxy.addjunshiresouceTimes(num);
+        }
         return 0;
     }
 
@@ -621,16 +630,17 @@ public class AdviserProxy extends BasicProxy {
     //获得抽奖信息
     public List<M26.CostInfo> getCostInfo() {
         List<M26.CostInfo> list = new ArrayList<M26.CostInfo>();
-        TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+     //   TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         M26.CostInfo.Builder info1 = M26.CostInfo.newBuilder();
         info1.setType(LotterDefine.JUBSHI_LOTTERY_GOLD);
-        int times = timerdbProxy.getTimerNum(TimerDefine.JUNSHILOTTERY, LotterDefine.JUBSHI_LOTTERY_GOLD, 0);
-        info1.setOnceprice(getCost(LotterDefine.JUBSHI_LOTTERY_GOLD, times, 1));
-        info1.setFiveprice(getCost(LotterDefine.JUBSHI_LOTTERY_GOLD, times, 5));
+       int times =playerProxy.getjunshigoldTimes();// timerdbProxy.getTimerNum(TimerDefine.JUNSHILOTTERY, LotterDefine.JUBSHI_LOTTERY_GOLD, 0);
+       info1.setOnceprice(getCost(LotterDefine.JUBSHI_LOTTERY_GOLD, times, 1));
+       info1.setFiveprice(getCost(LotterDefine.JUBSHI_LOTTERY_GOLD, times, 5));
         list.add(info1.build());
         M26.CostInfo.Builder info2 = M26.CostInfo.newBuilder();
         info2.setType(LotterDefine.JUBSHI_LOTTERY_RESOURSE);
-        int rtimes = timerdbProxy.getTimerNum(TimerDefine.JUNSHILOTTERY, LotterDefine.JUBSHI_LOTTERY_RESOURSE, 0);
+        int rtimes =playerProxy.getjunshiresouceTimes();// timerdbProxy.getTimerNum(TimerDefine.JUNSHILOTTERY, LotterDefine.JUBSHI_LOTTERY_RESOURSE, 0);
         info2.setOnceprice(getCost(LotterDefine.JUBSHI_LOTTERY_RESOURSE, rtimes, 1));
         info2.setFiveprice(getCost(LotterDefine.JUBSHI_LOTTERY_RESOURSE, rtimes, 5));
         list.add(info2.build());

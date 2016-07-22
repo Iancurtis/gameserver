@@ -1,27 +1,22 @@
 package com.znl
 
 import java.io._
-import java.util.{Date, Properties}
 import java.util.concurrent.ConcurrentHashMap
+import java.util.{Date, Properties}
 
-import akka.actor.{PoisonPill, Props, ActorPath, ActorSystem}
-import akka.io.IO
+import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
-import com.znl.base.{BaseDbPojo}
-import com.znl.define.{GameDefine, SoldierDefine, PlayerPowerDefine, ActorDefine}
+import com.znl.define.{ActorDefine, GameDefine, PlayerPowerDefine, SoldierDefine}
 import com.znl.framework.http.base.GameHttpServer
 import com.znl.framework.socket.base.GameNetServer
 import com.znl.hotReplace.HotReplaceClass
-import com.znl.log.{CustomerLogger, FlumeLog}
+import com.znl.log.CustomerLogger
 import com.znl.msg.GameMsg._
-import com.znl.pojo.db.Player
-import com.znl.proxy.{ConfigDataProxy, ScriptProxy}
+import com.znl.proxy.ConfigDataProxy
 import com.znl.server._
 import com.znl.service.WorldService
-import com.znl.service.actor.PlayerActor
 import com.znl.utils.{GameUtils, Hooker}
-import spray.can.Http
-import spray.can.server.UHttp
+
 import scala.collection.JavaConversions._
 
 
@@ -80,8 +75,6 @@ object GameMainServer extends App{
 
     startGameNetServer(port)
     startGameHttpServer(http_port)
-
-
 
     Runtime.getRuntime.addShutdownHook(new Hooker())
 

@@ -5,7 +5,7 @@ import com.znl.base.BasicModule;
 import com.znl.core.PlayerBattle;
 import com.znl.core.PlayerCache;
 import com.znl.core.PlayerTeam;
-import com.znl.proto.M4;
+import com.znl.proto.*;
 import com.znl.template.ReportTemplate;
 import com.znl.define.*;
 import com.znl.framework.socket.Request;
@@ -13,9 +13,6 @@ import com.znl.log.CustomerLogger;
 import com.znl.log.admin.tbllog_battle;
 import com.znl.msg.GameMsg;
 import com.znl.node.battle.BattleNodeActor;
-import com.znl.proto.Common;
-import com.znl.proto.M5;
-import com.znl.proto.M6;
 import com.znl.proxy.*;
 
 import akka.actor.Props;
@@ -171,6 +168,11 @@ public class BattleModule extends BasicModule {
     }
 
     private void starBattle(PlayerBattle battle) {
+        /*PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        if( battle.monsterList==null){
+            GameMsg.getArmyGroupDungeoInfo message = new GameMsg.getArmyGroupDungeoInfo(battle.infoType);
+            tellMsgToArmygroupNode(message,playerProxy.getPlayer().getArmygroupId());
+        }*/
         GameMsg.ReqPuppetList message = new GameMsg.ReqPuppetList(battle);
         sendMessageToBattleNode(message);
     }
@@ -187,7 +189,8 @@ public class BattleModule extends BasicModule {
         int eventId = c2s.getId();
         int cmd = ProtocolModuleDefine.NET_M5_C50000;
         int saveTraffic = c2s.getSaveTraffic();
-        onReqPuppetList(battleType, eventId, cmd, fightElementInfoList,saveTraffic);
+        onReqPuppetList(battleType, eventId, cmd, fightElementInfoList, saveTraffic);
+
     }
 
     private void onReqPuppetList(int battleType, int eventId, int cmd, List<Common.FightElementInfo> fightElementInfoList, int saveTraffic) {
@@ -212,12 +215,14 @@ public class BattleModule extends BasicModule {
                 //如果检测到出战单位不符合，刷新佣兵
                 if(rs==ErrorCodeDefine.M50000_1){
                     SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
-                    sendNetMsg(ProtocolModuleDefine.NET_M4, ProtocolModuleDefine.NET_M4_C40000, M4.M40000.S2C.newBuilder().addAllSoldiers(soldierProxy.getSoldierInfos()).build());
-                }
-                if (cmd == ProtocolModuleDefine.NET_M5_C50000) {
+                    sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,
+                            M2.M20007.S2C.newBuilder().addAllSoldierList(soldierProxy.getSoldierInfos()).build());
+                    sendPushNetMsgToClient();
+                }else if (cmd == ProtocolModuleDefine.NET_M5_C50000) {
                     M5.M50000.S2C.Builder builder = M5.M50000.S2C.newBuilder();
                     builder.setRc(rs);
                     sendNetMsg(ActorDefine.BATTLE_MODULE_ID, ProtocolModuleDefine.NET_M5_C50000, builder.build());
+                    sendPushNetMsgToClient();
                     return;
                 } else if (cmd == ProtocolModuleDefine.NET_M6_C60005) {
                     M6.M60005.S2C.Builder builder = M6.M60005.S2C.newBuilder();
@@ -234,8 +239,14 @@ public class BattleModule extends BasicModule {
         dataList.add(teams);
         dataList.add(cmd);
         dataList.add(saveTraffic);
-        GameMsg.ReqPuppetList message = new GameMsg.ReqPuppetList(dataList);
-        sendModuleMsg(ActorDefine.DUNGEO_MODULE_NAME, message);
+        if(battleType == BattleDefine.BATTLE_TYPE_ARMYGROUP_DEFEND){
+            PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+           // GameMsg.addPuppetList message = new GameMsg.addPuppetList(playerProxy.getAccountName(),battleType,eventId,cmd,teams,saveTraffic);
+            //tellMsgToArmygroupNode(message,playerProxy.getPlayer().getArmygroupId());
+        }else {
+            GameMsg.ReqPuppetList message = new GameMsg.ReqPuppetList(dataList);
+            sendModuleMsg(ActorDefine.DUNGEO_MODULE_NAME, message);
+        }
         isStartBattle = true;
         battleBuilder.clear();
 
@@ -252,6 +263,7 @@ public class BattleModule extends BasicModule {
             M5.M50001.S2C.Builder builder = M5.M50001.S2C.newBuilder();
             builder.setRc(1);
             sendNetMsg(ActorDefine.BATTLE_MODULE_ID,ProtocolModuleDefine.NET_M5_C50001,builder.build());
+            sendPushNetMsgToClient();
             return;
         }
         GameMsg.ClientEndHandle message = new GameMsg.ClientEndHandle(battleId);

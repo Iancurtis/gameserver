@@ -203,7 +203,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       tellMsgToPlayerModule(defendsimplePlayer.getAccountName, RemoveBeAttackedNotifyBytime(team.fightTime))
     } else {
       val player: Player = BaseDbPojo.getOfflineDbPojo(defendsimplePlayer.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
       performTasksProxy.deleteFormTask(team.fightTime, playerProxy)
       player.setGardNum(0)
@@ -215,7 +215,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       tellMsgToPlayerModule(atcksimplePlayer.getAccountName, DelformTask(x, y, team.fightTime))
     } else {
       val player: Player = BaseDbPojo.getOfflineDbPojo(atcksimplePlayer.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
       performTasksProxy.changeTaskType(x, y, team.fightTime, TaskDefine.PERFORM_TASK_HELPBACK)
       performTasksProxy.deleteFormTask(team.fightTime, playerProxy)
@@ -350,9 +350,10 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       tellMsgToPlayerModule(simplePlayer.getAccountName, RemoveBeAttackedNotifyBytime(time))
     } else {
       val player: Player = BaseDbPojo.getOfflineDbPojo(simplePlayer.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
       performTasksProxy.removeTeamNotice(time, playerProxy)
+
       player.setGardNum(player.getGardNum-1)
       val sp: SimplePlayer = GameUtils.player2SimplePlayer(player, simplePlayer)
       tellService(ActorDefine.PLAYER_SERVICE_NAME, UpdateSimplePlayer(sp))
@@ -362,7 +363,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       tellMsgToPlayerModule(atcksimplePlayer.getAccountName, DelformTask(x, y, time))
     } else {
       val player: Player = BaseDbPojo.getOfflineDbPojo(atcksimplePlayer.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
       performTasksProxy.changeTaskType(x, y, team.fightTime, TaskDefine.PERFORM_TASK_HELPBACK)
       performTasksProxy.deleteFormTask(time, playerProxy)
@@ -408,7 +409,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       tellMsgToPlayerModule(simplePlayer.getAccountName, RemoveBeAttackedNotifyByXY(x, y))
     } else {
       val player: Player = BaseDbPojo.getOfflineDbPojo(simplePlayer.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
       performTasksProxy.removeTeamNoticeByXY(x, y, playerProxy)
       player.save()
@@ -562,7 +563,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       team.tasttype = TaskDefine.PERFORM_TASK_HELPBACK
     } else {
       val player: Player = BaseDbPojo.getOfflineDbPojo(simplePlayer.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       performTasksProxy.changeTaskType(x, y, team.fightTime, TaskDefine.PERFORM_TASK_HELPBACK)
       team.tasttype = TaskDefine.PERFORM_TASK_HELPBACK
     }
@@ -580,7 +581,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       tellMsgToPlayerModule(defendSimplePlayer.getAccountName, tellHasArried(team.fightTime))
     } else {
       val player: Player = BaseDbPojo.getOfflineDbPojo(defendSimplePlayer.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       performTasksProxy.chanbeginttime(team.fightTime)
     }
     /* if(defendSimplePlayer.online){
@@ -1393,7 +1394,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       //给离线玩家增加
       //赢了就只做增加伤兵，输了需要删除掉对应的任务部队
       val player: Player = BaseDbPojo.getOfflineDbPojo(defendSimplePlayer.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val dungeoProxy: DungeoProxy = new DungeoProxy(player.getDungeoSet, areaKey)
       val soldierProxy: SoldierProxy = new SoldierProxy(player.getSoldierSet, areaKey)
       val deathMap: util.HashMap[Integer, Integer] = new util.HashMap[Integer, Integer]
@@ -1509,7 +1510,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       if (defendSimplePlayer != null && defendSimplePlayer.getHelpId != 0 && tileType == TileType.Building) {
         val player: Player = BaseDbPojo.getOfflineDbPojo(defendSimplePlayer.getId, classOf[Player], areaKey)
         val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
-        val defendperformTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+        val defendperformTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
         val task: PerformTasks = BaseDbPojo.getOfflineDbPojo(defendSimplePlayer.getHelpId, classOf[PerformTasks], areaKey)
         if (task != null) {
           val team: Team = gethelpTeamByTime(task.getTimeer)
@@ -1522,7 +1523,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
                 tellMsgToPlayerModule(helpsimple.getAccountName, GameMsg.changefightTeam(task.getTimeer, battle.monsterList))
               } else {
                 val helpplayer: Player = BaseDbPojo.getOfflineDbPojo(team.attackId, classOf[Player], areaKey)
-                val helpperformTasksProxy: PerformTasksProxy = new PerformTasksProxy(helpplayer.getPerformTaskSet, helpplayer.getTeamNoticeSet, areaKey)
+                val helpperformTasksProxy: PerformTasksProxy = new PerformTasksProxy(helpplayer, areaKey)
                 val helpdungeoProxy: DungeoProxy = new DungeoProxy(new util.HashSet[lang.Long](), areaKey)
                 val helpplayerProxy: PlayerProxy = new PlayerProxy(helpplayer, areaKey)
                 helpperformTasksProxy.checkDefendTroop(helpdungeoProxy, battle.monsterList, task.getTimeer)
@@ -1533,7 +1534,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
                 val defenddungeoProxy: DungeoProxy = new DungeoProxy(new util.HashSet[lang.Long](), areaKey)
                 val defendplayer: Player = BaseDbPojo.getOfflineDbPojo(defendSimplePlayer.getId, classOf[Player], areaKey)
                 val defendplayerProxy: PlayerProxy = new PlayerProxy(defendplayer, areaKey)
-                val defendformTasksProxy: PerformTasksProxy = new PerformTasksProxy(defendplayer.getPerformTaskSet, defendplayer.getTeamNoticeSet, areaKey)
+                val defendformTasksProxy: PerformTasksProxy = new PerformTasksProxy(defendplayer, areaKey)
                 defendformTasksProxy.checkDefendTroop(defenddungeoProxy, battle.monsterList, task.getTimeer)
                 // defendperformTasksProxy.deleteDiggingTask(task.getTimeer, playerProxy)
                 //  defendperformTasksProxy.checkDefendTroop(defenddungeoProxy, battle.monsterList, task.getTimeer)
@@ -1545,7 +1546,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
                 tellMsgToPlayerModule(helpsimple.getAccountName, GameMsg.DelformTask(task.getWorldTileX, task.getWorldTileY, team.fightTime))
               } else {
                 val helpplayer: Player = BaseDbPojo.getOfflineDbPojo(team.attackId, classOf[Player], areaKey)
-                val helpperformTasksProxy: PerformTasksProxy = new PerformTasksProxy(helpplayer.getPerformTaskSet, helpplayer.getTeamNoticeSet, areaKey)
+                val helpperformTasksProxy: PerformTasksProxy = new PerformTasksProxy(helpplayer, areaKey)
                 val helpdungeoProxy: DungeoProxy = new DungeoProxy(new util.HashSet[lang.Long](), areaKey)
                 val helpplayerProxy: PlayerProxy = new PlayerProxy(helpplayer, areaKey)
                 helpperformTasksProxy.deleteFormTask(team.fightTime, helpplayerProxy)
@@ -1680,7 +1681,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
     }
     val player: Player = BaseDbPojo.getOfflineDbPojo(defendSimplePlayer.getId, classOf[Player], areaKey)
     val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
-    val defendperformTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+    val defendperformTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
     val task: PerformTasks = BaseDbPojo.getOfflineDbPojo(defendSimplePlayer.getHelpId, classOf[PerformTasks], areaKey)
     if (task != null) {
       val team: Team = gethelpTeamByTime(task.getTimeer)
@@ -1808,7 +1809,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
             } else {
               val player: Player = BaseDbPojo.getOfflineDbPojo(defendSimplePlayer.getId, classOf[Player], areaKey)
               val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
-              val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+              val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
               performTasksProxy.removeTeamNotice(this.x, this.y, time, playerProxy)
               performTasksProxy.savePerformTasks()
               player.save()
@@ -1825,7 +1826,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
             tellMsgToPlayerModule(simplePlayer.getAccountName, changeformTask(x, y, team.fightTime))
           } else {
             val player: Player = BaseDbPojo.getOfflineDbPojo(simplePlayer.getId, classOf[Player], areaKey)
-            val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+            val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
             performTasksProxy.changeTaskType(x, y, team.fightTime, TaskDefine.PERFORM_TASK_HELPBACK)
           }
           //改变防守者的任务时间
@@ -1834,7 +1835,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
             tellMsgToPlayerModule(defendsimplePlayer.getAccountName, tellHasArried(team.fightTime))
           } else {
             val player: Player = BaseDbPojo.getOfflineDbPojo(defendsimplePlayer.getId, classOf[Player], areaKey)
-            val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+            val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
             performTasksProxy.chanbeginttime(team.fightTime)
           }
           val template: MailTemplate = new MailTemplate("驻军通知", simplePlayer.getName + "派遣了一支部队辅助您驻守基地，请下达命令", 0, defendsimplePlayer.getName, ChatAndMailDefine.MAIL_TYPE_INBOX)
@@ -1919,7 +1920,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       tellMsgToPlayerModule(accountName, CreateDiggingTask(x, y, digTeam.fightTeams, occupyLoads, name, level, product.toInt, occupyTime, simplePlayer.getX, simplePlayer.getY))
     } else {
       val player: Player = BaseDbPojo.getOfflineDbPojo(simplePlayer.getId, classOf[Player], areaKey)
-      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+      val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val dungeoProxy: DungeoProxy = new DungeoProxy(new util.HashSet[lang.Long](), areaKey)
       val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
       performTasksProxy.addPerformTaskForOffLine(TaskDefine.PERFORM_TASK_DIGGING, name, level, x, y,
@@ -2040,7 +2041,7 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
         tellMsgToPlayerModule(accountName, CreateReturnTask(x, y, backTeam.fightTeams, backTeam.fightTime, name, level, backTeam.attackX, backTeam.attackY))
       } else {
         val player: Player = BaseDbPojo.getOfflineDbPojo(mysimple.getId, classOf[Player], areaKey)
-        val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player.getPerformTaskSet, player.getTeamNoticeSet, areaKey)
+        val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
         val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
         val dungeoProxy: DungeoProxy = new DungeoProxy(new util.HashSet[java.lang.Long], areaKey)
         performTasksProxy.addPerformTaskForOffLine(TaskDefine.PERFORM_TASK_RETURN, name, level, x, y,

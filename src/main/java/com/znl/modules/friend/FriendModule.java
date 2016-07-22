@@ -71,12 +71,11 @@ public class FriendModule extends BasicModule {
             playerProxy.acceptBless(msg.playerId());
             // 查看该玩家信息，然后通知客户端
             this.sendServiceMsg(ActorDefine.PLAYER_SERVICE_NAME, new GameMsg.GetPlayerSimpleInfo(msg.playerId(), ACCEPT_BLESS_CMD));
-            sendModuleMsg(ActorDefine.ROLE_MODULE_NAME, new GameMsg.RefrshTip());
         }
     }
 
     private void onResetDayNum() {
-        TimerdbProxy timerdbProxy = this.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+      /*  TimerdbProxy timerdbProxy = this.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         timerdbProxy.addTimer(TimerDefine.FRIEND_DAY_BLESS,
                 0, 0, TimerDefine.TIMER_REFRESH_FOUR, 0, 0, playerProxy);
@@ -109,7 +108,7 @@ public class FriendModule extends BasicModule {
         int getNum = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_GET_BLESS, 0, 0);
         if (getNum == 0) {
             playerProxy.clearGetBless();
-        }
+        }*/
 
 
     }
@@ -265,8 +264,8 @@ public class FriendModule extends BasicModule {
             M17.M170001.S2C.Builder s2cBuilder = M17.M170001.S2C.newBuilder();
             s2cBuilder.setRs(rs);
             sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170001, s2cBuilder.build());
+            sendPushNetMsgToClient();
         }
-
     }
 
     //搜索玩家
@@ -304,13 +303,14 @@ public class FriendModule extends BasicModule {
         }
         s2cBuilder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170003, s2cBuilder.build());
+        sendPushNetMsgToClient();
     }
 
     //请求祝福
     private void OnTriggerNet170004Event(Request request) {
         M17.M170004.C2S c2s = request.getValue();
         List<Long> ids = c2s.getPlayerIdsList();
-        TimerdbProxy timerdbProxy = this.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //TimerdbProxy timerdbProxy = this.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
 
         ids.forEach(playerId -> {
@@ -324,11 +324,11 @@ public class FriendModule extends BasicModule {
                 //一次使用次数
                 List<Integer> rewardIds = new ArrayList<>();
                 ids.forEach(id -> {
-                    playerProxy.addBlessPlayerId(id);
-                    timerdbProxy.addNum(TimerDefine.FRIEND_DAY_BLESS, 0, 0, 1);
-
-                    int num = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_BLESS, 0, 0);
-
+                playerProxy.addBlessPlayerId(id);
+                //timerdbProxy.addNum(TimerDefine.FRIEND_DAY_BLESS, 0, 0, 1);
+                playerProxy.getPlayer().setDaybless(playerProxy.getPlayer().getDaybless()+1);
+                    //int num = 0;//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_BLESS, 0, 0);
+                    int num = playerProxy.getPlayer().getDaybless();
                     if (num <= FriendDefine.MAX_DAY_BLESS_NUM) {
                         //TODO 这里有奖励 多个的话，有多个
                         JSONObject json = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.FRIEND_GIFT, "level", playerProxy.getLevel());
@@ -350,7 +350,7 @@ public class FriendModule extends BasicModule {
 
             }
         });
-
+        sendPushNetMsgToClient();
     }
 
     //请求领取祝福
@@ -358,18 +358,20 @@ public class FriendModule extends BasicModule {
         M17.M170006.C2S c2s = request.getValue();
         List<Long> ids = c2s.getPlayerIdsList();
 
-        TimerdbProxy timerdbProxy = this.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+       //TimerdbProxy timerdbProxy = this.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
 
         List<Long> getIdList = new ArrayList<>(); //保存有处理的玩家ID
         List<Integer> rewardIds = new ArrayList<>();
         int rs = 0;
         for (long id : ids) {
-            int num = timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_GET_BLESS, 0, 0);
+            //int num = 0;//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_GET_BLESS, 0, 0);
+            int num = playerProxy.getPlayer().getGetbless();
             if (num < FriendDefine.MAX_DAY_GET_BLESS_NUM) {  //小于领取的最大次数，可以领取
                 boolean isCanGetBless = playerProxy.isCanGetBless(id);
                 if (isCanGetBless) {
-                    timerdbProxy.addNum(TimerDefine.FRIEND_DAY_GET_BLESS, 0, 0, 1);
+                    //timerdbProxy.addNum(TimerDefine.FRIEND_DAY_GET_BLESS, 0, 0, 1);
+                    playerProxy.getPlayer().setGetbless(playerProxy.getPlayer().getGetbless()+1);
                     getIdList.add(id);
                     playerProxy.addGetBless(id); //
                     //TODO 获取领取奖励
@@ -399,6 +401,7 @@ public class FriendModule extends BasicModule {
         s2cBuilder.addAllPlayerIds(getIdList);
         sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170006, s2cBuilder.build());
         sendFuntctionLog(FunctionIdDefine.ASK_GET_WISH_FUNCTION_ID);
+        sendPushNetMsgToClient();
     }
 
     private void blessRewardHandler(List<Integer> rewardId) {

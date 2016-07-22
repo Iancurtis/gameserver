@@ -57,6 +57,7 @@ public class LotterModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M15, ProtocolModuleDefine.NET_M15_C150000, builder.build());
         sendFuntctionLog(FunctionIdDefine.GET_EQUIP_LOTTER_INFOS_FUNCTION_ID);
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet150001Event(Request request) {
@@ -76,12 +77,9 @@ public class LotterModule extends BasicModule {
             sendM20007(equreward);
             TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
             PlayerReward reward = new PlayerReward();
-            M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_LOTTEREQUIP_TIEMS, 1, reward);
-            if(builder19!=null) {
-                sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));
-            }
-
+            taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_LOTTEREQUIP_TIEMS, 1);
         }
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet150002Event(Request request) {
@@ -99,7 +97,8 @@ public class LotterModule extends BasicModule {
             sendM20007(reward);
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
         }
-        sendNetMsg(ProtocolModuleDefine.NET_M15, ProtocolModuleDefine.NET_M15_C150003, lotterProxy.getTaoInfos(type));
+   //     sendNetMsg(ProtocolModuleDefine.NET_M15, ProtocolModuleDefine.NET_M15_C150003, lotterProxy.getTaoInfos(type));
+        sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet150003Event(Request request) {
@@ -150,6 +149,7 @@ public class LotterModule extends BasicModule {
             builder.setType(type);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M15, ProtocolModuleDefine.NET_M15_C150003, builder.build());
+        sendPushNetMsgToClient();
     }
 
     private void sendM20007(PlayerReward reward) {
