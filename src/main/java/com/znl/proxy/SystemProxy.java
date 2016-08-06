@@ -299,6 +299,17 @@ public class SystemProxy extends BasicProxy {
             tonormaltime = stattime + feixun2normalNeedTime();
         }
         ItemBuffProxy itemBuffProxy = getGameProxy().getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
+        long checktime = 0l;
+        if (lastbufferTime == 0l || stattime >= lastbufferTime) {
+            lastbufferTime = itemBuffProxy.getWillBeOverdueBuff(stattime);
+            checktime = lastbufferTime;
+        } else {
+            checktime = lastbufferTime;
+        }
+        if (feixun2normalNeedTime() > 0 && lastbufferTime > tonormaltime && stattime <= tonormaltime && boomcheck == false) {
+            checktime = tonormaltime;
+            boomcheck = true;
+        }
         //产量
         long addtale = (long) Math.ceil(playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_taelyield) * (100 + activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_RESOUCE_ADD)) / 100.0);
         long addiron = (long) Math.ceil(playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_ironyield) * (100 + activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_RESOUCE_ADD)) / 100.0);
@@ -317,17 +328,6 @@ public class SystemProxy extends BasicProxy {
         long woodlimt = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_woodcontent);
         long stoneslimt = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_stonescontent);
         long foodlimt = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_foodcontent);
-        long checktime = 0l;
-        if (lastbufferTime == 0l || stattime >= lastbufferTime) {
-            lastbufferTime = itemBuffProxy.getWillBeOverdueBuff(stattime);
-            checktime = lastbufferTime;
-        } else {
-            checktime = lastbufferTime;
-        }
-        if (feixun2normalNeedTime() > 0 && lastbufferTime > tonormaltime && stattime <= tonormaltime && boomcheck == false) {
-            checktime = tonormaltime;
-            boomcheck = true;
-        }
         double second = 0.0;
         if (checktime <= tonormaltime) {
             second = (checktime - stattime) / 1000 * 0.5;
@@ -415,6 +415,7 @@ public class SystemProxy extends BasicProxy {
         if (checktime + 3000 > GameUtils.getServerDate().getTime()) {
             playerProxy.getPlayer().setResourereftime(GameUtils.getServerDate().getTime());
             boomcheck = false;
+            lastbufferTime=0l;
             return;
         }
 

@@ -32,15 +32,15 @@ abstract class BasicModule extends Actor with ActorLogging {
   var protocalRequestMap: ConcurrentHashMap[Integer, Integer] = new ConcurrentHashMap[Integer, Integer]
 
   //虚拟协议缓存
-  var ptmap:util.Map[Integer,Object] =new util.HashMap[Integer,Object]()
+  var ptmap: util.Map[Integer, Object] = new util.HashMap[Integer, Object]()
 
   def setModuleId(moduleId: Int) = {
     this.moduleId = moduleId
   }
 
-  def sendFuntctionLog(functionId : Int,expand1 :Long,expand2 :Long,expand3 :Long,expandstr : String): Unit ={
-    if (gameProxy != null){
-      val log : tbllog_function = createFunctionLog(functionId)
+  def sendFuntctionLog(functionId: Int, expand1: Long, expand2: Long, expand3: Long, expandstr: String): Unit = {
+    if (gameProxy != null) {
+      val log: tbllog_function = createFunctionLog(functionId)
       log.setExpand1(expand1)
       log.setExpand2(expand2)
       log.setExpand3(expand3)
@@ -49,24 +49,24 @@ abstract class BasicModule extends Actor with ActorLogging {
     }
   }
 
-  def createFunctionLog(functionId : Int): tbllog_function ={
-    val log : tbllog_function = new tbllog_function
-    val playerProxy : PlayerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME)
+  def createFunctionLog(functionId: Int): tbllog_function = {
+    val log: tbllog_function = new tbllog_function
+    val playerProxy: PlayerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME)
     log.setAccount_name(playerProxy.getAccountName)
     log.setRole_id(playerProxy.getPlayerId)
     log.setPlatform(playerProxy.getPlayerCache.getPlat_name)
     log.setDim_level(playerProxy.getPlayer.getLevel)
     log.setAction_id(functionId)
     log.setStatus(FunctionIdDefine.ACCOMPLISH)
-    val now :Int = (GameUtils.getServerDate().getTime / FunctionIdDefine.tranform).toInt
+    val now: Int = (GameUtils.getServerDate().getTime / FunctionIdDefine.tranform).toInt
     log.setLog_time(now)
     log.setHappend_time(now)
     log
   }
 
-  def sendFuntctionLog(functionId : Int,expand1 :Long,expand2 :Long,expand3 :Long): Unit ={
-    if (gameProxy != null){
-      val log : tbllog_function = createFunctionLog(functionId)
+  def sendFuntctionLog(functionId: Int, expand1: Long, expand2: Long, expand3: Long): Unit = {
+    if (gameProxy != null) {
+      val log: tbllog_function = createFunctionLog(functionId)
       log.setExpand1(expand1)
       log.setExpand2(expand2)
       log.setExpand3(expand3)
@@ -74,9 +74,9 @@ abstract class BasicModule extends Actor with ActorLogging {
     }
   }
 
-  def sendFuntctionLog(functionId : Int): Unit ={
-    if (gameProxy != null){
-      val log : tbllog_function = createFunctionLog(functionId)
+  def sendFuntctionLog(functionId: Int): Unit = {
+    if (gameProxy != null) {
+      val log: tbllog_function = createFunctionLog(functionId)
       sendLog(log)
     }
   }
@@ -87,15 +87,15 @@ abstract class BasicModule extends Actor with ActorLogging {
     this.gameProxy = value
   }
 
-  def getGameProxy(): GameProxy ={
-     return gameProxy
+  def getGameProxy(): GameProxy = {
+    return gameProxy
   }
 
   def getProxy[T](name: String) = {
-      this.gameProxy.getProxy(name).asInstanceOf[T]
+    this.gameProxy.getProxy(name).asInstanceOf[T]
   }
 
-  def saveAllProxy() ={
+  def saveAllProxy() = {
     this.gameProxy.save()
   }
 
@@ -143,134 +143,110 @@ abstract class BasicModule extends Actor with ActorLogging {
     powerMap
   }
 
-  def checkTipMap(map: util.Map[Integer, Integer]) {
-    var send: Boolean = false
-    val playerPoxy: PlayerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME)
-    val tipmap: util.Map[Integer, Integer] = playerPoxy.getTipmap
-    import scala.collection.JavaConversions._
-    for (key <- map.keySet) {
-      if (map.get(key) != tipmap.get(key)) {
-        send = true
-      }
-    }
-    val builder: M2.M20200.S2C.Builder = M2.M20200.S2C.newBuilder
-    if (send) {
-      import scala.collection.JavaConversions._
-      for (key <- tipmap.keySet) {
-        val tip: M2.TipInfo.Builder = M2.TipInfo.newBuilder
-        tip.setType(key)
-        tip.setNum(tipmap.get(key))
-        builder.addTipInfos(tip)
-      }
 
-      sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20200, builder.build())
-    }
-  }
-
-
-//  def checkPlayerPowerValues(map: util.Map[java.lang.Integer, java.lang.Long]) = {
-//    var send = false
-//    var ref = false
-//    val builder: M2.M20002.S2C.Builder = M2.M20002.S2C.newBuilder()
-//    val refurceSoldier: util.List[Integer] = new util.ArrayList[Integer]
-//    if (map.size() > 0 && gameProxy != null) {
-//      val playerProxy: PlayerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME)
-//      val sendPowers: java.util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.RESOURCE, "isshow", 1)
-//      var falg: Boolean = false
-//      for (powerDefine <- sendPowers) {
-//        val power = powerDefine.getInt("ID")
-//        val value: Long = playerProxy.getPowerValue(power)
-//        val _value: Long = map.get(power)
-//        if (_value != value) {
-//          val diff: AttrDifInfo.Builder = AttrDifInfo.newBuilder()
-//          diff.setTypeid(power)
-//          diff.setValue(value)
-//          if (power == PlayerPowerDefine.POWER_exp){
-//          }
-//          builder.addDiffs(diff.build())
-//          if (power == PlayerPowerDefine.POWER_gold && value < _value) {
-//            val taskproxy: TaskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-//            val reward = new PlayerReward()
-//            val build: M190000.S2C.Builder = taskproxy.getTaskUpdate(TaskDefine.TASK_TYPE_COSTGOLD_TIMES, 1)
-//            if (build != null) {
-//              sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(build, reward))
-//            }
-//          }
-//          if (power >= 57 && power <= 61) {
-//            falg = true
-//          }
-//          send = true
-//          if (power <= SoldierDefine.TOTAL_FIGHT_POWER) {
-//            refurceSoldier.add(power)
-//            ref = true
-//          }
-//          if(power == PlayerPowerDefine.POWER_command){
-//            ref = true
-//          }
-//        }
-//      }
-//      if (falg == true) {
-//        val taskproxy: TaskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-//        val reward = new PlayerReward()
-//        val build: M190000.S2C.Builder = taskproxy.getTaskUpdate(TaskDefine.TASK_TYPE_RESOURCE_VALUE, 1)
-//        if(build!=null) {
-//          sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(build, reward))
-//        }
-//      }
-//    }
-//    if (send == true) {
-//      if (refurceSoldier.size() > 0) {
-//        val soldierProxy: SoldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME)
-//        val infos = soldierProxy.refurceSoldierPowerValue(refurceSoldier)
-////        val infoBuilder: M4.M40000.S2C.Builder = M4.M40000.S2C.newBuilder()
-////        infoBuilder.addAllSoldiers(infos)
-////        sendNetMsg(ActorDefine.SOLDIER_MODULE_ID, ProtocolModuleDefine.NET_M4_C40000, infoBuilder.build())
-//      }
-//      if(ref == true){
-//        //重新计算最高战力
-//        sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, CountCapacity())
-//      }
-//      sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20002, builder.build())
-//    }
-//    checkDifferentRefurceLogic(builder.build())
-//    map.clear()
-//  }
+  //  def checkPlayerPowerValues(map: util.Map[java.lang.Integer, java.lang.Long]) = {
+  //    var send = false
+  //    var ref = false
+  //    val builder: M2.M20002.S2C.Builder = M2.M20002.S2C.newBuilder()
+  //    val refurceSoldier: util.List[Integer] = new util.ArrayList[Integer]
+  //    if (map.size() > 0 && gameProxy != null) {
+  //      val playerProxy: PlayerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME)
+  //      val sendPowers: java.util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.RESOURCE, "isshow", 1)
+  //      var falg: Boolean = false
+  //      for (powerDefine <- sendPowers) {
+  //        val power = powerDefine.getInt("ID")
+  //        val value: Long = playerProxy.getPowerValue(power)
+  //        val _value: Long = map.get(power)
+  //        if (_value != value) {
+  //          val diff: AttrDifInfo.Builder = AttrDifInfo.newBuilder()
+  //          diff.setTypeid(power)
+  //          diff.setValue(value)
+  //          if (power == PlayerPowerDefine.POWER_exp){
+  //          }
+  //          builder.addDiffs(diff.build())
+  //          if (power == PlayerPowerDefine.POWER_gold && value < _value) {
+  //            val taskproxy: TaskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+  //            val reward = new PlayerReward()
+  //            val build: M190000.S2C.Builder = taskproxy.getTaskUpdate(TaskDefine.TASK_TYPE_COSTGOLD_TIMES, 1)
+  //            if (build != null) {
+  //              sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(build, reward))
+  //            }
+  //          }
+  //          if (power >= 57 && power <= 61) {
+  //            falg = true
+  //          }
+  //          send = true
+  //          if (power <= SoldierDefine.TOTAL_FIGHT_POWER) {
+  //            refurceSoldier.add(power)
+  //            ref = true
+  //          }
+  //          if(power == PlayerPowerDefine.POWER_command){
+  //            ref = true
+  //          }
+  //        }
+  //      }
+  //      if (falg == true) {
+  //        val taskproxy: TaskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+  //        val reward = new PlayerReward()
+  //        val build: M190000.S2C.Builder = taskproxy.getTaskUpdate(TaskDefine.TASK_TYPE_RESOURCE_VALUE, 1)
+  //        if(build!=null) {
+  //          sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(build, reward))
+  //        }
+  //      }
+  //    }
+  //    if (send == true) {
+  //      if (refurceSoldier.size() > 0) {
+  //        val soldierProxy: SoldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME)
+  //        val infos = soldierProxy.refurceSoldierPowerValue(refurceSoldier)
+  ////        val infoBuilder: M4.M40000.S2C.Builder = M4.M40000.S2C.newBuilder()
+  ////        infoBuilder.addAllSoldiers(infos)
+  ////        sendNetMsg(ActorDefine.SOLDIER_MODULE_ID, ProtocolModuleDefine.NET_M4_C40000, infoBuilder.build())
+  //      }
+  //      if(ref == true){
+  //        //重新计算最高战力
+  //        sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, CountCapacity())
+  //      }
+  //      sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20002, builder.build())
+  //    }
+  //    checkDifferentRefurceLogic(builder.build())
+  //    map.clear()
+  //  }
 
 
-  /***检查所有的different的power，完成对应需要刷新的操作***/
-  def checkDifferentRefurceLogic(mess : M2.M20002.S2C): Unit ={
+  /** *检查所有的different的power，完成对应需要刷新的操作 ***/
+  def checkDifferentRefurceLogic(mess: M2.M20002.S2C): Unit = {
     //发送到战力排行榜刷新
     val soldierProxy: SoldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME)
     val playerProxy: PlayerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME)
-    for(diff : Common.AttrDifInfo <- mess.getDiffsList){
-      if(diff.getTypeid == PlayerPowerDefine.NOR_POWER_highestCapacity ){
-        val msg: GameMsg.AddPlayerToRank = new GameMsg.AddPlayerToRank(playerProxy.getPlayerId,soldierProxy.getHighestCapacity,PowerRanksDefine.POWERRANK_TYPE_CAPACITY)
+    for (diff: Common.AttrDifInfo <- mess.getDiffsList) {
+      if (diff.getTypeid == PlayerPowerDefine.NOR_POWER_highestCapacity) {
+        val msg: GameMsg.AddPlayerToRank = new GameMsg.AddPlayerToRank(playerProxy.getPlayerId, soldierProxy.getHighestCapacity, PowerRanksDefine.POWERRANK_TYPE_CAPACITY)
         sendServiceMsg(ActorDefine.POWERRANKS_SERVICE_NAME, msg)
-        if(playerProxy.getArmGrouId>0){
-          val groupmsg:GameMsg.changeMenberCapity = new GameMsg.changeMenberCapity(playerProxy.getPlayerId,soldierProxy.getHighestCapacity)
-          tellMsgToArmygroupNode(groupmsg,playerProxy.getArmGrouId)
+        if (playerProxy.getArmGrouId > 0) {
+          val groupmsg: GameMsg.changeMenberCapity = new GameMsg.changeMenberCapity(playerProxy.getPlayerId, soldierProxy.getHighestCapacity)
+          tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId)
         }
-      }else if(diff.getTypeid == PlayerPowerDefine.POWER_level ){
-        val groupmsg:GameMsg.changeMenberLevel = new GameMsg.changeMenberLevel(playerProxy.getPlayerId,playerProxy.getLevel)
-        tellMsgToArmygroupNode(groupmsg,playerProxy.getArmGrouId)
+      } else if (diff.getTypeid == PlayerPowerDefine.POWER_level) {
+        val groupmsg: GameMsg.changeMenberLevel = new GameMsg.changeMenberLevel(playerProxy.getPlayerId, playerProxy.getLevel)
+        tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId)
       }
     }
     var needRefSimplePlayer = false
     //simplePlayer刷新
-    for(diff : Common.AttrDifInfo <- mess.getDiffsList){
-      if(GameUtils.refSimplePlayerMap.contains(diff.getTypeid)){
+    for (diff: Common.AttrDifInfo <- mess.getDiffsList) {
+      if (GameUtils.refSimplePlayerMap.contains(diff.getTypeid)) {
         updateMySimplePlayerData()
       }
     }
 
-   /* //检查一下体力时间是否有更新，有的话推送协议给客户端
-    val time = playerProxy.sendtimes()
-    if (time > 0){
-      val builder: M2.M20501.S2C.Builder = M2.M20501.S2C.newBuilder()
-      builder.setEnergyRefTime((time /1000).toInt)
-      builder.setRs(0)
-      sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20501, builder.build())
-    }*/
+    /* //检查一下体力时间是否有更新，有的话推送协议给客户端
+     val time = playerProxy.sendtimes()
+     if (time > 0){
+       val builder: M2.M20501.S2C.Builder = M2.M20501.S2C.newBuilder()
+       builder.setEnergyRefTime((time /1000).toInt)
+       builder.setRs(0)
+       sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20501, builder.build())
+     }*/
   }
 
   def sendDifferent(powerList: util.List[Integer]): M2.M20002.S2C = {
@@ -279,9 +255,9 @@ abstract class BasicModule extends Actor with ActorLogging {
     for (power <- powerList) {
       val value: Long = playerProxy.getPowerValue(power)
       val diff: AttrDifInfo.Builder = AttrDifInfo.newBuilder()
-      if(diff.getTypeid == PlayerPowerDefine.POWER_level ){
-        val groupmsg:GameMsg.changeMenberLevel = new GameMsg.changeMenberLevel(playerProxy.getPlayerId,playerProxy.getLevel)
-        tellMsgToArmygroupNode(groupmsg,playerProxy.getArmGrouId)
+      if (diff.getTypeid == PlayerPowerDefine.POWER_level) {
+        val groupmsg: GameMsg.changeMenberLevel = new GameMsg.changeMenberLevel(playerProxy.getPlayerId, playerProxy.getLevel)
+        tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId)
       }
       diff.setTypeid(power)
       diff.setValue(value)
@@ -291,11 +267,11 @@ abstract class BasicModule extends Actor with ActorLogging {
     builder.build()
   }
 
-//  def sendPowerDiff (list: util.List[Integer]) {
-//    val different: M2.M20002.S2C = sendDifferent(list)
-//    pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, different)
-//    sendPushNetMsgToClient
-//  }
+  //  def sendPowerDiff (list: util.List[Integer]) {
+  //    val different: M2.M20002.S2C = sendDifferent(list)
+  //    pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20002, different)
+  //    sendPushNetMsgToClient
+  //  }
 
 
   def onTriggerNetEvent(cmd: Int, request: Request) = {
@@ -309,16 +285,11 @@ abstract class BasicModule extends Actor with ActorLogging {
       method.setAccessible(true)
       method.invoke(this, request) //反射，性能很大的消耗
 
-//      checkPlayerPowerValues(powerMap)  //TODO 这个方法会有一定的消耗，需要优化
-      if(tipmap.size() > 0){
-        checkTipMap(tipmap)
-      }
-
-//      multicastNetToClient()
+      //      multicastNetToClient()
       val dtTime = System.currentTimeMillis() - curTime
-      if(dtTime > 100){
+      if (dtTime > 100) {
         log.error("==============操作延迟：cmd:%d==dt:%d================".format(cmd, dtTime))
-//        GameUtils.addSlowWarnMap(cmd)
+        //        GameUtils.addSlowWarnMap(cmd)
       }
     } catch {
       case e: Exception => {
@@ -342,8 +313,10 @@ abstract class BasicModule extends Actor with ActorLogging {
   //更新自己的在线数据
   def updateMySimplePlayerData() = {
     val playerProxy: PlayerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME)
-    playerProxy.getSimplePlayer
-    sendServiceMsg(ActorDefine.PLAYER_SERVICE_NAME, UpdateOnlineSimplePlayer(playerProxy.getSimplePlayer))
+    val simplePlayer: SimplePlayer = playerProxy.getSimplePlayer
+    if (simplePlayer != null) {
+      sendServiceMsg(ActorDefine.PLAYER_SERVICE_NAME, UpdateOnlineSimplePlayer(playerProxy.getSimplePlayer))
+    }
   }
 
 
@@ -357,11 +330,11 @@ abstract class BasicModule extends Actor with ActorLogging {
     val request = netMsg.request
     val cmd = request.getCmd()
     //判断协议重复请求
-    if(checkIsRepeatedProtocal(cmd,request.getReqTime)){
+    if (checkIsRepeatedProtocal(cmd, request.getReqTime)) {
       repeatedProtocalHandler(cmd)
       return null
     }
-    if(cmd==230001){
+    if (cmd == 230001) {
       System.err.println("++++++++++++++++++++++++==444");
     }
     onTriggerNetEvent(cmd, request)
@@ -370,21 +343,21 @@ abstract class BasicModule extends Actor with ActorLogging {
   def sendNetMsg(moduleId: Int, cmd: Int, message: GeneratedMessage): Unit = {
     val response: Response = Response.valueOf(moduleId, cmd, message)
     context.parent ! SendNetMsgToClient(response)
-//    println("==========服务器返回协议"+cmd)
+    //    println("==========服务器返回协议"+cmd)
   }
 
-//  def multicastNetToClient() = {
-//    context.parent ! MulticastNetToClient()
-//  }
+  //  def multicastNetToClient() = {
+  //    context.parent ! MulticastNetToClient()
+  //  }
 
   /*只在推送的时候调用，慎用！*/
   def pushNetMsg(moduleId: Int, cmd: Int, message: GeneratedMessage): Unit = {
     val response: Response = Response.valueOf(moduleId, cmd, message)
     context.parent ! SendNetMsgToClient(response)
-//    println("==========服务器推送协议"+cmd)
+    //    println("==========服务器推送协议"+cmd)
   }
 
-  def sendMsg(): Unit ={
+  def sendMsg(): Unit = {
     context.parent ! PushtNetMsgToClient()
   }
 
@@ -400,10 +373,10 @@ abstract class BasicModule extends Actor with ActorLogging {
   }
 
   // 检查有没有任务要推送
-  def checkSendActivity(): Unit ={
-    val activityProxy : ActivityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME)
+  def checkSendActivity(): Unit = {
+    val activityProxy: ActivityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME)
     val sendSet = activityProxy.getNeedSendActivitys()
-    if (sendSet.size() > 0){
+    if (sendSet.size() > 0) {
       val builder = M23.M230007.S2C.newBuilder
       val infos = activityProxy.getActivityInfoByIds(sendSet)
       builder.addAllActivityInfo(infos)
@@ -412,14 +385,14 @@ abstract class BasicModule extends Actor with ActorLogging {
   }
 
   // 检查有没有活动要推送
-  def checkSendTask(): Unit ={
-    val taskProxy : TaskProxy = getProxy(ActorDefine.TASK_PROXY_NAME)
+  def checkSendTask(): Unit = {
+    val taskProxy: TaskProxy = getProxy(ActorDefine.TASK_PROXY_NAME)
     val sendSet = taskProxy.getNeedPushTasks()
-    if (sendSet.size() > 0){
+    if (sendSet.size() > 0) {
       //发送协议刷新任务
       val taskInfos = taskProxy.getTaskInfosByTaskId(sendSet)
-      if(taskInfos.size() > 0){
-        val builder =M19.M190000.S2C.newBuilder()
+      if (taskInfos.size() > 0) {
+        val builder = M19.M190000.S2C.newBuilder()
         builder.setDayActivityId(taskProxy.getActivityId)
         val dayilNum: Int = taskProxy.taskTimer.getDaytaskNum // timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_MESSION, 0, 0);
         val num: Int = taskProxy.taskTimer.getActivyTastId //timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_ACTIVITY, 0, 0);
@@ -431,10 +404,10 @@ abstract class BasicModule extends Actor with ActorLogging {
         sendNetMsg(ProtocolModuleDefine.NET_M19, ProtocolModuleDefine.NET_M19_C190000, builder.build)
       }
       val reward = taskProxy.getDayActivityTaskReward(sendSet)
-      if (reward.haveReward){
+      if (reward.haveReward) {
         //发送奖励
-        val rewardProxy : RewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME)
-        rewardProxy.getRewardToPlayer(reward,LogDefine.GET_DAYLIY_TASK_DAYACTIVITY)
+        val rewardProxy: RewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME)
+        rewardProxy.getRewardToPlayer(reward, LogDefine.GET_DAYLIY_TASK_DAYACTIVITY)
         val build20007 = rewardProxy.getRewardClientInfo(reward)
         sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, build20007)
       }
@@ -443,29 +416,37 @@ abstract class BasicModule extends Actor with ActorLogging {
   }
 
   //检查有没有属性要推送
-  def checkSendPowerValue(): util.List[Common.AttrDifInfo] ={
+  def checkSendPowerValue(): util.List[Common.AttrDifInfo] = {
     val diffs = new util.ArrayList[Common.AttrDifInfo]()
     val refurceSoldier = new util.ArrayList[Integer]()
-    val  playerProxy : PlayerProxy= getProxy(ActorDefine.PLAYER_PROXY_NAME)
+    var refCapacity = false //是否需要通知到战力模块去执行重算战力
+    val playerProxy: PlayerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME)
     val powerSet = playerProxy.getChangePower
-    if (powerSet.size() > 0){
-      for (power : Integer <- powerSet){
+    if (powerSet.size() > 0) {
+      for (power: Integer <- powerSet) {
         val diffInfo = Common.AttrDifInfo.newBuilder();
         diffInfo.setTypeid(power)
         diffInfo.setValue(playerProxy.getPowerValue(power))
         diffs.add(diffInfo.build())
         if (power <= SoldierDefine.TOTAL_FIGHT_POWER) {
           refurceSoldier.add(power)
+          refCapacity = true
+        }
+        if (power == PlayerPowerDefine.POWER_command) {
+          refCapacity = true
         }
       }
     }
-    if(refurceSoldier.size() > 0){
+    if (refurceSoldier.size() > 0) {
       val soldierProxy: SoldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME)
       soldierProxy.refurceSoldierPowerValue(refurceSoldier)
+    }
+
+    if (refCapacity) {
       sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, CountCapacity())
     }
-    if(diffs.size() > 0){
-      val powerBuilder:M2.M20002.S2C.Builder= M2.M20002.S2C.newBuilder()
+    if (diffs.size() > 0) {
+      val powerBuilder: M2.M20002.S2C.Builder = M2.M20002.S2C.newBuilder()
       powerBuilder.addAllDiffs(diffs)
       sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20002, powerBuilder.build())
       checkDifferentRefurceLogic(powerBuilder.build())
@@ -525,29 +506,29 @@ abstract class BasicModule extends Actor with ActorLogging {
   }
 
   /**
-   * 检测是否是重复请求的协议
-   * @param cmd
-   * @return
-   */
-  def checkIsRepeatedProtocal(cmd:Int,requestTime:Int):Boolean={
-    var result=false
-    if(protocalRequestMap.contains(cmd)){
-       val preRequestTime=protocalRequestMap.get(cmd)
-       if(preRequestTime==requestTime){
-         result=true
-       }else{
-         protocalRequestMap.put(cmd,requestTime)
-       }
-    }else{
-      protocalRequestMap.put(cmd,requestTime)
+    * 检测是否是重复请求的协议
+    * @param cmd
+    * @return
+    */
+  def checkIsRepeatedProtocal(cmd: Int, requestTime: Int): Boolean = {
+    var result = false
+    if (protocalRequestMap.contains(cmd)) {
+      val preRequestTime = protocalRequestMap.get(cmd)
+      if (preRequestTime == requestTime) {
+        result = true
+      } else {
+        protocalRequestMap.put(cmd, requestTime)
+      }
+    } else {
+      protocalRequestMap.put(cmd, requestTime)
     }
     return result
   }
 
   /**
-   * 协议重复请求处理
-   */
-  def repeatedProtocalHandler(cmd:Int);
+    * 协议重复请求处理
+    */
+  def repeatedProtocalHandler(cmd: Int);
 
   /**
     * tbllog_error 出错日志

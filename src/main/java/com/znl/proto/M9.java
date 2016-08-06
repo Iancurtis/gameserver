@@ -3872,23 +3872,49 @@ public final class M9 {
        */
       int getRs();
 
-      // required int32 itemId = 2;
+      // required int32 type = 2;
       /**
-       * <code>required int32 itemId = 2;</code>
+       * <code>required int32 type = 2;</code>
+       *
+       * <pre>
+       *道具类型
+       * </pre>
        */
-      boolean hasItemId();
+      boolean hasType();
       /**
-       * <code>required int32 itemId = 2;</code>
+       * <code>required int32 type = 2;</code>
+       *
+       * <pre>
+       *道具类型
+       * </pre>
        */
-      int getItemId();
+      int getType();
 
-      // optional int32 remainTime = 6;
+      // required int32 powerId = 3;
       /**
-       * <code>optional int32 remainTime = 6;</code>
+       * <code>required int32 powerId = 3;</code>
+       *
+       * <pre>
+       *要加成效果的powerId
+       * </pre>
+       */
+      boolean hasPowerId();
+      /**
+       * <code>required int32 powerId = 3;</code>
+       *
+       * <pre>
+       *要加成效果的powerId
+       * </pre>
+       */
+      int getPowerId();
+
+      // optional int32 remainTime = 4;
+      /**
+       * <code>optional int32 remainTime = 4;</code>
        */
       boolean hasRemainTime();
       /**
-       * <code>optional int32 remainTime = 6;</code>
+       * <code>optional int32 remainTime = 4;</code>
        */
       int getRemainTime();
     }
@@ -3950,11 +3976,16 @@ public final class M9 {
               }
               case 16: {
                 bitField0_ |= 0x00000002;
-                itemId_ = input.readInt32();
+                type_ = input.readInt32();
                 break;
               }
-              case 48: {
+              case 24: {
                 bitField0_ |= 0x00000004;
+                powerId_ = input.readInt32();
+                break;
+              }
+              case 32: {
+                bitField0_ |= 0x00000008;
                 remainTime_ = input.readInt32();
                 break;
               }
@@ -4014,33 +4045,65 @@ public final class M9 {
         return rs_;
       }
 
-      // required int32 itemId = 2;
-      public static final int ITEMID_FIELD_NUMBER = 2;
-      private int itemId_;
+      // required int32 type = 2;
+      public static final int TYPE_FIELD_NUMBER = 2;
+      private int type_;
       /**
-       * <code>required int32 itemId = 2;</code>
+       * <code>required int32 type = 2;</code>
+       *
+       * <pre>
+       *道具类型
+       * </pre>
        */
-      public boolean hasItemId() {
+      public boolean hasType() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required int32 itemId = 2;</code>
+       * <code>required int32 type = 2;</code>
+       *
+       * <pre>
+       *道具类型
+       * </pre>
        */
-      public int getItemId() {
-        return itemId_;
+      public int getType() {
+        return type_;
       }
 
-      // optional int32 remainTime = 6;
-      public static final int REMAINTIME_FIELD_NUMBER = 6;
-      private int remainTime_;
+      // required int32 powerId = 3;
+      public static final int POWERID_FIELD_NUMBER = 3;
+      private int powerId_;
       /**
-       * <code>optional int32 remainTime = 6;</code>
+       * <code>required int32 powerId = 3;</code>
+       *
+       * <pre>
+       *要加成效果的powerId
+       * </pre>
        */
-      public boolean hasRemainTime() {
+      public boolean hasPowerId() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>optional int32 remainTime = 6;</code>
+       * <code>required int32 powerId = 3;</code>
+       *
+       * <pre>
+       *要加成效果的powerId
+       * </pre>
+       */
+      public int getPowerId() {
+        return powerId_;
+      }
+
+      // optional int32 remainTime = 4;
+      public static final int REMAINTIME_FIELD_NUMBER = 4;
+      private int remainTime_;
+      /**
+       * <code>optional int32 remainTime = 4;</code>
+       */
+      public boolean hasRemainTime() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional int32 remainTime = 4;</code>
        */
       public int getRemainTime() {
         return remainTime_;
@@ -4048,7 +4111,8 @@ public final class M9 {
 
       private void initFields() {
         rs_ = 0;
-        itemId_ = 0;
+        type_ = 0;
+        powerId_ = 0;
         remainTime_ = 0;
       }
       private byte memoizedIsInitialized = -1;
@@ -4060,7 +4124,11 @@ public final class M9 {
           memoizedIsInitialized = 0;
           return false;
         }
-        if (!hasItemId()) {
+        if (!hasType()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasPowerId()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -4075,10 +4143,13 @@ public final class M9 {
           output.writeInt32(1, rs_);
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          output.writeInt32(2, itemId_);
+          output.writeInt32(2, type_);
         }
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          output.writeInt32(6, remainTime_);
+          output.writeInt32(3, powerId_);
+        }
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          output.writeInt32(4, remainTime_);
         }
         getUnknownFields().writeTo(output);
       }
@@ -4095,11 +4166,15 @@ public final class M9 {
         }
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(2, itemId_);
+            .computeInt32Size(2, type_);
         }
         if (((bitField0_ & 0x00000004) == 0x00000004)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(6, remainTime_);
+            .computeInt32Size(3, powerId_);
+        }
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(4, remainTime_);
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -4219,10 +4294,12 @@ public final class M9 {
           super.clear();
           rs_ = 0;
           bitField0_ = (bitField0_ & ~0x00000001);
-          itemId_ = 0;
+          type_ = 0;
           bitField0_ = (bitField0_ & ~0x00000002);
-          remainTime_ = 0;
+          powerId_ = 0;
           bitField0_ = (bitField0_ & ~0x00000004);
+          remainTime_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000008);
           return this;
         }
 
@@ -4258,9 +4335,13 @@ public final class M9 {
           if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
             to_bitField0_ |= 0x00000002;
           }
-          result.itemId_ = itemId_;
+          result.type_ = type_;
           if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
             to_bitField0_ |= 0x00000004;
+          }
+          result.powerId_ = powerId_;
+          if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+            to_bitField0_ |= 0x00000008;
           }
           result.remainTime_ = remainTime_;
           result.bitField0_ = to_bitField0_;
@@ -4282,8 +4363,11 @@ public final class M9 {
           if (other.hasRs()) {
             setRs(other.getRs());
           }
-          if (other.hasItemId()) {
-            setItemId(other.getItemId());
+          if (other.hasType()) {
+            setType(other.getType());
+          }
+          if (other.hasPowerId()) {
+            setPowerId(other.getPowerId());
           }
           if (other.hasRemainTime()) {
             setRemainTime(other.getRemainTime());
@@ -4297,7 +4381,11 @@ public final class M9 {
             
             return false;
           }
-          if (!hasItemId()) {
+          if (!hasType()) {
+            
+            return false;
+          }
+          if (!hasPowerId()) {
             
             return false;
           }
@@ -4356,67 +4444,132 @@ public final class M9 {
           return this;
         }
 
-        // required int32 itemId = 2;
-        private int itemId_ ;
+        // required int32 type = 2;
+        private int type_ ;
         /**
-         * <code>required int32 itemId = 2;</code>
+         * <code>required int32 type = 2;</code>
+         *
+         * <pre>
+         *道具类型
+         * </pre>
          */
-        public boolean hasItemId() {
+        public boolean hasType() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
         /**
-         * <code>required int32 itemId = 2;</code>
+         * <code>required int32 type = 2;</code>
+         *
+         * <pre>
+         *道具类型
+         * </pre>
          */
-        public int getItemId() {
-          return itemId_;
+        public int getType() {
+          return type_;
         }
         /**
-         * <code>required int32 itemId = 2;</code>
+         * <code>required int32 type = 2;</code>
+         *
+         * <pre>
+         *道具类型
+         * </pre>
          */
-        public Builder setItemId(int value) {
+        public Builder setType(int value) {
           bitField0_ |= 0x00000002;
-          itemId_ = value;
+          type_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>required int32 itemId = 2;</code>
+         * <code>required int32 type = 2;</code>
+         *
+         * <pre>
+         *道具类型
+         * </pre>
          */
-        public Builder clearItemId() {
+        public Builder clearType() {
           bitField0_ = (bitField0_ & ~0x00000002);
-          itemId_ = 0;
+          type_ = 0;
           onChanged();
           return this;
         }
 
-        // optional int32 remainTime = 6;
-        private int remainTime_ ;
+        // required int32 powerId = 3;
+        private int powerId_ ;
         /**
-         * <code>optional int32 remainTime = 6;</code>
+         * <code>required int32 powerId = 3;</code>
+         *
+         * <pre>
+         *要加成效果的powerId
+         * </pre>
          */
-        public boolean hasRemainTime() {
+        public boolean hasPowerId() {
           return ((bitField0_ & 0x00000004) == 0x00000004);
         }
         /**
-         * <code>optional int32 remainTime = 6;</code>
+         * <code>required int32 powerId = 3;</code>
+         *
+         * <pre>
+         *要加成效果的powerId
+         * </pre>
+         */
+        public int getPowerId() {
+          return powerId_;
+        }
+        /**
+         * <code>required int32 powerId = 3;</code>
+         *
+         * <pre>
+         *要加成效果的powerId
+         * </pre>
+         */
+        public Builder setPowerId(int value) {
+          bitField0_ |= 0x00000004;
+          powerId_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required int32 powerId = 3;</code>
+         *
+         * <pre>
+         *要加成效果的powerId
+         * </pre>
+         */
+        public Builder clearPowerId() {
+          bitField0_ = (bitField0_ & ~0x00000004);
+          powerId_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // optional int32 remainTime = 4;
+        private int remainTime_ ;
+        /**
+         * <code>optional int32 remainTime = 4;</code>
+         */
+        public boolean hasRemainTime() {
+          return ((bitField0_ & 0x00000008) == 0x00000008);
+        }
+        /**
+         * <code>optional int32 remainTime = 4;</code>
          */
         public int getRemainTime() {
           return remainTime_;
         }
         /**
-         * <code>optional int32 remainTime = 6;</code>
+         * <code>optional int32 remainTime = 4;</code>
          */
         public Builder setRemainTime(int value) {
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000008;
           remainTime_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>optional int32 remainTime = 6;</code>
+         * <code>optional int32 remainTime = 4;</code>
          */
         public Builder clearRemainTime() {
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000008);
           remainTime_ = 0;
           onChanged();
           return this;
@@ -4436,23 +4589,41 @@ public final class M9 {
     public interface C2SOrBuilder
         extends com.google.protobuf.MessageOrBuilder {
 
-      // required int32 itemId = 1;
+      // required int32 type = 1;
       /**
-       * <code>required int32 itemId = 1;</code>
+       * <code>required int32 type = 1;</code>
        *
        * <pre>
-       *道具ID，道具Buff的唯一ID
+       *道具类型
        * </pre>
        */
-      boolean hasItemId();
+      boolean hasType();
       /**
-       * <code>required int32 itemId = 1;</code>
+       * <code>required int32 type = 1;</code>
        *
        * <pre>
-       *道具ID，道具Buff的唯一ID
+       *道具类型
        * </pre>
        */
-      int getItemId();
+      int getType();
+
+      // required int32 powerId = 2;
+      /**
+       * <code>required int32 powerId = 2;</code>
+       *
+       * <pre>
+       *要加成效果的powerId
+       * </pre>
+       */
+      boolean hasPowerId();
+      /**
+       * <code>required int32 powerId = 2;</code>
+       *
+       * <pre>
+       *要加成效果的powerId
+       * </pre>
+       */
+      int getPowerId();
     }
     /**
      * Protobuf type {@code M9.M90002.C2S}
@@ -4507,7 +4678,12 @@ public final class M9 {
               }
               case 8: {
                 bitField0_ |= 0x00000001;
-                itemId_ = input.readInt32();
+                type_ = input.readInt32();
+                break;
+              }
+              case 16: {
+                bitField0_ |= 0x00000002;
+                powerId_ = input.readInt32();
                 break;
               }
             }
@@ -4550,39 +4726,68 @@ public final class M9 {
       }
 
       private int bitField0_;
-      // required int32 itemId = 1;
-      public static final int ITEMID_FIELD_NUMBER = 1;
-      private int itemId_;
+      // required int32 type = 1;
+      public static final int TYPE_FIELD_NUMBER = 1;
+      private int type_;
       /**
-       * <code>required int32 itemId = 1;</code>
+       * <code>required int32 type = 1;</code>
        *
        * <pre>
-       *道具ID，道具Buff的唯一ID
+       *道具类型
        * </pre>
        */
-      public boolean hasItemId() {
+      public boolean hasType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required int32 itemId = 1;</code>
+       * <code>required int32 type = 1;</code>
        *
        * <pre>
-       *道具ID，道具Buff的唯一ID
+       *道具类型
        * </pre>
        */
-      public int getItemId() {
-        return itemId_;
+      public int getType() {
+        return type_;
+      }
+
+      // required int32 powerId = 2;
+      public static final int POWERID_FIELD_NUMBER = 2;
+      private int powerId_;
+      /**
+       * <code>required int32 powerId = 2;</code>
+       *
+       * <pre>
+       *要加成效果的powerId
+       * </pre>
+       */
+      public boolean hasPowerId() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required int32 powerId = 2;</code>
+       *
+       * <pre>
+       *要加成效果的powerId
+       * </pre>
+       */
+      public int getPowerId() {
+        return powerId_;
       }
 
       private void initFields() {
-        itemId_ = 0;
+        type_ = 0;
+        powerId_ = 0;
       }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
         if (isInitialized != -1) return isInitialized == 1;
 
-        if (!hasItemId()) {
+        if (!hasType()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasPowerId()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -4594,7 +4799,10 @@ public final class M9 {
                           throws java.io.IOException {
         getSerializedSize();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          output.writeInt32(1, itemId_);
+          output.writeInt32(1, type_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeInt32(2, powerId_);
         }
         getUnknownFields().writeTo(output);
       }
@@ -4607,7 +4815,11 @@ public final class M9 {
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(1, itemId_);
+            .computeInt32Size(1, type_);
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(2, powerId_);
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -4725,8 +4937,10 @@ public final class M9 {
 
         public Builder clear() {
           super.clear();
-          itemId_ = 0;
+          type_ = 0;
           bitField0_ = (bitField0_ & ~0x00000001);
+          powerId_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000002);
           return this;
         }
 
@@ -4758,7 +4972,11 @@ public final class M9 {
           if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
             to_bitField0_ |= 0x00000001;
           }
-          result.itemId_ = itemId_;
+          result.type_ = type_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          result.powerId_ = powerId_;
           result.bitField0_ = to_bitField0_;
           onBuilt();
           return result;
@@ -4775,15 +4993,22 @@ public final class M9 {
 
         public Builder mergeFrom(com.znl.proto.M9.M90002.C2S other) {
           if (other == com.znl.proto.M9.M90002.C2S.getDefaultInstance()) return this;
-          if (other.hasItemId()) {
-            setItemId(other.getItemId());
+          if (other.hasType()) {
+            setType(other.getType());
+          }
+          if (other.hasPowerId()) {
+            setPowerId(other.getPowerId());
           }
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
         }
 
         public final boolean isInitialized() {
-          if (!hasItemId()) {
+          if (!hasType()) {
+            
+            return false;
+          }
+          if (!hasPowerId()) {
             
             return false;
           }
@@ -4809,51 +5034,100 @@ public final class M9 {
         }
         private int bitField0_;
 
-        // required int32 itemId = 1;
-        private int itemId_ ;
+        // required int32 type = 1;
+        private int type_ ;
         /**
-         * <code>required int32 itemId = 1;</code>
+         * <code>required int32 type = 1;</code>
          *
          * <pre>
-         *道具ID，道具Buff的唯一ID
+         *道具类型
          * </pre>
          */
-        public boolean hasItemId() {
+        public boolean hasType() {
           return ((bitField0_ & 0x00000001) == 0x00000001);
         }
         /**
-         * <code>required int32 itemId = 1;</code>
+         * <code>required int32 type = 1;</code>
          *
          * <pre>
-         *道具ID，道具Buff的唯一ID
+         *道具类型
          * </pre>
          */
-        public int getItemId() {
-          return itemId_;
+        public int getType() {
+          return type_;
         }
         /**
-         * <code>required int32 itemId = 1;</code>
+         * <code>required int32 type = 1;</code>
          *
          * <pre>
-         *道具ID，道具Buff的唯一ID
+         *道具类型
          * </pre>
          */
-        public Builder setItemId(int value) {
+        public Builder setType(int value) {
           bitField0_ |= 0x00000001;
-          itemId_ = value;
+          type_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>required int32 itemId = 1;</code>
+         * <code>required int32 type = 1;</code>
          *
          * <pre>
-         *道具ID，道具Buff的唯一ID
+         *道具类型
          * </pre>
          */
-        public Builder clearItemId() {
+        public Builder clearType() {
           bitField0_ = (bitField0_ & ~0x00000001);
-          itemId_ = 0;
+          type_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // required int32 powerId = 2;
+        private int powerId_ ;
+        /**
+         * <code>required int32 powerId = 2;</code>
+         *
+         * <pre>
+         *要加成效果的powerId
+         * </pre>
+         */
+        public boolean hasPowerId() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        /**
+         * <code>required int32 powerId = 2;</code>
+         *
+         * <pre>
+         *要加成效果的powerId
+         * </pre>
+         */
+        public int getPowerId() {
+          return powerId_;
+        }
+        /**
+         * <code>required int32 powerId = 2;</code>
+         *
+         * <pre>
+         *要加成效果的powerId
+         * </pre>
+         */
+        public Builder setPowerId(int value) {
+          bitField0_ |= 0x00000002;
+          powerId_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required int32 powerId = 2;</code>
+         *
+         * <pre>
+         *要加成效果的powerId
+         * </pre>
+         */
+        public Builder clearPowerId() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          powerId_ = 0;
           onChanged();
           return this;
         }
@@ -13241,21 +13515,22 @@ public final class M9 {
       "\022#\n\titeminfos\030\004 \003(\0132\020.Common.ItemInfo\022&\n" +
       "\014itemBuffInfo\030\005 \001(\0132\020.M9.ItemBuffInfo\0324\n" +
       "\003C2S\022\016\n\006typeId\030\001 \002(\005\022\013\n\003num\030\002 \002(\005\022\020\n\010cos" +
-      "tType\030\003 \001(\005\"V\n\006M90002\0325\n\003S2C\022\n\n\002rs\030\001 \002(\005" +
-      "\022\016\n\006itemId\030\002 \002(\005\022\022\n\nremainTime\030\006 \001(\005\032\025\n\003" +
-      "C2S\022\016\n\006itemId\030\001 \002(\005\"J\n\006M90003\0329\n\003S2C\022\n\n\002",
-      "rs\030\001 \002(\005\022&\n\014itemBuffInfo\030\002 \003(\0132\020.M9.Item" +
-      "BuffInfo\032\005\n\003C2S\"e\n\006M90004\0326\n\003S2C\022\n\n\002rs\030\001" +
-      " \002(\005\022#\n\titeminfos\030\002 \003(\0132\020.Common.ItemInf" +
-      "o\032#\n\003C2S\022\016\n\006typeId\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\"2" +
-      "\n\006M90005\032!\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\016\n\006typeId\030\002 " +
-      "\002(\005\032\005\n\003C2S\"@\n\006M90006\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032" +
-      "#\n\003C2S\022\016\n\006typeId\030\001 \002(\005\022\014\n\004mess\030\002 \002(\t\"?\n\006" +
-      "M90007\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\"\n\003C2S\022\016\n\006type" +
-      "Id\030\001 \002(\005\022\013\n\003num\030\002 \002(\005\"n\n\014ItemBuffInfo\022\016\n" +
-      "\006itemId\030\001 \002(\005\022\014\n\004type\030\002 \002(\005\022\017\n\007powerId\030\003",
-      " \002(\005\022\r\n\005value\030\004 \002(\005\022\014\n\004time\030\005 \002(\005\022\022\n\nrem" +
-      "ainTime\030\006 \002(\005B\023\n\rcom.znl.protoB\002M9"
+      "tType\030\003 \001(\005\"t\n\006M90002\032D\n\003S2C\022\n\n\002rs\030\001 \002(\005" +
+      "\022\014\n\004type\030\002 \002(\005\022\017\n\007powerId\030\003 \002(\005\022\022\n\nremai" +
+      "nTime\030\004 \001(\005\032$\n\003C2S\022\014\n\004type\030\001 \002(\005\022\017\n\007powe",
+      "rId\030\002 \002(\005\"J\n\006M90003\0329\n\003S2C\022\n\n\002rs\030\001 \002(\005\022&" +
+      "\n\014itemBuffInfo\030\002 \003(\0132\020.M9.ItemBuffInfo\032\005" +
+      "\n\003C2S\"e\n\006M90004\0326\n\003S2C\022\n\n\002rs\030\001 \002(\005\022#\n\tit" +
+      "eminfos\030\002 \003(\0132\020.Common.ItemInfo\032#\n\003C2S\022\016" +
+      "\n\006typeId\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\"2\n\006M90005\032!" +
+      "\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\016\n\006typeId\030\002 \002(\005\032\005\n\003C2S" +
+      "\"@\n\006M90006\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032#\n\003C2S\022\016\n\006" +
+      "typeId\030\001 \002(\005\022\014\n\004mess\030\002 \002(\t\"?\n\006M90007\032\021\n\003" +
+      "S2C\022\n\n\002rs\030\001 \002(\005\032\"\n\003C2S\022\016\n\006typeId\030\001 \002(\005\022\013" +
+      "\n\003num\030\002 \002(\005\"n\n\014ItemBuffInfo\022\016\n\006itemId\030\001 ",
+      "\002(\005\022\014\n\004type\030\002 \002(\005\022\017\n\007powerId\030\003 \002(\005\022\r\n\005va" +
+      "lue\030\004 \002(\005\022\014\n\004time\030\005 \002(\005\022\022\n\nremainTime\030\006 " +
+      "\002(\005B\023\n\rcom.znl.protoB\002M9"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -13309,13 +13584,13 @@ public final class M9 {
           internal_static_M9_M90002_S2C_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M9_M90002_S2C_descriptor,
-              new java.lang.String[] { "Rs", "ItemId", "RemainTime", });
+              new java.lang.String[] { "Rs", "Type", "PowerId", "RemainTime", });
           internal_static_M9_M90002_C2S_descriptor =
             internal_static_M9_M90002_descriptor.getNestedTypes().get(1);
           internal_static_M9_M90002_C2S_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M9_M90002_C2S_descriptor,
-              new java.lang.String[] { "ItemId", });
+              new java.lang.String[] { "Type", "PowerId", });
           internal_static_M9_M90003_descriptor =
             getDescriptor().getMessageTypes().get(3);
           internal_static_M9_M90003_fieldAccessorTable = new

@@ -43,7 +43,7 @@ public class BattleActor extends UntypedActor {
 	private List<M5.Round> _roundDataList;
 	private int _curRound = 0;
 	private boolean _is_victory = false;
-	private final int MAX_ROUND = 72;
+	private final int MAX_ROUND = 150;
 	
 	final private ActorRef roundActor = context().actorOf(Props.create(RoundActor.class),
 			"roundActor");

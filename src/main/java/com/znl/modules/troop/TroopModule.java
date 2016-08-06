@@ -146,8 +146,8 @@ public class TroopModule extends BasicModule {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             GameMsg.RestArena msg = new GameMsg.RestArena(formationInfo, 1, playerProxy.getPlayerId(), playerProxy.getAreaKey());
             sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME, msg);
-            sendPushNetMsgToClient();
         }
+        sendPushNetMsgToClient();
         if (formationInfo.getType() == SoldierDefine.FORMATION_DEFEND && rs >= 0){
             List<PlayerTeam> defendTeams = formationProxy.createFormationTeam(formationInfo.getType());
             //把队伍设置到怪物那边去

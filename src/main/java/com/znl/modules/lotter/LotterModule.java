@@ -97,7 +97,7 @@ public class LotterModule extends BasicModule {
             sendM20007(reward);
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME,new GameMsg.CountCapacity());
         }
-   //     sendNetMsg(ProtocolModuleDefine.NET_M15, ProtocolModuleDefine.NET_M15_C150003, lotterProxy.getTaoInfos(type));
+        sendNetMsg(ProtocolModuleDefine.NET_M15, ProtocolModuleDefine.NET_M15_C150003, lotterProxy.getTaoInfos(type));
         sendPushNetMsgToClient();
     }
 

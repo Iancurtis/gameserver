@@ -28,6 +28,7 @@ public class NewBuildProxy extends BasicProxy {
 
     @Override
     protected void init() {
+        Long oldValue = expandPowerMap.get(PlayerPowerDefine.NOR_POWER_depotprotect);
         super.expandPowerMap.clear();
         for (ResFunBuilding rfb : rfbs) {
             if (getBuildTypeByType(rfb.getSmallType()) == 1) {
@@ -61,6 +62,7 @@ public class NewBuildProxy extends BasicProxy {
             PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
             if (playerProxy != null) {
                 if (expandPowerMap.get(PlayerPowerDefine.NOR_POWER_depotprotect) != null) {
+                    long newValue = expandPowerMap.get(PlayerPowerDefine.NOR_POWER_depotprotect);
                     playerProxy.setDepotprotect(expandPowerMap.get(PlayerPowerDefine.NOR_POWER_depotprotect));
                 }
             }
@@ -92,7 +94,7 @@ public class NewBuildProxy extends BasicProxy {
                     }
                 }
             }
-            init();
+            refurceExpandPowerMap();
         }
         //建设建筑初始化
         List<JSONObject> rlist = ConfigDataProxy.getConfigAllInfo(DataDefine.RESOUCEBUILD);
@@ -156,6 +158,7 @@ public class NewBuildProxy extends BasicProxy {
         //分为自动升级和非自动升级
         long now = GameUtils.getServerDate().getTime();
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         int autoState = playerProxy.getAutoBuildState();
         if (playerProxy.getAutoBuildState() == TimerDefine.BUILDAUTOLEVEL_OPEN){
             //执行自动升级检测
@@ -168,22 +171,39 @@ public class NewBuildProxy extends BasicProxy {
                 while (minFinishTime < endTime){
                     //执行离线的自动升级逻辑
                     doBuildAutoLevelUp(minFinishTime);
+                    while (getBuildLevelNum() > 0){
+                        //开始升级下一个建筑
+                        ResFunBuilding nextBuild = getNextCanLevelUpBuild();
+                        if (nextBuild == null){
+                            break;//没有可以升级的了
+                        }
+                        JSONObject jsonObject = null;
+                        if (getBuildTypeByType(nextBuild.getSmallType()) == 1) {
+                            jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", nextBuild.getSmallType(), "lv", nextBuild.getLevel());
 
-                    //开始升级下一个建筑
-                    ResFunBuilding nextBuild = getNextCanLevelUpBuild();
-                    if (nextBuild == null){
-                        break;//没有可以升级的了
+                        }else{
+                            jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", nextBuild.getSmallType(), "lv", nextBuild.getLevel());
+                        }
+                        JSONArray jsonArray = jsonObject.getJSONArray("need");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONArray array = jsonArray.getJSONArray(i);
+                            int typeId = array.getInt(0);
+                            int num = array.getInt(1);
+                            num = (int) Math.ceil(num * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE)) / 100.0);
+                            playerProxy.reducePowerValue(typeId,num,LogDefine.LOST_BUID_LEVELUP);
+                        }
+
+                        long time = jsonObject.getInt("time");
+                        long power = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_buildspeedrate);
+                        time = (long) Math.ceil(time / (1 + power / 100.0));
+                        long finishTime = minFinishTime + (time * 1000);
+                        setFinishLevelTime(nextBuild.getSmallType(),nextBuild.getIndex(),finishTime);
                     }
-                    JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", nextBuild.getSmallType(), "lv", nextBuild.getLevel());
-                    long time = jsonObject.getInt("time");
-                    long power = playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_buildspeedrate);
-                    time = (long) Math.ceil(time / (1 + power / 100.0));
-                    long finishTime = minFinishTime + (time * 1000);
-                    setFinishLevelTime(nextBuild.getSmallType(),nextBuild.getIndex(),finishTime);
+
 
                     //重新获取最小的升级到期时间
                     minFinishTime = getMinNextLevelTime();
-                    if (minFinishTime > 0){
+                    if (minFinishTime > now){
                         break;
                     }
                 }
@@ -209,7 +229,7 @@ public class NewBuildProxy extends BasicProxy {
             reCheck = false;
             Set<Production> productionSet = new HashSet<>(productions);
             for (Production p : productionSet){
-                if (p.getState() == ResFunBuildDefine.PRODUCTION_STATE_WORKING && p.getFinishTime() < now){
+                if (p.getState() == ResFunBuildDefine.PRODUCTION_STATE_WORKING && p.getFinishTime() <= now/1000){
                     autoFinishProduction(p,reward);
                     reCheck = true;
                 }
@@ -247,13 +267,33 @@ public class NewBuildProxy extends BasicProxy {
 
     private ResFunBuilding getNextCanLevelUpBuild(){
         ResFunBuilding resFunBuilding = null;
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         for (ResFunBuilding rfb : rfbs){
             //遍历出不在升级中，并且等级最小的
-            if (rfb.getLevel() > 0 && rfb.getSmallType() > 0){
+            JSONObject jsonObject = null;
+            JSONObject jsonUp = null;
+            if (rfb.getLevel() > 0 && rfb.getSmallType() > 0 && rfb.getNextLevelTime() == 0){
                 if (isCanBuildType(rfb.getSmallType(),rfb.getIndex())){
-                    JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
-                    JSONObject jsonUp = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel() + 1);
+                    if (getBuildTypeByType(rfb.getSmallType()) == 1) {
+                        jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
+                        jsonUp = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel() + 1);
+                    }else {
+                        //功能建筑
+                        jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
+                        jsonUp = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel() + 1);
+                    }
                     if (jsonUp != null && getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_COMMOND, 1) >= jsonObject.getInt("commandlv")) {
+                        JSONArray jsonArray = jsonObject.getJSONArray("need");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONArray array = jsonArray.getJSONArray(i);
+                            int typeId = array.getInt(0);
+                            int num = array.getInt(1);
+                            num = (int) Math.ceil(num * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE)) / 100.0);
+                            if (playerProxy.getPowerValue(typeId) < num) {
+                                continue;
+                            }
+                        }
                         if (resFunBuilding == null || resFunBuilding.getLevel() > rfb.getLevel()){
                             resFunBuilding = rfb;
                         }
@@ -269,7 +309,8 @@ public class NewBuildProxy extends BasicProxy {
         if (super.expandPowerMap.get(id) == null) {
             super.expandPowerMap.put(id, value);
         } else {
-            super.expandPowerMap.put(id, super.expandPowerMap.get(id) + value);
+            value += super.expandPowerMap.get(id);
+            super.expandPowerMap.put(id,  value);
         }
 
 
@@ -464,7 +505,6 @@ public class NewBuildProxy extends BasicProxy {
                 changeRfbs.offer(rfb);
             }
         }
-        init();
     }
 
     /**
@@ -523,7 +563,7 @@ public class NewBuildProxy extends BasicProxy {
         int times = hadbuildSize + expandBuildSize;
         int hasnum = 0;
         for (ResFunBuilding build : rfbs) {
-            if (build.getNextLevelTime()/1000 > GameUtils.getServerTime()) {
+            if (build.getNextLevelTime() > 0) {
                 hasnum++;
             }
         }
@@ -580,24 +620,24 @@ public class NewBuildProxy extends BasicProxy {
             }
         }
         if (building == null) {
-            return ErrorCodeDefine.M2800001_1;
+            return ErrorCodeDefine.M280001_1;
         }
         if(building.getSmallType()!=0 && building.getSmallType()!=buildType){
-            return ErrorCodeDefine.M2800001_1;
+            return ErrorCodeDefine.M280001_1;
         }
         long nextLevelTime = building.getNextLevelTime();
         int timeGap = (int) (nextLevelTime /1000 - GameUtils.getServerTime());//时间差值
         if (timeGap > TimerDefine.TOLERNACE_TIME) {
-            return ErrorCodeDefine.M2800001_2;//超过服务器可允许的时间差值了
+            return ErrorCodeDefine.M280001_2;//超过服务器可允许的时间差值了
         }
         if(!getResFuBuildStateByindex(buildType, index)){
-            return ErrorCodeDefine.M2800001_9;
+            return ErrorCodeDefine.M280001_9;
         }
         if(!isCanBuildType(buildType, index)){
-            return ErrorCodeDefine.M2800001_10;
+            return ErrorCodeDefine.M280001_10;
         }
         if (getBuildLevelNum() <= 0){
-            return ErrorCodeDefine.M2800001_6;
+            return ErrorCodeDefine.M280001_6;
         }
 
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
@@ -606,11 +646,11 @@ public class NewBuildProxy extends BasicProxy {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", buildType, "lv", building.getLevel());
             JSONObject jsonUp = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", buildType, "lv", building.getLevel() + 1);
             if (jsonUp == null) {
-                return ErrorCodeDefine.M2800001_3;
+                return ErrorCodeDefine.M280001_3;
             }
 
             if (getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_COMMOND, 1) < jsonObject.getInt("commandlv")) {
-                return ErrorCodeDefine.M2800001_5;
+                return ErrorCodeDefine.M280001_5;
             }
             JSONArray jsonArray = jsonObject.getJSONArray("need");
             int coin = jsonObject.getInt("gold");
@@ -621,12 +661,12 @@ public class NewBuildProxy extends BasicProxy {
                     int num = array.getInt(1);
                     num = (int) Math.ceil(num * (100 - activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE)) / 100.0);
                     if (playerProxy.getPowerValue(typeId) < num) {
-                        return ErrorCodeDefine.M2800001_4;
+                        return ErrorCodeDefine.M280001_4;
                     }
                 }
             } else {
                 if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < coin) {
-                    return ErrorCodeDefine.M2800001_8;
+                    return ErrorCodeDefine.M280001_8;
                 }
             }
 
@@ -655,10 +695,10 @@ public class NewBuildProxy extends BasicProxy {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel());
             JSONObject jsonUp = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel() + 1);
             if (jsonUp == null) {
-                return ErrorCodeDefine.M2800001_3;
+                return ErrorCodeDefine.M280001_3;
             }
             if (getResFuBuildLevelBysmallType(ResFunBuildDefine.BUILDE_TYPE_COMMOND, 1) < jsonObject.getInt("commandlv")) {
-                return ErrorCodeDefine.M2800001_5;
+                return ErrorCodeDefine.M280001_5;
             }
             JSONArray jsonArray = jsonObject.getJSONArray("need");
             int coin = jsonObject.getInt("gold");
@@ -669,12 +709,12 @@ public class NewBuildProxy extends BasicProxy {
                     int num = array.getInt(1);
                     num= (int) Math.ceil(num*(100-activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_BUILD_LEVEL_REDUCE))/100.0);
                     if (playerProxy.getPowerValue(typeId) < num) {
-                        return ErrorCodeDefine.M2800001_4;
+                        return ErrorCodeDefine.M280001_4;
                     }
                 }
             } else {
                 if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < coin) {
-                    return ErrorCodeDefine.M2800001_8;
+                    return ErrorCodeDefine.M280001_8;
                 }
             }
 
@@ -715,10 +755,10 @@ public class NewBuildProxy extends BasicProxy {
 //        }
 
         if (building == null) {
-            return ErrorCodeDefine.M2800002_1;
+            return ErrorCodeDefine.M280002_1;
         }
         if (building.getNextLevelTime() <= 0){
-            return ErrorCodeDefine.M2800002_2;
+            return ErrorCodeDefine.M280002_2;
         }
         int timeGap = (int) (building.getNextLevelTime()/1000 - GameUtils.getServerTime());
         if (timeGap > TimerDefine.TOLERNACE_TIME) {
@@ -749,6 +789,8 @@ public class NewBuildProxy extends BasicProxy {
         taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDING_LV,1,0);
         taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDING_NUM,1,0);
         taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_BUILDLEVEUP_TIMES,1,0);
+
+        refurceExpandPowerMap();
         return 0;
     }
 
@@ -763,14 +805,15 @@ public class NewBuildProxy extends BasicProxy {
     public int cancelBuildLevelUp(int buildType, int index) {
         ResFunBuilding building = getResFunBuildingByIndexsmallyType(buildType, index);
         if (building == null) {
-            return ErrorCodeDefine.M2800003_1;//该建筑不存在
+            return ErrorCodeDefine.M280003_1;//该建筑不存在
         }
         if (0 == building.getNextLevelTime()) {
             //建筑没有在升级中
-            return ErrorCodeDefine.M2800003_2;//建筑没有在升级中
+            return ErrorCodeDefine.M280003_2;//建筑没有在升级中
         }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        if (ResFunBuildDefine.RESOUCETYPELIST.contains(building.getSmallType())) {
+        //ResFunBuildDefine.RESOUCETYPELIST.contains(building.getSmallType())
+        if ( building.getSmallType() <= ResFunBuildDefine.MAX_RESOURCE_TYPE) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", building.getSmallType(), "lv", building.getLevel());
             JSONArray jsonArray = jsonObject.getJSONArray("need");
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -857,6 +900,7 @@ public class NewBuildProxy extends BasicProxy {
             long needtime = resFunBuilding.getNextLevelTime() - (reduceTime);
             if (GameUtils.getServerDate().getTime() >= needtime) {
                 doBuildLevelUp(buildType, index);
+                setFinishLevelTime(buildType, index, 0l);
             }else{
                 setFinishLevelTime(buildType, index, needtime);
                 return (int) (needtime /1000 - GameUtils.getServerTime());
@@ -1233,9 +1277,13 @@ public class NewBuildProxy extends BasicProxy {
         }
         int lessTime = jsonObject.getInt("timeneed");
         int powertype = getBuildTypeBypower(ResFunBuildDefine.BUILDE_TYPE_TANK);
+        ResFunBuilding resFunBuilding = getResFunBuildingByIndexsmallyType(ResFunBuildDefine.BUILDE_TYPE_TANK,index);
+        JSONObject jso = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type",ResFunBuildDefine.BUILDE_TYPE_TANK, "lv",resFunBuilding.getLevel());
         if (powertype != 0) {
-            long power = playerProxy.getPowerValue(powertype);
-            lessTime = (int)Math.ceil(lessTime / (1 + power / 100.0));
+            int power = (int)playerProxy.getPowerValue(powertype);
+            int producteffect = jso.getInt("producteffect");
+            int countpower = power+producteffect;
+            lessTime = (int)Math.ceil(lessTime / (1 + countpower / 100.0));
         }
         lessTime = lessTime * num;
 //        int finishTime = getLastCreateTime(ResFunBuildDefine.BUILDE_TYPE_TANK,index)+lessTime;
@@ -1552,6 +1600,7 @@ public class NewBuildProxy extends BasicProxy {
             default:
                 return ErrorCodeDefine.M280007_3;
         }
+        rewardProxy.getRewardToPlayer(reward,LogDefine.GET_BUILD_PRODUCTION);
         int startTime = production.getFinishTime();
         //删除生产队伍，并让下一个开始
         finishProduction(production,startTime);

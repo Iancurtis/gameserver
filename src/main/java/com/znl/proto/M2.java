@@ -365,6 +365,42 @@ public final class M2 {
      * </pre>
      */
     int getBackCount();
+
+    // optional int32 nextOpenId = 20;
+    /**
+     * <code>optional int32 nextOpenId = 20;</code>
+     *
+     * <pre>
+     *下一个要开启的活动id
+     * </pre>
+     */
+    boolean hasNextOpenId();
+    /**
+     * <code>optional int32 nextOpenId = 20;</code>
+     *
+     * <pre>
+     *下一个要开启的活动id
+     * </pre>
+     */
+    int getNextOpenId();
+
+    // optional int32 nextOpenTime = 21;
+    /**
+     * <code>optional int32 nextOpenTime = 21;</code>
+     *
+     * <pre>
+     *下一个要开启的时间
+     * </pre>
+     */
+    boolean hasNextOpenTime();
+    /**
+     * <code>optional int32 nextOpenTime = 21;</code>
+     *
+     * <pre>
+     *下一个要开启的时间
+     * </pre>
+     */
+    int getNextOpenTime();
   }
   /**
    * Protobuf type {@code M2.ActorInfo}
@@ -533,6 +569,16 @@ public final class M2 {
             case 152: {
               bitField0_ |= 0x00010000;
               backCount_ = input.readInt32();
+              break;
+            }
+            case 160: {
+              bitField0_ |= 0x00020000;
+              nextOpenId_ = input.readInt32();
+              break;
+            }
+            case 168: {
+              bitField0_ |= 0x00040000;
+              nextOpenTime_ = input.readInt32();
               break;
             }
           }
@@ -1102,6 +1148,54 @@ public final class M2 {
       return backCount_;
     }
 
+    // optional int32 nextOpenId = 20;
+    public static final int NEXTOPENID_FIELD_NUMBER = 20;
+    private int nextOpenId_;
+    /**
+     * <code>optional int32 nextOpenId = 20;</code>
+     *
+     * <pre>
+     *下一个要开启的活动id
+     * </pre>
+     */
+    public boolean hasNextOpenId() {
+      return ((bitField0_ & 0x00020000) == 0x00020000);
+    }
+    /**
+     * <code>optional int32 nextOpenId = 20;</code>
+     *
+     * <pre>
+     *下一个要开启的活动id
+     * </pre>
+     */
+    public int getNextOpenId() {
+      return nextOpenId_;
+    }
+
+    // optional int32 nextOpenTime = 21;
+    public static final int NEXTOPENTIME_FIELD_NUMBER = 21;
+    private int nextOpenTime_;
+    /**
+     * <code>optional int32 nextOpenTime = 21;</code>
+     *
+     * <pre>
+     *下一个要开启的时间
+     * </pre>
+     */
+    public boolean hasNextOpenTime() {
+      return ((bitField0_ & 0x00040000) == 0x00040000);
+    }
+    /**
+     * <code>optional int32 nextOpenTime = 21;</code>
+     *
+     * <pre>
+     *下一个要开启的时间
+     * </pre>
+     */
+    public int getNextOpenTime() {
+      return nextOpenTime_;
+    }
+
     private void initFields() {
       attrInfos_ = java.util.Collections.emptyList();
       name_ = "";
@@ -1122,6 +1216,8 @@ public final class M2 {
       tanbaoFrees_ = java.util.Collections.emptyList();
       fightCount_ = 0;
       backCount_ = 0;
+      nextOpenId_ = 0;
+      nextOpenTime_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1201,6 +1297,12 @@ public final class M2 {
       }
       if (((bitField0_ & 0x00010000) == 0x00010000)) {
         output.writeInt32(19, backCount_);
+      }
+      if (((bitField0_ & 0x00020000) == 0x00020000)) {
+        output.writeInt32(20, nextOpenId_);
+      }
+      if (((bitField0_ & 0x00040000) == 0x00040000)) {
+        output.writeInt32(21, nextOpenTime_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -1291,6 +1393,14 @@ public final class M2 {
       if (((bitField0_ & 0x00010000) == 0x00010000)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(19, backCount_);
+      }
+      if (((bitField0_ & 0x00020000) == 0x00020000)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(20, nextOpenId_);
+      }
+      if (((bitField0_ & 0x00040000) == 0x00040000)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(21, nextOpenTime_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1455,6 +1565,10 @@ public final class M2 {
         bitField0_ = (bitField0_ & ~0x00020000);
         backCount_ = 0;
         bitField0_ = (bitField0_ & ~0x00040000);
+        nextOpenId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00080000);
+        nextOpenTime_ = 0;
+        bitField0_ = (bitField0_ & ~0x00100000);
         return this;
       }
 
@@ -1565,6 +1679,14 @@ public final class M2 {
           to_bitField0_ |= 0x00010000;
         }
         result.backCount_ = backCount_;
+        if (((from_bitField0_ & 0x00080000) == 0x00080000)) {
+          to_bitField0_ |= 0x00020000;
+        }
+        result.nextOpenId_ = nextOpenId_;
+        if (((from_bitField0_ & 0x00100000) == 0x00100000)) {
+          to_bitField0_ |= 0x00040000;
+        }
+        result.nextOpenTime_ = nextOpenTime_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1671,6 +1793,12 @@ public final class M2 {
         }
         if (other.hasBackCount()) {
           setBackCount(other.getBackCount());
+        }
+        if (other.hasNextOpenId()) {
+          setNextOpenId(other.getNextOpenId());
+        }
+        if (other.hasNextOpenTime()) {
+          setNextOpenTime(other.getNextOpenTime());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -2930,6 +3058,104 @@ public final class M2 {
       public Builder clearBackCount() {
         bitField0_ = (bitField0_ & ~0x00040000);
         backCount_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 nextOpenId = 20;
+      private int nextOpenId_ ;
+      /**
+       * <code>optional int32 nextOpenId = 20;</code>
+       *
+       * <pre>
+       *下一个要开启的活动id
+       * </pre>
+       */
+      public boolean hasNextOpenId() {
+        return ((bitField0_ & 0x00080000) == 0x00080000);
+      }
+      /**
+       * <code>optional int32 nextOpenId = 20;</code>
+       *
+       * <pre>
+       *下一个要开启的活动id
+       * </pre>
+       */
+      public int getNextOpenId() {
+        return nextOpenId_;
+      }
+      /**
+       * <code>optional int32 nextOpenId = 20;</code>
+       *
+       * <pre>
+       *下一个要开启的活动id
+       * </pre>
+       */
+      public Builder setNextOpenId(int value) {
+        bitField0_ |= 0x00080000;
+        nextOpenId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 nextOpenId = 20;</code>
+       *
+       * <pre>
+       *下一个要开启的活动id
+       * </pre>
+       */
+      public Builder clearNextOpenId() {
+        bitField0_ = (bitField0_ & ~0x00080000);
+        nextOpenId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 nextOpenTime = 21;
+      private int nextOpenTime_ ;
+      /**
+       * <code>optional int32 nextOpenTime = 21;</code>
+       *
+       * <pre>
+       *下一个要开启的时间
+       * </pre>
+       */
+      public boolean hasNextOpenTime() {
+        return ((bitField0_ & 0x00100000) == 0x00100000);
+      }
+      /**
+       * <code>optional int32 nextOpenTime = 21;</code>
+       *
+       * <pre>
+       *下一个要开启的时间
+       * </pre>
+       */
+      public int getNextOpenTime() {
+        return nextOpenTime_;
+      }
+      /**
+       * <code>optional int32 nextOpenTime = 21;</code>
+       *
+       * <pre>
+       *下一个要开启的时间
+       * </pre>
+       */
+      public Builder setNextOpenTime(int value) {
+        bitField0_ |= 0x00100000;
+        nextOpenTime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 nextOpenTime = 21;</code>
+       *
+       * <pre>
+       *下一个要开启的时间
+       * </pre>
+       */
+      public Builder clearNextOpenTime() {
+        bitField0_ = (bitField0_ & ~0x00100000);
+        nextOpenTime_ = 0;
         onChanged();
         return this;
       }
@@ -48731,7 +48957,7 @@ public final class M2 {
       "\010M3.proto\032\010M7.proto\032\tM12.proto\032\010M9.proto" +
       "\032\010M8.proto\032\tM16.proto\032\tM23.proto\032\tM26.pr" +
       "oto\032\010M4.proto\032\010M6.proto\032\tM21.proto\032\tM17." +
-      "proto\"\217\003\n\tActorInfo\022#\n\tattrInfos\030\001 \003(\0132\020" +
+      "proto\"\271\003\n\tActorInfo\022#\n\tattrInfos\030\001 \003(\0132\020" +
       ".Common.AttrInfo\022\014\n\004name\030\002 \001(\t\022\022\n\nworldT" +
       "ileX\030\003 \001(\005\022\022\n\nworldTileY\030\004 \001(\005\022\020\n\010player" +
       "Id\030\005 \001(\006\022\016\n\006iconId\030\006 \001(\005\022\021\n\tpendantId\030\007 " +
@@ -48741,78 +48967,79 @@ public final class M2 {
       "\n\013boomRefTime\030\016 \001(\005\022\025\n\renergyRefTime\030\017 \001" +
       "(\005\022\027\n\017totalOnlineTime\030\020 \001(\005\022\023\n\013tanbaoFre" +
       "es\030\021 \003(\005\022\022\n\nfightCount\030\022 \001(\005\022\021\n\tbackCoun" +
-      "t\030\023 \001(\005\"$\n\007TipInfo\022\014\n\004type\030\001 \001(\005\022\013\n\003num\030" +
-      "\002 \001(\005\"\374\007\n\006M20000\032\352\007\n\003S2C\022\n\n\002rs\030\001 \002(\005\022 \n\t" +
-      "actorInfo\030\002 \001(\0132\r.M2.ActorInfo\022(\n\013soldie" +
-      "rList\030\003 \003(\0132\023.Common.SoldierInfo\022\"\n\010item" +
-      "List\030\004 \003(\0132\020.Common.ItemInfo\022(\n\rbuilding" +
-      "Infos\030\005 \003(\0132\021.M28.BuildingInfo\022%\n\007odInfo",
-      "s\030\006 \003(\0132\024.Common.OrdnanceInfo\022+\n\010odpInfo" +
-      "s\030\007 \003(\0132\031.Common.OrdnancePieceInfo\022%\n\014du" +
-      "ngeonInfos\030\010 \001(\0132\017.M6.dungeonlist\022-\n\017aut" +
-      "oUpgradeInfo\030\t \001(\0132\024.M28.AutoUpgradeInfo" +
-      "\022%\n\nequipinfos\030\n \003(\0132\021.Common.EquipInfo\022" +
-      "\'\n\ncacheInfos\030\013 \003(\0132\023.M3.ClientCacheInfo" +
-      "\022\037\n\004info\030\014 \003(\0132\021.M7.FormationInfo\022&\n\010tas" +
-      "kList\030\r \001(\0132\024.Common.TaskInfoList\022\"\n\nski" +
-      "llInfos\030\016 \003(\0132\016.M12.SkillInfo\022&\n\014itemBuf" +
-      "fInfo\030\017 \003(\0132\020.M9.ItemBuffInfo\022\036\n\004list\030\020 ",
-      "\003(\0132\020.M8.TaskTeamInfo\022!\n\005mails\030\021 \003(\0132\022.M" +
-      "16.MailShortInfo\022$\n\tactivitys\030\022 \003(\0132\021.M2" +
-      "3.ActivityInfo\022.\n\016limitActivitys\030\023 \003(\0132\026" +
-      ".M23.LimitActivityInfo\022(\n\013adviserinfo\030\024 " +
-      "\003(\0132\023.Common.AdviserInfo\022 \n\tcostInfos\030\025 " +
-      "\003(\0132\r.M26.CostInfo\022$\n\010soldiers\030\026 \003(\0132\022.M" +
-      "4.FixSoldierInfo\022$\n\trankinfos\030\027 \003(\0132\021.M2" +
-      "1.RankListInfo\022*\n\013friBleInfos\030\030 \001(\0132\025.M1" +
-      "7.FriendBlessInfos\022.\n\020legionrewardinfo\030\031" +
-      " \001(\0132\024.M2.LogionRewardInfo\022!\n\005infos\030\032 \003(",
-      "\0132\022.M8.TeamNoticeInfo\032\005\n\003C2S\"\"\n\006M20001\032\021" +
-      "\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\005\n\003C2S\":\n\006M20002\032)\n\003S2" +
-      "C\022\"\n\005diffs\030\001 \003(\0132\023.Common.AttrDifInfo\032\005\n" +
-      "\003C2S\"\"\n\006M20003\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\005\n\003C2S" +
-      "\"0\n\006M20004\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\023\n\003C2S\022\014\n\004" +
-      "type\030\001 \002(\005\">\n\006M20005\032\037\n\003S2C\022\n\n\002rs\030\001 \002(\005\022" +
-      "\014\n\004type\030\002 \002(\005\032\023\n\003C2S\022\014\n\004type\030\001 \002(\005\"\213\002\n\006M" +
-      "20007\032\371\001\n\003S2C\022(\n\013soldierList\030\001 \003(\0132\023.Com" +
-      "mon.SoldierInfo\022\"\n\010itemList\030\002 \003(\0132\020.Comm" +
-      "on.ItemInfo\022%\n\nequipinfos\030\003 \003(\0132\021.Common",
-      ".EquipInfo\022%\n\007odInfos\030\004 \003(\0132\024.Common.Ord" +
-      "nanceInfo\022+\n\010odpInfos\030\005 \003(\0132\031.Common.Ord" +
-      "nancePieceInfo\022)\n\014adviserInfos\030\006 \003(\0132\023.C" +
-      "ommon.AdviserInfo\032\005\n\003C2S\"K\n\006M20008\032\037\n\003S2" +
-      "C\022\n\n\002rs\030\001 \002(\005\022\014\n\004name\030\002 \001(\t\032 \n\003C2S\022\014\n\004na" +
-      "me\030\001 \002(\t\022\013\n\003sex\030\002 \002(\005\";\n\006M20009\032*\n\003S2C\022#" +
-      "\n\007rewards\030\001 \003(\0132\022.Common.RewardInfo\032\005\n\003C" +
-      "2S\"@\n\006M20010\032 \n\003S2C\022\n\n\002rs\030\001 \002(\005\022\r\n\005state" +
-      "\030\002 \001(\005\032\024\n\003C2S\022\r\n\005state\030\001 \002(\005\"1\n\006M20013\032 " +
-      "\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\r\n\005price\030\002 \002(\005\032\005\n\003C2S\"",
-      "\"\n\006M20011\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\005\n\003C2S\"h\n\006M" +
-      "20012\0324\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\016\n\006iconId\030\002 \001(\005" +
-      "\022\021\n\tpendantId\030\003 \001(\005\032(\n\003C2S\022\016\n\006iconId\030\001 \001" +
-      "(\005\022\021\n\tpendantId\030\002 \001(\005\">\n\006M20014\032-\n\003S2C\022\022" +
-      "\n\nworldTileX\030\001 \001(\005\022\022\n\nworldTileY\030\002 \001(\005\032\005" +
-      "\n\003C2S\"`\n\006M20015\032?\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\016\n\006ca" +
-      "nGet\030\002 \003(\005\022\014\n\004type\030\003 \002(\005\022\016\n\006allDay\030\004 \001(\005" +
-      "\032\025\n\003C2S\022\016\n\006dayNum\030\001 \002(\005\"@\n\020LogionRewardI" +
-      "nfo\022\016\n\006canGet\030\001 \003(\005\022\014\n\004type\030\002 \002(\005\022\016\n\006all" +
-      "Day\030\003 \001(\005\":\n\014loginLottery\022\r\n\005power\030\001 \002(\005",
-      "\022\016\n\006itemId\030\002 \002(\005\022\013\n\003num\030\003 \002(\005\"V\n\006M20016\032" +
-      "7\n\003S2C\022\n\n\002rs\030\001 \002(\005\022$\n\nrewardInfo\030\002 \003(\0132\020" +
-      ".M2.loginLottery\032\023\n\003C2S\022\014\n\004type\030\001 \002(\005\"1\n" +
-      "\006M20017\032 \n\003S2C\022\n\n\002rs\030\001 \002(\005\022\r\n\005preid\030\002 \002(" +
-      "\005\032\005\n\003C2S\"5\n\006M20200\032$\n\003S2C\022\035\n\010tipInfos\030\001 " +
-      "\003(\0132\013.M2.TipInfo\032\005\n\003C2S\"$\n\006M20201\032\023\n\003S2C" +
-      "\022\014\n\004name\030\001 \002(\t\032\005\n\003C2S\"J\n\006M20300\032%\n\003S2C\022\n" +
-      "\n\002rs\030\001 \002(\005\022\022\n\nremainlist\030\002 \003(\005\032\031\n\003C2S\022\022\n" +
-      "\nremainlist\030\001 \003(\005\"\"\n\006M20301\032\021\n\003S2C\022\n\n\002rs" +
-      "\030\001 \002(\005\032\005\n\003C2S\";\n\tlaterinfo\022\014\n\004name\030\001 \002(\t",
-      "\022\020\n\010playerId\030\002 \002(\006\022\016\n\006iconId\030\003 \002(\005\"@\n\006M2" +
-      "0400\032/\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\034\n\005infos\030\002 \003(\0132\r" +
-      ".M2.laterinfo\032\005\n\003C2S\"7\n\006M20500\032&\n\003S2C\022\n\n" +
-      "\002rs\030\001 \002(\005\022\023\n\013boomRefTime\030\002 \001(\005\032\005\n\003C2S\"9\n" +
-      "\006M20501\032(\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\025\n\renergyRefT" +
-      "ime\030\002 \001(\005\032\005\n\003C2SB\023\n\rcom.znl.protoB\002M2"
+      "t\030\023 \001(\005\022\022\n\nnextOpenId\030\024 \001(\005\022\024\n\014nextOpenT" +
+      "ime\030\025 \001(\005\"$\n\007TipInfo\022\014\n\004type\030\001 \001(\005\022\013\n\003nu" +
+      "m\030\002 \001(\005\"\374\007\n\006M20000\032\352\007\n\003S2C\022\n\n\002rs\030\001 \002(\005\022 " +
+      "\n\tactorInfo\030\002 \001(\0132\r.M2.ActorInfo\022(\n\013sold" +
+      "ierList\030\003 \003(\0132\023.Common.SoldierInfo\022\"\n\010it" +
+      "emList\030\004 \003(\0132\020.Common.ItemInfo\022(\n\rbuildi",
+      "ngInfos\030\005 \003(\0132\021.M28.BuildingInfo\022%\n\007odIn" +
+      "fos\030\006 \003(\0132\024.Common.OrdnanceInfo\022+\n\010odpIn" +
+      "fos\030\007 \003(\0132\031.Common.OrdnancePieceInfo\022%\n\014" +
+      "dungeonInfos\030\010 \001(\0132\017.M6.dungeonlist\022-\n\017a" +
+      "utoUpgradeInfo\030\t \001(\0132\024.M28.AutoUpgradeIn" +
+      "fo\022%\n\nequipinfos\030\n \003(\0132\021.Common.EquipInf" +
+      "o\022\'\n\ncacheInfos\030\013 \003(\0132\023.M3.ClientCacheIn" +
+      "fo\022\037\n\004info\030\014 \003(\0132\021.M7.FormationInfo\022&\n\010t" +
+      "askList\030\r \001(\0132\024.Common.TaskInfoList\022\"\n\ns" +
+      "killInfos\030\016 \003(\0132\016.M12.SkillInfo\022&\n\014itemB",
+      "uffInfo\030\017 \003(\0132\020.M9.ItemBuffInfo\022\036\n\004list\030" +
+      "\020 \003(\0132\020.M8.TaskTeamInfo\022!\n\005mails\030\021 \003(\0132\022" +
+      ".M16.MailShortInfo\022$\n\tactivitys\030\022 \003(\0132\021." +
+      "M23.ActivityInfo\022.\n\016limitActivitys\030\023 \003(\013" +
+      "2\026.M23.LimitActivityInfo\022(\n\013adviserinfo\030" +
+      "\024 \003(\0132\023.Common.AdviserInfo\022 \n\tcostInfos\030" +
+      "\025 \003(\0132\r.M26.CostInfo\022$\n\010soldiers\030\026 \003(\0132\022" +
+      ".M4.FixSoldierInfo\022$\n\trankinfos\030\027 \003(\0132\021." +
+      "M21.RankListInfo\022*\n\013friBleInfos\030\030 \001(\0132\025." +
+      "M17.FriendBlessInfos\022.\n\020legionrewardinfo",
+      "\030\031 \001(\0132\024.M2.LogionRewardInfo\022!\n\005infos\030\032 " +
+      "\003(\0132\022.M8.TeamNoticeInfo\032\005\n\003C2S\"\"\n\006M20001" +
+      "\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\005\n\003C2S\":\n\006M20002\032)\n\003" +
+      "S2C\022\"\n\005diffs\030\001 \003(\0132\023.Common.AttrDifInfo\032" +
+      "\005\n\003C2S\"\"\n\006M20003\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\005\n\003C" +
+      "2S\"0\n\006M20004\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\023\n\003C2S\022\014" +
+      "\n\004type\030\001 \002(\005\">\n\006M20005\032\037\n\003S2C\022\n\n\002rs\030\001 \002(" +
+      "\005\022\014\n\004type\030\002 \002(\005\032\023\n\003C2S\022\014\n\004type\030\001 \002(\005\"\213\002\n" +
+      "\006M20007\032\371\001\n\003S2C\022(\n\013soldierList\030\001 \003(\0132\023.C" +
+      "ommon.SoldierInfo\022\"\n\010itemList\030\002 \003(\0132\020.Co",
+      "mmon.ItemInfo\022%\n\nequipinfos\030\003 \003(\0132\021.Comm" +
+      "on.EquipInfo\022%\n\007odInfos\030\004 \003(\0132\024.Common.O" +
+      "rdnanceInfo\022+\n\010odpInfos\030\005 \003(\0132\031.Common.O" +
+      "rdnancePieceInfo\022)\n\014adviserInfos\030\006 \003(\0132\023" +
+      ".Common.AdviserInfo\032\005\n\003C2S\"K\n\006M20008\032\037\n\003" +
+      "S2C\022\n\n\002rs\030\001 \002(\005\022\014\n\004name\030\002 \001(\t\032 \n\003C2S\022\014\n\004" +
+      "name\030\001 \002(\t\022\013\n\003sex\030\002 \002(\005\";\n\006M20009\032*\n\003S2C" +
+      "\022#\n\007rewards\030\001 \003(\0132\022.Common.RewardInfo\032\005\n" +
+      "\003C2S\"@\n\006M20010\032 \n\003S2C\022\n\n\002rs\030\001 \002(\005\022\r\n\005sta" +
+      "te\030\002 \001(\005\032\024\n\003C2S\022\r\n\005state\030\001 \002(\005\"1\n\006M20013",
+      "\032 \n\003S2C\022\n\n\002rs\030\001 \002(\005\022\r\n\005price\030\002 \002(\005\032\005\n\003C2" +
+      "S\"\"\n\006M20011\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\005\n\003C2S\"h\n" +
+      "\006M20012\0324\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\016\n\006iconId\030\002 \001" +
+      "(\005\022\021\n\tpendantId\030\003 \001(\005\032(\n\003C2S\022\016\n\006iconId\030\001" +
+      " \001(\005\022\021\n\tpendantId\030\002 \001(\005\">\n\006M20014\032-\n\003S2C" +
+      "\022\022\n\nworldTileX\030\001 \001(\005\022\022\n\nworldTileY\030\002 \001(\005" +
+      "\032\005\n\003C2S\"`\n\006M20015\032?\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\016\n\006" +
+      "canGet\030\002 \003(\005\022\014\n\004type\030\003 \002(\005\022\016\n\006allDay\030\004 \001" +
+      "(\005\032\025\n\003C2S\022\016\n\006dayNum\030\001 \002(\005\"@\n\020LogionRewar" +
+      "dInfo\022\016\n\006canGet\030\001 \003(\005\022\014\n\004type\030\002 \002(\005\022\016\n\006a",
+      "llDay\030\003 \001(\005\":\n\014loginLottery\022\r\n\005power\030\001 \002" +
+      "(\005\022\016\n\006itemId\030\002 \002(\005\022\013\n\003num\030\003 \002(\005\"V\n\006M2001" +
+      "6\0327\n\003S2C\022\n\n\002rs\030\001 \002(\005\022$\n\nrewardInfo\030\002 \003(\013" +
+      "2\020.M2.loginLottery\032\023\n\003C2S\022\014\n\004type\030\001 \002(\005\"" +
+      "1\n\006M20017\032 \n\003S2C\022\n\n\002rs\030\001 \002(\005\022\r\n\005preid\030\002 " +
+      "\002(\005\032\005\n\003C2S\"5\n\006M20200\032$\n\003S2C\022\035\n\010tipInfos\030" +
+      "\001 \003(\0132\013.M2.TipInfo\032\005\n\003C2S\"$\n\006M20201\032\023\n\003S" +
+      "2C\022\014\n\004name\030\001 \002(\t\032\005\n\003C2S\"J\n\006M20300\032%\n\003S2C" +
+      "\022\n\n\002rs\030\001 \002(\005\022\022\n\nremainlist\030\002 \003(\005\032\031\n\003C2S\022" +
+      "\022\n\nremainlist\030\001 \003(\005\"\"\n\006M20301\032\021\n\003S2C\022\n\n\002",
+      "rs\030\001 \002(\005\032\005\n\003C2S\";\n\tlaterinfo\022\014\n\004name\030\001 \002" +
+      "(\t\022\020\n\010playerId\030\002 \002(\006\022\016\n\006iconId\030\003 \002(\005\"@\n\006" +
+      "M20400\032/\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\034\n\005infos\030\002 \003(\013" +
+      "2\r.M2.laterinfo\032\005\n\003C2S\"7\n\006M20500\032&\n\003S2C\022" +
+      "\n\n\002rs\030\001 \002(\005\022\023\n\013boomRefTime\030\002 \001(\005\032\005\n\003C2S\"" +
+      "9\n\006M20501\032(\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\025\n\renergyRe" +
+      "fTime\030\002 \001(\005\032\005\n\003C2SB\023\n\rcom.znl.protoB\002M2"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -48824,7 +49051,7 @@ public final class M2 {
           internal_static_M2_ActorInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M2_ActorInfo_descriptor,
-              new java.lang.String[] { "AttrInfos", "Name", "WorldTileX", "WorldTileY", "PlayerId", "IconId", "PendantId", "LegionId", "LegionName", "LegionLevel", "NewGift", "FameState", "Engryprice", "BoomRefTime", "EnergyRefTime", "TotalOnlineTime", "TanbaoFrees", "FightCount", "BackCount", });
+              new java.lang.String[] { "AttrInfos", "Name", "WorldTileX", "WorldTileY", "PlayerId", "IconId", "PendantId", "LegionId", "LegionName", "LegionLevel", "NewGift", "FameState", "Engryprice", "BoomRefTime", "EnergyRefTime", "TotalOnlineTime", "TanbaoFrees", "FightCount", "BackCount", "NextOpenId", "NextOpenTime", });
           internal_static_M2_TipInfo_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_M2_TipInfo_fieldAccessorTable = new

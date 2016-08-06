@@ -27114,6 +27114,1410 @@ public final class M16 {
     // @@protoc_insertion_point(class_scope:M16.M160006)
   }
 
+  public interface M160007OrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code M16.M160007}
+   *
+   * <pre>
+   *新邮件增加
+   * </pre>
+   */
+  public static final class M160007 extends
+      com.google.protobuf.GeneratedMessage
+      implements M160007OrBuilder {
+    // Use M160007.newBuilder() to construct.
+    private M160007(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private M160007(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final M160007 defaultInstance;
+    public static M160007 getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public M160007 getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private M160007(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.znl.proto.M16.internal_static_M16_M160007_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.znl.proto.M16.internal_static_M16_M160007_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.znl.proto.M16.M160007.class, com.znl.proto.M16.M160007.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<M160007> PARSER =
+        new com.google.protobuf.AbstractParser<M160007>() {
+      public M160007 parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new M160007(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<M160007> getParserForType() {
+      return PARSER;
+    }
+
+    public interface S2COrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required int32 rs = 1;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      boolean hasRs();
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      int getRs();
+
+      // repeated .M16.MailShortInfo mails = 2;
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      java.util.List<com.znl.proto.M16.MailShortInfo> 
+          getMailsList();
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      com.znl.proto.M16.MailShortInfo getMails(int index);
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      int getMailsCount();
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      java.util.List<? extends com.znl.proto.M16.MailShortInfoOrBuilder> 
+          getMailsOrBuilderList();
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      com.znl.proto.M16.MailShortInfoOrBuilder getMailsOrBuilder(
+          int index);
+    }
+    /**
+     * Protobuf type {@code M16.M160007.S2C}
+     */
+    public static final class S2C extends
+        com.google.protobuf.GeneratedMessage
+        implements S2COrBuilder {
+      // Use S2C.newBuilder() to construct.
+      private S2C(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private S2C(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final S2C defaultInstance;
+      public static S2C getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public S2C getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private S2C(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 8: {
+                bitField0_ |= 0x00000001;
+                rs_ = input.readInt32();
+                break;
+              }
+              case 18: {
+                if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                  mails_ = new java.util.ArrayList<com.znl.proto.M16.MailShortInfo>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                mails_.add(input.readMessage(com.znl.proto.M16.MailShortInfo.PARSER, extensionRegistry));
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            mails_ = java.util.Collections.unmodifiableList(mails_);
+          }
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M16.internal_static_M16_M160007_S2C_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M16.internal_static_M16_M160007_S2C_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M16.M160007.S2C.class, com.znl.proto.M16.M160007.S2C.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<S2C> PARSER =
+          new com.google.protobuf.AbstractParser<S2C>() {
+        public S2C parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new S2C(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<S2C> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required int32 rs = 1;
+      public static final int RS_FIELD_NUMBER = 1;
+      private int rs_;
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public boolean hasRs() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 rs = 1;</code>
+       */
+      public int getRs() {
+        return rs_;
+      }
+
+      // repeated .M16.MailShortInfo mails = 2;
+      public static final int MAILS_FIELD_NUMBER = 2;
+      private java.util.List<com.znl.proto.M16.MailShortInfo> mails_;
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      public java.util.List<com.znl.proto.M16.MailShortInfo> getMailsList() {
+        return mails_;
+      }
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      public java.util.List<? extends com.znl.proto.M16.MailShortInfoOrBuilder> 
+          getMailsOrBuilderList() {
+        return mails_;
+      }
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      public int getMailsCount() {
+        return mails_.size();
+      }
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      public com.znl.proto.M16.MailShortInfo getMails(int index) {
+        return mails_.get(index);
+      }
+      /**
+       * <code>repeated .M16.MailShortInfo mails = 2;</code>
+       */
+      public com.znl.proto.M16.MailShortInfoOrBuilder getMailsOrBuilder(
+          int index) {
+        return mails_.get(index);
+      }
+
+      private void initFields() {
+        rs_ = 0;
+        mails_ = java.util.Collections.emptyList();
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasRs()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        for (int i = 0; i < getMailsCount(); i++) {
+          if (!getMails(i).isInitialized()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeInt32(1, rs_);
+        }
+        for (int i = 0; i < mails_.size(); i++) {
+          output.writeMessage(2, mails_.get(i));
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(1, rs_);
+        }
+        for (int i = 0; i < mails_.size(); i++) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, mails_.get(i));
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M16.M160007.S2C parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M16.M160007.S2C parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M16.M160007.S2C parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M16.M160007.S2C parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M16.M160007.S2C parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M16.M160007.S2C parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M16.M160007.S2C parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M16.M160007.S2C parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M16.M160007.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M16.M160007.S2C parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M16.M160007.S2C prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M16.M160007.S2C}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M16.M160007.S2COrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M16.internal_static_M16_M160007_S2C_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M16.internal_static_M16_M160007_S2C_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M16.M160007.S2C.class, com.znl.proto.M16.M160007.S2C.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M16.M160007.S2C.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getMailsFieldBuilder();
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          rs_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000001);
+          if (mailsBuilder_ == null) {
+            mails_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            mailsBuilder_.clear();
+          }
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M16.internal_static_M16_M160007_S2C_descriptor;
+        }
+
+        public com.znl.proto.M16.M160007.S2C getDefaultInstanceForType() {
+          return com.znl.proto.M16.M160007.S2C.getDefaultInstance();
+        }
+
+        public com.znl.proto.M16.M160007.S2C build() {
+          com.znl.proto.M16.M160007.S2C result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M16.M160007.S2C buildPartial() {
+          com.znl.proto.M16.M160007.S2C result = new com.znl.proto.M16.M160007.S2C(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.rs_ = rs_;
+          if (mailsBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) == 0x00000002)) {
+              mails_ = java.util.Collections.unmodifiableList(mails_);
+              bitField0_ = (bitField0_ & ~0x00000002);
+            }
+            result.mails_ = mails_;
+          } else {
+            result.mails_ = mailsBuilder_.build();
+          }
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M16.M160007.S2C) {
+            return mergeFrom((com.znl.proto.M16.M160007.S2C)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M16.M160007.S2C other) {
+          if (other == com.znl.proto.M16.M160007.S2C.getDefaultInstance()) return this;
+          if (other.hasRs()) {
+            setRs(other.getRs());
+          }
+          if (mailsBuilder_ == null) {
+            if (!other.mails_.isEmpty()) {
+              if (mails_.isEmpty()) {
+                mails_ = other.mails_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+              } else {
+                ensureMailsIsMutable();
+                mails_.addAll(other.mails_);
+              }
+              onChanged();
+            }
+          } else {
+            if (!other.mails_.isEmpty()) {
+              if (mailsBuilder_.isEmpty()) {
+                mailsBuilder_.dispose();
+                mailsBuilder_ = null;
+                mails_ = other.mails_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+                mailsBuilder_ = 
+                  com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                     getMailsFieldBuilder() : null;
+              } else {
+                mailsBuilder_.addAllMessages(other.mails_);
+              }
+            }
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasRs()) {
+            
+            return false;
+          }
+          for (int i = 0; i < getMailsCount(); i++) {
+            if (!getMails(i).isInitialized()) {
+              
+              return false;
+            }
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M16.M160007.S2C parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M16.M160007.S2C) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required int32 rs = 1;
+        private int rs_ ;
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public boolean hasRs() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public int getRs() {
+          return rs_;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder setRs(int value) {
+          bitField0_ |= 0x00000001;
+          rs_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required int32 rs = 1;</code>
+         */
+        public Builder clearRs() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          rs_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // repeated .M16.MailShortInfo mails = 2;
+        private java.util.List<com.znl.proto.M16.MailShortInfo> mails_ =
+          java.util.Collections.emptyList();
+        private void ensureMailsIsMutable() {
+          if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+            mails_ = new java.util.ArrayList<com.znl.proto.M16.MailShortInfo>(mails_);
+            bitField0_ |= 0x00000002;
+           }
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M16.MailShortInfo, com.znl.proto.M16.MailShortInfo.Builder, com.znl.proto.M16.MailShortInfoOrBuilder> mailsBuilder_;
+
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public java.util.List<com.znl.proto.M16.MailShortInfo> getMailsList() {
+          if (mailsBuilder_ == null) {
+            return java.util.Collections.unmodifiableList(mails_);
+          } else {
+            return mailsBuilder_.getMessageList();
+          }
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public int getMailsCount() {
+          if (mailsBuilder_ == null) {
+            return mails_.size();
+          } else {
+            return mailsBuilder_.getCount();
+          }
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public com.znl.proto.M16.MailShortInfo getMails(int index) {
+          if (mailsBuilder_ == null) {
+            return mails_.get(index);
+          } else {
+            return mailsBuilder_.getMessage(index);
+          }
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public Builder setMails(
+            int index, com.znl.proto.M16.MailShortInfo value) {
+          if (mailsBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureMailsIsMutable();
+            mails_.set(index, value);
+            onChanged();
+          } else {
+            mailsBuilder_.setMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public Builder setMails(
+            int index, com.znl.proto.M16.MailShortInfo.Builder builderForValue) {
+          if (mailsBuilder_ == null) {
+            ensureMailsIsMutable();
+            mails_.set(index, builderForValue.build());
+            onChanged();
+          } else {
+            mailsBuilder_.setMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public Builder addMails(com.znl.proto.M16.MailShortInfo value) {
+          if (mailsBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureMailsIsMutable();
+            mails_.add(value);
+            onChanged();
+          } else {
+            mailsBuilder_.addMessage(value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public Builder addMails(
+            int index, com.znl.proto.M16.MailShortInfo value) {
+          if (mailsBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureMailsIsMutable();
+            mails_.add(index, value);
+            onChanged();
+          } else {
+            mailsBuilder_.addMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public Builder addMails(
+            com.znl.proto.M16.MailShortInfo.Builder builderForValue) {
+          if (mailsBuilder_ == null) {
+            ensureMailsIsMutable();
+            mails_.add(builderForValue.build());
+            onChanged();
+          } else {
+            mailsBuilder_.addMessage(builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public Builder addMails(
+            int index, com.znl.proto.M16.MailShortInfo.Builder builderForValue) {
+          if (mailsBuilder_ == null) {
+            ensureMailsIsMutable();
+            mails_.add(index, builderForValue.build());
+            onChanged();
+          } else {
+            mailsBuilder_.addMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public Builder addAllMails(
+            java.lang.Iterable<? extends com.znl.proto.M16.MailShortInfo> values) {
+          if (mailsBuilder_ == null) {
+            ensureMailsIsMutable();
+            super.addAll(values, mails_);
+            onChanged();
+          } else {
+            mailsBuilder_.addAllMessages(values);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public Builder clearMails() {
+          if (mailsBuilder_ == null) {
+            mails_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+            onChanged();
+          } else {
+            mailsBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public Builder removeMails(int index) {
+          if (mailsBuilder_ == null) {
+            ensureMailsIsMutable();
+            mails_.remove(index);
+            onChanged();
+          } else {
+            mailsBuilder_.remove(index);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public com.znl.proto.M16.MailShortInfo.Builder getMailsBuilder(
+            int index) {
+          return getMailsFieldBuilder().getBuilder(index);
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public com.znl.proto.M16.MailShortInfoOrBuilder getMailsOrBuilder(
+            int index) {
+          if (mailsBuilder_ == null) {
+            return mails_.get(index);  } else {
+            return mailsBuilder_.getMessageOrBuilder(index);
+          }
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public java.util.List<? extends com.znl.proto.M16.MailShortInfoOrBuilder> 
+             getMailsOrBuilderList() {
+          if (mailsBuilder_ != null) {
+            return mailsBuilder_.getMessageOrBuilderList();
+          } else {
+            return java.util.Collections.unmodifiableList(mails_);
+          }
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public com.znl.proto.M16.MailShortInfo.Builder addMailsBuilder() {
+          return getMailsFieldBuilder().addBuilder(
+              com.znl.proto.M16.MailShortInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public com.znl.proto.M16.MailShortInfo.Builder addMailsBuilder(
+            int index) {
+          return getMailsFieldBuilder().addBuilder(
+              index, com.znl.proto.M16.MailShortInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .M16.MailShortInfo mails = 2;</code>
+         */
+        public java.util.List<com.znl.proto.M16.MailShortInfo.Builder> 
+             getMailsBuilderList() {
+          return getMailsFieldBuilder().getBuilderList();
+        }
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.M16.MailShortInfo, com.znl.proto.M16.MailShortInfo.Builder, com.znl.proto.M16.MailShortInfoOrBuilder> 
+            getMailsFieldBuilder() {
+          if (mailsBuilder_ == null) {
+            mailsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+                com.znl.proto.M16.MailShortInfo, com.znl.proto.M16.MailShortInfo.Builder, com.znl.proto.M16.MailShortInfoOrBuilder>(
+                    mails_,
+                    ((bitField0_ & 0x00000002) == 0x00000002),
+                    getParentForChildren(),
+                    isClean());
+            mails_ = null;
+          }
+          return mailsBuilder_;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M16.M160007.S2C)
+      }
+
+      static {
+        defaultInstance = new S2C(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M16.M160007.S2C)
+    }
+
+    public interface C2SOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+    }
+    /**
+     * Protobuf type {@code M16.M160007.C2S}
+     */
+    public static final class C2S extends
+        com.google.protobuf.GeneratedMessage
+        implements C2SOrBuilder {
+      // Use C2S.newBuilder() to construct.
+      private C2S(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private C2S(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final C2S defaultInstance;
+      public static C2S getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public C2S getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private C2S(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M16.internal_static_M16_M160007_C2S_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M16.internal_static_M16_M160007_C2S_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M16.M160007.C2S.class, com.znl.proto.M16.M160007.C2S.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<C2S> PARSER =
+          new com.google.protobuf.AbstractParser<C2S>() {
+        public C2S parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new C2S(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<C2S> getParserForType() {
+        return PARSER;
+      }
+
+      private void initFields() {
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static com.znl.proto.M16.M160007.C2S parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M16.M160007.C2S parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M16.M160007.C2S parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static com.znl.proto.M16.M160007.C2S parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static com.znl.proto.M16.M160007.C2S parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M16.M160007.C2S parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M16.M160007.C2S parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static com.znl.proto.M16.M160007.C2S parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static com.znl.proto.M16.M160007.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static com.znl.proto.M16.M160007.C2S parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.znl.proto.M16.M160007.C2S prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code M16.M160007.C2S}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements com.znl.proto.M16.M160007.C2SOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return com.znl.proto.M16.internal_static_M16_M160007_C2S_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return com.znl.proto.M16.internal_static_M16_M160007_C2S_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  com.znl.proto.M16.M160007.C2S.class, com.znl.proto.M16.M160007.C2S.Builder.class);
+        }
+
+        // Construct using com.znl.proto.M16.M160007.C2S.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.znl.proto.M16.internal_static_M16_M160007_C2S_descriptor;
+        }
+
+        public com.znl.proto.M16.M160007.C2S getDefaultInstanceForType() {
+          return com.znl.proto.M16.M160007.C2S.getDefaultInstance();
+        }
+
+        public com.znl.proto.M16.M160007.C2S build() {
+          com.znl.proto.M16.M160007.C2S result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public com.znl.proto.M16.M160007.C2S buildPartial() {
+          com.znl.proto.M16.M160007.C2S result = new com.znl.proto.M16.M160007.C2S(this);
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.znl.proto.M16.M160007.C2S) {
+            return mergeFrom((com.znl.proto.M16.M160007.C2S)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(com.znl.proto.M16.M160007.C2S other) {
+          if (other == com.znl.proto.M16.M160007.C2S.getDefaultInstance()) return this;
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.znl.proto.M16.M160007.C2S parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (com.znl.proto.M16.M160007.C2S) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:M16.M160007.C2S)
+      }
+
+      static {
+        defaultInstance = new C2S(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:M16.M160007.C2S)
+    }
+
+    private void initFields() {
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.znl.proto.M16.M160007 parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M16.M160007 parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M16.M160007 parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M16.M160007 parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M16.M160007 parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M16.M160007 parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M16.M160007 parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.znl.proto.M16.M160007 parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M16.M160007 parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M16.M160007 parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.znl.proto.M16.M160007 prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code M16.M160007}
+     *
+     * <pre>
+     *新邮件增加
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.znl.proto.M16.M160007OrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M16.internal_static_M16_M160007_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M16.internal_static_M16_M160007_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M16.M160007.class, com.znl.proto.M16.M160007.Builder.class);
+      }
+
+      // Construct using com.znl.proto.M16.M160007.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.znl.proto.M16.internal_static_M16_M160007_descriptor;
+      }
+
+      public com.znl.proto.M16.M160007 getDefaultInstanceForType() {
+        return com.znl.proto.M16.M160007.getDefaultInstance();
+      }
+
+      public com.znl.proto.M16.M160007 build() {
+        com.znl.proto.M16.M160007 result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.znl.proto.M16.M160007 buildPartial() {
+        com.znl.proto.M16.M160007 result = new com.znl.proto.M16.M160007(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.znl.proto.M16.M160007) {
+          return mergeFrom((com.znl.proto.M16.M160007)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.znl.proto.M16.M160007 other) {
+        if (other == com.znl.proto.M16.M160007.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.znl.proto.M16.M160007 parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.znl.proto.M16.M160007) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:M16.M160007)
+    }
+
+    static {
+      defaultInstance = new M160007(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:M16.M160007)
+  }
+
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_M16_TargetInfo_descriptor;
   private static
@@ -27279,6 +28683,21 @@ public final class M16 {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_M16_M160006_C2S_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M16_M160007_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M16_M160007_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M16_M160007_S2C_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M16_M160007_S2C_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M16_M160007_C2S_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M16_M160007_C2S_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -27346,8 +28765,9 @@ public final class M16 {
       "ist\030\002 \003(\006\032\025\n\003C2S\022\016\n\006idlist\030\001 \003(\006\"5\n\007M160" +
       "005\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\027\n\003C2S\022\020\n\010battleI" +
       "d\030\001 \002(\006\"3\n\007M160006\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\005\032\025\n" +
-      "\003C2S\022\016\n\006mailId\030\001 \002(\006B\024\n\rcom.znl.protoB\003M" +
-      "16"
+      "\003C2S\022\016\n\006mailId\030\001 \002(\006\"F\n\007M160007\0324\n\003S2C\022\n" +
+      "\n\002rs\030\001 \002(\005\022!\n\005mails\030\002 \003(\0132\022.M16.MailShor",
+      "tInfo\032\005\n\003C2SB\024\n\rcom.znl.protoB\003M16"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -27552,6 +28972,24 @@ public final class M16 {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M16_M160006_C2S_descriptor,
               new java.lang.String[] { "MailId", });
+          internal_static_M16_M160007_descriptor =
+            getDescriptor().getMessageTypes().get(19);
+          internal_static_M16_M160007_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M16_M160007_descriptor,
+              new java.lang.String[] { });
+          internal_static_M16_M160007_S2C_descriptor =
+            internal_static_M16_M160007_descriptor.getNestedTypes().get(0);
+          internal_static_M16_M160007_S2C_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M16_M160007_S2C_descriptor,
+              new java.lang.String[] { "Rs", "Mails", });
+          internal_static_M16_M160007_C2S_descriptor =
+            internal_static_M16_M160007_descriptor.getNestedTypes().get(1);
+          internal_static_M16_M160007_C2S_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M16_M160007_C2S_descriptor,
+              new java.lang.String[] { });
           return null;
         }
       };

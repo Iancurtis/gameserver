@@ -1145,7 +1145,7 @@ public class DungeoProxy extends BasicProxy {
     public int openArmygroupDungeoBox(int dungeoId, PlayerReward reward) {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         if(playerProxy.getPlayer().getGetbox().contains(dungeoId)){
-            return ErrorCodeDefine.M2700003_1;
+            return ErrorCodeDefine.M270003_1;
         }else{
         JSONObject json =  ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent, dungeoId);
         RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
@@ -1580,7 +1580,14 @@ public class DungeoProxy extends BasicProxy {
         if (jsonObject == null) {
             return 0;
         }
-      return jsonObject.getInt("time")-dungeo.getChangetimes();
+        int addtimes=0;
+        ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        if(dungeoid==BattleDefine.ADVANTRUE_TYPE_EQUIP){
+            addtimes = (activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_EUIP_ADVANCE_ADDTIMES));
+        }else if(dungeoid==BattleDefine.ADVANTRUE_TYPE_ORNDANCE){
+            addtimes = (activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_ORDANCE_ADVANCE_ADDTIMES));
+        }
+      return jsonObject.getInt("time")+addtimes-dungeo.getChangetimes();
     }
 
     //增加冒险副本挑战次数

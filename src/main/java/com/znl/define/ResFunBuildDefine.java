@@ -32,6 +32,8 @@ public class ResFunBuildDefine {
  public static final int BUILDE_TYPE_RREFIT= 10;//改装工厂
  public static final int BUILDE_TYPE_CREATEROOM = 11;//制造车间
 
+ public final static int MAX_RESOURCE_TYPE = BUILDE_TYPE_DEPOT;
+
 /************等*待*队*列*初始值*************/
 public static final int MIN_WAITQUEUE = 1;
 

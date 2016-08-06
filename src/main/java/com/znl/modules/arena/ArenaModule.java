@@ -274,7 +274,7 @@ public class ArenaModule extends BasicModule {
         if (rs == 0) {
             RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
             M2.M20007.S2C msg = rewardProxy.getRewardClientInfo(reward);
-            sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, msg);
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, msg);
             sendFuntctionLog(FunctionIdDefine.ARENA_SHOP_BUY_FUNCTION_ID);
         }
         sendPushNetMsgToClient();

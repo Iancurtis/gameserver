@@ -7,7 +7,6 @@ import com.znl.GameMainServer
 import com.znl.base.{BaseDbPojo, BaseSetDbPojo}
 import com.znl.define.ActorDefine
 import com.znl.framework.http.HttpMessage
-import com.znl.msg.GameMsg.QueryToMysql
 import com.znl.pojo.db.Player
 import com.znl.pojo.db.set.{AccountNameSetDb, RoleNameSetDb}
 import com.znl.proxy.DbProxy

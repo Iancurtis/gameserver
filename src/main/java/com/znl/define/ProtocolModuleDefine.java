@@ -523,6 +523,7 @@ public class  ProtocolModuleDefine {
     public static final int NET_M16_C160004 = 160004;//删除邮件
     public static final int NET_M16_C160005 = 160005;//战斗播报
     public static final int NET_M16_C160006 = 160006;//邮件提取
+    public static final int NET_M16_C160007 = 160007;//新邮件增加
     /**
      * ******好友模块************
      */
@@ -611,6 +612,7 @@ public class  ProtocolModuleDefine {
     public static final int NET_M23_C230009= 230009;//增加一个限时活动
     public static final int NET_M23_C230010= 230010;//检测一个普通活动是否开启
     public static final int NET_M23_C230011= 230011;//检测一个限时活动是否开启
+    public static final int NET_M23_C230012= 230012;//检测一个在线礼包活动是否开启
     /******cdkey*********/
     public static final int NET_M24 = 24;
     public static final int NET_M24_C240000 = 240000;//cdkey领取

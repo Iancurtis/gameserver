@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * Created by Administrator on 2015/10/27.
  */
 public class PlayerProxy extends BasicProxy {
-    private final Player player;
+    private final  Player player;
     public Map<Integer, Integer> rankmap = new ConcurrentHashMap<>();
     private  long reduceEnergytime;
 
@@ -45,7 +45,7 @@ public class PlayerProxy extends BasicProxy {
     protected void init() {
     }
 
-    private SimplePlayer simplePlayer;
+    private  SimplePlayer simplePlayer=new SimplePlayer();
 
     public void setSimplePlayer(SimplePlayer value) {
         this.simplePlayer = value;
@@ -654,12 +654,76 @@ public class PlayerProxy extends BasicProxy {
     private Set<Integer> changePower = new ConcurrentHashSet<>();
 
     public void addPowerToChangePower(Integer power) {
-        changePower.add(power);
+        changePower.addAll(getRealEffectPower(power));
         if (power >= 57 && power <= 61) {
             //产量相关的要触发刷新一下任务
             TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
             taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_RESOURCE_VALUE, 1);
         }
+        if (power == PlayerPowerDefine.NOR_POWER_depotprotect || power == PlayerPowerDefine.NOR_POWER_depotprotectrate){
+            setDepotprotect(getPowerValue(PlayerPowerDefine.NOR_POWER_depotprotect));
+        }
+    }
+
+    public Set<Integer> getRealEffectPower(int power){
+        Set<Integer> powers = new HashSet<>();
+        powers.add(power);
+        switch (power){
+            case PlayerPowerDefine.NOR_POWER_depotcontent:
+            case PlayerPowerDefine.NOR_POWER_depotcontentrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_taelcontent);
+                powers.add(PlayerPowerDefine.NOR_POWER_ironcontent);
+                powers.add(PlayerPowerDefine.NOR_POWER_woodcontent);
+                powers.add(PlayerPowerDefine.NOR_POWER_stonescontent);
+                powers.add(PlayerPowerDefine.NOR_POWER_foodcontent);
+                break;
+            case PlayerPowerDefine.NOR_POWER_taelcontentrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_taelcontent);
+                break;
+            case PlayerPowerDefine.NOR_POWER_woodcontentrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_woodcontent);
+                break;
+            case PlayerPowerDefine.NOR_POWER_ironcontentrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_ironcontent);
+                break;
+            case PlayerPowerDefine.NOR_POWER_foodcontentrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_foodcontent);
+                break;
+            case PlayerPowerDefine.NOR_POWER_stonescontentrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_stonescontent);
+                break;
+
+            case PlayerPowerDefine.NOR_POWER_taelyieldrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_taelyield);
+
+                break;
+            case PlayerPowerDefine.NOR_POWER_ironyieldrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_ironyield);
+                break;
+            case PlayerPowerDefine.NOR_POWER_woodyieldrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_woodyield);
+                break;
+            case PlayerPowerDefine.NOR_POWER_stonesyieldrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_stonesyield);
+                break;
+            case PlayerPowerDefine.NOR_POWER_foodyieldrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_foodyield);
+                break;
+            case PlayerPowerDefine.NOR_POWER_allresyield:
+            case PlayerPowerDefine.NOR_POWER_allresyieldrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_taelyield);
+                powers.add(PlayerPowerDefine.NOR_POWER_ironyield);
+                powers.add(PlayerPowerDefine.NOR_POWER_woodyield);
+                powers.add(PlayerPowerDefine.NOR_POWER_stonesyield);
+                powers.add(PlayerPowerDefine.NOR_POWER_foodyield);
+                break;
+
+            case PlayerPowerDefine.NOR_POWER_depotprotectrate:
+                powers.add(PlayerPowerDefine.NOR_POWER_depotprotect);
+                break;
+
+        }
+        return powers;
     }
 
     public void addPowerValue(int power, int add, int logType) {
@@ -961,9 +1025,7 @@ public class PlayerProxy extends BasicProxy {
         allTakeSoldierNum();
         long newBoomLv = getPowerValue(PlayerPowerDefine.POWER_boomLevel);
         if (currentBoomLv != newBoomLv) {
-            if (getGameProxy() != null) {
-                SoldierProxy soldierProxy = getGameProxy().getProxy(ActorDefine.SOLDIER_PROXY_NAME);
-            }
+            addPowerToChangePower(PlayerPowerDefine.POWER_boomLevel);
         }
         if (simplePlayer != null) {
             simplePlayer.setBoom(getPowerValue(PlayerPowerDefine.POWER_boom));
@@ -1477,6 +1539,7 @@ public class PlayerProxy extends BasicProxy {
 
     //总带兵量
     public long allTakeSoldierNum() {
+        long oldNum = getPowerValue(PlayerPowerDefine.POWER_command);
         long currentBoomLv = getPowerValue(PlayerPowerDefine.POWER_boomLevel);
         long commandLv = getPowerValue(PlayerPowerDefine.POWER_commandLevel);
         long currentLv = getPowerValue(PlayerPowerDefine.POWER_level);
@@ -1496,7 +1559,10 @@ public class PlayerProxy extends BasicProxy {
             boomNum = boomInfo.getInt("command");
         }
         long allNum = lvNum + commandNum + boomNum;
-        setPowerValue(PlayerPowerDefine.POWER_command, allNum);
+        if (allNum != oldNum){
+            setPowerValue(PlayerPowerDefine.POWER_command, allNum);
+            addPowerToChangePower(PlayerPowerDefine.POWER_command);
+        }
         return allNum;
     }
 
@@ -2730,6 +2796,7 @@ public class PlayerProxy extends BasicProxy {
        //每日抽奖 30天开服
         getPlayer().setEverylottery(0);
         player.setFirthlogin(0);
+        loginDayNum();
       //每日体力购买次数刷新
         player.setBuyenergytimes(0);
       //普通武将每日刷新免费次数
@@ -2751,6 +2818,24 @@ public class PlayerProxy extends BasicProxy {
         player.setBeBlessSet(blessSet2);
         //掏宝刷新
         player.setTaobaofree(0);
+        //每日重置在线总时长
+        player.setOnlinetime(0);
+    }
+
+    public int getRistChangeTimes(){
+        JSONObject jsonObject=ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ADVENTURE,"type",BattleDefine.ADVANTRUE_TYPE_LIMIT);
+        if(getPowerValue(PlayerPowerDefine.POWER_level)<jsonObject.getInt("level")){
+            return 0;
+        }
+        return DungeonDefine.DEOGEO_LIMIT_CHANGE -getPlayer().getDungeolimitchange();
+    }
+
+    public int getRistRestTimes(){
+        JSONObject jsonObject=ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ADVENTURE,"type",BattleDefine.ADVANTRUE_TYPE_LIMIT);
+        if(getPowerValue(PlayerPowerDefine.POWER_level)<jsonObject.getInt("level")){
+            return 0;
+        }
+        return DungeonDefine.DEOGEO_LIMIT_REST - getPlayer().getDungeolimitrest();
     }
 
 }

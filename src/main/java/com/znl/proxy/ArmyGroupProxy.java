@@ -66,7 +66,7 @@ public class ArmyGroupProxy extends BasicProxy {
                 super.expandPowerMap.put(id, super.expandPowerMap.get(id) + value);
             }
         }
-
+      refurceExpandPowerMap();
     }
 
     //创建军团

@@ -24,13 +24,14 @@ object StopServer {
 
 class StopServer(gameNetServer : GameNetServer,gameHttpServer : GameHttpServer,areaKeyMap : ConcurrentHashMap[Int, String]) extends Actor with ActorLogging{
   override def receive: Receive = {
+    case StopGame()=>
+      GameMainServer.stopServer()
     case _=>
 
   }
 
   override def preStart() = {
     log.info("StopServer start")
-    GameMainServer.stopServer()
 //    stopServer()
   }
 

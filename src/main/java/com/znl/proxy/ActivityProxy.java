@@ -304,7 +304,9 @@ public class ActivityProxy extends BasicProxy {
         needSendActivitys.clear();
         return res;
     }
-
+    public int getNeddSendActivitySize(){
+        return needSendActivitys.size();
+    }
     private void initCondition() {
         ConditionFormula condition;
         condition = (Activity activity, int value, int expandCondition, int sort) -> {
@@ -318,12 +320,12 @@ public class ActivityProxy extends BasicProxy {
                     valuelist.add(sort - 1, (int) _value);
                     activity.setConditionValue(_value);
                     activity.setValuelist(valuelist);
-                    needSendActivitys.add(activity.getActivityId());
                     if (define.getInt("condition2") <= _value) {
                         if (activity.getCanGetList().contains(define.getInt("sort")) == false
                                 && activity.getAlreadyGetList().contains(define.getInt("sort")) == false) {
                             //如果满足条件，还未领取过则设置为可领
                             activity.addCanGetList(define.getInt("sort"));
+                            needSendActivitys.add(activity.getActivityId());
                             //设置活动已经被修改，修改更新列表
                             //addFutureUpdateActivityList(getActivityInfo(activity));
                         }
@@ -357,11 +359,11 @@ public class ActivityProxy extends BasicProxy {
                     List<Integer> valuelist = activity.getValuelist();
                     valuelist.remove(sort - 1);
                     valuelist.add(sort - 1,  conditionValue);
-                    needSendActivitys.add(activity.getActivityId());
                     if (conditionValue <= value) {
                         if (activity.getCanGetList().contains(define.getInt("sort")) == false
                                 && activity.getAlreadyGetList().contains(define.getInt("sort")) == false) {
                             activity.addCanGetList(define.getInt("sort"));
+                            needSendActivitys.add(activity.getActivityId());
                         }
                     }
                 }
@@ -425,30 +427,19 @@ public class ActivityProxy extends BasicProxy {
             JSONObject acDefine = activityMap.get(activity.getActivityId());
             List<JSONObject> list = activityEffectMap.get(acDefine.getInt("effectID"));
             for (JSONObject define : list) {
-                if (define.getInt("sort") == sort) {
-                    List<Integer> valuelist = activity.getValuelist();
-                    Long lastTime = activity.getLastCheckTime();
-                    if (lastTime == 0) {
-                        lastTime = GameUtils.getServerDate().getTime();
-                    }
-                    long addtime = (GameUtils.getServerDate().getTime() - lastTime) / 1000;
-                    long _value = valuelist.get(sort - 1) + addtime;
-                    valuelist.remove(sort - 1);
-                    valuelist.add(sort - 1, (int) _value);
-                    needSendActivitys.add(activity.getActivityId());
-                    activity.setLastCheckTime(GameUtils.getServerDate().getTime());
-                    if (define.getInt("condition2") <= _value) {
+                    if (define.getInt("condition2") <= value) {
                         if (activity.getCanGetList().contains(define.getInt("sort")) == false
-                                && activity.getAlreadyGetList().contains(define.getInt("sort")) == false) {
+                                && activity.getAlreadyGetList().contains(define.getInt("sort")) == false && define.getInt("sort") == sort) {
                             //如果满足条件，还未领取过则设置为可领
                             activity.addCanGetList(define.getInt("sort"));
+                            needSendActivitys.add(activity.getActivityId());
                         }
                     }
-                }
+
             }
             pushActivityToChangeList(activity);
         };
-        _mapCondition.put(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, condition);
+       _mapCondition.put(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, condition);
         _mapCondition.put(ActivityDefine.ACTIVITY_CONDITION_ONLINE_TIME, condition);
 
         condition = (Activity activity, int value, int expandCondition, int sort) -> {
@@ -460,7 +451,6 @@ public class ActivityProxy extends BasicProxy {
                     long _value = valuelist.get(sort - 1) + value;
                     valuelist.remove(sort - 1);
                     valuelist.add(sort - 1, (int) _value);
-                    needSendActivitys.add(activity.getActivityId());
                     activity.setValuelist(valuelist);
                     activity.setConditionValue(_value);
                     if (define.getInt("condition2") <= _value) {
@@ -468,6 +458,7 @@ public class ActivityProxy extends BasicProxy {
                                 && activity.getAlreadyGetList().contains(define.getInt("sort")) == false) {
                             //如果满足条件，还未领取过则设置为可领
                             activity.addCanGetList(define.getInt("sort"));
+                            needSendActivitys.add(activity.getActivityId());
                         }
                     }
                 }
@@ -489,7 +480,6 @@ public class ActivityProxy extends BasicProxy {
                     }
                     valuelist.remove(sort - 1);
                     valuelist.add(sort - 1, (int) _value);
-                    needSendActivitys.add(activity.getActivityId());
                     activity.setValuelist(valuelist);
                     activity.setConditionValue(_value);
                     if (define.getInt("condition2") <= _value) {
@@ -497,6 +487,7 @@ public class ActivityProxy extends BasicProxy {
                                 && activity.getAlreadyGetList().contains(define.getInt("sort")) == false) {
                             //如果满足条件，还未领取过则设置为可领
                             activity.addCanGetList(define.getInt("sort"));
+                            needSendActivitys.add(activity.getActivityId());
                         }
                     }
                 }
@@ -517,12 +508,12 @@ public class ActivityProxy extends BasicProxy {
                         valuelist.add(sort - 1, (int) _value);
                         activity.setValuelist(valuelist);
                         activity.setConditionValue(_value);
-                        needSendActivitys.add(activity.getActivityId());
                         if (define.getInt("condition1") <= _value && define.getInt("condition2") == value) {
                             if (activity.getCanGetList().contains(define.getInt("sort")) == false
                                     && activity.getAlreadyGetList().contains(define.getInt("sort")) == false) {
                                 //如果满足条件，还未领取过则设置为可领
                                 activity.addCanGetList(define.getInt("sort"));
+                                needSendActivitys.add(activity.getActivityId());
                             }
                         }
                     }
@@ -565,9 +556,12 @@ public class ActivityProxy extends BasicProxy {
                         }
                     } else {
                         List<Integer> cangetlist = activity.getCanGetList();
+                        int oldSize =cangetlist.size();
                         cangetlist.remove(new Integer(define.getInt("sort")));
+                        if (cangetlist.size() != oldSize){
+                            needSendActivitys.add(activity.getActivityId());
+                        }
                         activity.setCanGetList(cangetlist);
-                        needSendActivitys.add(activity.getActivityId());
                     }
                 }
             }
@@ -1451,14 +1445,14 @@ public class ActivityProxy extends BasicProxy {
      * @return
      */
     public int[] nextAddActivitStartTime(PlayerProxy playerProxy,int type) {
-        int nowtime =(int) GameUtils.getServerDate().getTime();
-        int mintime = 0;
+        long nowtime = GameUtils.getServerDate().getTime();
+        long mintime = 0;
         int activityId=0;
         for (Activity activity : activitys) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.ACTIVE_DESIGN, activity.getActivityId());
             if (jsonObject.getInt("show") !=type) continue;//现阶段只限制限时活动
             if (jsonObject != null && !isEffect(jsonObject, playerProxy)) {
-                int startTime = (int)getActivityStarTime(jsonObject, playerProxy);
+                long startTime = getActivityStarTime(jsonObject, playerProxy);
                 if (startTime > nowtime) {
                     if (mintime == 0) {
                         mintime = startTime;
@@ -1470,7 +1464,8 @@ public class ActivityProxy extends BasicProxy {
                 }
             }
         }
-        return new int[]{mintime,activityId};
+        mintime =mintime- nowtime;
+        return new int[]{(int)(mintime/1000),activityId};
     }
 
 
@@ -1927,18 +1922,33 @@ public class ActivityProxy extends BasicProxy {
 
     //时间活动检验
     public void checkeTimeActivity(List<M3.TimeInfo> infos) {
-        //TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-      //  M3.TimeInfo info = timerdbProxy.setLesTime(TimerDefine.ACTIVITY_REFRESH, 0, 0, 60);
-       // timerdbProxy.addTimeDbToList(info, infos);
-  //      if (info != null) {
-      ///     infos.add(info);
-   //     }
+        /*TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        M3.TimeInfo info = timerdbProxy.setLesTime(TimerDefine.ACTIVITY_REFRESH, 0, 0, 60);
+        timerdbProxy.addTimeDbToList(info, infos);
+        if (info != null) {
+        infos.add(info);
+       }*/
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, 0, playerProxy, 0);
-        addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ONLINE_TIME, 0, playerProxy, 0);
+       // addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, 0, playerProxy, 0);
+       // addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ONLINE_TIME, 0, playerProxy, 0);
         long regTime = (long) playerProxy.getCreatePlayerTime() * 1000;
         int days = DateUtil.getDayIntwoTime(regTime, GameUtils.getServerDate().getTime());
         addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_AFTER_LONGIN, days, playerProxy, 0);
+    }
+    //在线礼包活动校验
+    public int checkeolineActivity() {
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        int time= (int)(GameUtils.getServerDate().getTime()/1000);
+        addolineActivity();
+        return playerProxy.getPlayer().getOnlinetime()+(time-playerProxy.getPlayer().getLoginTime());
+    }
+    //添加在线礼包活动效果
+    public void addolineActivity() {
+            PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+            int time= (int)(GameUtils.getServerDate().getTime()/1000);
+            int times=playerProxy.getPlayer().getOnlinetime()+(time-playerProxy.getPlayer().getLoginTime());
+            addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, times, playerProxy, 0);
+            addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ONLINE_TIME,times, playerProxy, 0);
     }
 
     //获取全服相应vip等级的玩家数量
@@ -2323,12 +2333,59 @@ public class ActivityProxy extends BasicProxy {
      *
      * @param ids
      */
-    public List<M23.ActivityInfo> getActivityInfoByIds(Set<Integer> ids){
-        List<M23.ActivityInfo> res = new ArrayList<>();
+    public List<M23.ActivityShowInfo> getActivityInfoByIds(Set<Integer> ids){
+        List<M23.ActivityShowInfo> res = new ArrayList<>();
+        //List<M23.ActivityInfo> re= new ArrayList<>();
         for (Integer id : ids){
             Activity activity = getActivityByTypeId(id);
             if (activity != null){
-                res.add(getActivityInfo(activity));
+                M23.ActivityShowInfo.Builder builder = M23.ActivityShowInfo.newBuilder();
+                M23.ActivityInfo info = getActivityInfo(activity);
+                //re.add(info);
+                builder.setActivityId(info.getActivityId());
+                  /* builder.setArtIcon(info.getArtIcon());
+                builder.setUitype(info.getUitype());
+                builder.setSort(info.getSort());*/
+                List<M23.ButtonInfo> rb= new ArrayList<>();
+                  for(M23.ButtonInfo inf :info.getButtonsList()){
+                      M23.ButtonInfo.Builder buttonbuilder = M23.ButtonInfo.newBuilder();
+                      buttonbuilder.setType(inf.getType());
+                      buttonbuilder.setName(inf.getName());
+                      rb.add(buttonbuilder.build());
+                  }
+                builder.addAllButtons(rb);
+                List<M23.ActivityEffectInfo> rf= new ArrayList<>();
+                  for(M23.ActivityEffectInfo inf :info.getEffectInfosList()){
+                      M23.ActivityEffectInfo.Builder effectbuilder = M23.ActivityEffectInfo.newBuilder();
+                      effectbuilder.setType(inf.getType());
+                      effectbuilder.setEffectId(inf.getEffectId());
+                      effectbuilder.setSort(inf.getSort());
+                      effectbuilder.setIscanget(inf.getIscanget());
+                      List<Common.RewardInfo> rewardInfos = new ArrayList<>();
+                      for(Common.RewardInfo rew:inf.getRewardsList()){
+                          Common.RewardInfo.Builder rewardbuiler = Common.RewardInfo.newBuilder();
+                          rewardbuiler.setNum(rew.getNum());
+                          rewardbuiler.setTypeid(rew.getTypeid());
+                          rewardbuiler.setPower(rew.getPower());
+                          rewardInfos.add(rewardbuiler.build());
+                      }
+                      effectbuilder.addAllRewards(rewardInfos);
+                      effectbuilder.setEffecttype(inf.getEffecttype());
+                      effectbuilder.setEffect(inf.getEffect());
+                      effectbuilder.setLimit(inf.getLimit());
+                      effectbuilder.setTotalLimit(inf.getTotalLimit());
+                      rf.add(effectbuilder.build());
+                   }
+                builder.addAllEffectInfos(rf);
+                /*builder.setStartTime(info.getStartTime());
+                builder.setEndTime(info.getEndTime());
+                builder.setBgIcon(info.getBgIcon());
+                builder.setAlready(info.getAlready());
+                builder.setTotal(info.getTotal());
+                builder.setConditiontype(info.getConditiontype());
+                builder.setShow(info.getShow());
+                builder.setEndjudge(info.getEndjudge());*/
+                res.add(builder.build());
             }
         }
         return res;
@@ -2444,6 +2501,9 @@ public class ActivityProxy extends BasicProxy {
             builder.setRs(1);
             builder.addAllActivityInfo(openActivitys);
         }
+        int[]nextOpenActivity=nextAddActivitStartTime(playerProxy,1);
+        builder.setNextOpenTime(nextOpenActivity[0]);//下一个要开启的活动时间
+        builder.setNextOpenId(nextOpenActivity[1]);//下一个要开启的活动Id
         return builder.build();
     }
 

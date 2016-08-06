@@ -52,42 +52,42 @@ public class ResFunBuildProxy extends BasicProxy {
     @Override
     protected void init() {
         super.expandPowerMap.clear();
-        for (ResFunBuilding rfb : rfbs) {
-            if (getBuildTypeByType(rfb.getSmallType()) == 1) {
-                JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
-                if(jsonObject==null){
-                    List<JSONObject> jsonObjectList=ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.RESOUCEBUILDLEVEEFFECT,"type",rfb.getSmallType());
-                    rfb.setLevel(jsonObjectList.size()-1);
-                    rfb.save();
-                    continue;
-                }
-                JSONArray jsonArray = jsonObject.getJSONArray("effect");
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONArray array = jsonArray.getJSONArray(i);
-                    addBuildPlayerPower(array.getInt(0), array.getLong(1));
-                }
-            } else if (getBuildTypeByType(rfb.getSmallType()) == 2) {
-                JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
-                if(jsonObject==null){
-                    List<JSONObject> jsonObjectList=ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.FUNTIONBUILDLEVEEFFECT,"type",rfb.getSmallType());
-                    rfb.setLevel(jsonObjectList.size()-1);
-                    rfb.save();
-                    continue;
-                }
-                JSONArray jsonArray = jsonObject.getJSONArray("effect");
-                if (jsonArray.length() > 0) {
-                    addBuildPlayerPower(jsonArray.getInt(0), jsonArray.getLong(1));
-                }
-            }
-        }
-        if (getGameProxy() != null) {
-            PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            if (playerProxy != null) {
-                if (expandPowerMap.get(PlayerPowerDefine.NOR_POWER_depotprotect) != null) {
-                    playerProxy.setDepotprotect(expandPowerMap.get(PlayerPowerDefine.NOR_POWER_depotprotect));
-                }
-            }
-        }
+//        for (ResFunBuilding rfb : rfbs) {
+//            if (getBuildTypeByType(rfb.getSmallType()) == 1) {
+//                JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.RESOUCEBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
+//                if(jsonObject==null){
+//                    List<JSONObject> jsonObjectList=ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.RESOUCEBUILDLEVEEFFECT,"type",rfb.getSmallType());
+//                    rfb.setLevel(jsonObjectList.size()-1);
+//                    rfb.save();
+//                    continue;
+//                }
+//                JSONArray jsonArray = jsonObject.getJSONArray("effect");
+//                for (int i = 0; i < jsonArray.length(); i++) {
+//                    JSONArray array = jsonArray.getJSONArray(i);
+//                    addBuildPlayerPower(array.getInt(0), array.getLong(1));
+//                }
+//            } else if (getBuildTypeByType(rfb.getSmallType()) == 2) {
+//                JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByTwoKey(DataDefine.FUNTIONBUILDLEVEEFFECT, "type", rfb.getSmallType(), "lv", rfb.getLevel());
+//                if(jsonObject==null){
+//                    List<JSONObject> jsonObjectList=ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.FUNTIONBUILDLEVEEFFECT,"type",rfb.getSmallType());
+//                    rfb.setLevel(jsonObjectList.size()-1);
+//                    rfb.save();
+//                    continue;
+//                }
+//                JSONArray jsonArray = jsonObject.getJSONArray("effect");
+//                if (jsonArray.length() > 0) {
+//                    addBuildPlayerPower(jsonArray.getInt(0), jsonArray.getLong(1));
+//                }
+//            }
+//        }
+//        if (getGameProxy() != null) {
+//            PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+//            if (playerProxy != null) {
+//                if (expandPowerMap.get(PlayerPowerDefine.NOR_POWER_depotprotect) != null) {
+//                    playerProxy.setDepotprotect(expandPowerMap.get(PlayerPowerDefine.NOR_POWER_depotprotect));
+//                }
+//            }
+//        }
     }
 
     private void addBuildPlayerPower(int id, long value) {

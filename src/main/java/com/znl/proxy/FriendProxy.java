@@ -31,8 +31,11 @@ public class FriendProxy extends BasicProxy {
     public List<M17.FriendInfo> getFriendInfoList(List<SimplePlayer> simplePlayerList){
 
         List<M17.FriendInfo> list = new ArrayList<>();
-        simplePlayerList.forEach( simplePlayer -> list.add(getFriendInfo(simplePlayer)) );
-
+        for(SimplePlayer simplePlayer : simplePlayerList){
+            if(simplePlayer!= null){
+                list.add(getFriendInfo(simplePlayer));
+            }
+        }
         return list;
     }
 

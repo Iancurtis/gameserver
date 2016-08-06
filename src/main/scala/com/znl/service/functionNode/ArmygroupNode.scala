@@ -27,9 +27,11 @@ import scala.collection.JavaConversions._
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
+
 object ArmygroupNode {
   def props(armygroup: Armygroup, areakey: String) = Props(classOf[ArmygroupNode], armygroup, areakey)
-  //val ArmygroupDungeoMap: util.Map[Integer,Armygroup] = new util.HashMap[Integer,Armygroup]()
+
+  var techExpandPowerMap:util.Map[java.lang.Long,ConcurrentHashMap[java.lang.Integer, java.lang.Long]] = new util.HashMap[java.lang.Long, ConcurrentHashMap[java.lang.Integer, java.lang.Long]]
 }
 
 class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with ActorLogging {
@@ -37,12 +39,12 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
   val techsMap: util.Map[Integer, ArmyGroupTech] = new util.HashMap[Integer, ArmyGroupTech]()
   val situationmap: util.Map[Integer, util.List[Situation]] = new util.HashMap[Integer, util.List[Situation]]()
   val simples: util.List[SimplePlayer] = new util.ArrayList[SimplePlayer]()
-  var ArmygroupDungeoMax:  Integer= 0
+  var ArmygroupDungeoMax: Integer = 0
   var Dungeolist: util.List[Integer] = new util.ArrayList[Integer]()
-  var armygroupdungeoinfo:util.Map[Integer, util.List[PlayerTeam]] = new util.HashMap[Integer, util.List[PlayerTeam]]()
+  var armygroupdungeoinfo: util.Map[Integer, util.List[PlayerTeam]] = new util.HashMap[Integer, util.List[PlayerTeam]]()
   var attackDungeolist: util.List[Integer] = new util.ArrayList[Integer]()
 
-/*
+  /*
 //以下为军团副本测试数据
   attackDungeolist.clear();
 
@@ -108,7 +110,7 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     case agreeApply(myId: Long, otherId: Long, retype: Int) =>
       agreeApply(myId, otherId, retype)
     case getMyGroupInfos() =>
-      sender() ! getMyGroupInfosback(armygroup,menbers)
+      sender() ! getMyGroupInfosback(armygroup, menbers)
     case lookAppList() =>
       dolookAppList()
     case TechExpandPowerMap() =>
@@ -166,12 +168,12 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
       onchangetIconPend(playerId, icon, pendIcon)
     case applistNum() =>
       onapplistNum()
-    case ActivityRankTrigger() =>
-      checkACTimer()
+    case ActivityRankTrigger(ids: util.List[java.lang.Integer]) =>
+      checkACTimer(ids)
     case legionenlist(playerId: Long) =>
       onlegionenlist(playerId)
-    case addLegionShareRecord(playerId :Long,chargeId:Int,createTime:Int,sharedPlayerName:String) =>
-      doAddLegionShareRecord(playerId,chargeId,createTime,sharedPlayerName)
+    case addLegionShareRecord(playerId: Long, chargeId: Int, createTime: Int, sharedPlayerName: String) =>
+      doAddLegionShareRecord(playerId, chargeId, createTime, sharedPlayerName)
     /*case getArmyGroupDungeoInfo(dungeoid:Int) =>
       ongetArmyGroupDungeoInfo(dungeoid)
     case iscanattackArmyGroupDungeo(dungeoid:Int) =>
@@ -187,7 +189,8 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     case _ =>
 
   }
-  def checkACTimer() {
+
+  def checkACTimer(ids: util.List[java.lang.Integer]) {
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE)
     val c: Calendar = Calendar.getInstance
     c.setTime(GameUtils.getServerDate)
@@ -198,7 +201,7 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     val serverMinute: Int = c.get(Calendar.MINUTE)
     val serverSecond: Int = c.get(Calendar.SECOND)
     for (define <- list) {
-      val endTime: Long = getActivityEndTime(define)
+      /*val endTime: Long = getActivityEndTime(define)
       val endCalender: Calendar = Calendar.getInstance
       endCalender.setTimeInMillis(endTime)
       if (endCalender.get(Calendar.YEAR) == serverYear
@@ -207,24 +210,29 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
         && endCalender.get(Calendar.HOUR_OF_DAY) == serverHour
         && endCalender.get(Calendar.MINUTE) == serverMinute
         && endCalender.get(Calendar.SECOND) == serverSecond) {
-        //年月日时分秒都一致就发吧
+        //年月日时分秒都一致就发吧*/
+      if (ids.contains(define.getInt("ID"))) {
         val effectId = define.getInt("effectID")
         val effectDefineList: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_EFFECT, "effectID", effectId)
         if (effectDefineList.get(0).getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_DONVATE_RANK) {
           refreshACdevoteRank()
         }
-        if(effectDefineList.get(0).getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_RANK_LEGION){
+        if (effectDefineList.get(0).getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_RANK_LEGION) {
           checkRefreshLegionRank()
         }
       }
     }
+
     getActivityTimer()
   }
 
+
+  val deleEven:util.List[TriggerEvent] =new util.ArrayList[TriggerEvent]()
   def getActivityTimer(): Unit = {
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE)
     val now = GameUtils.getServerDate().getTime
     var end = 0l
+    val ids : util.List[java.lang.Integer] =new util.ArrayList[java.lang.Integer]()
     for (define <- list) {
       val timeType = define.getInt("timetype")
       if (timeType == 2) {
@@ -236,9 +244,23 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
         }
       }
     }
+    for (define <- list) {
+      val timeType = define.getInt("timetype")
+      if (timeType == 2) {
+        val endTime = getActivityEndTime(define)
+        if ( end ==endTime) {
+          ids.add(define.getInt("ID"))
+        }
+      }
+    }
     if (end > 0) {
-      val event = new TriggerEvent(self, ActivityRankTrigger(), TriggerType.COUNT_DOWN, (end / 1000 - now / 1000).toInt)
+      for(del <-  deleEven){
+        getTriggerService(context) ! RemoveTriggerEvent(del)
+      }
+      deleEven.clear()
+      val event = new TriggerEvent(self, ActivityRankTrigger(ids), TriggerType.COUNT_DOWN, (end / 1000 - now / 1000).toInt)
       getTriggerService(context) ! AddTriggerEvent(event)
+      deleEven.add(event)
     }
   }
 
@@ -466,7 +488,7 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
   //返回军团科技属性加成信息
   def onGetTechExpandPowerMap(): Unit = {
     addTechEpandPower()
-    sender() ! GetTechExpandPowerMap(techExpandPowerMap)
+    sender() ! GetTechExpandPowerMap(ArmygroupNode.techExpandPowerMap.get(armygroup.getId))
   }
 
   def onArmyGroupShop(playerId: Long, itemId: Int, opt: Int, typeId: Int): Unit = {
@@ -1379,21 +1401,27 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     val actor = context.actorSelection("../../" + ActorDefine.CHAT_SERVICE_NAME)
     actor ! CreateLegionChatNode(armygroup.getId)
     initSituation()
-
-    val son: util.List[JSONObject] = ConfigDataProxy.getConfigAllInfo(DataDefine.LegionEvent)
-    val playertroop:PlayerTroop = new PlayerTroop()
-    val  dungeoproxy:DungeoProxy = new DungeoProxy()
-    for(json <- son){
-    if(BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).getTeamData(armygroup.getId, json.getInt("ID")) == null){
-      playertroop.setPlayerTeams(dungeoproxy.createArmyGroupDungeoMonsterList(json.getInt("ID")))
-      BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).addTeamDate(playertroop, armygroup.getId, json.getInt("ID"))
-      armygroupdungeoinfo.put(json.getInt("ID"),dungeoproxy.createArmyGroupDungeoMonsterList(json.getInt("ID")))
+    val map :ConcurrentHashMap[java.lang.Integer, java.lang.Long]=new ConcurrentHashMap[java.lang.Integer, java.lang.Long]()
+    if(ArmygroupNode.techExpandPowerMap.get(armygroup.getId)!=null){
+      map.putAll(ArmygroupNode.techExpandPowerMap.get(armygroup.getId))
     }
-   }
+    ArmygroupNode.techExpandPowerMap.put(armygroup.getId,map)
+    addTechEpandPower()
+//    val son: util.List[JSONObject] = ConfigDataProxy.getConfigAllInfo(DataDefine.LegionEvent)
+//    val playertroop:PlayerTroop = new PlayerTroop()
+//    val  dungeoproxy:DungeoProxy = new DungeoProxy()
+//    for(json <- son){
+//    if(BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).getTeamData(armygroup.getId, json.getInt("ID")) == null){
+//      playertroop.setPlayerTeams(dungeoproxy.createArmyGroupDungeoMonsterList(json.getInt("ID")))
+//      BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).addTeamDate(playertroop, armygroup.getId, json.getInt("ID"))
+//      armygroupdungeoinfo.put(json.getInt("ID"),dungeoproxy.createArmyGroupDungeoMonsterList(json.getInt("ID")))
+//    }
+//   }
   }
 
 
   def initSituation(): Unit = {
+    try{
     situationmap.clear()
     val list: util.List[Situation] = BaseSetDbPojo.getSetDbPojo(classOf[SituationDateSetDb], areakey).getAllSituationDatas(armygroup.getId)
     for (st <- list) {
@@ -1407,6 +1435,12 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
         situationmap.put(st.getType, typelist)
       }
     }
+  }
+  catch {
+    case e: Exception => {
+      e.printStackTrace()
+    }
+  }
   }
 
   def initfiveMap(): Unit = {
@@ -1432,16 +1466,16 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
         armygroup.save()
       }
     }
-    val son: util.List[JSONObject] = ConfigDataProxy.getConfigAllInfo(DataDefine.LegionEvent)
-    val playertroop:PlayerTroop = new PlayerTroop()
-    for (info <- armygroupdungeoinfo.keySet()) {
-      for (json <- son) {
-        if (info == json.getInt(("ID")) && armygroupdungeoinfo.get(info) != BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).getTeamData(armygroup.getId, json.getInt("ID")).getPlayerTeams) {
-          playertroop.setPlayerTeams(armygroupdungeoinfo.get(info))
-          BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).addTeamDate(playertroop, armygroup.getId, json.getInt("ID"))
-        }
-      }
-    }
+//    val son: util.List[JSONObject] = ConfigDataProxy.getConfigAllInfo(DataDefine.LegionEvent)
+//    val playertroop:PlayerTroop = new PlayerTroop()
+//    for (info <- armygroupdungeoinfo.keySet()) {
+//      for (json <- son) {
+//        if (info == json.getInt(("ID")) && armygroupdungeoinfo.get(info) != BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).getTeamData(armygroup.getId, json.getInt("ID")).getPlayerTeams) {
+//          playertroop.setPlayerTeams(armygroupdungeoinfo.get(info))
+//          BaseSetDbPojo.getSetDbPojo(classOf[LegionDungeoTeamSetDb], areakey).addTeamDate(playertroop, armygroup.getId, json.getInt("ID"))
+//        }
+//      }
+//    }
   }
 
 
@@ -1474,7 +1508,7 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
       val sp: SimplePlayer = PlayerService.getSimplePlayer(spId, areakey)
       if (sp.online == true) {
         /** 在线 ***/
-        sendMsgToPlayerArmyModule(sp.getAccountName, GameMsg.GetTechExpandPowerMap(techExpandPowerMap))
+        sendMsgToPlayerArmyModule(sp.getAccountName, GameMsg.GetTechExpandPowerMap(ArmygroupNode.techExpandPowerMap.get(armygroup.getId)))
       }
     }
   }
@@ -1547,7 +1581,7 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     }
 
   }
-  var techExpandPowerMap: ConcurrentHashMap[java.lang.Integer, java.lang.Long] = new ConcurrentHashMap[java.lang.Integer, java.lang.Long]
+
   var reload = true
 
   /**
@@ -1574,7 +1608,12 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
                 val power: Integer = ja.getInt(0)
                 val powerVlaue: Long = ja.getInt(1)
                 val value = powerVlaue * techLv
-                techExpandPowerMap.put(power, value)
+                val map :ConcurrentHashMap[java.lang.Integer, java.lang.Long]=new ConcurrentHashMap[java.lang.Integer, java.lang.Long]()
+                if(ArmygroupNode.techExpandPowerMap.get(armygroup.getId)!=null){
+                    map.putAll(ArmygroupNode.techExpandPowerMap.get(armygroup.getId))
+                }
+                map.put(power, value)
+                ArmygroupNode.techExpandPowerMap.put(armygroup.getId,map)
                 len -= 1
               }
             }
@@ -1809,7 +1848,7 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     for (menber <- menbers) {
       val simple: SimplePlayer = PlayerService.getSimplePlayer(menber.getPlayerId, areakey)
       if (simple != null && simple.online) {
-        sendMsgToPlayerArmyModule(menber.getAccoutName, GameMsg.GetTechExpandPowerMap(techExpandPowerMap))
+        sendMsgToPlayerArmyModule(menber.getAccoutName, GameMsg.GetTechExpandPowerMap(ArmygroupNode.techExpandPowerMap.get(armygroup.getId)))
       }
     }
   }
@@ -1852,12 +1891,14 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     val builder: M22.SubTechsInfo.Builder = M22.SubTechsInfo.newBuilder()
     val builderList: util.List[M22.SubTechsInfo] = new util.ArrayList[M22.SubTechsInfo]()
     for (techId <- techsMap.keySet()) {
-      val tech = techsMap.get(techId)
-      builder.setSubTechId(techId)
-      builder.setSubTechExp(tech.getTechExp)
-      builder.setSubTechLv(tech.getTechLv)
-      builderList.add(builder.build())
-      System.err.println("军团Id：" + tech.getArmyGroupId + "........ID:" + techId + ",,,,exp:" + tech.getTechExp + ",,lv:" + tech.getTechLv);
+      if(techId!=0) {
+        val tech = techsMap.get(techId)
+        builder.setSubTechId(techId)
+        builder.setSubTechExp(tech.getTechExp)
+        builder.setSubTechLv(tech.getTechLv)
+        builderList.add(builder.build())
+        System.err.println("军团Id：" + tech.getArmyGroupId + "........ID:" + techId + ",,,,exp:" + tech.getTechExp + ",,lv:" + tech.getTechLv);
+      }
     }
     return builderList
   }
@@ -2191,9 +2232,9 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
       refreshZero()
       refreshActiVitily()
       initfiveMap()
-      refreshArmygroupdungeo()
-      refreshMenbersDungeoTimes()
-      refreshArmygroupdungeoinfo()
+//      refreshArmygroupdungeo()
+//      refreshMenbersDungeoTimes()
+//      refreshArmygroupdungeoinfo()
     }
     if (hour == 12) {
       refreshShop()
@@ -2465,7 +2506,7 @@ class ArmygroupNode(armygroup: Armygroup, areakey: String) extends Actor with Ac
     addTechEpandPower()
     for (member: ArmygroupMenber <- menbers) {
       if (isMemberOnline(member)) {
-        sendMsgToPlayerArmyModule(member.getAccoutName, GetTechExpandPowerMap(techExpandPowerMap))
+        sendMsgToPlayerArmyModule(member.getAccoutName, GetTechExpandPowerMap(ArmygroupNode.techExpandPowerMap.get(armygroup.getId)))
       }
     }
   }

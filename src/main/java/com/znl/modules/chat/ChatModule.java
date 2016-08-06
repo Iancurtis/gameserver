@@ -809,7 +809,7 @@ public class ChatModule extends BasicModule {
             }
 
             M2.M20007.S2C message = rewardProxy.getRewardClientInfo(reward);
-            sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, message);
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, message);
             if (reward.soldierMap.size() > 0) {
                 sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.CountCapacity());
             }

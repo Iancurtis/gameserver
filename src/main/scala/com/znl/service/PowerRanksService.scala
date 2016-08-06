@@ -127,15 +127,15 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
       addlimitNearList(dungeoOrder, id, playerId)
     case saveDateBeforeStop() =>
       save()
-    case ActivityRankTrigger() =>
-      checkTimer()
+    case ActivityRankTrigger(ids:util.List[java.lang.Integer]) =>
+      checkTimer(ids)
     case getMyRanks(playerId:Long) =>
       logionGetRanks(playerId)
     case _ =>
       log.warning("未知消息")
   }
 
-  def checkTimer() {
+  def checkTimer(ids:util.List[java.lang.Integer]) {
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE)
     val c: Calendar = Calendar.getInstance
     c.setTime(GameUtils.getServerDate)
@@ -146,16 +146,23 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     val serverMinute: Int = c.get(Calendar.MINUTE)
     val serverSecond: Int = c.get(Calendar.SECOND)
     for (define <- list) {
-      val endTime: Long = getActivityEndTime(define)
+    /*  val endTime: Long = getActivityEndTime(define)
       val endCalender: Calendar = Calendar.getInstance
       endCalender.setTimeInMillis(endTime)
-      if (endCalender.get(Calendar.YEAR) == serverYear
-        && endCalender.get(Calendar.MONTH) == serverMonth
-        && endCalender.get(Calendar.DAY_OF_MONTH) == serverDay
-        && endCalender.get(Calendar.HOUR_OF_DAY) == serverHour
-        && endCalender.get(Calendar.MINUTE) == serverMinute
-        && endCalender.get(Calendar.SECOND) == serverSecond) {
+      val endserverYear: Int = endCalender.get(Calendar.YEAR)
+      val endserverMonth: Int =endCalender.get(Calendar.MONTH)
+      val endserverDay: Int = endCalender.get(Calendar.DAY_OF_MONTH)
+      val endserverHour: Int = endCalender.get(Calendar.HOUR_OF_DAY)
+      val endserverMinute: Int = endCalender.get(Calendar.MINUTE)
+      val endserverSecond: Int = endCalender.get(Calendar.SECOND)
+      if (endserverYear == serverYear
+        && endserverMonth == serverMonth
+        && endserverDay == serverDay
+        && endserverHour == serverHour
+        && endserverMinute == serverMinute
+        && endserverSecond == serverSecond) {*/
         //年月日时分秒都一致就发吧
+        if(ids.contains(define.getInt("ID"))){
         val effectId = define.getInt("effectID")
         val effectDefineList: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_EFFECT, "effectID", effectId)
         if (effectDefineList.get(0).getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_CAPITY_RANK) {
@@ -207,7 +214,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
       BaseSetDbPojo.getSetDbPojo(classOf[LimitDungeonNearSetDb], areaKey).addLimitDungeonSet(report.getDungeoId, report.getBattleId, report.getPlayerId, report.getTime)
     }
   }
-
+  val deleEven:util.List[TriggerEvent] =new util.ArrayList[TriggerEvent]()
   override def preStart() = {
     /*    BaseSetDbPojo.getSetDbPojo(classOf[LimitDungeonNearSetDb], areaKey).removeAllKey()
         BaseSetDbPojo.getSetDbPojo(classOf[LimitDungeonFastSetDb], areaKey).removeAllKey()*/
@@ -215,7 +222,6 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     reportlist.addAll(BaseSetDbPojo.getSetDbPojo(classOf[LimitDungeonNearSetDb], areaKey).getLimitDungeoReports)
     BaseSetDbPojo.getSetDbPojo(classOf[PlayerRankSetDb], areaKey)
     PowerRanksService.rankPowerList.clear()
-
     val playerRankSetDb = BaseSetDbPojo.getSetDbPojo(classOf[PlayerRankSetDb], areaKey)
     val capacity: util.List[String] = playerRankSetDb.getAllRankByType(PowerRanksDefine.POWERRANK_TYPE_CAPACITY) // DbProxy.ask(GetAllRankByType(areaKey,PowerRanksDefine.POWERRANK_TYPE_CAPACITY))
     initPowerMap(capacity, PowerRanksDefine.POWERRANK_TYPE_CAPACITY)
@@ -248,6 +254,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE)
     val now = GameUtils.getServerDate().getTime
     var end = 0l
+    val ids : util.List[java.lang.Integer] =new util.ArrayList[java.lang.Integer]()
     for (define <- list) {
       val timeType = define.getInt("timetype")
       if (timeType == 2) {
@@ -259,9 +266,23 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
         }
       }
     }
+    for (define <- list) {
+      val timeType = define.getInt("timetype")
+      if (timeType == 2) {
+        val endTime = getActivityEndTime(define)
+          if ( end ==endTime) {
+            ids.add(define.getInt("ID"))
+          }
+      }
+    }
     if (end > 0) {
-      val event = new TriggerEvent(self, ActivityRankTrigger(), TriggerType.COUNT_DOWN, (end / 1000 - now / 1000).toInt)
+      for(del <-  deleEven){
+        getTriggerService(context) ! RemoveTriggerEvent(del)
+      }
+      deleEven.clear()
+      val event = new TriggerEvent(self, ActivityRankTrigger(ids), TriggerType.COUNT_DOWN, (end / 1000 - now / 1000).toInt)
       getTriggerService(context) ! AddTriggerEvent(event)
+      deleEven.add(event)
     }
 //    import context.dispatcher
 //    context.system.scheduler.schedule(1 seconds, 1 seconds, context.self, ActivityRankTrigger())

@@ -22393,7 +22393,7 @@ public final class M8 {
        * <code>required int32 rs = 1;</code>
        *
        * <pre>
-       *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+       *0表示时间吻合,删除这个任务，
        * </pre>
        */
       boolean hasRs();
@@ -22401,7 +22401,7 @@ public final class M8 {
        * <code>required int32 rs = 1;</code>
        *
        * <pre>
-       *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+       *0表示时间吻合,删除这个任务，
        * </pre>
        */
       int getRs();
@@ -22411,7 +22411,7 @@ public final class M8 {
        * <code>required fixed64 key = 3;</code>
        *
        * <pre>
-       *唯一key
+       *1表示清空通知列表 -2表示时间不吻合发给我剩余时间 
        * </pre>
        */
       boolean hasKey();
@@ -22419,7 +22419,7 @@ public final class M8 {
        * <code>required fixed64 key = 3;</code>
        *
        * <pre>
-       *唯一key
+       *1表示清空通知列表 -2表示时间不吻合发给我剩余时间 
        * </pre>
        */
       long getKey();
@@ -22547,7 +22547,7 @@ public final class M8 {
        * <code>required int32 rs = 1;</code>
        *
        * <pre>
-       *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+       *0表示时间吻合,删除这个任务，
        * </pre>
        */
       public boolean hasRs() {
@@ -22557,7 +22557,7 @@ public final class M8 {
        * <code>required int32 rs = 1;</code>
        *
        * <pre>
-       *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+       *0表示时间吻合,删除这个任务，
        * </pre>
        */
       public int getRs() {
@@ -22571,7 +22571,7 @@ public final class M8 {
        * <code>required fixed64 key = 3;</code>
        *
        * <pre>
-       *唯一key
+       *1表示清空通知列表 -2表示时间不吻合发给我剩余时间 
        * </pre>
        */
       public boolean hasKey() {
@@ -22581,7 +22581,7 @@ public final class M8 {
        * <code>required fixed64 key = 3;</code>
        *
        * <pre>
-       *唯一key
+       *1表示清空通知列表 -2表示时间不吻合发给我剩余时间 
        * </pre>
        */
       public long getKey() {
@@ -22887,7 +22887,7 @@ public final class M8 {
          * <code>required int32 rs = 1;</code>
          *
          * <pre>
-         *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+         *0表示时间吻合,删除这个任务，
          * </pre>
          */
         public boolean hasRs() {
@@ -22897,7 +22897,7 @@ public final class M8 {
          * <code>required int32 rs = 1;</code>
          *
          * <pre>
-         *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+         *0表示时间吻合,删除这个任务，
          * </pre>
          */
         public int getRs() {
@@ -22907,7 +22907,7 @@ public final class M8 {
          * <code>required int32 rs = 1;</code>
          *
          * <pre>
-         *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+         *0表示时间吻合,删除这个任务，
          * </pre>
          */
         public Builder setRs(int value) {
@@ -22920,7 +22920,7 @@ public final class M8 {
          * <code>required int32 rs = 1;</code>
          *
          * <pre>
-         *0表示时间吻合,删除这个任务， -2表示时间不吻合发给我剩余时间
+         *0表示时间吻合,删除这个任务，
          * </pre>
          */
         public Builder clearRs() {
@@ -22936,7 +22936,7 @@ public final class M8 {
          * <code>required fixed64 key = 3;</code>
          *
          * <pre>
-         *唯一key
+         *1表示清空通知列表 -2表示时间不吻合发给我剩余时间 
          * </pre>
          */
         public boolean hasKey() {
@@ -22946,7 +22946,7 @@ public final class M8 {
          * <code>required fixed64 key = 3;</code>
          *
          * <pre>
-         *唯一key
+         *1表示清空通知列表 -2表示时间不吻合发给我剩余时间 
          * </pre>
          */
         public long getKey() {
@@ -22956,7 +22956,7 @@ public final class M8 {
          * <code>required fixed64 key = 3;</code>
          *
          * <pre>
-         *唯一key
+         *1表示清空通知列表 -2表示时间不吻合发给我剩余时间 
          * </pre>
          */
         public Builder setKey(long value) {
@@ -22969,7 +22969,7 @@ public final class M8 {
          * <code>required fixed64 key = 3;</code>
          *
          * <pre>
-         *唯一key
+         *1表示清空通知列表 -2表示时间不吻合发给我剩余时间 
          * </pre>
          */
         public Builder clearKey() {

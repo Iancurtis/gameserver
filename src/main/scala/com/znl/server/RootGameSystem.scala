@@ -75,7 +75,8 @@ class RootGameSystem(p: Properties) extends Actor with ActorLogging{
 
   override def receive: Receive = {
     case StopGame() =>
-      context.watch(context.actorOf(StopServer.props(null, null, null), "stopServer"+GameUtils.getRandomValueByRange(50000)))
+      val stopNode = context.watch(context.actorOf(StopServer.props(null, null, null), "stopServer"+GameUtils.getRandomValueByRange(50000)))
+      stopNode ! StopGame()
     case _=>
   }
 

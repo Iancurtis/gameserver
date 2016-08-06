@@ -193,7 +193,7 @@ public class BuildModule extends BasicModule {
         if (rs == 0) {
             RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
             M2.M20007.S2C message1 = rewardProxy.getRewardClientInfo(reward);
-            sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, message1);
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, message1);
             sendFuntctionLog(FunctionIdDefine.CANCEL_BUILDING_UPGRADE_FUNCTION_ID, buildType, index, order);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M10, ProtocolModuleDefine.NET_M10_C100003, builder.build());
@@ -222,7 +222,7 @@ public class BuildModule extends BasicModule {
         if (rs >= 0) {
             RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
             M2.M20007.S2C message1 = rewardProxy.getRewardClientInfo(reward);
-            sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, message1);
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, message1);
             SystemProxy systemProxy = getProxy(ActorDefine.SYSTEM_PROXY_NAME);
             List<M3.TimeInfo> m3info = new ArrayList<M3.TimeInfo>();
             M3.TimeInfo.Builder tb = M3.TimeInfo.newBuilder();
@@ -295,7 +295,7 @@ public class BuildModule extends BasicModule {
         if (rs == 0) {
             RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
             M2.M20007.S2C msg = rewardProxy.getRewardClientInfo(reward);
-            sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, msg);
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, msg);
             for (BaseLog baseLog : baseLogs) {
                 sendLog(baseLog);
             }
@@ -333,10 +333,22 @@ public class BuildModule extends BasicModule {
         if (itemlist.size() > 0) {
             RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
             M2.M20007.S2C msg = rewardProxy.getItemListClientInfo(itemlist);
-            sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, msg);
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, msg);
         }
         if (rs == 0) {
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, new GameMsg.RefeshItemBuff());
+            //刷新单个生效的itemBuffer
+            ItemBuffProxy itemBuffProxy=getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
+            JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.FillITEM, id);
+            ItemProxy itemProxy = getGameProxy().getProxy(ActorDefine.ITEM_PROXY_NAME);
+            if (jsonObject != null) {
+                int itemId = jsonObject.getInt("itemID");
+                M9.M90003.S2C s2c90003=itemBuffProxy.getM90003EffectItemBufferByItemId(itemId);
+                if(s2c90003!=null&&s2c90003.getItemBuffInfoCount()>0){
+                    pushNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90003, s2c90003);
+                    System.err.println("+++++++++++++++刷新单个的itemBuffer:时间="+s2c90003.getItemBuffInfo(0).getRemainTime());
+                }
+            }
+           // sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, new GameMsg.RefeshItemBuff());
             updateMySimplePlayerData();
             sendNoticeToPushService(TipDefine.NOTICE_TYPE_CREATESOLDIER);
             sendNoticeToPushService(TipDefine.NOTICE_TYPE_SCIENCELEVEL);
@@ -360,7 +372,7 @@ public class BuildModule extends BasicModule {
             sendFuntctionLog(FunctionIdDefine.ITEM_BUY_EMPLOY_FUNCTION_ID, id, num, 0);
             //推送背包刷新，奖励飘字等
             RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
-            sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
             for (Integer itemId : reward.addItemMap.keySet()) {
                 shopLog(itemId, reward.addItemMap.get(itemId), id);
             }

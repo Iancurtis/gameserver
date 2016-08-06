@@ -254,6 +254,20 @@ public class ActivityModule extends BasicModule {
         sendPushNetMsgToClient();
     }
 
+    /**
+     * 校验在线礼包
+     * @param request
+     */
+   private void OnTriggerNet230012Event(Request request) {
+        M23.M230012.S2C.Builder builder = M23.M230012.S2C.newBuilder();
+        ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        activityProxy.addolineActivity();
+        builder.setRs(0);
+        builder.setTotalOnlineTime(activityProxy.checkeolineActivity());
+        sendNetMsg(ProtocolModuleDefine.NET_M23, ProtocolModuleDefine.NET_M23_C230012, builder.build());
+       sendPushNetMsgToClient();
+    }
+
 
 
     /**

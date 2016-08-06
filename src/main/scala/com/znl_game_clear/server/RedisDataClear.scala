@@ -66,7 +66,7 @@ object RedisDataClear extends App{
     while(true){
       println("输入命令:<start/stop/openServer(了解更多指令)>")
       try {
-        var str : String = br.readLine().trim().toString
+        val str : String = br.readLine().trim().toString
         if (str.equals("start")) {
           println("服务器正在运行")
         }

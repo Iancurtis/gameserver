@@ -258,7 +258,7 @@ public class Player extends BaseDbPojo implements Serializable {
     public void setPrestaeReward(int prestaeReward) {
         this.prestaeReward = prestaeReward;
     }
-    private int lottereedtime3 = 9;//顶级武将已抽次数（再抽几次出紫）
+    private int lottereedtime3 = 0;//顶级武将已抽次数（再抽几次出紫）
     public int getLottereedtime3() {
         return lottereedtime3;
     }
@@ -888,9 +888,7 @@ public class Player extends BaseDbPojo implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) {this.name = name;}
 
     public Integer getSex() {
         return sex;

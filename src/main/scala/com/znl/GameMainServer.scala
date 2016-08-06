@@ -50,6 +50,8 @@ object GameMainServer extends App{
     GameUtils.setCenterServerIp(p.getProperty("center_server_ip"))
     GameUtils.setGameId(p.getProperty("game_id").toInt)
     GameUtils.test=p.getProperty("test").toBoolean
+    GameUtils.redisExpireTime=p.getProperty("redisExpireTime").toInt
+    GameUtils.mysqlDbName=p.getProperty("mysql_db")
     val http_port : Int = p.getProperty("http_port").toInt
     protectTime = p.getProperty("protect_time").toInt
     p.propertyNames().foreach(v => {

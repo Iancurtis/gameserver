@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 import akka.actor.{Props, ActorLogging, Actor}
 import akka.actor.Actor.Receive
+import com.alibaba.druid.pool.DruidDataSource
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import com.znl.core.DbOper
 import com.znl.define.ActorDefine
@@ -25,46 +26,82 @@ import scala.concurrent.duration._
  */
 
 object MySqlActor{
-  def props(mysql_ip : String, mysql_db : String, mysql_user : String, mysql_pwd : String,p:Properties)
-  = Props(classOf[MySqlActor], mysql_ip, mysql_db, mysql_user, mysql_pwd, p)
-}
+  var game_db_server_ip = ""
+  var game_db_server_port = ""
 
-class MySqlActor(mysql_ip : String, mysql_db : String, mysql_user : String, mysql_pwd : String, p:Properties) extends Actor with ActorLogging{
+  var cpds :DruidDataSource= null
 
-  val game_db_server_ip = p.getProperty("game_db_server_ip")
-  val game_db_server_port = p.getProperty("game_db_server_port")
+  def props(mysql_ip : String, mysql_db : String, mysql_user : String, mysql_pwd : String,p:Properties)= {
+    game_db_server_ip = p.getProperty("game_db_server_ip")
+    game_db_server_port = p.getProperty("game_db_server_port")
+    cpds = new com.alibaba.druid.pool.DruidDataSource()
+    cpds.setDriverClassName("com.mysql.jdbc.Driver")
+    cpds.setUrl("jdbc:mysql://%s/?useUnicode=true&characterEncoding=UTF-8".format(mysql_ip))
+    cpds.setUsername(mysql_user)
+    cpds.setPassword(mysql_pwd)
+    cpds.setMaxActive(20)
+    cpds.setMinIdle(1)
+    cpds.setMaxWait(60000)
+    cpds.setInitialSize(1)
+    Props(classOf[MySqlActor], mysql_ip, mysql_db, mysql_user, mysql_pwd, p)
+  }
 
-  //通过用C3P0 来做mysql的连接池，如果单一连接的话，会出现空闲超时异常
-//  val cpds = new ComboPooledDataSource()
-//  cpds.setDriverClass("com.mysql.jdbc.Driver")
-//  cpds.setJdbcUrl("jdbc:mysql://%s/%s?useUnicode=true&characterEncoding=UTF-8".format(mysql_ip, mysql_db))
-//  cpds.setUser(mysql_user)
-//  cpds.setPassword(mysql_pwd)
-//
-//  cpds.setMinPoolSize(5)
-//  cpds.setAcquireIncrement(5)
-//  cpds.setMaxPoolSize(20)
 
-  val cpds = new com.alibaba.druid.pool.DruidDataSource()
-  cpds.setDriverClassName("com.mysql.jdbc.Driver")
-  cpds.setUrl("jdbc:mysql://%s/?useUnicode=true&characterEncoding=UTF-8".format(mysql_ip))
-  cpds.setUsername(mysql_user)
-  cpds.setPassword(mysql_pwd)
-
-  cpds.setMaxActive(20)
-  cpds.setMinIdle(1)
-  cpds.setMaxWait(60000)
-  cpds.setInitialSize(1)
 
   def getConnection() ={
     try{
       cpds.getConnection
     }catch{
       case e:SQLException =>
-        log.error(e.getCause, "getConnection error")
+        CustomerLogger.error(e.getCause, "getConnection error")
+        e.printStackTrace()
         null
     }
   }
+
+  def insert(sql : String): Unit ={
+    val conn = getConnection()
+    val pstmt  = conn.prepareStatement(sql)
+     pstmt.executeUpdate();
+    pstmt.close()
+    conn.close()
+  }
+
+  //进行查询数据 一般只有管理平台会用到
+  def onQuery(sql : String) ={
+    val queryList = new util.ArrayList[String]()
+    //val time = System.currentTimeMillis()
+    val conn = getConnection()
+    val pstmt  = conn.prepareStatement(sql)
+    try{
+      val rs = pstmt.executeQuery()
+      val col = rs.getMetaData.getColumnCount
+      while (rs.next()){
+        val result: String = new String(rs.getString(1).toString.getBytes("ISO-8859-1"), "utf8")
+        queryList.add(result)
+      }
+      pstmt.close()
+      conn.close()
+    }catch {
+      case e: Exception => {
+        e.printStackTrace
+      }
+    }finally {
+      try{
+        pstmt.close();
+        conn.close();
+      }catch{
+        case ex:SQLException=>
+          ex.printStackTrace();
+      }
+    }
+    queryList
+  }
+}
+
+class MySqlActor(mysql_ip : String, mysql_db : String, mysql_user : String, mysql_pwd : String, p:Properties) extends Actor with ActorLogging{
+
+
 
   val loadList = new util.ArrayList[Boolean]()
   val LOAD_LIST_SIZE = 20
@@ -108,7 +145,7 @@ class MySqlActor(mysql_ip : String, mysql_db : String, mysql_user : String, mysq
 //      gameDbServer ! onDelToMysql(table, id)
       onDelToMysql(table, id,logAreaId)
     case QueryToMysql(sql : String) =>
-      sender() ! onQuery(sql)
+       //sender() ! MySqlActor.onQuery(sql)
     case TriggerExecuteToMysql() =>
       onTriggerExecuteToMysql()  //TODO 待优化
     case IsDbQueueEmpty() =>
@@ -203,39 +240,8 @@ class MySqlActor(mysql_ip : String, mysql_db : String, mysql_user : String, mysq
 //    executeUpdate(sql)
   }
 
-  //进行查询数据 一般只有管理平台会用到
-  def onQuery(sql : String) ={
-    val queryList = new util.ArrayList[String]()
-
-    val time = System.currentTimeMillis()
-    try{
-      val conn = getConnection()
-      val pstmt  = conn.prepareStatement(sql)
-      val rs = pstmt.executeQuery()
-      val col = rs.getMetaData.getColumnCount
 
 
-      while (rs.next()){
-        val result = rs.getString(1)
-
-//        val jsonObj = new JSONObject(result)
-        //      for(i <- 1 until col + 1){
-        //        jsonObj.put(rs.getMetaData.getColumnName(i), rs.getString(i))
-        //      }
-        queryList.add(result)
-      }
-
-      pstmt.close()
-      conn.close()
-    }catch {
-      case e: Exception => {
-        e.printStackTrace
-      }
-
-    }
-
-    queryList
-  }
 
   def onTriggerExecuteToMysql() : Unit ={
 
@@ -259,7 +265,6 @@ class MySqlActor(mysql_ip : String, mysql_db : String, mysql_user : String, mysq
       if (loaderIndex >= 0){
         loadList.set(loaderIndex,false)
         context.actorSelection(LOAD_NAME+loaderIndex) ! LoadMysql(datas)
-
       }
     }
     val unLockKeys: util.HashSet[String] = new util.HashSet[String]
@@ -379,7 +384,7 @@ class MySqlActor(mysql_ip : String, mysql_db : String, mysql_user : String, mysq
     try{
       val time = System.currentTimeMillis()
 
-      conn = getConnection()
+      conn = MySqlActor.getConnection()
       stmt = conn.createStatement()
       stmt.executeUpdate(sql)
 

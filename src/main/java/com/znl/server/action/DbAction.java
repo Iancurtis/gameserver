@@ -13,7 +13,8 @@ public class DbAction {
     private DbActionType type;
     private String key;
     private Map<String, String> map;
-    private Integer expireAt = -1;
+    private Integer expireAt = -1;//过期时间，时间戳
+    private Integer expire= -1;//过期时间s
 
     public Long getId() {
         return id;
@@ -62,4 +63,8 @@ public class DbAction {
     public void setExpireAt(Integer expireAt) {
         this.expireAt = expireAt;
     }
+
+    public Integer getExpire() {return expire;}
+
+    public void setExpire(Integer expire) {this.expire = expire;}
 }

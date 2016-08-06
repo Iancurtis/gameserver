@@ -51,6 +51,9 @@ public class PerformTasksProxy extends BasicProxy {
         this.areaKey = areaKey;
         for (Long id : player.getPerformTaskSet()) {
             PerformTasks performTk = BaseDbPojo.get(id, PerformTasks.class, areaKey);
+            if (performTk == null) {
+                continue;
+            }
             performTasks.add(performTk);
             for (Long memberId : performTk.getMembersSet()) {
                 FormationMember member = BaseDbPojo.get(memberId, FormationMember.class, areaKey);
@@ -210,11 +213,13 @@ public class PerformTasksProxy extends BasicProxy {
         return null;
     }
 
-    public void removeTeamNoticeByXY(int x, int y, PlayerProxy playerProxy) {
+    public List removeTeamNoticeByXY(int x, int y, PlayerProxy playerProxy) {
         List<TeamNotice> delList = new ArrayList<>();
+        List<Long> noticeIdList = new ArrayList<Long>();
         for (TeamNotice notice : teamNotices) {
             if (notice.getX() == x && notice.getY() == y) {
                 delList.add(notice);
+                noticeIdList.add(notice.getId());
                 playerProxy.removeTeamNotice(notice.getId());
                 notice.del();
             }
@@ -222,6 +227,10 @@ public class PerformTasksProxy extends BasicProxy {
         if (delList.size() > 0) {
             teamNotices.removeAll(delList);
         }
+        if (noticeIdList.size() > 0) {
+            return noticeIdList;
+        }
+        return noticeIdList;
     }
 
     public int getTaskNumforTip() {
@@ -234,20 +243,23 @@ public class PerformTasksProxy extends BasicProxy {
         return num;
     }
 
-    public void removeTeamNotice(int x, int y, long time, PlayerProxy playerProxy) {
+    public long removeTeamNotice(int x, int y, long time, PlayerProxy playerProxy) {
         TeamNotice delNotice = null;
+        long noticeId = 0l;
         for (TeamNotice notice : teamNotices) {
             if (notice.getArriveTime() == time && notice.getX() == x && notice.getY() == y) {
                 delNotice = notice;
                 break;
             }
         }
+        noticeId = delNotice.getId();
         if (delNotice != null) {
             delNotice.del();
             teamNotices.remove(delNotice);
             playerProxy.removeTeamNotice(delNotice.getId());
         }
         deleteDiggingTask(x, y, time, playerProxy);
+        return noticeId;
     }
 
     public void removeTeamNotice(long time, PlayerProxy playerProxy) {
@@ -258,6 +270,7 @@ public class PerformTasksProxy extends BasicProxy {
                 break;
             }
         }
+
         if (delNotice != null) {
             delNotice.del();
             teamNotices.remove(delNotice);
@@ -663,6 +676,7 @@ public class PerformTasksProxy extends BasicProxy {
 
     public long deleteDiggingTask(int x, int y, PlayerProxy playerProxy) {
         PerformTasks task = null;
+        long id = 0l;
         for (PerformTasks performTask : performTasks) {
             if (performTask.getWorldTileX() == x && performTask.getWorldTileY() == y) {
                 if (performTask.getType() == TaskDefine.PERFORM_TASK_DIGGING) {
@@ -670,13 +684,14 @@ public class PerformTasksProxy extends BasicProxy {
                 }
             }
         }
+        id = task.getId();
         if (task != null) {
             setLoad(task, 0, "deleteDiggingTask3");
 //            task.setLoad(0);
 //            pushPerformTaskToChangeList(task);
         }
         checkPerformTask(playerProxy);
-        return task.getId();
+        return id;
     }
 
     public void deleteDiggingTask(int x, int y, long time, PlayerProxy playerProxy) {
@@ -714,13 +729,12 @@ public class PerformTasksProxy extends BasicProxy {
     }
 
 
-    public long deleteFormTask(long time, PlayerProxy playerProxy) {
+    public void deleteFormTask(long time, PlayerProxy playerProxy) {
         PerformTasks task = null;
         for (PerformTasks performTask : performTasks) {
             if (performTask.getTimeer() == time) {
                 if (performTask.getType() == TaskDefine.PERFORM_TASK_GOHELP || performTask.getType() == TaskDefine.PERFORM_TASK_HELPBACK || performTask.getType() == TaskDefine.PERFORM_TASK_OTHERHELPBACK) {
                     task = performTask;
-                    return task.getId();
                 }
             }
         }
@@ -737,7 +751,6 @@ public class PerformTasksProxy extends BasicProxy {
             playerProxy.reducePerformTaskfromPlayer(task.getId());
         }
         checkPerformTask(playerProxy);
-        return 0;
     }
 
     public List<String> getDigList() {
@@ -753,6 +766,7 @@ public class PerformTasksProxy extends BasicProxy {
 
     public long updateDiggingTask(List<PlayerTeam> teams, int x, int y, long load) {
         PerformTasks task = null;
+        long taskId = 0l;
         for (PerformTasks performTask : performTasks) {
             if (performTask.getWorldTileX() == x && performTask.getWorldTileY() == y) {
                 if (performTask.getType() == TaskDefine.PERFORM_TASK_DIGGING) {
@@ -760,6 +774,7 @@ public class PerformTasksProxy extends BasicProxy {
                 }
             }
         }
+        taskId = task.getId();
         if (task != null) {
             setLoad(task, load, "updateDiggingTask");
 //            task.setLoad(load);
@@ -780,7 +795,7 @@ public class PerformTasksProxy extends BasicProxy {
         }
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         checkPerformTask(playerProxy);
-        return task.getId();
+        return taskId;
     }
 
     public int changerHelp(long id) {
@@ -805,12 +820,23 @@ public class PerformTasksProxy extends BasicProxy {
     }
 
 
+    /**
+     * 获取任务数量
+     *
+     * @return
+     */
     public int getTaskNum() {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         checkPerformTask(playerProxy);
         return performTasks.size();
     }
 
+    /**
+     * 根据任务到期时间获取任务
+     *
+     * @param time
+     * @return
+     */
     private PerformTasks getTaskByTime(long time) {
         for (PerformTasks tasks : performTasks) {
             if (tasks.getTimeer() == time) {
@@ -874,8 +900,8 @@ public class PerformTasksProxy extends BasicProxy {
         if (getTaskById(taskId) != null) {
             PerformTasks tasks = getTaskById(taskId);
             int timeer = (int) (tasks.getTimeer() / 1000);
-            long timee=tasks.getTimeer();
-             if (GameUtils.checkTime(timeer)||timee==tasks.getBeginTime()) {
+//            long timee=tasks.getTimeer();
+            if (GameUtils.checkTime(timeer)) {
                 checkPerformTask(playerProxy);
                 return rs;
             } else {
@@ -901,6 +927,7 @@ public class PerformTasksProxy extends BasicProxy {
         return null;
     }
 
+
     /**
      * 根据到达时间获取taskid
      *
@@ -914,6 +941,29 @@ public class PerformTasksProxy extends BasicProxy {
             }
         }
         return 0;
+    }
+
+
+    /**
+     * 检查被攻击的到达时间是否与服务器时间吻合
+     *
+     * @param key
+     * @return rs
+     */
+    public int checkTeamNoticeTimeOut(long key) {
+        int rs = 0;
+        TeamNotice teamNotice = getTeamNoticeByKey(key);
+        if (teamNotice != null) {
+            int timeer = (int) (teamNotice.getArriveTime() / 1000);
+            if (GameUtils.checkTime(timeer)) {
+                checkTeamNotices();
+                return rs;
+            } else {
+                rs = ErrorCodeDefine.M80107_2;
+                return rs;
+            }
+        }
+        return rs;
     }
 
     /**
@@ -931,60 +981,5 @@ public class PerformTasksProxy extends BasicProxy {
         return null;
     }
 
-    /**
-     * 检查被攻击的到达时间是否与服务器时间吻合
-     *
-     * @param key
-     * @return rs
-     */
-    public int checkTeamNoticeTimeOut(long key) {
-        int rs = 0;
-        TeamNotice teamNotice = getTeamNoticeByKey(key);
-        if (teamNotice != null && key == teamNotice.getId()) {
-            int timeer = (int) (teamNotice.getArriveTime() / 1000);
-            if (GameUtils.checkTime(timeer)) {
-                checkTeamNotices();
-                return rs;
-            } else {
-                rs = ErrorCodeDefine.M80107_2;
-                return rs;
-            }
-        }
-        return rs;
-    }
-
-
-    /**
-     * 通过坐标点获取TeamNotice
-     *
-     * @param x
-     * @param y
-     * @return id
-     */
-    public long getTeamNoticeByXY(int x, int y) {
-        for (TeamNotice notice : teamNotices) {
-            if (notice.getX() == x && notice.getY() == y) {
-                return notice.getId();
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * 通过time获取TeamNotice
-     *
-     * @param time
-     * @return id
-     */
-    public long getTeamNoticeByTime(long time) {
-        TeamNotice teamNotice = null;
-        for (TeamNotice notice : teamNotices) {
-            if (notice.getArriveTime() == time) {
-                teamNotice = notice;
-                return teamNotice.getId();
-            }
-        }
-        return 0;
-    }
 
 }

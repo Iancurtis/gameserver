@@ -6,6 +6,7 @@ import com.znl.GameMainServer;
 import com.znl.define.ActorDefine;
 import com.znl.define.DataDefine;
 import com.znl.define.FunctionIdDefine;
+import com.znl.define.PlayerPowerDefine;
 import com.znl.log.CustomerLogger;
 import com.znl.log.admin.tbllog_function;
 import com.znl.msg.GameMsg;
@@ -64,18 +65,18 @@ abstract public class BasicProxy{
   protected void refurceExpandPowerMap(){
     ConcurrentHashMap<Integer,Long> map  = new ConcurrentHashMap<>(expandPowerMap);
     init();
-    List<JSONObject> sendPowers = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.RESOURCE, "isshow", 1);
+    List<JSONObject> sendPowers = ConfigDataProxy.getConfigAllInfo(DataDefine.RESOURCE);
 
     //比较重置前和重置后的两个map，取出有不一样的通知到playerProxy
     for (JSONObject key :sendPowers){
       int power = key.getInt("ID");
       PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-      if (expandPowerMap.contains(power) && !map.contains(power)){
+      if (expandPowerMap.containsKey(power) && !map.containsKey(power)){
         playerProxy.addPowerToChangePower(power);
-      }else if(!expandPowerMap.contains(power) && map.contains(power)){
+      }else if(!expandPowerMap.containsKey(power) && map.containsKey(power)){
         playerProxy.addPowerToChangePower(power);
-      }else  if (expandPowerMap.contains(power) && map.contains(power)){
-        if(map.get(key).longValue() != expandPowerMap.get(key)){
+      }else  if (expandPowerMap.containsKey(power) && map.containsKey(power)){
+        if(map.get(power) != expandPowerMap.get(power).longValue()){
           playerProxy.addPowerToChangePower(power);
         }
       }

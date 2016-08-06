@@ -29,17 +29,17 @@ public final class M23 {
      */
     int getType();
 
-    // required string name = 2;
+    // optional string name = 2;
     /**
-     * <code>required string name = 2;</code>
+     * <code>optional string name = 2;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 2;</code>
+     * <code>optional string name = 2;</code>
      */
     java.lang.String getName();
     /**
-     * <code>required string name = 2;</code>
+     * <code>optional string name = 2;</code>
      */
     com.google.protobuf.ByteString
         getNameBytes();
@@ -233,17 +233,17 @@ public final class M23 {
       return type_;
     }
 
-    // required string name = 2;
+    // optional string name = 2;
     public static final int NAME_FIELD_NUMBER = 2;
     private java.lang.Object name_;
     /**
-     * <code>required string name = 2;</code>
+     * <code>optional string name = 2;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string name = 2;</code>
+     * <code>optional string name = 2;</code>
      */
     public java.lang.String getName() {
       java.lang.Object ref = name_;
@@ -260,7 +260,7 @@ public final class M23 {
       }
     }
     /**
-     * <code>required string name = 2;</code>
+     * <code>optional string name = 2;</code>
      */
     public com.google.protobuf.ByteString
         getNameBytes() {
@@ -398,10 +398,6 @@ public final class M23 {
       if (isInitialized != -1) return isInitialized == 1;
 
       if (!hasType()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasName()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -660,10 +656,6 @@ public final class M23 {
           
           return false;
         }
-        if (!hasName()) {
-          
-          return false;
-        }
         return true;
       }
 
@@ -735,16 +727,16 @@ public final class M23 {
         return this;
       }
 
-      // required string name = 2;
+      // optional string name = 2;
       private java.lang.Object name_ = "";
       /**
-       * <code>required string name = 2;</code>
+       * <code>optional string name = 2;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>optional string name = 2;</code>
        */
       public java.lang.String getName() {
         java.lang.Object ref = name_;
@@ -758,7 +750,7 @@ public final class M23 {
         }
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>optional string name = 2;</code>
        */
       public com.google.protobuf.ByteString
           getNameBytes() {
@@ -774,7 +766,7 @@ public final class M23 {
         }
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>optional string name = 2;</code>
        */
       public Builder setName(
           java.lang.String value) {
@@ -787,7 +779,7 @@ public final class M23 {
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>optional string name = 2;</code>
        */
       public Builder clearName() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -796,7 +788,7 @@ public final class M23 {
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>optional string name = 2;</code>
        */
       public Builder setNameBytes(
           com.google.protobuf.ByteString value) {
@@ -1621,9 +1613,9 @@ public final class M23 {
      */
     int getEffectId();
 
-    // required string conditionName = 3;
+    // optional string conditionName = 3;
     /**
-     * <code>required string conditionName = 3;</code>
+     * <code>optional string conditionName = 3;</code>
      *
      * <pre>
      *条件名称
@@ -1631,7 +1623,7 @@ public final class M23 {
      */
     boolean hasConditionName();
     /**
-     * <code>required string conditionName = 3;</code>
+     * <code>optional string conditionName = 3;</code>
      *
      * <pre>
      *条件名称
@@ -1639,7 +1631,7 @@ public final class M23 {
      */
     java.lang.String getConditionName();
     /**
-     * <code>required string conditionName = 3;</code>
+     * <code>optional string conditionName = 3;</code>
      *
      * <pre>
      *条件名称
@@ -1666,9 +1658,9 @@ public final class M23 {
      */
     int getSort();
 
-    // required string info = 5;
+    // optional string info = 5;
     /**
-     * <code>required string info = 5;</code>
+     * <code>optional string info = 5;</code>
      *
      * <pre>
      *条件描述
@@ -1676,7 +1668,7 @@ public final class M23 {
      */
     boolean hasInfo();
     /**
-     * <code>required string info = 5;</code>
+     * <code>optional string info = 5;</code>
      *
      * <pre>
      *条件描述
@@ -1684,7 +1676,7 @@ public final class M23 {
      */
     java.lang.String getInfo();
     /**
-     * <code>required string info = 5;</code>
+     * <code>optional string info = 5;</code>
      *
      * <pre>
      *条件描述
@@ -1711,9 +1703,9 @@ public final class M23 {
      */
     int getIscanget();
 
-    // required string icon = 7;
+    // optional string icon = 7;
     /**
-     * <code>required string icon = 7;</code>
+     * <code>optional string icon = 7;</code>
      *
      * <pre>
      *图标ICON
@@ -1721,7 +1713,7 @@ public final class M23 {
      */
     boolean hasIcon();
     /**
-     * <code>required string icon = 7;</code>
+     * <code>optional string icon = 7;</code>
      *
      * <pre>
      *图标ICON
@@ -1729,7 +1721,7 @@ public final class M23 {
      */
     java.lang.String getIcon();
     /**
-     * <code>required string icon = 7;</code>
+     * <code>optional string icon = 7;</code>
      *
      * <pre>
      *图标ICON
@@ -2220,11 +2212,11 @@ public final class M23 {
       return effectId_;
     }
 
-    // required string conditionName = 3;
+    // optional string conditionName = 3;
     public static final int CONDITIONNAME_FIELD_NUMBER = 3;
     private java.lang.Object conditionName_;
     /**
-     * <code>required string conditionName = 3;</code>
+     * <code>optional string conditionName = 3;</code>
      *
      * <pre>
      *条件名称
@@ -2234,7 +2226,7 @@ public final class M23 {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required string conditionName = 3;</code>
+     * <code>optional string conditionName = 3;</code>
      *
      * <pre>
      *条件名称
@@ -2255,7 +2247,7 @@ public final class M23 {
       }
     }
     /**
-     * <code>required string conditionName = 3;</code>
+     * <code>optional string conditionName = 3;</code>
      *
      * <pre>
      *条件名称
@@ -2299,11 +2291,11 @@ public final class M23 {
       return sort_;
     }
 
-    // required string info = 5;
+    // optional string info = 5;
     public static final int INFO_FIELD_NUMBER = 5;
     private java.lang.Object info_;
     /**
-     * <code>required string info = 5;</code>
+     * <code>optional string info = 5;</code>
      *
      * <pre>
      *条件描述
@@ -2313,7 +2305,7 @@ public final class M23 {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>required string info = 5;</code>
+     * <code>optional string info = 5;</code>
      *
      * <pre>
      *条件描述
@@ -2334,7 +2326,7 @@ public final class M23 {
       }
     }
     /**
-     * <code>required string info = 5;</code>
+     * <code>optional string info = 5;</code>
      *
      * <pre>
      *条件描述
@@ -2378,11 +2370,11 @@ public final class M23 {
       return iscanget_;
     }
 
-    // required string icon = 7;
+    // optional string icon = 7;
     public static final int ICON_FIELD_NUMBER = 7;
     private java.lang.Object icon_;
     /**
-     * <code>required string icon = 7;</code>
+     * <code>optional string icon = 7;</code>
      *
      * <pre>
      *图标ICON
@@ -2392,7 +2384,7 @@ public final class M23 {
       return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     /**
-     * <code>required string icon = 7;</code>
+     * <code>optional string icon = 7;</code>
      *
      * <pre>
      *图标ICON
@@ -2413,7 +2405,7 @@ public final class M23 {
       }
     }
     /**
-     * <code>required string icon = 7;</code>
+     * <code>optional string icon = 7;</code>
      *
      * <pre>
      *图标ICON
@@ -2838,23 +2830,11 @@ public final class M23 {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasConditionName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!hasSort()) {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasInfo()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!hasIscanget()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasIcon()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -3430,23 +3410,11 @@ public final class M23 {
           
           return false;
         }
-        if (!hasConditionName()) {
-          
-          return false;
-        }
         if (!hasSort()) {
           
           return false;
         }
-        if (!hasInfo()) {
-          
-          return false;
-        }
         if (!hasIscanget()) {
-          
-          return false;
-        }
-        if (!hasIcon()) {
           
           return false;
         }
@@ -3556,10 +3524,10 @@ public final class M23 {
         return this;
       }
 
-      // required string conditionName = 3;
+      // optional string conditionName = 3;
       private java.lang.Object conditionName_ = "";
       /**
-       * <code>required string conditionName = 3;</code>
+       * <code>optional string conditionName = 3;</code>
        *
        * <pre>
        *条件名称
@@ -3569,7 +3537,7 @@ public final class M23 {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required string conditionName = 3;</code>
+       * <code>optional string conditionName = 3;</code>
        *
        * <pre>
        *条件名称
@@ -3587,7 +3555,7 @@ public final class M23 {
         }
       }
       /**
-       * <code>required string conditionName = 3;</code>
+       * <code>optional string conditionName = 3;</code>
        *
        * <pre>
        *条件名称
@@ -3607,7 +3575,7 @@ public final class M23 {
         }
       }
       /**
-       * <code>required string conditionName = 3;</code>
+       * <code>optional string conditionName = 3;</code>
        *
        * <pre>
        *条件名称
@@ -3624,7 +3592,7 @@ public final class M23 {
         return this;
       }
       /**
-       * <code>required string conditionName = 3;</code>
+       * <code>optional string conditionName = 3;</code>
        *
        * <pre>
        *条件名称
@@ -3637,7 +3605,7 @@ public final class M23 {
         return this;
       }
       /**
-       * <code>required string conditionName = 3;</code>
+       * <code>optional string conditionName = 3;</code>
        *
        * <pre>
        *条件名称
@@ -3703,10 +3671,10 @@ public final class M23 {
         return this;
       }
 
-      // required string info = 5;
+      // optional string info = 5;
       private java.lang.Object info_ = "";
       /**
-       * <code>required string info = 5;</code>
+       * <code>optional string info = 5;</code>
        *
        * <pre>
        *条件描述
@@ -3716,7 +3684,7 @@ public final class M23 {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       /**
-       * <code>required string info = 5;</code>
+       * <code>optional string info = 5;</code>
        *
        * <pre>
        *条件描述
@@ -3734,7 +3702,7 @@ public final class M23 {
         }
       }
       /**
-       * <code>required string info = 5;</code>
+       * <code>optional string info = 5;</code>
        *
        * <pre>
        *条件描述
@@ -3754,7 +3722,7 @@ public final class M23 {
         }
       }
       /**
-       * <code>required string info = 5;</code>
+       * <code>optional string info = 5;</code>
        *
        * <pre>
        *条件描述
@@ -3771,7 +3739,7 @@ public final class M23 {
         return this;
       }
       /**
-       * <code>required string info = 5;</code>
+       * <code>optional string info = 5;</code>
        *
        * <pre>
        *条件描述
@@ -3784,7 +3752,7 @@ public final class M23 {
         return this;
       }
       /**
-       * <code>required string info = 5;</code>
+       * <code>optional string info = 5;</code>
        *
        * <pre>
        *条件描述
@@ -3850,10 +3818,10 @@ public final class M23 {
         return this;
       }
 
-      // required string icon = 7;
+      // optional string icon = 7;
       private java.lang.Object icon_ = "";
       /**
-       * <code>required string icon = 7;</code>
+       * <code>optional string icon = 7;</code>
        *
        * <pre>
        *图标ICON
@@ -3863,7 +3831,7 @@ public final class M23 {
         return ((bitField0_ & 0x00000040) == 0x00000040);
       }
       /**
-       * <code>required string icon = 7;</code>
+       * <code>optional string icon = 7;</code>
        *
        * <pre>
        *图标ICON
@@ -3881,7 +3849,7 @@ public final class M23 {
         }
       }
       /**
-       * <code>required string icon = 7;</code>
+       * <code>optional string icon = 7;</code>
        *
        * <pre>
        *图标ICON
@@ -3901,7 +3869,7 @@ public final class M23 {
         }
       }
       /**
-       * <code>required string icon = 7;</code>
+       * <code>optional string icon = 7;</code>
        *
        * <pre>
        *图标ICON
@@ -3918,7 +3886,7 @@ public final class M23 {
         return this;
       }
       /**
-       * <code>required string icon = 7;</code>
+       * <code>optional string icon = 7;</code>
        *
        * <pre>
        *图标ICON
@@ -3931,7 +3899,7 @@ public final class M23 {
         return this;
       }
       /**
-       * <code>required string icon = 7;</code>
+       * <code>optional string icon = 7;</code>
        *
        * <pre>
        *图标ICON
@@ -8592,6 +8560,1310 @@ public final class M23 {
     }
 
     // @@protoc_insertion_point(class_scope:M23.ActivityInfo)
+  }
+
+  public interface ActivityShowInfoOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // required int32 activityId = 1;
+    /**
+     * <code>required int32 activityId = 1;</code>
+     *
+     * <pre>
+     *配置表活动id
+     * </pre>
+     */
+    boolean hasActivityId();
+    /**
+     * <code>required int32 activityId = 1;</code>
+     *
+     * <pre>
+     *配置表活动id
+     * </pre>
+     */
+    int getActivityId();
+
+    // repeated .M23.ButtonInfo buttons = 2;
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    java.util.List<com.znl.proto.M23.ButtonInfo> 
+        getButtonsList();
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    com.znl.proto.M23.ButtonInfo getButtons(int index);
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    int getButtonsCount();
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    java.util.List<? extends com.znl.proto.M23.ButtonInfoOrBuilder> 
+        getButtonsOrBuilderList();
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    com.znl.proto.M23.ButtonInfoOrBuilder getButtonsOrBuilder(
+        int index);
+
+    // repeated .M23.ActivityEffectInfo effectInfos = 3;
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    java.util.List<com.znl.proto.M23.ActivityEffectInfo> 
+        getEffectInfosList();
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    com.znl.proto.M23.ActivityEffectInfo getEffectInfos(int index);
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    int getEffectInfosCount();
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    java.util.List<? extends com.znl.proto.M23.ActivityEffectInfoOrBuilder> 
+        getEffectInfosOrBuilderList();
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    com.znl.proto.M23.ActivityEffectInfoOrBuilder getEffectInfosOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code M23.ActivityShowInfo}
+   *
+   * <pre>
+   *活动相关信息(230007用) 
+   * </pre>
+   */
+  public static final class ActivityShowInfo extends
+      com.google.protobuf.GeneratedMessage
+      implements ActivityShowInfoOrBuilder {
+    // Use ActivityShowInfo.newBuilder() to construct.
+    private ActivityShowInfo(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private ActivityShowInfo(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final ActivityShowInfo defaultInstance;
+    public static ActivityShowInfo getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public ActivityShowInfo getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ActivityShowInfo(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              activityId_ = input.readInt32();
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                buttons_ = new java.util.ArrayList<com.znl.proto.M23.ButtonInfo>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              buttons_.add(input.readMessage(com.znl.proto.M23.ButtonInfo.PARSER, extensionRegistry));
+              break;
+            }
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                effectInfos_ = new java.util.ArrayList<com.znl.proto.M23.ActivityEffectInfo>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              effectInfos_.add(input.readMessage(com.znl.proto.M23.ActivityEffectInfo.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          buttons_ = java.util.Collections.unmodifiableList(buttons_);
+        }
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          effectInfos_ = java.util.Collections.unmodifiableList(effectInfos_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.znl.proto.M23.internal_static_M23_ActivityShowInfo_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.znl.proto.M23.internal_static_M23_ActivityShowInfo_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.znl.proto.M23.ActivityShowInfo.class, com.znl.proto.M23.ActivityShowInfo.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<ActivityShowInfo> PARSER =
+        new com.google.protobuf.AbstractParser<ActivityShowInfo>() {
+      public ActivityShowInfo parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ActivityShowInfo(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ActivityShowInfo> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // required int32 activityId = 1;
+    public static final int ACTIVITYID_FIELD_NUMBER = 1;
+    private int activityId_;
+    /**
+     * <code>required int32 activityId = 1;</code>
+     *
+     * <pre>
+     *配置表活动id
+     * </pre>
+     */
+    public boolean hasActivityId() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required int32 activityId = 1;</code>
+     *
+     * <pre>
+     *配置表活动id
+     * </pre>
+     */
+    public int getActivityId() {
+      return activityId_;
+    }
+
+    // repeated .M23.ButtonInfo buttons = 2;
+    public static final int BUTTONS_FIELD_NUMBER = 2;
+    private java.util.List<com.znl.proto.M23.ButtonInfo> buttons_;
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    public java.util.List<com.znl.proto.M23.ButtonInfo> getButtonsList() {
+      return buttons_;
+    }
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    public java.util.List<? extends com.znl.proto.M23.ButtonInfoOrBuilder> 
+        getButtonsOrBuilderList() {
+      return buttons_;
+    }
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    public int getButtonsCount() {
+      return buttons_.size();
+    }
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    public com.znl.proto.M23.ButtonInfo getButtons(int index) {
+      return buttons_.get(index);
+    }
+    /**
+     * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+     */
+    public com.znl.proto.M23.ButtonInfoOrBuilder getButtonsOrBuilder(
+        int index) {
+      return buttons_.get(index);
+    }
+
+    // repeated .M23.ActivityEffectInfo effectInfos = 3;
+    public static final int EFFECTINFOS_FIELD_NUMBER = 3;
+    private java.util.List<com.znl.proto.M23.ActivityEffectInfo> effectInfos_;
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    public java.util.List<com.znl.proto.M23.ActivityEffectInfo> getEffectInfosList() {
+      return effectInfos_;
+    }
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    public java.util.List<? extends com.znl.proto.M23.ActivityEffectInfoOrBuilder> 
+        getEffectInfosOrBuilderList() {
+      return effectInfos_;
+    }
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    public int getEffectInfosCount() {
+      return effectInfos_.size();
+    }
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    public com.znl.proto.M23.ActivityEffectInfo getEffectInfos(int index) {
+      return effectInfos_.get(index);
+    }
+    /**
+     * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+     *
+     * <pre>
+     *活动效果
+     * </pre>
+     */
+    public com.znl.proto.M23.ActivityEffectInfoOrBuilder getEffectInfosOrBuilder(
+        int index) {
+      return effectInfos_.get(index);
+    }
+
+    private void initFields() {
+      activityId_ = 0;
+      buttons_ = java.util.Collections.emptyList();
+      effectInfos_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasActivityId()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      for (int i = 0; i < getButtonsCount(); i++) {
+        if (!getButtons(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getEffectInfosCount(); i++) {
+        if (!getEffectInfos(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, activityId_);
+      }
+      for (int i = 0; i < buttons_.size(); i++) {
+        output.writeMessage(2, buttons_.get(i));
+      }
+      for (int i = 0; i < effectInfos_.size(); i++) {
+        output.writeMessage(3, effectInfos_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, activityId_);
+      }
+      for (int i = 0; i < buttons_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, buttons_.get(i));
+      }
+      for (int i = 0; i < effectInfos_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, effectInfos_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.znl.proto.M23.ActivityShowInfo parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M23.ActivityShowInfo parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M23.ActivityShowInfo parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.znl.proto.M23.ActivityShowInfo parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.znl.proto.M23.ActivityShowInfo parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M23.ActivityShowInfo parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M23.ActivityShowInfo parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.znl.proto.M23.ActivityShowInfo parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.znl.proto.M23.ActivityShowInfo parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.znl.proto.M23.ActivityShowInfo parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.znl.proto.M23.ActivityShowInfo prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code M23.ActivityShowInfo}
+     *
+     * <pre>
+     *活动相关信息(230007用) 
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.znl.proto.M23.ActivityShowInfoOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.znl.proto.M23.internal_static_M23_ActivityShowInfo_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.znl.proto.M23.internal_static_M23_ActivityShowInfo_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.znl.proto.M23.ActivityShowInfo.class, com.znl.proto.M23.ActivityShowInfo.Builder.class);
+      }
+
+      // Construct using com.znl.proto.M23.ActivityShowInfo.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getButtonsFieldBuilder();
+          getEffectInfosFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        activityId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        if (buttonsBuilder_ == null) {
+          buttons_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          buttonsBuilder_.clear();
+        }
+        if (effectInfosBuilder_ == null) {
+          effectInfos_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          effectInfosBuilder_.clear();
+        }
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.znl.proto.M23.internal_static_M23_ActivityShowInfo_descriptor;
+      }
+
+      public com.znl.proto.M23.ActivityShowInfo getDefaultInstanceForType() {
+        return com.znl.proto.M23.ActivityShowInfo.getDefaultInstance();
+      }
+
+      public com.znl.proto.M23.ActivityShowInfo build() {
+        com.znl.proto.M23.ActivityShowInfo result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.znl.proto.M23.ActivityShowInfo buildPartial() {
+        com.znl.proto.M23.ActivityShowInfo result = new com.znl.proto.M23.ActivityShowInfo(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.activityId_ = activityId_;
+        if (buttonsBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+            buttons_ = java.util.Collections.unmodifiableList(buttons_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.buttons_ = buttons_;
+        } else {
+          result.buttons_ = buttonsBuilder_.build();
+        }
+        if (effectInfosBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+            effectInfos_ = java.util.Collections.unmodifiableList(effectInfos_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.effectInfos_ = effectInfos_;
+        } else {
+          result.effectInfos_ = effectInfosBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.znl.proto.M23.ActivityShowInfo) {
+          return mergeFrom((com.znl.proto.M23.ActivityShowInfo)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.znl.proto.M23.ActivityShowInfo other) {
+        if (other == com.znl.proto.M23.ActivityShowInfo.getDefaultInstance()) return this;
+        if (other.hasActivityId()) {
+          setActivityId(other.getActivityId());
+        }
+        if (buttonsBuilder_ == null) {
+          if (!other.buttons_.isEmpty()) {
+            if (buttons_.isEmpty()) {
+              buttons_ = other.buttons_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureButtonsIsMutable();
+              buttons_.addAll(other.buttons_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.buttons_.isEmpty()) {
+            if (buttonsBuilder_.isEmpty()) {
+              buttonsBuilder_.dispose();
+              buttonsBuilder_ = null;
+              buttons_ = other.buttons_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              buttonsBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getButtonsFieldBuilder() : null;
+            } else {
+              buttonsBuilder_.addAllMessages(other.buttons_);
+            }
+          }
+        }
+        if (effectInfosBuilder_ == null) {
+          if (!other.effectInfos_.isEmpty()) {
+            if (effectInfos_.isEmpty()) {
+              effectInfos_ = other.effectInfos_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureEffectInfosIsMutable();
+              effectInfos_.addAll(other.effectInfos_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.effectInfos_.isEmpty()) {
+            if (effectInfosBuilder_.isEmpty()) {
+              effectInfosBuilder_.dispose();
+              effectInfosBuilder_ = null;
+              effectInfos_ = other.effectInfos_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              effectInfosBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getEffectInfosFieldBuilder() : null;
+            } else {
+              effectInfosBuilder_.addAllMessages(other.effectInfos_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasActivityId()) {
+          
+          return false;
+        }
+        for (int i = 0; i < getButtonsCount(); i++) {
+          if (!getButtons(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getEffectInfosCount(); i++) {
+          if (!getEffectInfos(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.znl.proto.M23.ActivityShowInfo parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.znl.proto.M23.ActivityShowInfo) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // required int32 activityId = 1;
+      private int activityId_ ;
+      /**
+       * <code>required int32 activityId = 1;</code>
+       *
+       * <pre>
+       *配置表活动id
+       * </pre>
+       */
+      public boolean hasActivityId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 activityId = 1;</code>
+       *
+       * <pre>
+       *配置表活动id
+       * </pre>
+       */
+      public int getActivityId() {
+        return activityId_;
+      }
+      /**
+       * <code>required int32 activityId = 1;</code>
+       *
+       * <pre>
+       *配置表活动id
+       * </pre>
+       */
+      public Builder setActivityId(int value) {
+        bitField0_ |= 0x00000001;
+        activityId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required int32 activityId = 1;</code>
+       *
+       * <pre>
+       *配置表活动id
+       * </pre>
+       */
+      public Builder clearActivityId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        activityId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // repeated .M23.ButtonInfo buttons = 2;
+      private java.util.List<com.znl.proto.M23.ButtonInfo> buttons_ =
+        java.util.Collections.emptyList();
+      private void ensureButtonsIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          buttons_ = new java.util.ArrayList<com.znl.proto.M23.ButtonInfo>(buttons_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.znl.proto.M23.ButtonInfo, com.znl.proto.M23.ButtonInfo.Builder, com.znl.proto.M23.ButtonInfoOrBuilder> buttonsBuilder_;
+
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public java.util.List<com.znl.proto.M23.ButtonInfo> getButtonsList() {
+        if (buttonsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(buttons_);
+        } else {
+          return buttonsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public int getButtonsCount() {
+        if (buttonsBuilder_ == null) {
+          return buttons_.size();
+        } else {
+          return buttonsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public com.znl.proto.M23.ButtonInfo getButtons(int index) {
+        if (buttonsBuilder_ == null) {
+          return buttons_.get(index);
+        } else {
+          return buttonsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public Builder setButtons(
+          int index, com.znl.proto.M23.ButtonInfo value) {
+        if (buttonsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureButtonsIsMutable();
+          buttons_.set(index, value);
+          onChanged();
+        } else {
+          buttonsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public Builder setButtons(
+          int index, com.znl.proto.M23.ButtonInfo.Builder builderForValue) {
+        if (buttonsBuilder_ == null) {
+          ensureButtonsIsMutable();
+          buttons_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          buttonsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public Builder addButtons(com.znl.proto.M23.ButtonInfo value) {
+        if (buttonsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureButtonsIsMutable();
+          buttons_.add(value);
+          onChanged();
+        } else {
+          buttonsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public Builder addButtons(
+          int index, com.znl.proto.M23.ButtonInfo value) {
+        if (buttonsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureButtonsIsMutable();
+          buttons_.add(index, value);
+          onChanged();
+        } else {
+          buttonsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public Builder addButtons(
+          com.znl.proto.M23.ButtonInfo.Builder builderForValue) {
+        if (buttonsBuilder_ == null) {
+          ensureButtonsIsMutable();
+          buttons_.add(builderForValue.build());
+          onChanged();
+        } else {
+          buttonsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public Builder addButtons(
+          int index, com.znl.proto.M23.ButtonInfo.Builder builderForValue) {
+        if (buttonsBuilder_ == null) {
+          ensureButtonsIsMutable();
+          buttons_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          buttonsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public Builder addAllButtons(
+          java.lang.Iterable<? extends com.znl.proto.M23.ButtonInfo> values) {
+        if (buttonsBuilder_ == null) {
+          ensureButtonsIsMutable();
+          super.addAll(values, buttons_);
+          onChanged();
+        } else {
+          buttonsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public Builder clearButtons() {
+        if (buttonsBuilder_ == null) {
+          buttons_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          buttonsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public Builder removeButtons(int index) {
+        if (buttonsBuilder_ == null) {
+          ensureButtonsIsMutable();
+          buttons_.remove(index);
+          onChanged();
+        } else {
+          buttonsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public com.znl.proto.M23.ButtonInfo.Builder getButtonsBuilder(
+          int index) {
+        return getButtonsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public com.znl.proto.M23.ButtonInfoOrBuilder getButtonsOrBuilder(
+          int index) {
+        if (buttonsBuilder_ == null) {
+          return buttons_.get(index);  } else {
+          return buttonsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public java.util.List<? extends com.znl.proto.M23.ButtonInfoOrBuilder> 
+           getButtonsOrBuilderList() {
+        if (buttonsBuilder_ != null) {
+          return buttonsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(buttons_);
+        }
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public com.znl.proto.M23.ButtonInfo.Builder addButtonsBuilder() {
+        return getButtonsFieldBuilder().addBuilder(
+            com.znl.proto.M23.ButtonInfo.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public com.znl.proto.M23.ButtonInfo.Builder addButtonsBuilder(
+          int index) {
+        return getButtonsFieldBuilder().addBuilder(
+            index, com.znl.proto.M23.ButtonInfo.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .M23.ButtonInfo buttons = 2;</code>
+       */
+      public java.util.List<com.znl.proto.M23.ButtonInfo.Builder> 
+           getButtonsBuilderList() {
+        return getButtonsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.znl.proto.M23.ButtonInfo, com.znl.proto.M23.ButtonInfo.Builder, com.znl.proto.M23.ButtonInfoOrBuilder> 
+          getButtonsFieldBuilder() {
+        if (buttonsBuilder_ == null) {
+          buttonsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              com.znl.proto.M23.ButtonInfo, com.znl.proto.M23.ButtonInfo.Builder, com.znl.proto.M23.ButtonInfoOrBuilder>(
+                  buttons_,
+                  ((bitField0_ & 0x00000002) == 0x00000002),
+                  getParentForChildren(),
+                  isClean());
+          buttons_ = null;
+        }
+        return buttonsBuilder_;
+      }
+
+      // repeated .M23.ActivityEffectInfo effectInfos = 3;
+      private java.util.List<com.znl.proto.M23.ActivityEffectInfo> effectInfos_ =
+        java.util.Collections.emptyList();
+      private void ensureEffectInfosIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          effectInfos_ = new java.util.ArrayList<com.znl.proto.M23.ActivityEffectInfo>(effectInfos_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.znl.proto.M23.ActivityEffectInfo, com.znl.proto.M23.ActivityEffectInfo.Builder, com.znl.proto.M23.ActivityEffectInfoOrBuilder> effectInfosBuilder_;
+
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public java.util.List<com.znl.proto.M23.ActivityEffectInfo> getEffectInfosList() {
+        if (effectInfosBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(effectInfos_);
+        } else {
+          return effectInfosBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public int getEffectInfosCount() {
+        if (effectInfosBuilder_ == null) {
+          return effectInfos_.size();
+        } else {
+          return effectInfosBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public com.znl.proto.M23.ActivityEffectInfo getEffectInfos(int index) {
+        if (effectInfosBuilder_ == null) {
+          return effectInfos_.get(index);
+        } else {
+          return effectInfosBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public Builder setEffectInfos(
+          int index, com.znl.proto.M23.ActivityEffectInfo value) {
+        if (effectInfosBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureEffectInfosIsMutable();
+          effectInfos_.set(index, value);
+          onChanged();
+        } else {
+          effectInfosBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public Builder setEffectInfos(
+          int index, com.znl.proto.M23.ActivityEffectInfo.Builder builderForValue) {
+        if (effectInfosBuilder_ == null) {
+          ensureEffectInfosIsMutable();
+          effectInfos_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          effectInfosBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public Builder addEffectInfos(com.znl.proto.M23.ActivityEffectInfo value) {
+        if (effectInfosBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureEffectInfosIsMutable();
+          effectInfos_.add(value);
+          onChanged();
+        } else {
+          effectInfosBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public Builder addEffectInfos(
+          int index, com.znl.proto.M23.ActivityEffectInfo value) {
+        if (effectInfosBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureEffectInfosIsMutable();
+          effectInfos_.add(index, value);
+          onChanged();
+        } else {
+          effectInfosBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public Builder addEffectInfos(
+          com.znl.proto.M23.ActivityEffectInfo.Builder builderForValue) {
+        if (effectInfosBuilder_ == null) {
+          ensureEffectInfosIsMutable();
+          effectInfos_.add(builderForValue.build());
+          onChanged();
+        } else {
+          effectInfosBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public Builder addEffectInfos(
+          int index, com.znl.proto.M23.ActivityEffectInfo.Builder builderForValue) {
+        if (effectInfosBuilder_ == null) {
+          ensureEffectInfosIsMutable();
+          effectInfos_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          effectInfosBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public Builder addAllEffectInfos(
+          java.lang.Iterable<? extends com.znl.proto.M23.ActivityEffectInfo> values) {
+        if (effectInfosBuilder_ == null) {
+          ensureEffectInfosIsMutable();
+          super.addAll(values, effectInfos_);
+          onChanged();
+        } else {
+          effectInfosBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public Builder clearEffectInfos() {
+        if (effectInfosBuilder_ == null) {
+          effectInfos_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          effectInfosBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public Builder removeEffectInfos(int index) {
+        if (effectInfosBuilder_ == null) {
+          ensureEffectInfosIsMutable();
+          effectInfos_.remove(index);
+          onChanged();
+        } else {
+          effectInfosBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public com.znl.proto.M23.ActivityEffectInfo.Builder getEffectInfosBuilder(
+          int index) {
+        return getEffectInfosFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public com.znl.proto.M23.ActivityEffectInfoOrBuilder getEffectInfosOrBuilder(
+          int index) {
+        if (effectInfosBuilder_ == null) {
+          return effectInfos_.get(index);  } else {
+          return effectInfosBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public java.util.List<? extends com.znl.proto.M23.ActivityEffectInfoOrBuilder> 
+           getEffectInfosOrBuilderList() {
+        if (effectInfosBuilder_ != null) {
+          return effectInfosBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(effectInfos_);
+        }
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public com.znl.proto.M23.ActivityEffectInfo.Builder addEffectInfosBuilder() {
+        return getEffectInfosFieldBuilder().addBuilder(
+            com.znl.proto.M23.ActivityEffectInfo.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public com.znl.proto.M23.ActivityEffectInfo.Builder addEffectInfosBuilder(
+          int index) {
+        return getEffectInfosFieldBuilder().addBuilder(
+            index, com.znl.proto.M23.ActivityEffectInfo.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .M23.ActivityEffectInfo effectInfos = 3;</code>
+       *
+       * <pre>
+       *活动效果
+       * </pre>
+       */
+      public java.util.List<com.znl.proto.M23.ActivityEffectInfo.Builder> 
+           getEffectInfosBuilderList() {
+        return getEffectInfosFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          com.znl.proto.M23.ActivityEffectInfo, com.znl.proto.M23.ActivityEffectInfo.Builder, com.znl.proto.M23.ActivityEffectInfoOrBuilder> 
+          getEffectInfosFieldBuilder() {
+        if (effectInfosBuilder_ == null) {
+          effectInfosBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              com.znl.proto.M23.ActivityEffectInfo, com.znl.proto.M23.ActivityEffectInfo.Builder, com.znl.proto.M23.ActivityEffectInfoOrBuilder>(
+                  effectInfos_,
+                  ((bitField0_ & 0x00000004) == 0x00000004),
+                  getParentForChildren(),
+                  isClean());
+          effectInfos_ = null;
+        }
+        return effectInfosBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:M23.ActivityShowInfo)
+    }
+
+    static {
+      defaultInstance = new ActivityShowInfo(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:M23.ActivityShowInfo)
   }
 
   public interface LimitActivityInfoOrBuilder
@@ -21279,29 +22551,29 @@ public final class M23 {
     public interface S2COrBuilder
         extends com.google.protobuf.MessageOrBuilder {
 
-      // repeated .M23.ActivityInfo activityInfo = 1;
+      // repeated .M23.ActivityShowInfo activityInfo = 1;
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
-      java.util.List<com.znl.proto.M23.ActivityInfo> 
+      java.util.List<com.znl.proto.M23.ActivityShowInfo> 
           getActivityInfoList();
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
-      com.znl.proto.M23.ActivityInfo getActivityInfo(int index);
+      com.znl.proto.M23.ActivityShowInfo getActivityInfo(int index);
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
       int getActivityInfoCount();
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
-      java.util.List<? extends com.znl.proto.M23.ActivityInfoOrBuilder> 
+      java.util.List<? extends com.znl.proto.M23.ActivityShowInfoOrBuilder> 
           getActivityInfoOrBuilderList();
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
-      com.znl.proto.M23.ActivityInfoOrBuilder getActivityInfoOrBuilder(
+      com.znl.proto.M23.ActivityShowInfoOrBuilder getActivityInfoOrBuilder(
           int index);
     }
     /**
@@ -21357,10 +22629,10 @@ public final class M23 {
               }
               case 10: {
                 if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                  activityInfo_ = new java.util.ArrayList<com.znl.proto.M23.ActivityInfo>();
+                  activityInfo_ = new java.util.ArrayList<com.znl.proto.M23.ActivityShowInfo>();
                   mutable_bitField0_ |= 0x00000001;
                 }
-                activityInfo_.add(input.readMessage(com.znl.proto.M23.ActivityInfo.PARSER, extensionRegistry));
+                activityInfo_.add(input.readMessage(com.znl.proto.M23.ActivityShowInfo.PARSER, extensionRegistry));
                 break;
               }
             }
@@ -21405,38 +22677,38 @@ public final class M23 {
         return PARSER;
       }
 
-      // repeated .M23.ActivityInfo activityInfo = 1;
+      // repeated .M23.ActivityShowInfo activityInfo = 1;
       public static final int ACTIVITYINFO_FIELD_NUMBER = 1;
-      private java.util.List<com.znl.proto.M23.ActivityInfo> activityInfo_;
+      private java.util.List<com.znl.proto.M23.ActivityShowInfo> activityInfo_;
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
-      public java.util.List<com.znl.proto.M23.ActivityInfo> getActivityInfoList() {
+      public java.util.List<com.znl.proto.M23.ActivityShowInfo> getActivityInfoList() {
         return activityInfo_;
       }
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
-      public java.util.List<? extends com.znl.proto.M23.ActivityInfoOrBuilder> 
+      public java.util.List<? extends com.znl.proto.M23.ActivityShowInfoOrBuilder> 
           getActivityInfoOrBuilderList() {
         return activityInfo_;
       }
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
       public int getActivityInfoCount() {
         return activityInfo_.size();
       }
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
-      public com.znl.proto.M23.ActivityInfo getActivityInfo(int index) {
+      public com.znl.proto.M23.ActivityShowInfo getActivityInfo(int index) {
         return activityInfo_.get(index);
       }
       /**
-       * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+       * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
        */
-      public com.znl.proto.M23.ActivityInfoOrBuilder getActivityInfoOrBuilder(
+      public com.znl.proto.M23.ActivityShowInfoOrBuilder getActivityInfoOrBuilder(
           int index) {
         return activityInfo_.get(index);
       }
@@ -21711,23 +22983,23 @@ public final class M23 {
         }
         private int bitField0_;
 
-        // repeated .M23.ActivityInfo activityInfo = 1;
-        private java.util.List<com.znl.proto.M23.ActivityInfo> activityInfo_ =
+        // repeated .M23.ActivityShowInfo activityInfo = 1;
+        private java.util.List<com.znl.proto.M23.ActivityShowInfo> activityInfo_ =
           java.util.Collections.emptyList();
         private void ensureActivityInfoIsMutable() {
           if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-            activityInfo_ = new java.util.ArrayList<com.znl.proto.M23.ActivityInfo>(activityInfo_);
+            activityInfo_ = new java.util.ArrayList<com.znl.proto.M23.ActivityShowInfo>(activityInfo_);
             bitField0_ |= 0x00000001;
            }
         }
 
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.znl.proto.M23.ActivityInfo, com.znl.proto.M23.ActivityInfo.Builder, com.znl.proto.M23.ActivityInfoOrBuilder> activityInfoBuilder_;
+            com.znl.proto.M23.ActivityShowInfo, com.znl.proto.M23.ActivityShowInfo.Builder, com.znl.proto.M23.ActivityShowInfoOrBuilder> activityInfoBuilder_;
 
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
-        public java.util.List<com.znl.proto.M23.ActivityInfo> getActivityInfoList() {
+        public java.util.List<com.znl.proto.M23.ActivityShowInfo> getActivityInfoList() {
           if (activityInfoBuilder_ == null) {
             return java.util.Collections.unmodifiableList(activityInfo_);
           } else {
@@ -21735,7 +23007,7 @@ public final class M23 {
           }
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
         public int getActivityInfoCount() {
           if (activityInfoBuilder_ == null) {
@@ -21745,9 +23017,9 @@ public final class M23 {
           }
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
-        public com.znl.proto.M23.ActivityInfo getActivityInfo(int index) {
+        public com.znl.proto.M23.ActivityShowInfo getActivityInfo(int index) {
           if (activityInfoBuilder_ == null) {
             return activityInfo_.get(index);
           } else {
@@ -21755,10 +23027,10 @@ public final class M23 {
           }
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
         public Builder setActivityInfo(
-            int index, com.znl.proto.M23.ActivityInfo value) {
+            int index, com.znl.proto.M23.ActivityShowInfo value) {
           if (activityInfoBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -21772,10 +23044,10 @@ public final class M23 {
           return this;
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
         public Builder setActivityInfo(
-            int index, com.znl.proto.M23.ActivityInfo.Builder builderForValue) {
+            int index, com.znl.proto.M23.ActivityShowInfo.Builder builderForValue) {
           if (activityInfoBuilder_ == null) {
             ensureActivityInfoIsMutable();
             activityInfo_.set(index, builderForValue.build());
@@ -21786,9 +23058,9 @@ public final class M23 {
           return this;
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
-        public Builder addActivityInfo(com.znl.proto.M23.ActivityInfo value) {
+        public Builder addActivityInfo(com.znl.proto.M23.ActivityShowInfo value) {
           if (activityInfoBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -21802,10 +23074,10 @@ public final class M23 {
           return this;
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
         public Builder addActivityInfo(
-            int index, com.znl.proto.M23.ActivityInfo value) {
+            int index, com.znl.proto.M23.ActivityShowInfo value) {
           if (activityInfoBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -21819,10 +23091,10 @@ public final class M23 {
           return this;
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
         public Builder addActivityInfo(
-            com.znl.proto.M23.ActivityInfo.Builder builderForValue) {
+            com.znl.proto.M23.ActivityShowInfo.Builder builderForValue) {
           if (activityInfoBuilder_ == null) {
             ensureActivityInfoIsMutable();
             activityInfo_.add(builderForValue.build());
@@ -21833,10 +23105,10 @@ public final class M23 {
           return this;
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
         public Builder addActivityInfo(
-            int index, com.znl.proto.M23.ActivityInfo.Builder builderForValue) {
+            int index, com.znl.proto.M23.ActivityShowInfo.Builder builderForValue) {
           if (activityInfoBuilder_ == null) {
             ensureActivityInfoIsMutable();
             activityInfo_.add(index, builderForValue.build());
@@ -21847,10 +23119,10 @@ public final class M23 {
           return this;
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
         public Builder addAllActivityInfo(
-            java.lang.Iterable<? extends com.znl.proto.M23.ActivityInfo> values) {
+            java.lang.Iterable<? extends com.znl.proto.M23.ActivityShowInfo> values) {
           if (activityInfoBuilder_ == null) {
             ensureActivityInfoIsMutable();
             super.addAll(values, activityInfo_);
@@ -21861,7 +23133,7 @@ public final class M23 {
           return this;
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
         public Builder clearActivityInfo() {
           if (activityInfoBuilder_ == null) {
@@ -21874,7 +23146,7 @@ public final class M23 {
           return this;
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
         public Builder removeActivityInfo(int index) {
           if (activityInfoBuilder_ == null) {
@@ -21887,16 +23159,16 @@ public final class M23 {
           return this;
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
-        public com.znl.proto.M23.ActivityInfo.Builder getActivityInfoBuilder(
+        public com.znl.proto.M23.ActivityShowInfo.Builder getActivityInfoBuilder(
             int index) {
           return getActivityInfoFieldBuilder().getBuilder(index);
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
-        public com.znl.proto.M23.ActivityInfoOrBuilder getActivityInfoOrBuilder(
+        public com.znl.proto.M23.ActivityShowInfoOrBuilder getActivityInfoOrBuilder(
             int index) {
           if (activityInfoBuilder_ == null) {
             return activityInfo_.get(index);  } else {
@@ -21904,9 +23176,9 @@ public final class M23 {
           }
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
-        public java.util.List<? extends com.znl.proto.M23.ActivityInfoOrBuilder> 
+        public java.util.List<? extends com.znl.proto.M23.ActivityShowInfoOrBuilder> 
              getActivityInfoOrBuilderList() {
           if (activityInfoBuilder_ != null) {
             return activityInfoBuilder_.getMessageOrBuilderList();
@@ -21915,33 +23187,33 @@ public final class M23 {
           }
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
-        public com.znl.proto.M23.ActivityInfo.Builder addActivityInfoBuilder() {
+        public com.znl.proto.M23.ActivityShowInfo.Builder addActivityInfoBuilder() {
           return getActivityInfoFieldBuilder().addBuilder(
-              com.znl.proto.M23.ActivityInfo.getDefaultInstance());
+              com.znl.proto.M23.ActivityShowInfo.getDefaultInstance());
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
-        public com.znl.proto.M23.ActivityInfo.Builder addActivityInfoBuilder(
+        public com.znl.proto.M23.ActivityShowInfo.Builder addActivityInfoBuilder(
             int index) {
           return getActivityInfoFieldBuilder().addBuilder(
-              index, com.znl.proto.M23.ActivityInfo.getDefaultInstance());
+              index, com.znl.proto.M23.ActivityShowInfo.getDefaultInstance());
         }
         /**
-         * <code>repeated .M23.ActivityInfo activityInfo = 1;</code>
+         * <code>repeated .M23.ActivityShowInfo activityInfo = 1;</code>
          */
-        public java.util.List<com.znl.proto.M23.ActivityInfo.Builder> 
+        public java.util.List<com.znl.proto.M23.ActivityShowInfo.Builder> 
              getActivityInfoBuilderList() {
           return getActivityInfoFieldBuilder().getBuilderList();
         }
         private com.google.protobuf.RepeatedFieldBuilder<
-            com.znl.proto.M23.ActivityInfo, com.znl.proto.M23.ActivityInfo.Builder, com.znl.proto.M23.ActivityInfoOrBuilder> 
+            com.znl.proto.M23.ActivityShowInfo, com.znl.proto.M23.ActivityShowInfo.Builder, com.znl.proto.M23.ActivityShowInfoOrBuilder> 
             getActivityInfoFieldBuilder() {
           if (activityInfoBuilder_ == null) {
             activityInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-                com.znl.proto.M23.ActivityInfo, com.znl.proto.M23.ActivityInfo.Builder, com.znl.proto.M23.ActivityInfoOrBuilder>(
+                com.znl.proto.M23.ActivityShowInfo, com.znl.proto.M23.ActivityShowInfo.Builder, com.znl.proto.M23.ActivityShowInfoOrBuilder>(
                     activityInfo_,
                     ((bitField0_ & 0x00000001) == 0x00000001),
                     getParentForChildren(),
@@ -24543,6 +25815,42 @@ public final class M23 {
        */
       com.znl.proto.M23.ActivityInfoOrBuilder getActivityInfoOrBuilder(
           int index);
+
+      // optional int32 nextOpenId = 3;
+      /**
+       * <code>optional int32 nextOpenId = 3;</code>
+       *
+       * <pre>
+       *下一个要开启的活动id
+       * </pre>
+       */
+      boolean hasNextOpenId();
+      /**
+       * <code>optional int32 nextOpenId = 3;</code>
+       *
+       * <pre>
+       *下一个要开启的活动id
+       * </pre>
+       */
+      int getNextOpenId();
+
+      // optional int32 nextOpenTime = 4;
+      /**
+       * <code>optional int32 nextOpenTime = 4;</code>
+       *
+       * <pre>
+       *下一个要开启的时间
+       * </pre>
+       */
+      boolean hasNextOpenTime();
+      /**
+       * <code>optional int32 nextOpenTime = 4;</code>
+       *
+       * <pre>
+       *下一个要开启的时间
+       * </pre>
+       */
+      int getNextOpenTime();
     }
     /**
      * Protobuf type {@code M23.M230010.S2C}
@@ -24606,6 +25914,16 @@ public final class M23 {
                   mutable_bitField0_ |= 0x00000002;
                 }
                 activityInfo_.add(input.readMessage(com.znl.proto.M23.ActivityInfo.PARSER, extensionRegistry));
+                break;
+              }
+              case 24: {
+                bitField0_ |= 0x00000002;
+                nextOpenId_ = input.readInt32();
+                break;
+              }
+              case 32: {
+                bitField0_ |= 0x00000004;
+                nextOpenTime_ = input.readInt32();
                 break;
               }
             }
@@ -24731,9 +26049,59 @@ public final class M23 {
         return activityInfo_.get(index);
       }
 
+      // optional int32 nextOpenId = 3;
+      public static final int NEXTOPENID_FIELD_NUMBER = 3;
+      private int nextOpenId_;
+      /**
+       * <code>optional int32 nextOpenId = 3;</code>
+       *
+       * <pre>
+       *下一个要开启的活动id
+       * </pre>
+       */
+      public boolean hasNextOpenId() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional int32 nextOpenId = 3;</code>
+       *
+       * <pre>
+       *下一个要开启的活动id
+       * </pre>
+       */
+      public int getNextOpenId() {
+        return nextOpenId_;
+      }
+
+      // optional int32 nextOpenTime = 4;
+      public static final int NEXTOPENTIME_FIELD_NUMBER = 4;
+      private int nextOpenTime_;
+      /**
+       * <code>optional int32 nextOpenTime = 4;</code>
+       *
+       * <pre>
+       *下一个要开启的时间
+       * </pre>
+       */
+      public boolean hasNextOpenTime() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional int32 nextOpenTime = 4;</code>
+       *
+       * <pre>
+       *下一个要开启的时间
+       * </pre>
+       */
+      public int getNextOpenTime() {
+        return nextOpenTime_;
+      }
+
       private void initFields() {
         rs_ = 0;
         activityInfo_ = java.util.Collections.emptyList();
+        nextOpenId_ = 0;
+        nextOpenTime_ = 0;
       }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
@@ -24763,6 +26131,12 @@ public final class M23 {
         for (int i = 0; i < activityInfo_.size(); i++) {
           output.writeMessage(2, activityInfo_.get(i));
         }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeInt32(3, nextOpenId_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          output.writeInt32(4, nextOpenTime_);
+        }
         getUnknownFields().writeTo(output);
       }
 
@@ -24779,6 +26153,14 @@ public final class M23 {
         for (int i = 0; i < activityInfo_.size(); i++) {
           size += com.google.protobuf.CodedOutputStream
             .computeMessageSize(2, activityInfo_.get(i));
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(3, nextOpenId_);
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(4, nextOpenTime_);
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -24905,6 +26287,10 @@ public final class M23 {
           } else {
             activityInfoBuilder_.clear();
           }
+          nextOpenId_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000004);
+          nextOpenTime_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000008);
           return this;
         }
 
@@ -24946,6 +26332,14 @@ public final class M23 {
           } else {
             result.activityInfo_ = activityInfoBuilder_.build();
           }
+          if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          result.nextOpenId_ = nextOpenId_;
+          if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+            to_bitField0_ |= 0x00000004;
+          }
+          result.nextOpenTime_ = nextOpenTime_;
           result.bitField0_ = to_bitField0_;
           onBuilt();
           return result;
@@ -24990,6 +26384,12 @@ public final class M23 {
                 activityInfoBuilder_.addAllMessages(other.activityInfo_);
               }
             }
+          }
+          if (other.hasNextOpenId()) {
+            setNextOpenId(other.getNextOpenId());
+          }
+          if (other.hasNextOpenTime()) {
+            setNextOpenTime(other.getNextOpenTime());
           }
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
@@ -25387,6 +26787,104 @@ public final class M23 {
             activityInfo_ = null;
           }
           return activityInfoBuilder_;
+        }
+
+        // optional int32 nextOpenId = 3;
+        private int nextOpenId_ ;
+        /**
+         * <code>optional int32 nextOpenId = 3;</code>
+         *
+         * <pre>
+         *下一个要开启的活动id
+         * </pre>
+         */
+        public boolean hasNextOpenId() {
+          return ((bitField0_ & 0x00000004) == 0x00000004);
+        }
+        /**
+         * <code>optional int32 nextOpenId = 3;</code>
+         *
+         * <pre>
+         *下一个要开启的活动id
+         * </pre>
+         */
+        public int getNextOpenId() {
+          return nextOpenId_;
+        }
+        /**
+         * <code>optional int32 nextOpenId = 3;</code>
+         *
+         * <pre>
+         *下一个要开启的活动id
+         * </pre>
+         */
+        public Builder setNextOpenId(int value) {
+          bitField0_ |= 0x00000004;
+          nextOpenId_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional int32 nextOpenId = 3;</code>
+         *
+         * <pre>
+         *下一个要开启的活动id
+         * </pre>
+         */
+        public Builder clearNextOpenId() {
+          bitField0_ = (bitField0_ & ~0x00000004);
+          nextOpenId_ = 0;
+          onChanged();
+          return this;
+        }
+
+        // optional int32 nextOpenTime = 4;
+        private int nextOpenTime_ ;
+        /**
+         * <code>optional int32 nextOpenTime = 4;</code>
+         *
+         * <pre>
+         *下一个要开启的时间
+         * </pre>
+         */
+        public boolean hasNextOpenTime() {
+          return ((bitField0_ & 0x00000008) == 0x00000008);
+        }
+        /**
+         * <code>optional int32 nextOpenTime = 4;</code>
+         *
+         * <pre>
+         *下一个要开启的时间
+         * </pre>
+         */
+        public int getNextOpenTime() {
+          return nextOpenTime_;
+        }
+        /**
+         * <code>optional int32 nextOpenTime = 4;</code>
+         *
+         * <pre>
+         *下一个要开启的时间
+         * </pre>
+         */
+        public Builder setNextOpenTime(int value) {
+          bitField0_ |= 0x00000008;
+          nextOpenTime_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional int32 nextOpenTime = 4;</code>
+         *
+         * <pre>
+         *下一个要开启的时间
+         * </pre>
+         */
+        public Builder clearNextOpenTime() {
+          bitField0_ = (bitField0_ & ~0x00000008);
+          nextOpenTime_ = 0;
+          onChanged();
+          return this;
         }
 
         // @@protoc_insertion_point(builder_scope:M23.M230010.S2C)
@@ -28872,6 +30370,11 @@ public final class M23 {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_M23_ActivityInfo_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_M23_ActivityShowInfo_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_M23_ActivityShowInfo_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_M23_LimitActivityInfo_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -29066,13 +30569,13 @@ public final class M23 {
   static {
     java.lang.String[] descriptorData = {
       "\n\tM23.proto\022\003M23\032\014Common.proto\"I\n\nButton" +
-      "Info\022\014\n\004type\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\014\n\004jump" +
+      "Info\022\014\n\004type\030\001 \002(\005\022\014\n\004name\030\002 \001(\t\022\014\n\004jump" +
       "\030\003 \001(\t\022\021\n\tjumpPanel\030\004 \001(\t\"7\n\tPriceInfo\022\r" +
       "\n\005power\030\001 \002(\005\022\016\n\006typeId\030\002 \002(\005\022\013\n\003num\030\003 \002" +
       "(\005\"\344\002\n\022ActivityEffectInfo\022\014\n\004type\030\001 \002(\005\022" +
-      "\020\n\010effectId\030\002 \002(\005\022\025\n\rconditionName\030\003 \002(\t" +
-      "\022\014\n\004sort\030\004 \002(\005\022\014\n\004info\030\005 \002(\t\022\020\n\010iscanget" +
-      "\030\006 \002(\005\022\014\n\004icon\030\007 \002(\t\022\022\n\njumpbutton\030\010 \001(\t" +
+      "\020\n\010effectId\030\002 \002(\005\022\025\n\rconditionName\030\003 \001(\t" +
+      "\022\014\n\004sort\030\004 \002(\005\022\014\n\004info\030\005 \001(\t\022\020\n\010iscanget" +
+      "\030\006 \002(\005\022\014\n\004icon\030\007 \001(\t\022\022\n\njumpbutton\030\010 \001(\t" +
       "\022\022\n\njumpmodule\030\t \001(\t\022#\n\007rewards\030\n \003(\0132\022." +
       "Common.RewardInfo\022\022\n\neffecttype\030\013 \001(\005\022\016\n",
       "\006effect\030\014 \001(\005\022%\n\roriginalprice\030\r \003(\0132\016.M" +
@@ -29087,44 +30590,48 @@ public final class M23 {
       " \001(\005\022\016\n\006bgIcon\030\014 \002(\005\022\017\n\007already\030\r \001(\005\022\r\n",
       "\005total\030\016 \001(\005\022\025\n\rconditiontype\030\017 \001(\005\022\014\n\004s" +
       "how\030\020 \001(\005\022\014\n\004text\030\021 \001(\t\022\020\n\010endjudge\030\023 \001(" +
-      "\005\"\231\001\n\021LimitActivityInfo\022\016\n\006uitype\030\001 \002(\005\022" +
+      "\005\"v\n\020ActivityShowInfo\022\022\n\nactivityId\030\001 \002(" +
+      "\005\022 \n\007buttons\030\002 \003(\0132\017.M23.ButtonInfo\022,\n\013e" +
+      "ffectInfos\030\003 \003(\0132\027.M23.ActivityEffectInf" +
+      "o\"\231\001\n\021LimitActivityInfo\022\016\n\006uitype\030\001 \002(\005\022" +
       "\022\n\nactivityId\030\002 \002(\005\022\020\n\010effectId\030\003 \002(\005\022\014\n" +
       "\004name\030\004 \002(\t\022\021\n\tstartTime\030\005 \002(\005\022\017\n\007endTim" +
       "e\030\006 \002(\005\022\016\n\006bgIcon\030\007 \002(\005\022\014\n\004info\030\010 \002(\t\"\243\001" +
-      "\n\010LaBaInfo\022\n\n\002id\030\001 \002(\005\022\014\n\004free\030\002 \002(\005\022\021\n\t" +
+      "\n\010LaBaInfo\022\n\n\002id\030\001 \002(\005\022\014\n\004free\030\002 \002(\005\022\021\n\t",
       "startTime\030\003 \002(\005\022\017\n\007endTime\030\004 \002(\005\022\r\n\005pric" +
       "e\030\005 \002(\005\022\020\n\010tenPrice\030\006 \002(\005\022\023\n\013rewardgroup" +
-      "\030\007 \002(\005\022\025\n\rrewardgroupId\030\010 \001(\005\022\014\n\004type\030\t ",
+      "\030\007 \002(\005\022\025\n\rrewardgroupId\030\010 \001(\005\022\014\n\004type\030\t " +
       "\001(\005\"?\n\017LegionShareInfo\022\n\n\002id\030\001 \002(\005\022\016\n\006pl" +
       "ayer\030\002 \002(\t\022\020\n\010timeLeft\030\003 \002(\005\"s\n\007M230000\032" +
       "a\n\003S2C\022\n\n\002rs\030\001 \002(\005\022$\n\tactivitys\030\002 \003(\0132\021." +
       "M23.ActivityInfo\022\022\n\nnextOpenId\030\003 \001(\005\022\024\n\014" +
       "nextOpenTime\030\004 \001(\005\032\005\n\003C2S\"}\n\007M230001\0327\n\003" +
       "S2C\022\n\n\002rs\030\001 \002(\005\022\022\n\nactivityId\030\002 \002(\005\022\020\n\010e" +
-      "ffectId\030\003 \002(\005\0329\n\003C2S\022\022\n\nactivityId\030\001 \002(\005" +
+      "ffectId\030\003 \002(\005\0329\n\003C2S\022\022\n\nactivityId\030\001 \002(\005",
       "\022\020\n\010effectId\030\002 \002(\005\022\014\n\004sort\030\003 \002(\005\"x\n\007M230" +
       "002\032f\n\003S2C\022\n\n\002rs\030\001 \002(\005\022)\n\tactivitys\030\002 \003(" +
-      "\0132\026.M23.LimitActivityInfo\022\022\n\nnextOpenId\030",
+      "\0132\026.M23.LimitActivityInfo\022\022\n\nnextOpenId\030" +
       "\003 \001(\005\022\024\n\014nextOpenTime\030\004 \001(\005\032\005\n\003C2S\"d\n\007M2" +
       "30003\0322\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\037\n\010labaInfo\030\002 \001" +
       "(\0132\r.M23.LaBaInfo\032%\n\003C2S\022\020\n\010effectId\030\001 \002" +
       "(\005\022\014\n\004type\030\002 \002(\005\"R\n\007M230005\032@\n\003S2C\022\n\n\002rs" +
       "\030\001 \002(\005\022-\n\017legionShareInfo\030\002 \003(\0132\024.M23.Le" +
       "gionShareInfo\032\005\n\003C2S\"3\n\007M230006\032\025\n\003S2C\022\016" +
-      "\n\006result\030\001 \002(\005\032\021\n\003C2S\022\n\n\002id\030\001 \002(\005\"9\n\007M23" +
-      "0007\032.\n\003S2C\022\'\n\014activityInfo\030\001 \003(\0132\021.M23." +
-      "ActivityInfo\"F\n\007M230008\032\032\n\003S2C\022\023\n\013activi" +
-      "tyIds\030\001 \003(\005\032\037\n\003C2S\022\030\n\020checkActivityIds\030\001",
-      " \003(\005\">\n\007M230009\0323\n\003S2C\022,\n\014activityInfo\030\001" +
-      " \002(\0132\026.M23.LimitActivityInfo\"f\n\007M230010\032" +
-      ":\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\'\n\014activityInfo\030\002 \003(\013" +
-      "2\021.M23.ActivityInfo\032\037\n\003C2S\022\030\n\020checkActiv" +
-      "ityIds\030\001 \002(\005\"k\n\007M230011\032?\n\003S2C\022\n\n\002rs\030\001 \002" +
-      "(\005\022,\n\014activityInfo\030\002 \003(\0132\026.M23.LimitActi" +
-      "vityInfo\032\037\n\003C2S\022\030\n\020checkActivityIds\030\001 \002(" +
-      "\005\"<\n\007M230012\032*\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\027\n\017total" +
-      "OnlineTime\030\002 \002(\005\032\005\n\003C2SB\024\n\rcom.znl.proto" +
-      "B\003M23"
+      "\n\006result\030\001 \002(\005\032\021\n\003C2S\022\n\n\002id\030\001 \002(\005\"=\n\007M23",
+      "0007\0322\n\003S2C\022+\n\014activityInfo\030\001 \003(\0132\025.M23." +
+      "ActivityShowInfo\"F\n\007M230008\032\032\n\003S2C\022\023\n\013ac" +
+      "tivityIds\030\001 \003(\005\032\037\n\003C2S\022\030\n\020checkActivityI" +
+      "ds\030\001 \003(\005\">\n\007M230009\0323\n\003S2C\022,\n\014activityIn" +
+      "fo\030\001 \002(\0132\026.M23.LimitActivityInfo\"\220\001\n\007M23" +
+      "0010\032d\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\'\n\014activityInfo\030" +
+      "\002 \003(\0132\021.M23.ActivityInfo\022\022\n\nnextOpenId\030\003" +
+      " \001(\005\022\024\n\014nextOpenTime\030\004 \001(\005\032\037\n\003C2S\022\030\n\020che" +
+      "ckActivityIds\030\001 \002(\005\"k\n\007M230011\032?\n\003S2C\022\n\n" +
+      "\002rs\030\001 \002(\005\022,\n\014activityInfo\030\002 \003(\0132\026.M23.Li",
+      "mitActivityInfo\032\037\n\003C2S\022\030\n\020checkActivityI" +
+      "ds\030\001 \002(\005\"<\n\007M230012\032*\n\003S2C\022\n\n\002rs\030\001 \002(\005\022\027" +
+      "\n\017totalOnlineTime\030\002 \002(\005\032\005\n\003C2SB\024\n\rcom.zn" +
+      "l.protoB\003M23"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -29155,26 +30662,32 @@ public final class M23 {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_ActivityInfo_descriptor,
               new java.lang.String[] { "ActivityId", "Name", "ArtIcon", "Info", "Uitype", "Title", "Sort", "Buttons", "EffectInfos", "StartTime", "EndTime", "BgIcon", "Already", "Total", "Conditiontype", "Show", "Text", "Endjudge", });
-          internal_static_M23_LimitActivityInfo_descriptor =
+          internal_static_M23_ActivityShowInfo_descriptor =
             getDescriptor().getMessageTypes().get(4);
+          internal_static_M23_ActivityShowInfo_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_M23_ActivityShowInfo_descriptor,
+              new java.lang.String[] { "ActivityId", "Buttons", "EffectInfos", });
+          internal_static_M23_LimitActivityInfo_descriptor =
+            getDescriptor().getMessageTypes().get(5);
           internal_static_M23_LimitActivityInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_LimitActivityInfo_descriptor,
               new java.lang.String[] { "Uitype", "ActivityId", "EffectId", "Name", "StartTime", "EndTime", "BgIcon", "Info", });
           internal_static_M23_LaBaInfo_descriptor =
-            getDescriptor().getMessageTypes().get(5);
+            getDescriptor().getMessageTypes().get(6);
           internal_static_M23_LaBaInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_LaBaInfo_descriptor,
               new java.lang.String[] { "Id", "Free", "StartTime", "EndTime", "Price", "TenPrice", "Rewardgroup", "RewardgroupId", "Type", });
           internal_static_M23_LegionShareInfo_descriptor =
-            getDescriptor().getMessageTypes().get(6);
+            getDescriptor().getMessageTypes().get(7);
           internal_static_M23_LegionShareInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_LegionShareInfo_descriptor,
               new java.lang.String[] { "Id", "Player", "TimeLeft", });
           internal_static_M23_M230000_descriptor =
-            getDescriptor().getMessageTypes().get(7);
+            getDescriptor().getMessageTypes().get(8);
           internal_static_M23_M230000_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230000_descriptor,
@@ -29192,7 +30705,7 @@ public final class M23 {
               internal_static_M23_M230000_C2S_descriptor,
               new java.lang.String[] { });
           internal_static_M23_M230001_descriptor =
-            getDescriptor().getMessageTypes().get(8);
+            getDescriptor().getMessageTypes().get(9);
           internal_static_M23_M230001_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230001_descriptor,
@@ -29210,7 +30723,7 @@ public final class M23 {
               internal_static_M23_M230001_C2S_descriptor,
               new java.lang.String[] { "ActivityId", "EffectId", "Sort", });
           internal_static_M23_M230002_descriptor =
-            getDescriptor().getMessageTypes().get(9);
+            getDescriptor().getMessageTypes().get(10);
           internal_static_M23_M230002_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230002_descriptor,
@@ -29228,7 +30741,7 @@ public final class M23 {
               internal_static_M23_M230002_C2S_descriptor,
               new java.lang.String[] { });
           internal_static_M23_M230003_descriptor =
-            getDescriptor().getMessageTypes().get(10);
+            getDescriptor().getMessageTypes().get(11);
           internal_static_M23_M230003_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230003_descriptor,
@@ -29246,7 +30759,7 @@ public final class M23 {
               internal_static_M23_M230003_C2S_descriptor,
               new java.lang.String[] { "EffectId", "Type", });
           internal_static_M23_M230005_descriptor =
-            getDescriptor().getMessageTypes().get(11);
+            getDescriptor().getMessageTypes().get(12);
           internal_static_M23_M230005_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230005_descriptor,
@@ -29264,7 +30777,7 @@ public final class M23 {
               internal_static_M23_M230005_C2S_descriptor,
               new java.lang.String[] { });
           internal_static_M23_M230006_descriptor =
-            getDescriptor().getMessageTypes().get(12);
+            getDescriptor().getMessageTypes().get(13);
           internal_static_M23_M230006_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230006_descriptor,
@@ -29282,7 +30795,7 @@ public final class M23 {
               internal_static_M23_M230006_C2S_descriptor,
               new java.lang.String[] { "Id", });
           internal_static_M23_M230007_descriptor =
-            getDescriptor().getMessageTypes().get(13);
+            getDescriptor().getMessageTypes().get(14);
           internal_static_M23_M230007_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230007_descriptor,
@@ -29294,7 +30807,7 @@ public final class M23 {
               internal_static_M23_M230007_S2C_descriptor,
               new java.lang.String[] { "ActivityInfo", });
           internal_static_M23_M230008_descriptor =
-            getDescriptor().getMessageTypes().get(14);
+            getDescriptor().getMessageTypes().get(15);
           internal_static_M23_M230008_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230008_descriptor,
@@ -29312,7 +30825,7 @@ public final class M23 {
               internal_static_M23_M230008_C2S_descriptor,
               new java.lang.String[] { "CheckActivityIds", });
           internal_static_M23_M230009_descriptor =
-            getDescriptor().getMessageTypes().get(15);
+            getDescriptor().getMessageTypes().get(16);
           internal_static_M23_M230009_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230009_descriptor,
@@ -29324,7 +30837,7 @@ public final class M23 {
               internal_static_M23_M230009_S2C_descriptor,
               new java.lang.String[] { "ActivityInfo", });
           internal_static_M23_M230010_descriptor =
-            getDescriptor().getMessageTypes().get(16);
+            getDescriptor().getMessageTypes().get(17);
           internal_static_M23_M230010_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230010_descriptor,
@@ -29334,7 +30847,7 @@ public final class M23 {
           internal_static_M23_M230010_S2C_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230010_S2C_descriptor,
-              new java.lang.String[] { "Rs", "ActivityInfo", });
+              new java.lang.String[] { "Rs", "ActivityInfo", "NextOpenId", "NextOpenTime", });
           internal_static_M23_M230010_C2S_descriptor =
             internal_static_M23_M230010_descriptor.getNestedTypes().get(1);
           internal_static_M23_M230010_C2S_fieldAccessorTable = new
@@ -29342,7 +30855,7 @@ public final class M23 {
               internal_static_M23_M230010_C2S_descriptor,
               new java.lang.String[] { "CheckActivityIds", });
           internal_static_M23_M230011_descriptor =
-            getDescriptor().getMessageTypes().get(17);
+            getDescriptor().getMessageTypes().get(18);
           internal_static_M23_M230011_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230011_descriptor,
@@ -29360,7 +30873,7 @@ public final class M23 {
               internal_static_M23_M230011_C2S_descriptor,
               new java.lang.String[] { "CheckActivityIds", });
           internal_static_M23_M230012_descriptor =
-            getDescriptor().getMessageTypes().get(18);
+            getDescriptor().getMessageTypes().get(19);
           internal_static_M23_M230012_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M23_M230012_descriptor,

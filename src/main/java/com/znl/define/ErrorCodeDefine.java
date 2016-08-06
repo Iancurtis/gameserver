@@ -34,9 +34,9 @@ public class ErrorCodeDefine {
 
     public static final int M20006_1 = -1;  //今日好友祝福10已经上限
 
-    public static final int M20007_1 = -1;  //获取佣兵失败
-    public static final int M20007_2 = -2;  //金币不足，无法修复
-    public static final int M20007_3 = -3;  //宝石不足，无法修复
+    public static final int M40002_1 = -1;  //获取佣兵失败
+    public static final int M40002_2 = -2;  //金币不足，无法修复
+    public static final int M40002_3 = -3;  //宝石不足，无法修复
 
     public static final int M20008_1 = -1;  //角色名称重复
     public static final int M20008_2 = -2;  //中文角色名称长度为2~6个汉字
@@ -665,24 +665,24 @@ public class ErrorCodeDefine {
     public static final int M260005_2 = -2;//读取配置失败
     public static final int M260005_3 = -3;//军师府上限
 
-    public static final int M2700002_1 = -1;//请先通关上一一关
-    public static final int M2700002_2 = -2;//该副本正在被挑战中
-    public static final int M2700002_3 = -3;//挑战次数不足
+    public static final int M270002_1 = -1;//请先通关上一一关
+    public static final int M270002_2 = -2;//该副本正在被挑战中
+    public static final int M270002_3 = -3;//挑战次数不足
 
-    public static final int M2700003_1 = -3;//宝箱已领取
+    public static final int M270003_1 = -3;//宝箱已领取
 
-    public static final int M2800001_1 = -1;//获取配置信息失败
-    public static final int M2800001_2 = -2;//该建筑已经在升级了
-    public static final int M2800001_3 = -3;//该建筑已经满级了
-    public static final int M2800001_4 = -4;//建筑升级所需资源不足
-    public static final int M2800001_5 = -5;//建筑升级需要的指挥所等级不够
-    public static final int M2800001_6 = -6;//提升VIP等级,开放购买更多建筑位
-    public static final int M2800001_7 = -7;//资源够不需要使用金币
-    public static final int M2800001_8 = -8;//建筑升级所需金币不足
-    public static final int M2800001_9 = -9;//该空地还未开启不能建造
-    public static final int M2800001_10 = -10;//改地方不可一建造此类型的建筑
-    public static final int M2800001_11 = -11;//请先拆除后建造
-    public static final int M2800001_12 = -12;//请求的数据有误，请求升级的等级要大于自己建筑的等级
+    public static final int M280001_1 = -1;//获取配置信息失败
+    public static final int M280001_2 = -2;//该建筑已经在升级了
+    public static final int M280001_3 = -3;//该建筑已经满级了
+    public static final int M280001_4 = -4;//建筑升级所需资源不足
+    public static final int M280001_5 = -5;//建筑升级需要的指挥所等级不够
+    public static final int M280001_6 = -6;//提升VIP等级,开放购买更多建筑位
+    public static final int M280001_7 = -7;//资源够不需要使用金币
+    public static final int M280001_8 = -8;//建筑升级所需金币不足
+    public static final int M280001_9 = -9;//该空地还未开启不能建造
+    public static final int M280001_10 = -10;//改地方不可一建造此类型的建筑
+    public static final int M280001_11 = -11;//请先拆除后建造
+    public static final int M280001_12 = -12;//请求的数据有误，请求升级的等级要大于自己建筑的等级
 
     public static final int M260006_1 = -1;//数量不够
     public static final int M260006_2 = -2;//所需军师不足
@@ -691,13 +691,13 @@ public class ErrorCodeDefine {
     public static final int M260006_5 = -5;//配置数据错误
 
 
-    public static final int M2800002_1 = -1;//获取配置信息失败
-    public static final int M2800002_2 = -2;//该建筑并没有在升级中
-    public static final int M2800002_3 = -3;//升级时间未到
+    public static final int M280002_1 = -1;//获取配置信息失败
+    public static final int M280002_2 = -2;//该建筑并没有在升级中
+    public static final int M280002_3 = -3;//升级时间未到
 
 
-    public static final int M2800003_1 = -1;//建筑不存在
-    public static final int M2800003_2 = -2;//建筑没有在升级中
+    public static final int M280003_1 = -1;//建筑不存在
+    public static final int M280003_2 = -2;//建筑没有在升级中
 
     public static final int M280004_1 = -1;//建筑不存在
     public static final int M280004_2 = -2;//建筑没有在升级中

@@ -1,24 +1,16 @@
 package com.znl.base;
 
-import akka.actor.*;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
+import akka.actor.ActorRef;
 import com.znl.GameMainServer;
-import com.znl.define.ActorDefine;
 import com.znl.log.CustomerLogger;
 import com.znl.msg.GameMsg;
 import com.znl.proxy.DbProxy;
 import com.znl.server.DbServer;
 import com.znl.utils.GameUtils;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Administrator on 2015/10/16.
@@ -30,6 +22,8 @@ public class BaseDbPojo {
 
     //过期的时间戳，这个时间是跟着系统时间的
     private Integer expireAt = -1;
+    //过期数据，多少秒之后过期
+    private Integer expire = -1;
 
     private List<String> updateFieldList = new ArrayList<String>();
 
@@ -63,7 +57,9 @@ public class BaseDbPojo {
         try {
             updateFieldList.add(att);
             att = toUpperCaseFirstOne(att);
-
+            if(att=="Name"){
+                System.err.println(value);
+            }
             Method[] methods = this.getClass().getDeclaredMethods();
             String methodName = "set" + att;
             for(Method method : methods){
@@ -85,7 +81,7 @@ public class BaseDbPojo {
                         }
                     }else if(claName == "java.lang.Long" || claName == "long"){
                         if(value.toString().length() == 0){
-                            method.invoke(this, 0);
+                            method.invoke(this, 0L);
                         }else{
                             method.invoke(this, Long.parseLong(value.toString()));
                         }
@@ -115,6 +111,7 @@ public class BaseDbPojo {
     }
 
     public void save(){
+        this.setExpire(GameUtils.getRedisExpireTime());//多少秒之后过期
         DbServer.pushIntoSaveMap(this);//先推进去缓存起来
         DbProxy.tell(new GameMsg.SaveDBPojo(this), ActorRef.noSender());
     }
@@ -166,7 +163,7 @@ public class BaseDbPojo {
         }
         try {
             int logAreaId = GameMainServer.getLogAreaIdByAreaKey(areaKey);
-            result = (T)DbProxy.getDbPojo(id, pojoClass, true);
+            result = (T)DbProxy.getDbPojo(id, pojoClass, true,logAreaId);
             if (result != null){
                 result.setLogAreaId(logAreaId);
             }
@@ -185,7 +182,7 @@ public class BaseDbPojo {
         }
         try {
             int logAreaId = GameMainServer.getLogAreaIdByAreaKey(areaKey);
-            result = (T)DbProxy.getDbPojo(id, pojoClass, false);
+            result = (T)DbProxy.getDbPojo(id, pojoClass, false,logAreaId);
             if (result != null){
                 result.setLogAreaId(logAreaId);
             }
@@ -247,8 +244,6 @@ public class BaseDbPojo {
                 list.add(name);
             }
         }
-
-
         return list;
     }
 
@@ -275,5 +270,41 @@ public class BaseDbPojo {
 
     public void setLogAreaId(int logAreaId) {
         this.logAreaId = logAreaId;
+    }
+
+    public Integer getExpire() {return expire;}
+
+    public void setExpire(Integer expire) {this.expire = expire;}
+
+    /**
+     * 将字段属性转换成map<字段名,字段值>
+     * @return
+     */
+    public Map<String,String> converFils2RedisDataMap(){
+        Map<String,String>dataMap=new HashMap<>();
+        String setStr="";
+        for(String f:getFieldNameList()){
+            Object value=this.getter(f);
+            if(value instanceof Set){
+                synchronized (value){
+                    setStr = GameUtils.set2str((Set)value);
+                }
+            }else if(value instanceof List){
+                setStr = GameUtils.list2str((List) value);
+            }else if(value!=null&&value.getClass().getName().equals("[B")){
+                setStr = com.znl.framework.socket.websocket.Base64.encodeBytes((byte[])value);
+            } else if (value == null) {
+                if(value instanceof  Integer||value instanceof  Long){
+                    setStr="0";
+                }else {
+                    setStr="";
+                }
+            }else{
+                setStr=value.toString();
+            }
+            dataMap.put(f,setStr);
+        }
+        dataMap.put("id",getId().toString());
+        return dataMap;
     }
 }

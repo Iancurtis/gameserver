@@ -209,7 +209,7 @@ public class DamageAction extends SkillAction{
 		
 //		int aIndex = caster.getAttrValue(Define.POWER_INDEX);
 		log.info(String.format("=======造成的伤害========realDamage:%d====", realDamage) );
-		
+		System.out.println(String.format("=======造成的伤害========realDamage:%d====", realDamage));
 		int targetHp = target.getAttrValue(SoldierDefine.POWER_hp);
 		int newHp = targetHp - realDamage;
 		target.setAttrValue(SoldierDefine.POWER_hp, newHp);
@@ -256,7 +256,7 @@ public class DamageAction extends SkillAction{
 		addCount(SoldierDefine.NOR_POWER_TYPE_ATK_COUNT,caster);
 		damageBase =  Double.parseDouble(_formula.metic(damFormula, caster, target).toString());
 		log.info(String.format("--caster-:%s=>---target:%s-----damageBase:%f",caster.name, target.name, damageBase));
-		
+		System.out.println(String.format("--caster-:%s=>---target:%s-----damageBase:%f", caster.name, target.name, damageBase));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("hurtType", hurtType);
 		resultMap.put("damageBase", damageBase);

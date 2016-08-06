@@ -621,6 +621,9 @@ public class ItemProxy extends BasicProxy {
         int num = 0;
         for (Item item : items) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.ITEM_METIC, item.getTypeId());
+            if(jsonObject==null){
+               continue;
+            }
             if (!ItemDefine.ITEM_REWARD_NONE.contains(jsonObject.getInt("type"))) {
                 num++;
             }

@@ -352,8 +352,8 @@ class BattleNode(x: Integer, y: Integer, sortId: Integer, tileType: TileType, ti
       val player: Player = BaseDbPojo.getOfflineDbPojo(simplePlayer.getId, classOf[Player], areaKey)
       val performTasksProxy: PerformTasksProxy = new PerformTasksProxy(player, areaKey)
       val playerProxy: PlayerProxy = new PlayerProxy(player, areaKey)
-      performTasksProxy.removeTeamNotice(time, playerProxy)
-
+//      performTasksProxy.removeTeamNotice(time, playerProxy)
+      performTasksProxy.deleteDiggingTask(time, playerProxy)
       player.setGardNum(player.getGardNum-1)
       val sp: SimplePlayer = GameUtils.player2SimplePlayer(player, simplePlayer)
       tellService(ActorDefine.PLAYER_SERVICE_NAME, UpdateSimplePlayer(sp))

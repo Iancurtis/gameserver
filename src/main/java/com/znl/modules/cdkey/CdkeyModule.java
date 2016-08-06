@@ -162,7 +162,7 @@ public class CdkeyModule extends BasicModule{
             PlayerReward reward = new PlayerReward();
             rewardProxy.getPlayerReward(rewardId, reward);
             rewardProxy.getRewardToPlayer(reward, LogDefine.GET_CDKEY);
-            sendNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
             List<Common.RewardInfo> infos = new ArrayList<>();
             rewardProxy.getRewardInfoByReward(reward,infos);
             builder.addAllRewards(infos);

@@ -30,8 +30,8 @@ object DbProxy {
     dbService.tell(msg, sendRef)
   }
 
-  def getDbPojo(id: Long, pojoClass: Class[_],pushDataMap : Boolean) ={
-    DbServer.getDbPojo(id, pojoClass,pushDataMap).getOrElse(null)
+  def getDbPojo(id: Long, pojoClass: Class[_],pushDataMap : Boolean,areaId : Int) ={
+    DbServer.getDbPojo(id, pojoClass,pushDataMap,areaId).getOrElse(null)
   }
 
   def createDbPojo(pojoClass: Class[_],areaId : Int) ={

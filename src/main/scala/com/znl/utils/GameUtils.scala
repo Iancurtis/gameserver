@@ -33,6 +33,24 @@ import scala.collection.JavaConversions._
   */
 object GameUtils {
 
+
+  /**
+   * mysql数据库
+   */
+  var mysqlDbName=""
+
+  def getMysqlDbName:String={
+    mysqlDbName
+  }
+
+  /**
+   * reids玩家数据过期时间
+   */
+  var redisExpireTime=0
+
+  def getRedisExpireTime:Int={
+    redisExpireTime
+  }
   var gameId = 0
   def getGameId(): Int ={
     gameId
@@ -608,7 +626,7 @@ object GameUtils {
    */
   def getTodayTimeForHourInt(time:Int): Int = {
     val calendar: Calendar = Calendar.getInstance()
-    calendar.setTimeInMillis(System.currentTimeMillis)
+    calendar.setTime(GameUtils.getServerDate())
     calendar.set(Calendar.HOUR_OF_DAY,time)
     calendar.set(Calendar.MINUTE, 0)
     calendar.set(Calendar.SECOND, 0)

@@ -180,6 +180,9 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
 
   def logOutHandle(player: Player): Unit ={
     player.setLoginOutTime(GameUtils.getServerDate().getTime)
+    val time: Int= ((player.getLoginOutTime)/1000).toInt-player.getLoginTime
+    player.setOnlinetime(player.getOnlinetime() + time)
+
     if (player.getArmygroupId > 0) {
       val mess: changeMenberlogOuttime = new changeMenberlogOuttime(player.getId)
       context.actorSelection("../../" + ActorDefine.ARMYGROUP_SERVICE_NAME + "/" + ActorDefine.ARMYGROUPNODE + player.getArmygroupId).tell(mess, self)

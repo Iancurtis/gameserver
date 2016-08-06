@@ -76,7 +76,7 @@ public class NewBuildModule extends BasicModule {
             int rs = newBuildProxy.doBuildLevelUp(buildType, index);
             M28.BuildingShortInfo.Builder builder = M28.BuildingShortInfo.newBuilder();
             if (rs > 0){
-                builder.setRs(ErrorCodeDefine.M2800002_3);
+                builder.setRs(ErrorCodeDefine.M280002_3);
                 builder.setLevelTime(rs);
             }else {
                 builder.setRs(rs);

@@ -133,8 +133,13 @@ public class ItemModule extends BasicModule {
         }
         sendNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90001, builder.build());
         if (rs == 0) {//生效的道具buff
-            ItemBuffProxy ibfp = getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
-            sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, new GameMsg.RefeshItemBuff());
+            M9.M90003.S2C s2c90003=itemBuffProxy.getM90003EffectItemBufferByItemId(typeId);
+            if(s2c90003!=null&&s2c90003.getItemBuffInfoCount()>0){
+                pushNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90003, s2c90003);
+            }
+           // ItemBuffProxy ibfp = getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
+           // sendModuleMsg(ActorDefine.SYSTEM_MODULE_NAME, new GameMsg.RefeshItemBuff());
+
             RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
             int expandBbuildnewSize = itemBuffProxy.getValidBuildSize();
@@ -338,11 +343,12 @@ public class ItemModule extends BasicModule {
      */
     private void OnTriggerNet90002Event(Request request) {
         M9.M90002.C2S c2S=request.getValue();
-        int itemId=c2S.getItemId();//道具ID，道具Buff的唯一ID
+        int powerId=c2S.getPowerId();
+        int type=c2S.getType();
         ItemBuffProxy itemBuffProxy=getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
         M9.M90002.S2C.Builder builder90002=M9.M90002.S2C.newBuilder();
         M9.M90003.S2C.Builder builder90003=M9.M90003.S2C.newBuilder();
-        itemBuffProxy.checkBufferIsOverTime(itemId,builder90002,builder90003);
+        itemBuffProxy.checkBufferIsOverTime(powerId,type,builder90002,builder90003);
         System.err.println("+++++++++++++检测buff返回:"+builder90002.getRs());
         System.err.println("+++++++++++++检测下一个buff返回:"+builder90003.getItemBuffInfoList().size());
         pushNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90002, builder90002.build());

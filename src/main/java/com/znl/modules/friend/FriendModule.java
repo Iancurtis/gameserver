@@ -156,7 +156,9 @@ public class FriendModule extends BasicModule {
             playerProxy.addFriend(simplePlayer.getId());
 
             FriendProxy friendProxy = this.getProxy(ActorDefine.FRIEND_PROXY_NAME);
-            s2cBuilder.setFriendInfo(friendProxy.getFriendInfo(simplePlayer));
+            if(simplePlayer!= null) {
+                s2cBuilder.setFriendInfo(friendProxy.getFriendInfo(simplePlayer));
+            }
 
             // 添加对方好友成功，这里可能需要邮件推送等
             String mailContent = String.format("%s已添加您为好友，打个招呼吧！", playerProxy.getPlayerName());
@@ -190,7 +192,9 @@ public class FriendModule extends BasicModule {
         if (rs == 0) {
 
             FriendProxy friendProxy = this.getProxy(ActorDefine.FRIEND_PROXY_NAME);
-            s2cBuilder.setFriendInfo(friendProxy.getFriendInfo(simplePlayer));
+            if(simplePlayer!=null) {
+                s2cBuilder.setFriendInfo(friendProxy.getFriendInfo(simplePlayer));
+            }
             sendFuntctionLog(FunctionIdDefine.SEARCH_ROLE_FUNCTION_ID, simplePlayer.getId(), 0, 0);
         }
 
@@ -312,44 +316,48 @@ public class FriendModule extends BasicModule {
         List<Long> ids = c2s.getPlayerIdsList();
         //TimerdbProxy timerdbProxy = this.getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = this.getProxy(ActorDefine.PLAYER_PROXY_NAME);
-
-        ids.forEach(playerId -> {
-            int rs = 0;
+        List<Integer> rewardIds = new ArrayList<>();
+        //boolean blessed =false;
+        int i =0;
+        for (Long playerId : ids){
+            //int rs = 0;
             if (playerProxy.isBlessed(playerId)) {
-                rs = ErrorCodeDefine.M170004_1;
+                i++;
+               /* rs = ErrorCodeDefine.M170004_1;
                 M17.M170004.S2C.Builder s2cBuilder = M17.M170004.S2C.newBuilder();
                 s2cBuilder.setRs(rs);
-                sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170004, s2cBuilder.build());
+                sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170004, s2cBuilder.build());*/
             } else {
+                //blessed = true;
                 //一次使用次数
-                List<Integer> rewardIds = new ArrayList<>();
-                ids.forEach(id -> {
-                playerProxy.addBlessPlayerId(id);
+                playerProxy.addBlessPlayerId(playerId);
                 //timerdbProxy.addNum(TimerDefine.FRIEND_DAY_BLESS, 0, 0, 1);
                 playerProxy.getPlayer().setDaybless(playerProxy.getPlayer().getDaybless()+1);
-                    //int num = 0;//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_BLESS, 0, 0);
-                    int num = playerProxy.getPlayer().getDaybless();
-                    if (num <= FriendDefine.MAX_DAY_BLESS_NUM) {
+                //int num = 0;//timerdbProxy.getTimerNum(TimerDefine.FRIEND_DAY_BLESS, 0, 0);
+                int num = playerProxy.getPlayer().getDaybless();
+                if (num <= FriendDefine.MAX_DAY_BLESS_NUM) {
                         //TODO 这里有奖励 多个的话，有多个
                         JSONObject json = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.FRIEND_GIFT, "level", playerProxy.getLevel());
                         int getreward = json.getInt("blessreward");
                         rewardIds.add(getreward);
                     }
-                });
-                if (rewardIds.size() > 0) {
-                    blessRewardHandler(rewardIds);
-                }
-                //通知客户端
-                M17.M170004.S2C.Builder s2cBuilder = M17.M170004.S2C.newBuilder();
-                s2cBuilder.setRs(0);
-                s2cBuilder.addAllPlayerIds(ids);
-                sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170004, s2cBuilder.build());
-                sendFuntctionLog(FunctionIdDefine.ASK_WISH_FUNCTION_ID);
-                //通知那些被祝福的玩家，在线的话就推送到具体模块，不在线的话，直接修改数据库数据
-                sendServiceMsg(ActorDefine.FRIEND_SERVICE_NAME, new GameMsg.FriendBlessPlayers(playerProxy.getPlayerId(), ids));
-
             }
-        });
+        }
+        //通知客户端
+        if (rewardIds.size() > 0) {
+            blessRewardHandler(rewardIds);
+        }
+        M17.M170004.S2C.Builder s2cBuilder = M17.M170004.S2C.newBuilder();
+        if(i ==ids.size()){
+            s2cBuilder.setRs(ErrorCodeDefine.M170004_1);
+        }else{
+            s2cBuilder.setRs(0);
+        }
+        s2cBuilder.addAllPlayerIds(ids);
+        sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170004, s2cBuilder.build());
+        sendFuntctionLog(FunctionIdDefine.ASK_WISH_FUNCTION_ID);
+        //通知那些被祝福的玩家，在线的话就推送到具体模块，不在线的话，直接修改数据库数据
+        sendServiceMsg(ActorDefine.FRIEND_SERVICE_NAME, new GameMsg.FriendBlessPlayers(playerProxy.getPlayerId(), ids));
         sendPushNetMsgToClient();
     }
 

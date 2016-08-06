@@ -107,7 +107,7 @@ public class MapModule extends BasicModule {
             GameMsg.GetPlayerSimpleInfoSuccess mess = (GameMsg.GetPlayerSimpleInfoSuccess) object;
             onGetPlayerSimpleInfoSuccess(mess);
         } else if (object instanceof GameMsg.RefTaskListNotify) {
-//            pushTaskListToClient();
+            //           pushTaskListToClient();
 //            sendPushNetMsgToClient();
         } else if (object instanceof GameMsg.BeAttackedNotify) {
             TeamNotice notice = ((GameMsg.BeAttackedNotify) object).teamNotice();
@@ -118,21 +118,22 @@ public class MapModule extends BasicModule {
             long time = ((GameMsg.RemoveBeAttackedNotify) object).time();
             PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            long key = performTasksProxy.getTeamNoticeByTime(time);
-            performTasksProxy.removeTeamNotice(x, y, time, playerProxy);
+            long key = performTasksProxy.removeTeamNotice(x, y, time, playerProxy);
+            //TODO 发送80107
             pushClearTeamNoticeToClient(key);
 //            pushAllTeamNoticeInfo();
         } else if (object instanceof GameMsg.RemoveBeAttackedNotifyBytime) {
             long time = ((GameMsg.RemoveBeAttackedNotifyBytime) object).time();
             PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            long key = performTasksProxy.getTeamNoticeByTime(time);
-            performTasksProxy.removeTeamNotice(time, playerProxy);
+//            long key = performTasksProxy.removeTeamNotice(time, playerProxy);
             long taskId = performTasksProxy.getTaskIdByTime(time);
             performTasksProxy.deleteDiggingTask(time, playerProxy);
 //            pushAllTeamNoticeInfo();
+            //TODO 发送80103
             pushTaskInfo(taskId);
-            pushClearTeamNoticeToClient(key);
+            //TODO 发送80107
+//            pushClearTeamNoticeToClient(key);
             playerProxy.getPlayer().setGardNum(performTasksProxy.getguardNum());
             updateMySimplePlayerData();
             playerProxy.getPlayer().setGardNum(performTasksProxy.getguardNum());
@@ -240,12 +241,17 @@ public class MapModule extends BasicModule {
             long time = ((GameMsg.changeformTask) object).time();
             PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
             long taskId = performTasksProxy.changeTaskType(x, y, time, TaskDefine.PERFORM_TASK_HELPBACK);
-            performTasksProxy.checkIsTimeOut(taskId);
+            //TODO 发送80103
+            pushTaskInfo(taskId);
+            //TODO 发送80104
             pushAddTaskInfo(taskId);
         } else if (object instanceof GameMsg.tellHasArried) {
             long time = ((GameMsg.tellHasArried) object).time();
             PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
             long taskId = performTasksProxy.chanbeginttime(time);
+            //TODO 发送80103
+            pushTaskInfo(taskId);
+            //TODO 发送80104
             pushAddTaskInfo(taskId);
         } else if (object instanceof GameMsg.DelformTask) {
             int x = ((GameMsg.DelformTask) object).targetX();
@@ -254,14 +260,19 @@ public class MapModule extends BasicModule {
             PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             performTasksProxy.changeTaskType(x, y, time, TaskDefine.PERFORM_TASK_HELPBACK);
-            long taskId = performTasksProxy.deleteFormTask(time, playerProxy);
-            pushAddTaskInfo(taskId);
+            long taskId = performTasksProxy.getTaskIdByTime(time);
+            performTasksProxy.deleteFormTask(time, playerProxy);
+            //TODO 发送80103
+            pushTaskInfo(taskId);
         } else if (object instanceof GameMsg.changefightTeam) {
             PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
             DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
             long time = ((GameMsg.changefightTeam) object).timeer();
             List<PlayerTeam> team = ((GameMsg.changefightTeam) object).teams();
             long taskId = performTasksProxy.checkDefendTroop(dungeoProxy, team, time);
+           //TODO 发送80103
+            pushTaskInfo(taskId);
+            //TODO 发送80104
             pushAddTaskInfo(taskId);
         } else if (object instanceof GameMsg.getArenaRankBack) {
             Map<Long, Integer> map = ((GameMsg.getArenaRankBack) object).rankmap();
@@ -277,14 +288,14 @@ public class MapModule extends BasicModule {
             TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
             taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_WINRESOURCE_LV, 0);
         } else if (object instanceof GameMsg.SendTeamTaskInfo) {
-            OnTriggerNet80107Event(null);
-            OnTriggerNet80103Event(null);
+
         } else if (object instanceof GameMsg.DeleteDiggingTask) {
             int x = ((GameMsg.DeleteDiggingTask) object).x();
             int y = ((GameMsg.DeleteDiggingTask) object).y();
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
             long taskId = performTasksProxy.deleteDiggingTask(x, y, playerProxy);
+            //TODO 发送80103
             pushTaskInfo(taskId);
         }
     }
@@ -292,10 +303,12 @@ public class MapModule extends BasicModule {
     private void onRemoveBeAttackedNotifyByXY(int x, int y) {
         PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        long key = performTasksProxy.getTeamNoticeByXY(x, y);
-        performTasksProxy.removeTeamNoticeByXY(x, y, playerProxy);
-        pushClearTeamNoticeToClient(key);
-//        pushAllTeamNoticeInfo();
+        List<Long> noticeIdList = performTasksProxy.removeTeamNoticeByXY(x, y, playerProxy);
+        if (noticeIdList != null) {
+            for (long key : noticeIdList)
+                //TODO 发送80107
+                pushClearTeamNoticeToClient(key);
+        }
     }
 
     private void onMoveRandomWorldBuildBack(GameMsg.MoveRandomWorldBuildBack mess) {
@@ -319,6 +332,7 @@ public class MapModule extends BasicModule {
         pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20014, pointInfo.build());
         PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
         performTasksProxy.clearTeamNotice();
+        //TODO 发送80107
         OnTriggerNet80107Event(null);
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         playerProxy.setWorldTilePoint(x, y);
@@ -338,6 +352,7 @@ public class MapModule extends BasicModule {
         PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         performTasksProxy.addTeamNotices(notice, playerProxy);
+        //TODO 发送80108
         pushTeamNoticeToClient(notice.getId());
     }
 
@@ -436,6 +451,7 @@ public class MapModule extends BasicModule {
         }
         PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
         performTasksProxy.clearTeamNotice();
+        //TODO 发送80107
         OnTriggerNet80107Event(null);
     }
 
@@ -479,15 +495,18 @@ public class MapModule extends BasicModule {
         GameMsg.FixSoldierList msg = new GameMsg.FixSoldierList();
         sendModuleMsg(ActorDefine.SOLDIER_MODULE_NAME, msg);
         PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
-        long taskId = 0;
         if (isWin == false) {
             //删除掉该挖掘队列
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            taskId = performTasksProxy.deleteDiggingTask(x, y, playerProxy);
+            long taskId = performTasksProxy.deleteDiggingTask(x, y, playerProxy);
+            //TODO 发送80103
             pushTaskInfo(taskId);
         } else {
-            taskId = performTasksProxy.updateDiggingTask(teams, x, y, load);
-            pushAddTaskInfo(taskId);
+            long id = performTasksProxy.updateDiggingTask(teams, x, y, load);
+            //TODO 发送80103
+            pushTaskInfo(id);
+            //TODO 发送80104
+            pushAddTaskInfo(id);
         }
         sendPushNetMsgToClient();
     }
@@ -585,7 +604,7 @@ public class MapModule extends BasicModule {
         }
         M2.M20007.S2C.Builder refSoldiers = M2.M20007.S2C.newBuilder();
         refSoldiers.addAllSoldierList(infos);
-        sendNetMsg(ActorDefine.SOLDIER_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, refSoldiers.build());
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, refSoldiers.build());
         FormationProxy formationProxy = getProxy(ActorDefine.FORMATION_PROXY_NAME);
         boolean refurce = formationProxy.checkDefendTroop(soldierProxy, ActorDefine.SETTING_AUTO_ADD_DEFEND_TEAM_ON, null, null);
         if (refurce) {
@@ -621,6 +640,7 @@ public class MapModule extends BasicModule {
         M8.M80001.S2C.Builder builder = M8.M80001.S2C.newBuilder();
         builder.setRs(0);
         pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80001, builder.build());
+        //TODO 发送80104
         pushAddTaskInfo(taskId);
         sendPushNetMsgToClient();
         int tileType = 0;
@@ -791,7 +811,7 @@ public class MapModule extends BasicModule {
             long id = soldierProxy.addSoldierNumWithoutBaseNum(typeId, num, LogDefine.GET_WORLD_FIGHT_TEAM_RETURN);
             builder.addSoldierList(soldierProxy.getSoldierInfo(typeId));
         }
-        pushNetMsg(ActorDefine.SOLDIER_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, builder.build());
+        pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, builder.build());
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
         rewardProxy.getRewardToPlayer(reward, LogDefine.GET_WORLD_FIGHT_TEAM_RETURN);
         pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
@@ -799,8 +819,7 @@ public class MapModule extends BasicModule {
         //推送玩家属性
         M2.M20002.S2C dif = sendDifferent(powerList);
         pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20002, dif);
-
-
+        sendPushNetMsgToClient();
 //        pushTaskListToClient();
 //        pushAllTeamNoticeInfo();
         //阵型
@@ -871,7 +890,7 @@ public class MapModule extends BasicModule {
         for (Integer id : ids) {
             soldierInfos.addSoldierList(soldierProxy.getSoldierInfo(id));
         }
-        pushNetMsg(ActorDefine.SOLDIER_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, soldierInfos.build());
+        pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, soldierInfos.build());
         //推送到荣耀排行榜
         if (honner > 0) {
             GameMsg.AddPlayerToRank honorRank = new GameMsg.AddPlayerToRank(playerProxy.getPlayerId(),
@@ -1080,7 +1099,7 @@ public class MapModule extends BasicModule {
         }
         M2.M20007.S2C.Builder refSoldiers = M2.M20007.S2C.newBuilder();
         refSoldiers.addAllSoldierList(infos);
-        sendNetMsg(ActorDefine.SOLDIER_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, refSoldiers.build());
+        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, refSoldiers.build());
         FormationProxy formationProxy = getProxy(ActorDefine.FORMATION_PROXY_NAME);
         boolean refurce = formationProxy.checkDefendTroop(soldierProxy, ActorDefine.SETTING_AUTO_ADD_DEFEND_TEAM_ON, null, null);
         if (refurce) {
@@ -1358,38 +1377,30 @@ public class MapModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80014, builder.build());
         if (rs == 0) {
-            pushAddTaskInfo(id);
             updateMySimplePlayerData();
         }
         sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet80103Event(Request request) {
+        M8.M80103.C2S c2S = request.getValue();
+        long taskId = c2S.getId();
+        PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
+        int rs = performTasksProxy.checkIsTimeOut(taskId);
         M8.M80103.S2C.Builder builder = M8.M80103.S2C.newBuilder();
-        if (request == null) {
-            int rss = ErrorCodeDefine.M80103_1;
-            builder.setId(0);
-            builder.setRs(rss);
-            pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80103, builder.build());
+        if (rs == 0) {
+            builder.setRs(rs);
+            builder.setId(taskId);
         } else {
-            M8.M80103.C2S c2S = request.getValue();
-            long taskId = c2S.getId();
-            PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
-            int rs = performTasksProxy.checkIsTimeOut(taskId);
-            if (rs == 0) {
-                builder.setRs(rs);
-                builder.setId(taskId);
-            } else {
-                builder.setRs(rs);
-                builder.setId(taskId);
-                PerformTasks tasks = performTasksProxy.getTaskById(taskId);
-                int totalTime = (int) GameUtils.getServerDate().getTime();
-                int timmer = (int) tasks.getTimeer();
-                int alreadyTime = ((timmer - totalTime) / 1000);
-                builder.setAlreadyTime(alreadyTime);
-            }
-            sendNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80103, builder.build());
+            builder.setRs(rs);
+            builder.setId(taskId);
+            PerformTasks tasks = performTasksProxy.getTaskById(taskId);
+            long totalTime = (GameUtils.getServerDate().getTime());
+            long timmer = tasks.getTimeer();
+            int alreadyTime =(int) ((timmer - totalTime) / 1000);
+            builder.setAlreadyTime(alreadyTime);
         }
+        sendNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80103, builder.build());
         sendPushNetMsgToClient();
     }
 
@@ -1404,21 +1415,18 @@ public class MapModule extends BasicModule {
     }
 
     private void pushTaskInfo(long taskId) {
-        M8.M80103.S2C.Builder builder = M8.M80103.S2C.newBuilder();
-        PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
-        builder.setRs(0);
-        builder.setId(taskId);
-        performTasksProxy.checkIsTimeOut(taskId);
-        pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80103, builder.build());
+        M8.M80103.S2C.Builder builder80103 = M8.M80103.S2C.newBuilder();
+        builder80103.setRs(0);
+        builder80103.setId(taskId);
+        pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80103, builder80103.build());
         sendPushNetMsgToClient();
     }
 
     private void OnTriggerNet80107Event(Request request) {
         M8.M80107.S2C.Builder builder = M8.M80107.S2C.newBuilder();
         if (request == null) {
-            int rss = ErrorCodeDefine.M80107_1;
+            builder.setRs(1);
             builder.setKey(0);
-            builder.setRs(rss);
         } else {
             M8.M80107.C2S c2S = request.getValue();
             long key = c2S.getKey();
@@ -1433,13 +1441,14 @@ public class MapModule extends BasicModule {
                 TeamNotice teamNotice = performTasksProxy.getTeamNoticeByKey(key);
                 int now = (int) (GameUtils.getServerDate().getTime() / 1000);
                 int arriveTime = (int) (teamNotice.getArriveTime() / 1000);
-                int remainTime = (arriveTime - now);
+                int remainTime = arriveTime - now;
                 builder.setTime(remainTime);
             }
         }
         sendNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80107, builder.build());
         sendFuntctionLog(FunctionIdDefine.GET_ALL_TEAM_NOTICE_INFO_FUNCTION_ID);
         sendPushNetMsgToClient();
+
     }
 
     public void pushClearTeamNoticeToClient(long key) {

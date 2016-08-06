@@ -51,6 +51,7 @@ public class TaskProxy extends BasicProxy {
         taskTimer.setRestTimes(0);
         taskTimer.setDaytaskNum(0);
         taskTimer.save();
+        initTask();
     }
 
 
@@ -141,6 +142,7 @@ public class TaskProxy extends BasicProxy {
         task.save();
         doaddcompleteness(tastType, 0, 0);
         addNeedPushTask(task);
+        needPushTasks.remove(task.getId());
         return task.getId();
     }
 
@@ -251,6 +253,9 @@ public class TaskProxy extends BasicProxy {
     private void addTaskNum(Task task, int add) {
         long num = task.getNum();
         task.setNum(num + add);
+        if (task.getNum() != num){
+            addNeedPushTask(task);
+        }
         pushTaskToChangeList(task);
     }
 
@@ -258,6 +263,7 @@ public class TaskProxy extends BasicProxy {
     private void setTaskNum(Task task, long num) {
         if (task.getNum() != num) {
             task.setNum(num);
+            addNeedPushTask(task);
             pushTaskToChangeList(task);
         }
     }
@@ -316,9 +322,11 @@ public class TaskProxy extends BasicProxy {
                 rewardProxy.getPlayerRewardByFixReward(jsonArray.getInt(i), reward);
             }
             rewardProxy.getRewardToPlayer(reward, LogDefine.GET_MAIN_TASK_GETREWARD);
-            initTaskAll();
+           // initTaskAll();
             builder.addAllTaskInfos(getTaskInfoBytableType(TaskDefine.TABLE_TASK_MAIN_LINE));
             builder.addTaskInfos(getDelTaskInfoByTask(task));
+
+
             return 0;
         };
         _mapgetRewardMetic.put(TaskDefine.TABLE_TASK_MAIN_LINE, formula);
@@ -536,7 +544,7 @@ public class TaskProxy extends BasicProxy {
             for (Task task : taskList) {
                 if (isCanadd(task) && isCanAddTask(task) && iscanChangeTaskNum(task)) {
                     falg = true;
-                    addNeedPushTask(task);
+
                     int typeId = task.getTastId();
                     int soldierId = 0;
                     JSONObject jsonObject = getTastJsonObject(task.getTableType(), typeId);
@@ -644,7 +652,7 @@ public class TaskProxy extends BasicProxy {
                         rewardProxy.getPlayerRewardByFixReward(rewardId, reward);
                     }
                     task.setIsget(TaskDefine.TASK_STATUS_HASGET);
-                    rewardProxy.getRewardToPlayer(reward, LogDefine.GET_DAYLIY_TASK_DAYACTIVITY);
+                  //  rewardProxy.getRewardToPlayer(reward, LogDefine.GET_DAYLIY_TASK_DAYACTIVITY);
                 }
             }
         }
@@ -987,7 +995,9 @@ public class TaskProxy extends BasicProxy {
         List<Common.TaskInfo> taskInfos = new ArrayList<>();
         for (Task task : tasks){
             if (tasksSet.contains(task.getId())){
-                taskInfos.add(getTaskInfoByTask(task));
+                if(getTaskInfoByTask(task)!=null) {
+                    taskInfos.add(getTaskInfoByTask(task));
+                }
             }
         }
         return taskInfos;

@@ -776,7 +776,7 @@ public class SoldierProxy extends BasicProxy {
         }else {
             Soldier soldier = getSoldierBySoldierId(typeId);
             if(soldier == null){
-                return ErrorCodeDefine.M20007_1;
+                return ErrorCodeDefine.M40002_1;
             }
             JSONObject soldierDefine = ConfigDataProxy.getConfigInfoFindById(DataDefine.ARM_KINDS,typeId);
             if(type == 1){
@@ -790,23 +790,27 @@ public class SoldierProxy extends BasicProxy {
         if (type == 1){
             value = playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold);
             if(value < price){
-                return ErrorCodeDefine.M20007_2;
+                return ErrorCodeDefine.M40002_2;
             }
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold,price,LogDefine.LOST_REPAIR_SOLDIER);
         }else {
             value = playerProxy.getPowerValue(PlayerPowerDefine.POWER_tael);
             if(value < price){
-                return ErrorCodeDefine.M20007_3;
+                return ErrorCodeDefine.M40002_3;
             }
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_tael,price,LogDefine.LOST_REPAIR_SOLDIER);
         }
+        TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
         if(typeId == 0){
             for (Soldier soldier : soldiers){
                 int num = soldier.getNum();
-                soldierInfos.add(doFixSoldier(soldier.getTypeId()));
-                int _num = soldier.getNum();
-                if(_num > num){
-                    sb.append(soldier.getTypeId()+"&"+(_num-num)+",");
+                if(soldier.getLostNum() > 0){
+                    soldierInfos.add(doFixSoldier(soldier.getTypeId()));
+                    int _num = soldier.getNum();
+                    if(_num > num){
+                        sb.append(soldier.getTypeId()+"&"+(_num-num)+",");
+                        taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_CREATESODIER_NUM, _num - num, 0);
+                    }
                 }
             }
         }else {
@@ -815,8 +819,11 @@ public class SoldierProxy extends BasicProxy {
             int _num = getSoldierNum(typeId);
             if(_num > num){
                 sb.append(typeId+"&"+(_num-num)+",");
+                taskProxy.doaddcompleteness(TaskDefine.TASK_TYPE_CREATESODIER_NUM,_num-num,0);
             }
         }
+
+
         sendFunctionLog(FunctionIdDefine.FIX_LOST_SOLDIER_FUNCTION_ID, type,price,0,sb.toString());
         return price;
     }
@@ -824,9 +831,11 @@ public class SoldierProxy extends BasicProxy {
     private Common.SoldierInfo doFixSoldier(int typeId){
         Soldier soldier = getSoldierBySoldierId(typeId);
         int lostNum = soldier.getLostNum();
-        addSoldierNum(typeId, lostNum,LogDefine.GET_REPAIRE_SOLDIER);
-        soldier.setLostNum(0);
-        pushSoldierToChangeList(soldier);
+        if (lostNum > 0){
+            addSoldierNum(typeId, lostNum,LogDefine.GET_REPAIRE_SOLDIER);
+            soldier.setLostNum(0);
+            pushSoldierToChangeList(soldier);
+        }
         return getSoldierInfo(typeId);
     }
 

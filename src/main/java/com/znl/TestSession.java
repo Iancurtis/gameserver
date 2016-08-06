@@ -25,6 +25,9 @@ import java.util.Set;
  */
 public class TestSession implements IoSession, Serializable {
 
+    public static void  main(String[]args){
+
+    }
     private Map<Object, Object> attributeMap = new HashMap<>();
 
     @Override
@@ -225,7 +228,8 @@ public class TestSession implements IoSession, Serializable {
 
     @Override
     public void updateThroughput(long l, boolean b) {
-
+        String dd="dddds";
+        //String test=new String(dd.getBytes(),"utf-8");
     }
 
     @Override

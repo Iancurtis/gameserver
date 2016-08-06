@@ -354,8 +354,8 @@ public class LotterProxy extends BasicProxy {
             //}
             if(playerProxy.getPlayer().getFirstlotter() ==1){
                 eli.setWillNum(-1);
-            }else {
-                eli.setWillNum(playerProxy.getPlayer().getLottereedtime3());
+            }else{
+                eli.setWillNum((jsonObject.getInt("purpletime")+1)-playerProxy.getPlayer().getLottereedtime3());
             }
         }
 
@@ -426,12 +426,13 @@ public class LotterProxy extends BasicProxy {
                 if(playerProxy.getPlayer().getFirstlotter() ==1){
                     ranId = jsonObject.getInt("purpleID");
                     playerProxy.getPlayer().setFirstlotter(0);
+                    playerProxy.getPlayer().setLottereedtime3(playerProxy.getPlayer().getLottereedtime3() + 1);
                 }else{
-                    playerProxy.getPlayer().setLottereedtime3(playerProxy.getPlayer().getLottereedtime3() - 1);
+                    playerProxy.getPlayer().setLottereedtime3(playerProxy.getPlayer().getLottereedtime3() + 1);
                     num = playerProxy.getPlayer().getLottereedtime3();
-                    if (jsonObject.getInt("purpletime") != 0 && num == 0) {
+                    if (jsonObject.getInt("purpletime") != 0 && num >jsonObject.getInt("purpletime")) {
                         ranId = jsonObject.getInt("purpleID");
-                        playerProxy.getPlayer().setLottereedtime3(jsonObject.getInt("purpletime"));
+                        playerProxy.getPlayer().setLottereedtime3(0);
                     }
                 }
 
@@ -504,6 +505,10 @@ public class LotterProxy extends BasicProxy {
                     return ErrorCodeDefine.M150002_2;
                 }
             }
+            if(freetimes>0){
+                PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+                playerProxy.getPlayer().setTaobaofree(playerProxy.getPlayer().getTaobaofree()+1);
+            }
             if (freetimes <= 0) {
                 itemProxy.reduceItemNum(itemId, itemNum, LogDefine.LOST_LOTTER_TAO);
                 RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
@@ -522,8 +527,6 @@ public class LotterProxy extends BasicProxy {
         for (int i = 0; i < num; i++) {
             int ranId = jsonObject.getInt("ruleID");
           //  timerdbProxy.addNum(TimerDefine.TIMIER_LOTTERY_TAOBAO, type, 0, 1);
-            PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            playerProxy.getPlayer().setTaobaofree(playerProxy.getPlayer().getTaobaofree()+1);
             List<Integer> alllist = new ArrayList<Integer>();
             int rewardId = getRandomRewardTaoBao(ranId, alllist);
             for (int getId : alllist) {

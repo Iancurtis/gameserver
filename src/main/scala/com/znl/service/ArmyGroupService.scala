@@ -86,7 +86,7 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
       onAddMailBattleProto(reportTemplate,cmd)
     case getAllLegion(name:String,typeId:Int) =>
       sender() ! getAllLegionSucess(ArmyGroupService.armymap,name,typeId)
-    case ActivityRankTrigger() =>
+    case ActivityRankTrigger(ids:util.List[java.lang.Integer]) =>
       checkTimer()
     case checkArmy(id : Long) =>
       oncheckArmy(id)
@@ -277,7 +277,7 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
       }
     }
     if (end > 0) {
-      val event = new TriggerEvent(self, ActivityRankTrigger(), TriggerType.COUNT_DOWN, (end / 1000 - now / 1000).toInt)
+      val event = new TriggerEvent(self, ActivityRankTrigger(new util.ArrayList[java.lang.Integer]), TriggerType.COUNT_DOWN, (end / 1000 - now / 1000).toInt)
       getTriggerService(context) ! AddTriggerEvent(event)
     }
   }

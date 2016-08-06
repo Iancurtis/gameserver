@@ -219,6 +219,7 @@ public class DungeoModule extends BasicModule {
     private void clientEndBattleHandle(int battleId) {
         int tastType = 0;
         //清空战斗出战队列
+        TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
         BattleProxy battleProxy = getProxy(ActorDefine.BATTLE_PROXY_NAME);
         PlayerBattle battle = battleProxy.battles.get(battleId);
         if (battle == null) {
@@ -241,10 +242,10 @@ public class DungeoModule extends BasicModule {
                 tastType = TaskDefine.TASK_TYPE_JIXIANTANXIAN_TIMES;
             }
             if (tastType != 0) {
-                TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+                taskProxy.getTaskUpdate(tastType,1);
             }
         } //任务逻辑
-        /*else if(battle.type == BattleDefine.BATTLE_TYPE_ARMYGROUP_DEFEND){
+     /*   else if(battle.type == BattleDefine.BATTLE_TYPE_ARMYGROUP_DEFEND){
             TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
             PlayerReward reward = new PlayerReward();
             tastType =TaskDefine.TASK_TYPE_UNIONARENA_LV;
@@ -273,7 +274,6 @@ public class DungeoModule extends BasicModule {
                         //将奖励发送到玩家背包,实现星星等计算逻辑
                         openNewDungeo = dungeoProxy.eventFightEndHandle(battle);
                         //发送任务完成
-                        TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
                         PlayerReward reward = new PlayerReward();
 //                        List<PlayerTask> playerTasks = new ArrayList<>();
 //                        playerTasks.add(new PlayerTask(TaskDefine.TASK_TYPE_WINGATE_ID, dungeoId, 0));
@@ -351,7 +351,6 @@ public class DungeoModule extends BasicModule {
 //                            }
                         }
                         //发送任务完成
-                        TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
                         PlayerReward reward = new PlayerReward();
                         List<PlayerTask> playerTasks = new ArrayList<PlayerTask>();
                         playerTasks.add(new PlayerTask(TaskDefine.TASK_TYPE_WINGATE_ID, dungeoId, 0));
@@ -412,13 +411,12 @@ public class DungeoModule extends BasicModule {
                     }
                     arenaProxy.saveArena();
                     M2.M20007.S2C msg20007 = rewardProxy.getRewardClientInfo(battle.reward);
-                    pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, msg20007);
+                    pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, msg20007);
                     List<Integer> list = new ArrayList<>();
                     list.add(PlayerPowerDefine.POWER_arenaGrade);
                     M2.M20002.S2C different = sendDifferent(list);
                     pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20002, different);
                     rewardProxy.getRewardToPlayer(battle.reward, LogDefine.GET_AREAN_FIGHT);
-                    TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
                     taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_ARENAFIGHT_TIMES, 1);
                     int state = 1;
                     if (battle.battleResult == false) {
@@ -465,7 +463,7 @@ public class DungeoModule extends BasicModule {
         }
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
         M2.M20007.S2C message = rewardProxy.getRewardClientInfo(battle.reward);
-        pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20007, message);
+        pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, message);
         int newlevel = playerProxy.getLevel();
         if (newlevel != level) {
             GameMsg.changeMenberLevel groupmsg = new GameMsg.changeMenberLevel(playerProxy.getPlayerId(), playerProxy.getLevel());
@@ -961,6 +959,8 @@ public class DungeoModule extends BasicModule {
         battle.totalCapacity = dungeoProxy.countSoldierCapacity(fightList);
         battle.monsterList = monsterList;
         battle.soldierList = fightList;
+        showBattListInfo(monsterList);
+        showBattListInfo(fightList);
         battle.type = battleType;
         battle.infoType = id;
         battle.cmd = cmd;

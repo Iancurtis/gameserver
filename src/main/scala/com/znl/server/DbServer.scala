@@ -52,7 +52,7 @@ object DbServer {
 
     }
 
-    val mysqlActor = getMysqlActor
+    //val mysqlActor = getMysqlActor
 //    println("！！！！！创建数据的时候就不发到mysqlActor了")
 //    mysqlActor ! InsertToMysql(pojo.get.getClassName, id, areaId)
     pojo
@@ -68,22 +68,25 @@ object DbServer {
     saveDataMap.put(dataKey, Some(pojo))
   }
 
-  def getDbPojo(id: Long, pojoClass: Class[_],pushDataMap : Boolean) = {
-
-    val time = System.currentTimeMillis()
+  def getDbPojo(id: Long, pojoClass: Class[_],pushDataMap : Boolean,areaId : Int) = {
+    //val time = System.currentTimeMillis()
     var res : Option[BaseDbPojo] = null
+    if(id==0){
+       res;
+    }
     val dataKey = getDataKey(id, GameUtils.getClassName(pojoClass))
     //先读内存缓存
     if (dataMap.contains(dataKey)) {
       res = dataMap.get(dataKey) //需要做下线释放掉对应的数据
     }else if(saveDataMap.containsKey(dataKey)) {
       res = saveDataMap.get(dataKey)
-    }else {
+    } else {
       //再读redis
       var pojo: Option[BaseDbPojo] = Some(pojoClass.newInstance().asInstanceOf[BaseDbPojo])
       pojo.get.setId(id)
       val key = pojo.get.getKey
-      val map = jc.hgetAll(key) //new ConcurrentHashMap[String, String]() //
+      val map = jc.hgetAll(key)
+      //val map=new ConcurrentHashMap[String,String]()
       if (map.size() == 0) {
         pojo = None
       } else {
@@ -97,32 +100,48 @@ object DbServer {
 //          offlineDataMap.put(dataKey, pojo)
         }
       }
-
-      //      log.info("getDbPojo耗时xx:" + dataKey + ":" + ( System.currentTimeMillis() - time ) )
-      //可能再读mysql
-      //      if(map.size() == 0){
-      //        val sql = "select data from %s where id = %d".format(GameUtils.getClassName(pojoClass), id)
-      //        System.out.println(sql)
-      //        val actor  = context.actorSelection( ActorDefine.MYSQL_ACTOR_NAME )
-      //        val resultList :  util.ArrayList[String] = GameUtils.futureAsk(actor, QueryToMysql(sql), 30)
-      //        if(resultList.length > 0){
-      //          val result = resultList.get(0)
-      //
-      //          val jsonObject = new JSONObject(result)
-      //          jsonObject.keySet().foreach( key => {
-      //            val value = java.net.URLDecoder.decode(jsonObject.get(key).toString, "utf-8")
-      //            pojo.get.setter(key, value)
-      //          })
-      //
-      //          dataMap.put(dataKey, pojo)
-      //        }else{
-      //          pojo = None
-      //        }
-      //      }
-
+     // System.err.println("getDbPojo耗时xx:" + dataKey + ":" + ( System.currentTimeMillis() - time ));
+      /**********************************读取mysql开始***********************************************/
+      //log.info("getDbPojo耗时xx:" + dataKey + ":" + ( System.currentTimeMillis() - time ) )
+       //可能再读mysql
+      if(map.size() == 0){
+          pojo= getPojoObjectFormMysql(id,pojoClass,areaId);
+          if(pojo!=None){
+            dataMap.put(dataKey, pojo)
+            jc.hmset(key, pojo.get.converFils2RedisDataMap()) //放进redis，并设置过期时间
+            // jc.expireAt(key, (GameUtils.getServerDate().getTime+GameUtils.redisExpireTime))
+            jc.expire(key, GameUtils.redisExpireTime)
+          }
+      }
+      /**********************************读取mysql结束***********************************************/
       res = pojo
     }
     res
+  }
+
+
+  def getPojoObjectFormMysql(id: Long, pojoClass: Class[_],logAreaId:Int) ={
+    val time = System.currentTimeMillis()//记录读取时间
+    var pojo: Option[BaseDbPojo] = Some(pojoClass.newInstance().asInstanceOf[BaseDbPojo])
+    val sql = "select data from %s where id = %d".format(GameUtils.mysqlDbName+logAreaId+"."+GameUtils.getClassName(pojoClass), id)
+    val resultList :  util.ArrayList[String] = MySqlActor.onQuery(sql);
+    if(resultList.length > 0){
+      val result = resultList.get(0)
+      val jsonObject = new JSONObject(result)
+      jsonObject.keySet().foreach( key => {
+        val value2 = java.net.URLDecoder.decode(jsonObject.get(key).toString, "utf-8")
+        val value = jsonObject.get(key).toString
+        val test: String = new String(jsonObject.get(key).toString.getBytes, "GBK")
+        if(key=="name"){
+          System.err.println(value)
+        }
+        pojo.get.setter(key, value)
+      })
+    }else{
+      pojo = None
+    }
+    System.err.println("getMysql耗时xx:" + sql + " 用时=" + ( System.currentTimeMillis() - time )+"毫秒");
+    pojo
   }
 
   def clearOffLineDataMap(): Unit ={
@@ -304,9 +323,6 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
   }
 
   def getDbPojo(id: Long, pojoClass: Class[_]) = {
-
-    val time = System.currentTimeMillis()
-
     val dataKey = getDataKey(id, GameUtils.getClassName(pojoClass))
     //先读内存缓存
     if (dataMap.contains(dataKey)) {
@@ -330,7 +346,6 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
 
         dataMap.put(dataKey, pojo)
       }
-
       //      log.info("getDbPojo耗时xx:" + dataKey + ":" + ( System.currentTimeMillis() - time ) )
       //可能再读mysql
 //      if(map.size() == 0){
@@ -413,7 +428,10 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
               val map = action.getMap
               jc.hmset(key, map) //入库
               if (action.getExpireAt > 0) {
-                jc.expireAt(key, action.getExpireAt * 1000L)
+                jc.expireAt(key, action.getExpireAt*1L)
+              }
+              if (action.getExpire> 0) {
+                jc.expire(key,action.getExpire)
               }
               val dataKey = getDataKey(action.getId, action.getPojoClassName)
 //              dataMap.remove(dataKey)
@@ -439,78 +457,26 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
     val time = System.currentTimeMillis()
 
     val key = pojo.getKey
-    val fields = pojo.getFieldNameList
     val dataKey = getDataKey(pojo.getId, GameUtils.getClassName(pojo))
-
-    val map: java.util.Map[String, String] = new java.util.HashMap() //保存要入库的数据
-    //    val valueMap: java.util.Map[String, String] = new java.util.HashMap()  //所有的值保存起来，以便比较
-    val saveMap: util.Map[String, Object] = new java.util.HashMap()
-
+    val map: java.util.Map[String, String] = new java.util.HashMap() //保存要入redis库的数据
+    val saveToMysqlMap: util.Map[String, Object] = new java.util.HashMap()///保存到mysql的数据
     var oldFielMap = saveFieldMap.get(dataKey)
     if (oldFielMap == null) {
       oldFielMap = new java.util.HashMap()
+      saveFieldMap.put(dataKey, oldFielMap)
     }
-
-    fields.foreach(
-      field => {
-        val value = pojo.getter(field)
-
-        var setStr: String = ""
-        if (value.isInstanceOf[util.Set[Any]]) {
-          setStr = GameUtils.set2str(value.asInstanceOf[util.Set[Any]])
-        } else if (value.isInstanceOf[util.List[Any]]) {
-          setStr = GameUtils.list2str(value.asInstanceOf[util.List[Any]])
-        } else if (value != null && value.getClass.getName.equals("[B")) {
-          //[B
-          setStr = com.znl.framework.socket.websocket.Base64.encodeBytes(value.asInstanceOf[Array[Byte]])
+    val pojoDatamap: java.util.Map[String, String] = pojo.converFils2RedisDataMap()////保存到mysql的数据
+    pojoDatamap.keys.foreach(f=>{
+        val value=pojoDatamap(f)
+        val oldValue = oldFielMap.get(f)
+        if (oldValue==null||(oldValue!=null && !oldValue.equals(value))) {
+          map.put(f, value)
+          oldFielMap.put(f, value) //替换成新值
         }
-        else if (value == null) {
-          if (value.isInstanceOf[Integer]) {
-            setStr = "0"
-          } else if (value.isInstanceOf[java.lang.Long]) {
-            setStr = "0"
-          } else {
-            setStr = ""
-
-          }
-          pojo.setter(field, setStr) //随便把默认值附上去
-        } else {
-          setStr = value.toString
-        }
-
-        saveMap.put(field, setStr)
-
-        //        valueMap.put(field, setStr)
-
-        //        if(oldFielMap != null){
-        val oldValue = oldFielMap.get(field)
-        if ((oldValue != null) && (!oldFielMap.get(field).equals(setStr))) {
-          //
-          //            log.info("===key:%s==field:%s====oldValue:%s=====newValue:%s==========".format(key, field, oldValue, setStr))
-          map.put(field, setStr)
-        } else if (oldValue == null) {
-          //            log.info("===key:%s==field:%s====oldValue:%s=====newValue:%s==========".format(key, field, oldValue, setStr))
-          map.put(field, setStr)
-        }
-        oldFielMap.put(field, setStr) //替换成新值
-        //        }else{
-        //          map.put(field, setStr)
-        //        }
-      }
-    )
+      saveToMysqlMap.put(f,value)
+    })
 
     map.put("id", pojo.getId().toString)
-
-    saveFieldMap.put(dataKey, oldFielMap)
-
-    //TODO 这里可能要设置一个比较长的过期时间，然后在get的地方拿不到，则到mysql拿
-    saveMap.put("id", pojo.getId())
-
-    //    jc.hmset(key, map)
-    //
-    //    if(pojo.getExpireAt > 0 ){  //设置了过期的时间戳
-    //      jc.expireAt(key, pojo.getExpireAt * 1000L)
-    //    }
 
     if (map.size() > 1) {
       //没有值改变，那就不入库了，减少IO
@@ -521,22 +487,24 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
       action.setPojoClassName(pojo.getClassName)
       action.setExpireAt(pojo.getExpireAt)
       action.setType(DbActionType.SAVE)
+      action.setExpire(pojo.getExpire)
 
       //log.info("==dbQueue.push:=key:%s=====newValue:%s==========".format(key, map))
-
-
       dbQueue.offer(action) //TODO 入不了就写日志 警报
 
       //TODO 如果入库队列里面又出现相同的Key，则会出现问题
-//      DbServer.saveDataMap.put(dataKey, Some(pojo))
       //发送到别的进程，进行mysql数据备份 TODO
-      val json = new JSONObject(saveMap)
+      val json = new JSONObject(saveToMysqlMap)
+      if(saveToMysqlMap.containsKey("name")){
+        System.err.println("+++++++++++++++保存名字:"+json.get("name"))
+      }
+
       if(pojo.getClassName.equals("Player")){
 //        log.info("UpdateToMysql:[]" + pojo.getClassName + ":" + json.toString)
       }
       mysqlActor ! UpdateToMysql(pojo.getClassName, pojo.getId, json.toString,pojo.getLogAreaId)
     }
-    //    log.info("saveDbPojo耗时:" + key + " " + ( System.currentTimeMillis() - time ) )
+    log.info("saveDbPojo耗时:" + key + " " + ( System.currentTimeMillis() - time ) )
   }
 
   def delDbPojo(pojo: BaseDbPojo) = {

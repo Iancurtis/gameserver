@@ -122,6 +122,9 @@ public class SystemModule extends BasicModule {
         ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ENERY_EVERYDAY, 0, playerProxy, 0);
+        if(activityProxy.getNeddSendActivitySize() > 0){
+            sendPushNetMsgToClient();
+        }  
     }
 
     private void eachHourHandle() {
@@ -160,7 +163,7 @@ public class SystemModule extends BasicModule {
                 sendModuleMsg(ActorDefine.FRIEND_MODULE_NAME, blessState);*/
 
 
-                //sendTimeFourNoticity(hour);
+                sendTimeFourNoticity(hour);
 
                 getGameProxy().fixedTimeHandler();
                 break;
@@ -211,6 +214,8 @@ public class SystemModule extends BasicModule {
         taskProxy.saveTasks();
         ArmyGroupProxy armyGroupProxy=getGameProxy().getProxy(ActorDefine.ARMYGROUP_PROXY_NAME);
         armyGroupProxy.saveDate();
+        NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
+        newBuildProxy.saveResFunBuildings();
     }
 
 

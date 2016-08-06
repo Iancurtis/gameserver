@@ -58,9 +58,15 @@ public class MailProxy  extends BasicProxy {
         }
         for (Long id : reportIds){
             Report report = BaseDbPojo.get(id, Report.class,areaKey);
-            reports.add(report);
+            if(report!=null) {
+                reports.add(report);
+            }else {
+                CustomerLogger.error("出现了空的战报！！");
+            }
         }
     }
+
+
 
     public long createSendingMail(SimplePlayer simplePlayer,String context,String title){
         Mail mail = BaseDbPojo.create(Mail.class,areaKey);
@@ -77,7 +83,7 @@ public class MailProxy  extends BasicProxy {
         return mail.getId();
     }
 
-    public void createMail(MailTemplate mailTemplate){
+    public long createMail(MailTemplate mailTemplate){
         Mail mail = BaseDbPojo.create(Mail.class,areaKey);
         mail.setContent(mailTemplate.getContext());
         StringBuffer buffer = new StringBuffer();
@@ -107,6 +113,7 @@ public class MailProxy  extends BasicProxy {
         mails.add(mail);
         playerProxy.addMailToPlayer(mail.getId());
         mail.save();
+        return mail.getId();
     }
 
     public int getUnreadMailNum() {
@@ -137,6 +144,15 @@ public class MailProxy  extends BasicProxy {
             deleteMail(fixDel);
         }
         return res;
+    }
+
+    public M16.MailShortInfo getReportMailShortInfoByid(long id){
+        Mail mail=getMailById(id);
+        if (mail.getType() == ChatAndMailDefine.MAIL_TYPE_REPORT) {
+            return getReportShortInfo(mail);
+        }else{
+            return getMailShortInfo(id);
+        }
     }
 
     private M16.MailShortInfo getReportShortInfo(Mail mail) {
@@ -647,6 +663,7 @@ public class MailProxy  extends BasicProxy {
         mail.setReportId(report.getId());
         mail.setState(ChatAndMailDefine.MAIL_STATE_UNREAD);
         mail.setCreateMailTime(GameUtils.getServerDate().getTime());
+        mail.setSenderName(report.getName());
         mail.save();
         mails.add(mail);
         reports.add(report);

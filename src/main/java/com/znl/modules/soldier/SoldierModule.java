@@ -86,7 +86,7 @@ public class SoldierModule  extends BasicModule {
     private void sendRefuceSoldierInfo(List<Common.SoldierInfo> soldierInfos){
         M2.M20007.S2C.Builder builder = M2.M20007.S2C.newBuilder();
         builder.addAllSoldierList(soldierInfos);
-        sendNetMsg(ActorDefine.SOLDIER_MODULE_ID,ProtocolModuleDefine.NET_M2_C20007,builder.build());
+        sendNetMsg(ProtocolModuleDefine.NET_M2,ProtocolModuleDefine.NET_M2_C20007,builder.build());
         sendPushNetMsgToClient();
     }
 

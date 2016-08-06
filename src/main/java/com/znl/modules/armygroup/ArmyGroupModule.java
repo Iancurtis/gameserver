@@ -16,6 +16,7 @@ import com.znl.proto.M19;
 import com.znl.proto.M2;
 import com.znl.proto.M22;
 import com.znl.proxy.*;
+import com.znl.service.functionNode.ArmygroupNode;
 
 import java.util.*;
 
@@ -43,9 +44,10 @@ public class ArmyGroupModule extends BasicModule {
         areaKey = gameProxy.getAreaKey();
         //军团科技属性加成
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        long groupId = playerProxy.getArmGrouId();
-        GameMsg.TechExpandPowerMap msg = new GameMsg.TechExpandPowerMap();
-        tellMsgToArmygroupNode(msg, groupId);
+   /*     long groupId = playerProxy.getArmGrouId();
+      GameMsg.TechExpandPowerMap msg = new GameMsg.TechExpandPowerMap();
+        tellMsgToArmygroupNode(msg, groupId);*/
+        getLegionTechnologyPowerMapFromService();
         if (playerProxy.getArmGrouId() != 0) {
             GameMsg.checkArmy chemsg = new GameMsg.checkArmy(playerProxy.getArmGrouId());
             sendServiceMsg(ActorDefine.ARMYGROUP_SERVICE_NAME, chemsg);
@@ -409,8 +411,9 @@ public class ArmyGroupModule extends BasicModule {
             sendPushNetMsgToClient();
             sendFuntctionLog(FunctionIdDefine.GET_APPROVAL_LISTS_FUNCTION_ID);
         } else if (anyRef instanceof GameMsg.GetTechExpandPowerMap) {//军团科技属性加成
-            Map<Integer, Long> techExpandPower = ((GameMsg.GetTechExpandPowerMap) anyRef).techExpandPowerMap();
-            refLegionTechnologyPowerMap(techExpandPower);
+         //   Map<Integer, Long> techExpandPower = ((GameMsg.GetTechExpandPowerMap) anyRef).techExpandPowerMap();
+           // refLegionTechnologyPowerMap(techExpandPower);
+            getLegionTechnologyPowerMapFromService();
         } else if (anyRef instanceof GameMsg.GetWelfareRes) {//军团福利资源
             Map<Integer, Integer> resMap = ((GameMsg.GetWelfareRes) anyRef).resMap();
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
@@ -484,15 +487,15 @@ public class ArmyGroupModule extends BasicModule {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             //   TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
             int timerNum = armyGroupProxy.getScienceDonateTimes(power);//timerdbProxy.getTimerNum(TimerDefine.ARMYGROUP_TECH_CONTIBUTE, power, ArmyGroupDefine.CONTRUBUTE_TECH);
-            int alltime=armyGroupProxy.legionTimer.getAlldonetetimes();//timerdbProxy.getTimerNum(TimerDefine.LEGION_ALLTIME_DONATE, 0, 0);
+            int alltime = armyGroupProxy.legionTimer.getAlldonetetimes();//timerdbProxy.getTimerNum(TimerDefine.LEGION_ALLTIME_DONATE, 0, 0);
             int rs = armyGroupProxy.legionTechGoldDonate(power, techId, techLv, techExp, armyTechLv, armygroupMenber, armygroup);
             List<M22.ResInfo> resInfo = armyGroupProxy.resContributeNum();
             if (rs == 0) {
-                   if (timerNum == 0) {
-                        timerNum = 1;
-                   }
-                   GameMsg.MtSTechContributeReq msg = new GameMsg.MtSTechContributeReq(techId, power, playerProxy.getPlayerId(), ArmyGroupDefine.UP_OPT,timerNum ,alltime);
-                   sendToArmyGroupNode(msg);
+                if (timerNum == 0) {
+                    timerNum = 1;
+                }
+                GameMsg.MtSTechContributeReq msg = new GameMsg.MtSTechContributeReq(techId, power, playerProxy.getPlayerId(), ArmyGroupDefine.UP_OPT, timerNum, alltime);
+                sendToArmyGroupNode(msg);
                 M2.M20002.S2C.Builder dif = M2.M20002.S2C.newBuilder();
                 Common.AttrDifInfo.Builder diff = Common.AttrDifInfo.newBuilder();
                 if (power == 200) {
@@ -789,14 +792,18 @@ public class ArmyGroupModule extends BasicModule {
 //    }
 
     /*****
-     * 请求公会科技增益，进入时调用
+     * 刷新工会属性加成
      ******/
     private void getLegionTechnologyPowerMapFromService() {
         //军团科技属性加成
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         long groupId = playerProxy.getArmGrouId();
-        GameMsg.TechExpandPowerMap msg = new GameMsg.TechExpandPowerMap();
-        tellMsgToArmygroupNode(msg, groupId);
+       /* GameMsg.TechExpandPowerMap msg = new GameMsg.TechExpandPowerMap();
+        tellMsgToArmygroupNode(msg, groupId);*/
+        if (groupId > 0 && ArmygroupNode.techExpandPowerMap().get(groupId) != null) {
+            Map<Integer, Long> techExpandPower = ArmygroupNode.techExpandPowerMap().get(groupId);
+            refLegionTechnologyPowerMap(techExpandPower);
+        }
     }
 
     /*****
