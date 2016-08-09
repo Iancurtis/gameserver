@@ -7,6 +7,8 @@ import com.znl.core.PlayerReward;
 import com.znl.core.PlayerTask;
 import com.znl.define.*;
 import com.znl.framework.socket.Request;
+import com.znl.msg.GameMsg;
+import com.znl.proto.Common;
 import com.znl.proto.M28;
 import com.znl.proxy.*;
 import com.znl.utils.GameUtils;
@@ -48,7 +50,7 @@ public class NewBuildModule extends BasicModule {
         int type = c2s.getType();
         NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
         List<M28.BuildingShortInfo> res = new ArrayList<>();
-        for (M28.BuildingShortInfo info : shortInfoList){
+        for (M28.BuildingShortInfo info : shortInfoList) {
             int index = info.getIndex();
             int buildType = info.getBuildingType();
             int rs = newBuildProxy.buildingLevelUp(buildType, index, type);
@@ -57,11 +59,14 @@ public class NewBuildModule extends BasicModule {
             builder.setBuildingType(buildType);
             builder.setIndex(index);
             res.add(builder.build());
+            if (rs >= 0) {
+                sendNoticeToPushService(TipDefine.NOTICE_TYPE_AUTUBUILD);
+            }
         }
         M28.M280001.S2C.Builder builder = M28.M280001.S2C.newBuilder();
         builder.addAllBuildingShortInfos(res);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280001, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280001);
     }
 
     //请求完成升级 包括建造（0级升1级）完成成功后，客户端做对应的逻辑
@@ -70,15 +75,15 @@ public class NewBuildModule extends BasicModule {
         List<M28.BuildingShortInfo> shortInfoList = c2s.getBuildingShortInfosList();
         NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
         List<M28.BuildingShortInfo> res = new ArrayList<>();
-        for (M28.BuildingShortInfo info : shortInfoList){
+        for (M28.BuildingShortInfo info : shortInfoList) {
             int buildType = info.getBuildingType();
             int index = info.getIndex();
             int rs = newBuildProxy.doBuildLevelUp(buildType, index);
             M28.BuildingShortInfo.Builder builder = M28.BuildingShortInfo.newBuilder();
-            if (rs > 0){
+            if (rs > 0) {
                 builder.setRs(ErrorCodeDefine.M280002_3);
                 builder.setLevelTime(rs);
-            }else {
+            } else {
                 builder.setRs(rs);
             }
             builder.setBuildingType(buildType);
@@ -89,7 +94,7 @@ public class NewBuildModule extends BasicModule {
         M28.M280002.S2C.Builder builder = M28.M280002.S2C.newBuilder();
         builder.addAllBuildingShortInfos(res);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280002, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280002);
     }
 
     //取消建筑升级
@@ -104,7 +109,10 @@ public class NewBuildModule extends BasicModule {
         builder.setBuildingType(buildType);
         builder.setIndex(index);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280003, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280003);
+        if (rs >= 0) {
+            sendNoticeToPushService(TipDefine.NOTICE_TYPE_AUTUBUILD);
+        }
     }
 
     //建筑加速升级
@@ -120,16 +128,19 @@ public class NewBuildModule extends BasicModule {
         builder.setRs(rs);
         builder.setIndex(index);
         builder.setBuildingType(buildType);
-        if (rs >= 0){
+        if (rs >= 0) {
             builder.setRs(0);
             builder.setLevelTime(rs);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280004, builder.build());
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
-        if (reward.haveReward()){
+        if (reward.haveReward()) {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280004);
+        if(rs>=0){
+            sendNoticeToPushService(TipDefine.NOTICE_TYPE_AUTUBUILD);
+        }
     }
 
     //野外建筑拆除
@@ -142,7 +153,7 @@ public class NewBuildModule extends BasicModule {
         builder.setIndex(index);
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280005, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280005);
     }
 
     //建筑生产 包括 兵营，校场，工匠坊，科技
@@ -154,20 +165,27 @@ public class NewBuildModule extends BasicModule {
         int typeId = c2s.getTypeid();
         PlayerReward reward = new PlayerReward();
         NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
-        int rs = newBuildProxy.builderProduction(buildType,index,typeId,num,reward);
+        int rs = newBuildProxy.builderProduction(buildType, index, typeId, num, reward);
         M28.M280006.S2C.Builder builder = M28.M280006.S2C.newBuilder();
         builder.setRs(rs);
         builder.setBuildingType(buildType);
         builder.setIndex(index);
-        if (rs >= 0){
-            builder.setProductionInfo(newBuildProxy.getMaxSortProductionInfo(buildType,index));
+        if (rs >= 0) {
+            builder.setProductionInfo(newBuildProxy.getMaxSortProductionInfo(buildType, index));
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280006, builder.build());
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
-        if (reward.haveReward()){
+        if (reward.haveReward()) {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280006);
+        if(rs>=0){
+            if(buildType==ResFunBuildDefine.BUILDE_TYPE_TANK) {
+                sendNoticeToPushService(TipDefine.NOTICE_TYPE_CREATESOLDIER);
+            }else if(buildType==ResFunBuildDefine.BUILDE_TYPE_SCIENCE) {
+                sendNoticeToPushService(TipDefine.NOTICE_TYPE_SCIENCELEVEL);
+            }
+        }
     }
 
     private void OnTriggerNet280007Event(Request request) {
@@ -182,22 +200,22 @@ public class NewBuildModule extends BasicModule {
         builder.setBuildingType(buildType);
         builder.setIndex(index);
         builder.setOrder(order);
-        if (rs > 0){
+        if (rs > 0) {
             builder.setRemainTime(rs);
             builder.setRs(ErrorCodeDefine.M280007_2);
-        }else if (rs == 0){
+        } else if (rs == 0) {
             builder.setRs(rs);
-            builder.setNextOrder(newBuildProxy.getWorkingSort(buildType,index));
+            builder.setNextOrder(newBuildProxy.getWorkingSort(buildType, index));
 
-        }else {
+        } else {
             builder.setRs(rs);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280007, builder.build());
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
-        if (reward.haveReward()){
+        if (reward.haveReward()) {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280007);
     }
 
     //取消生产
@@ -210,8 +228,8 @@ public class NewBuildModule extends BasicModule {
         NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
         int rs = newBuildProxy.cancelCreate(buildType, index, order, reward);
         M28.M280008.S2C.Builder builder = M28.M280008.S2C.newBuilder();
-        if (rs >= 0){
-            builder.setNextOrder(newBuildProxy.getWorkingSort(buildType,index));
+        if (rs >= 0) {
+            builder.setNextOrder(newBuildProxy.getWorkingSort(buildType, index));
         }
         builder.setBuildingType(buildType);
         builder.setIndex(index);
@@ -219,10 +237,17 @@ public class NewBuildModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280008, builder.build());
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
-        if (reward.haveReward()){
+        if (reward.haveReward()) {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280008);
+        if(rs>=0){
+            if(buildType==ResFunBuildDefine.BUILDE_TYPE_TANK) {
+                sendNoticeToPushService(TipDefine.NOTICE_TYPE_CREATESOLDIER);
+            }else if(buildType==ResFunBuildDefine.BUILDE_TYPE_SCIENCE) {
+                sendNoticeToPushService(TipDefine.NOTICE_TYPE_SCIENCELEVEL);
+            }
+        }
     }
 
     //加速生产
@@ -235,26 +260,30 @@ public class NewBuildModule extends BasicModule {
         PlayerReward reward = new PlayerReward();
         M28.M280009.S2C.Builder builder = M28.M280009.S2C.newBuilder();
         NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
-        int rs = newBuildProxy.sepeedProduct(buildType,index,order,useType,reward);
-        if (rs > 0){
+        int rs = newBuildProxy.sepeedProduct(buildType, index, order, useType, reward);
+        if (rs > 0) {
             builder.setRs(0);
             builder.setRemainTime(rs);
             builder.setOrder(order);
-        }else {
+        } else {
             builder.setRs(rs);
-            if (rs == 0){
-                builder.setNextOrder(newBuildProxy.getWorkingSort(buildType,index));
+            if (rs == 0) {
+                builder.setNextOrder(newBuildProxy.getWorkingSort(buildType, index));
                 builder.setOrder(order);
             }
         }
         builder.setBuildingType(buildType);
         builder.setIndex(index);
+        builder.setOrder(order);
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280009, builder.build());
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
-        if (reward.haveReward()){
+        if (reward.haveReward()) {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
         }
-        sendPushNetMsgToClient();
+        if (rs >= 0) {
+            sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.CountCapacity());
+        }
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280009);
     }
 
     //客户端自己判断是否可以购买VIP购买建筑位，且计算出价格
@@ -263,20 +292,20 @@ public class NewBuildModule extends BasicModule {
         NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
         int rs = newBuildProxy.buyBuildSize();
         builder.setRs(rs);
-        if (rs >= 0){
+        if (rs >= 0) {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            int autoEndTime = (int) (playerProxy.getAutoBuildStateendtime() /1000);
+            int autoEndTime = (int) (playerProxy.getAutoBuildStateendtime() / 1000);
             int now = GameUtils.getServerTime();
-            if (autoEndTime > now){
+            if (autoEndTime > now) {
                 builder.setAutoRemainTime(autoEndTime - now);
                 builder.setType(playerProxy.getAutoBuildState());
-            }else {
+            } else {
                 builder.setType(TimerDefine.BUILDAUTOLEVEL_OFF);
                 builder.setAutoRemainTime(0);
             }
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280011, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280011);
     }
 
     //购买自动升级建筑
@@ -285,20 +314,20 @@ public class NewBuildModule extends BasicModule {
         NewBuildProxy newBuildProxy = getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
         int rs = newBuildProxy.buyAutoLevel();
         builder.setRs(rs);
-        if (rs >= 0){
+        if (rs >= 0) {
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            int autoEndTime = (int) (playerProxy.getAutoBuildStateendtime() /1000);
+            int autoEndTime = (int) (playerProxy.getAutoBuildStateendtime() / 1000);
             int now = GameUtils.getServerTime();
-            if (autoEndTime > now){
+            if (autoEndTime > now) {
                 builder.setAutoRemainTime(autoEndTime - now);
                 builder.setType(playerProxy.getAutoBuildState());
-            }else {
+            } else {
                 builder.setType(TimerDefine.BUILDAUTOLEVEL_OFF);
                 builder.setAutoRemainTime(0);
             }
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280012, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280012);
     }
 
     //自动升级建筑开关
@@ -311,52 +340,80 @@ public class NewBuildModule extends BasicModule {
         builder.setRs(rs);
         builder.setType(type);
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        int autoEndTime = (int) (playerProxy.getAutoBuildStateendtime() /1000);
+        int autoEndTime = (int) (playerProxy.getAutoBuildStateendtime() / 1000);
         int now = GameUtils.getServerTime();
-        if (autoEndTime > now){
+        if (autoEndTime > now) {
             builder.setAutoRemainTime(autoEndTime - now);
-        }else {
+        } else {
             builder.setAutoRemainTime(0);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280013, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280013);
     }
 
     //完成自动升级建筑 升级建筑倒计时已经结束
     private void OnTriggerNet280014Event(Request request) {
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         int now = GameUtils.getServerTime();
-        int autoEndTime = (int) (playerProxy.getAutoBuildStateendtime() /1000);
+        int autoEndTime = (int) (playerProxy.getAutoBuildStateendtime() / 1000);
         M28.M280014.S2C.Builder builder = M28.M280014.S2C.newBuilder();
-        if (autoEndTime > now){
+        if (autoEndTime > now) {
             builder.setRs(ErrorCodeDefine.M280014_1);
             builder.setAutoRemainTime(autoEndTime - now);
-        }else {
+        } else {
             builder.setRs(0);
             //关闭自动建造
             playerProxy.setAutoBuildState(TimerDefine.BUILDAUTOLEVEL_OFF);
             playerProxy.setAutoBuildStateendtime(0l);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280014, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280014);
     }
 
     //资源产出校验
     private void OnTriggerNet280015Event(Request request) {
-        SystemProxy systemProxy=getProxy(ActorDefine.SYSTEM_PROXY_NAME);
+        SystemProxy systemProxy = getProxy(ActorDefine.SYSTEM_PROXY_NAME);
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         M28.M280015.S2C.Builder builder = M28.M280015.S2C.newBuilder();
         systemProxy.checkResouse();
+        playerProxy.removeChangetPowerBytypeid(PlayerPowerDefine.POWER_food);
+        playerProxy.removeChangetPowerBytypeid(PlayerPowerDefine.POWER_tael);
+        playerProxy.removeChangetPowerBytypeid(PlayerPowerDefine.POWER_iron);
+        playerProxy.removeChangetPowerBytypeid(PlayerPowerDefine.POWER_wood);
+        playerProxy.removeChangetPowerBytypeid(PlayerPowerDefine.POWER_stones);
         builder.setRs(0);
+        builder.addAllDiffs(getResoursePower());
         sendNetMsg(ProtocolModuleDefine.NET_M28, ProtocolModuleDefine.NET_M28_C280015, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M28_C280015);
+    }
+
+    //发送资源改变
+    private List<Common.AttrDifInfo> getResoursePower() {
+        List<Common.AttrDifInfo> powerlist = new ArrayList<Common.AttrDifInfo>();
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        for (int power = PlayerPowerDefine.POWER_tael; power <= PlayerPowerDefine.POWER_food; power++) {
+            Common.AttrDifInfo.Builder builder = Common.AttrDifInfo.newBuilder();
+            builder.setTypeid(power);
+            builder.setValue(playerProxy.getPowerValue(power));
+            powerlist.add(builder.build());
+        }
+        return powerlist;
+    }
+
+
+    //通过某个类型发送通知
+    public void sendNoticeToPushService(int type) {
+        NewBuildProxy newBuildProxy = getGameProxy().getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
+        sendServiceMsg(ActorDefine.PUSH_SERVICE_NAME, new GameMsg.addNoticelist(newBuildProxy.getNoticeByType(type), type));
     }
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     *
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

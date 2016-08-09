@@ -39,15 +39,19 @@ public class ActivityProxy extends BasicProxy {
 
 
     public ActivityProxy(Set<Long> ids, String areaKey) {
-        this.areaKey = areaKey;
-        for (Long id : ids) {
-            Activity activity = BaseDbPojo.get(id, Activity.class, areaKey);
-            if (activity == null) {
-                CustomerLogger.error("活动出现空值");
-                System.out.println("活动出现空值");
-                continue;
+        try {
+            this.areaKey = areaKey;
+            for (Long id : ids) {
+                Activity activity = BaseDbPojo.get(id, Activity.class, areaKey);
+                if (activity == null) {
+                    CustomerLogger.error("活动出现空值");
+                    System.out.println("活动出现空值");
+                    continue;
+                }
+                activitys.add(activity);
             }
-            activitys.add(activity);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -299,14 +303,17 @@ public class ActivityProxy extends BasicProxy {
     private Map<Integer, ConditionFormula> _mapCondition = new HashMap<>();
 
     private Set<Integer> needSendActivitys = new ConcurrentHashSet<>();
-    public Set<Integer> getNeedSendActivitys(){
+
+    public Set<Integer> getNeedSendActivitys() {
         Set<Integer> res = new HashSet<>(needSendActivitys);
         needSendActivitys.clear();
         return res;
     }
-    public int getNeddSendActivitySize(){
+
+    public int getNeddSendActivitySize() {
         return needSendActivitys.size();
     }
+
     private void initCondition() {
         ConditionFormula condition;
         condition = (Activity activity, int value, int expandCondition, int sort) -> {
@@ -314,7 +321,7 @@ public class ActivityProxy extends BasicProxy {
             List<JSONObject> list = activityEffectMap.get(acDefine.getInt("effectID"));
             for (JSONObject define : list) {
                 if (define.getInt("sort") == sort) {
-                    List<Integer> valuelist =new ArrayList<Integer>( activity.getValuelist());
+                    List<Integer> valuelist = new ArrayList<Integer>(activity.getValuelist());
                     long _value = valuelist.get(sort - 1) + value;
                     valuelist.remove(sort - 1);
                     valuelist.add(sort - 1, (int) _value);
@@ -357,8 +364,10 @@ public class ActivityProxy extends BasicProxy {
                 int conditionValue = define.getInt("condition2");
                 if (define.getInt("sort") == sort) {
                     List<Integer> valuelist = activity.getValuelist();
-                    valuelist.remove(sort - 1);
-                    valuelist.add(sort - 1,  conditionValue);
+                    if (valuelist.size() >= sort) {
+                        valuelist.remove(sort - 1);
+                    }
+                    valuelist.add(sort - 1, conditionValue);
                     if (conditionValue <= value) {
                         if (activity.getCanGetList().contains(define.getInt("sort")) == false
                                 && activity.getAlreadyGetList().contains(define.getInt("sort")) == false) {
@@ -427,19 +436,19 @@ public class ActivityProxy extends BasicProxy {
             JSONObject acDefine = activityMap.get(activity.getActivityId());
             List<JSONObject> list = activityEffectMap.get(acDefine.getInt("effectID"));
             for (JSONObject define : list) {
-                    if (define.getInt("condition2") <= value) {
-                        if (activity.getCanGetList().contains(define.getInt("sort")) == false
-                                && activity.getAlreadyGetList().contains(define.getInt("sort")) == false && define.getInt("sort") == sort) {
-                            //如果满足条件，还未领取过则设置为可领
-                            activity.addCanGetList(define.getInt("sort"));
-                            needSendActivitys.add(activity.getActivityId());
-                        }
+                if (define.getInt("condition2") <= value) {
+                    if (activity.getCanGetList().contains(define.getInt("sort")) == false
+                            && activity.getAlreadyGetList().contains(define.getInt("sort")) == false && define.getInt("sort") == sort) {
+                        //如果满足条件，还未领取过则设置为可领
+                        activity.addCanGetList(define.getInt("sort"));
+                        needSendActivitys.add(activity.getActivityId());
                     }
+                }
 
             }
             pushActivityToChangeList(activity);
         };
-       _mapCondition.put(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, condition);
+        _mapCondition.put(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, condition);
         _mapCondition.put(ActivityDefine.ACTIVITY_CONDITION_ONLINE_TIME, condition);
 
         condition = (Activity activity, int value, int expandCondition, int sort) -> {
@@ -556,9 +565,9 @@ public class ActivityProxy extends BasicProxy {
                         }
                     } else {
                         List<Integer> cangetlist = activity.getCanGetList();
-                        int oldSize =cangetlist.size();
+                        int oldSize = cangetlist.size();
                         cangetlist.remove(new Integer(define.getInt("sort")));
-                        if (cangetlist.size() != oldSize){
+                        if (cangetlist.size() != oldSize) {
                             needSendActivitys.add(activity.getActivityId());
                         }
                         activity.setCanGetList(cangetlist);
@@ -645,7 +654,7 @@ public class ActivityProxy extends BasicProxy {
             }
             if (isEffect(activityDefine, playerProxy)) {
                 list.add(getActivityInfo(activity));
-            } else if (activityDefine.getInt("endjudge") !=0 && activity.getCanGetList().size() > 0) {
+            } else if (activityDefine.getInt("endjudge") != 0 && activity.getCanGetList().size() > 0) {
                 list.add(getActivityInfo(activity));//虽然过期但是还是可领取的
             }
         }
@@ -690,7 +699,7 @@ public class ActivityProxy extends BasicProxy {
             }
         }
         builder.addAllActivitys(list);
-        int[]nextOpenActivity=nextAddActivitStartTime(playerProxy,2);
+        int[] nextOpenActivity = nextAddActivitStartTime(playerProxy, 2);
         builder.setNextOpenTime(nextOpenActivity[0]);
         builder.setNextOpenId(nextOpenActivity[1]);
         builder.setRs(0);
@@ -741,6 +750,7 @@ public class ActivityProxy extends BasicProxy {
         builder.setInfo(define.getString("info"));
         builder.setStartTime((int) (getActivityStarTime(define, playerProxy) / 1000));
         builder.setEndTime((int) (getActivityEndTime(define) / 1000));
+        builder.setLestime((int) ((getActivityEndTime(define) / 1000) - GameUtils.getServerTime()));
         return builder.build();
     }
 
@@ -769,9 +779,9 @@ public class ActivityProxy extends BasicProxy {
      */
     public int getLaBaInfo(int effectId, M23.LaBaInfo.Builder builder, int type) {
         int rs = 0;
-      //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-       int times = playerProxy.getLabafreetimes();//timerdbProxy.getTimerNum(TimerDefine.LABA_LOTTER_FREETIME, 0, 0);
+        int times = playerProxy.getLabafreetimes();//timerdbProxy.getTimerNum(TimerDefine.LABA_LOTTER_FREETIME, 0, 0);
         List<JSONObject> jsonObjects = getLaBaActivitid();
         boolean falg = false;
         for (JSONObject jsonObject : jsonObjects) {
@@ -860,9 +870,9 @@ public class ActivityProxy extends BasicProxy {
      * @return freetime
      */
     public int showFreeTime() {
-      //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-        PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        int times =playerProxy.getLabafreetimes();// timerdbProxy.getTimerNum(TimerDefine.LABA_LOTTER_FREETIME, 0, 0);
+        //  TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        int times = playerProxy.getLabafreetimes();// timerdbProxy.getTimerNum(TimerDefine.LABA_LOTTER_FREETIME, 0, 0);
         JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.LABA, "ID", 1);
         if (times < jsonObject.getInt("freetime")) {
             return jsonObject.getInt("freetime");
@@ -893,13 +903,13 @@ public class ActivityProxy extends BasicProxy {
         if (falg == false) {
             return ErrorCodeDefine.M230003_11;
         }
-       // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+        // TimerdbProxy timerdbProxy = getGameProxy().getProxy(ActorDefine.TIMERDB_PROXY_NAME);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        int times =playerProxy.getLabafreetimes();// timerdbProxy.getTimerNum(TimerDefine.LABA_LOTTER_FREETIME, 0, 0);
+        int times = playerProxy.getLabafreetimes();// timerdbProxy.getTimerNum(TimerDefine.LABA_LOTTER_FREETIME, 0, 0);
         JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.LABA, 1);
         int rewardGroup = jsonObject.getInt("rewardgroup");
         if (type == ActivityDefine.LABA_FREE_LOTTER_TYPE && times < jsonObject.getInt("freetime")) {
-          //  timerdbProxy.addNum(TimerDefine.LABA_LOTTER_FREETIME, 0, 0, 1);
+            //  timerdbProxy.addNum(TimerDefine.LABA_LOTTER_FREETIME, 0, 0, 1);
             playerProxy.addlabafreetimes(1);
             RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
             JSONObject define = getRewardById(rewardGroup);
@@ -1146,14 +1156,19 @@ public class ActivityProxy extends BasicProxy {
         if (endTime != -1) {
             builder.setEndTime((int) (endTime / 1000));
         }
+        if (endTime != -1) {
+            builder.setLestime((int) ((endTime / 1000) - GameUtils.getServerTime()));
+        } else {
+            builder.setLestime(-1);
+        }
         JSONObject effectjson = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ACTIVE_EFFECT, "effectID", define.getInt("effectID"));
         builder.setConditiontype(effectjson.getInt("conditiontype"));
         builder.setAlready((int) activity.getConditionValue());
        /* PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);*/
         if (effectjson.getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_CAPITY_RANK) {
-            if(playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CAPACITY)==null){
-            builder.setAlready(-1);
-            }else{
+            if (playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CAPACITY) == null) {
+                builder.setAlready(-1);
+            } else {
                 builder.setAlready(playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CAPACITY));
             }
             if (activity.getConditionValue() > 0) {
@@ -1161,9 +1176,9 @@ public class ActivityProxy extends BasicProxy {
             }
         }
         if (effectjson.getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_GUANQIA_RANK) {
-            if(playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CUSTOMS)==null){
+            if (playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CUSTOMS) == null) {
                 builder.setAlready(-1);
-            }else{
+            } else {
                 builder.setAlready(playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CUSTOMS));
             }
             if (activity.getConditionValue() > 0) {
@@ -1171,9 +1186,9 @@ public class ActivityProxy extends BasicProxy {
             }
         }
         if (effectjson.getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_HONOR_RANK) {
-            if(playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_HONOR)==null){
+            if (playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_HONOR) == null) {
                 builder.setAlready(-1);
-            }else{
+            } else {
                 builder.setAlready(playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_HONOR));
             }
             if (activity.getConditionValue() > 0) {
@@ -1340,7 +1355,7 @@ public class ActivityProxy extends BasicProxy {
                         expandCondition = getVipMap(value);*/
                             _mapCondition.get(conditionType).calc(activity, value, (int) expandCondition, jsonObject.getInt("sort"));
                         }
-                        if(conditionType == ActivityDefine.ACTIVITY_CONDITION_RANK_LEGION){
+                        if (conditionType == ActivityDefine.ACTIVITY_CONDITION_RANK_LEGION) {
                             _mapCondition.get(conditionType).calc(activity, value, (int) expandCondition, jsonObject.getInt("sort"));
                         }
                         if (conditionType == ActivityDefine.ACTIVITY_CONDITION_TYPE_CAPITY_RANK ||
@@ -1355,9 +1370,9 @@ public class ActivityProxy extends BasicProxy {
                         } else if (isEffect(define, playerProxy)) {
                             if (conditionType == ActivityDefine.ACTIVITY_CONDITION_TYPE_LEVEL_PURPLE_EQUIP_NUM) {
                                 _mapCondition.get(conditionType).calc(activity, value, (int) expandCondition, jsonObject.getInt("sort"));
-                            }  else if (conditionType == ActivityDefine.ACTIVITY_CONDITION_TYPE_RESOUCE_GETNUM) {
+                            } else if (conditionType == ActivityDefine.ACTIVITY_CONDITION_TYPE_RESOUCE_GETNUM) {
                                 _mapCondition.get(conditionType).calc(activity, value, (int) expandCondition, jsonObject.getInt("sort"));
-                            }else {
+                            } else {
                                 _mapCondition.get(conditionType).calc(activity, value, 0, jsonObject.getInt("sort"));
                             }
                         }
@@ -1437,35 +1452,35 @@ public class ActivityProxy extends BasicProxy {
     }
 
 
-
     /**
      * /获得下次要开启的活动的时间
+     *
      * @param playerProxy
-     * @param type 1:普通活动,2.限时活动
+     * @param type        1:普通活动,2.限时活动
      * @return
      */
-    public int[] nextAddActivitStartTime(PlayerProxy playerProxy,int type) {
+    public int[] nextAddActivitStartTime(PlayerProxy playerProxy, int type) {
         long nowtime = GameUtils.getServerDate().getTime();
         long mintime = 0;
-        int activityId=0;
+        int activityId = 0;
         for (Activity activity : activitys) {
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindById(DataDefine.ACTIVE_DESIGN, activity.getActivityId());
-            if (jsonObject.getInt("show") !=type) continue;//现阶段只限制限时活动
+            if (jsonObject.getInt("show") != type) continue;//现阶段只限制限时活动
             if (jsonObject != null && !isEffect(jsonObject, playerProxy)) {
                 long startTime = getActivityStarTime(jsonObject, playerProxy);
                 if (startTime > nowtime) {
                     if (mintime == 0) {
                         mintime = startTime;
-                        activityId=activity.getActivityId();
+                        activityId = activity.getActivityId();
                     } else if (startTime < mintime) {
                         mintime = startTime;
-                        activityId=activity.getActivityId();
+                        activityId = activity.getActivityId();
                     }
                 }
             }
         }
-        mintime =mintime- nowtime;
-        return new int[]{(int)(mintime/1000),activityId};
+        mintime = mintime - nowtime;
+        return new int[]{(int) (mintime / 1000), activityId};
     }
 
 
@@ -1681,17 +1696,17 @@ public class ActivityProxy extends BasicProxy {
                 if (activity.getBuyInv() == ActivityDefine.ACTIVITY_STATE_INVEST) {
                     //已购买就别重复购买了
                     builder.setRs(ErrorCodeDefine.M230001_6);
-                    return  builder.build();
-                   // return ErrorCodeDefine.M230001_6;
+                    return builder.build();
+                    // return ErrorCodeDefine.M230001_6;
                 }
                 if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < ActivityDefine.INVESTMENT_PRICE) {
                     builder.setRs(ErrorCodeDefine.M230001_7);
-                    return  builder.build();
+                    return builder.build();
                     //return ErrorCodeDefine.M230001_7;
                 }
                 if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_vipLevel) < ActivityDefine.INVESTMENT_VIP) {
                     builder.setRs(ErrorCodeDefine.M230001_8);
-                    return  builder.build();
+                    return builder.build();
                     //return ErrorCodeDefine.M230001_8;
                 }
                 playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, ActivityDefine.INVESTMENT_PRICE, LogDefine.LOST_ACTIVITY_BUY);
@@ -1712,13 +1727,13 @@ public class ActivityProxy extends BasicProxy {
                 }
                 if (effectDefine == null) {
                     builder.setRs(ErrorCodeDefine.M230001_2);
-                    return  builder.build();
+                    return builder.build();
                     //return ErrorCodeDefine.M230001_2;
                 }
                 int rs = getActivityEffect(effectDefine, activity, reward);
                 if (rs < 0) {
                     builder.setRs(rs);
-                    return  builder.build();
+                    return builder.build();
                 }
                 if (activityDefine.getInt("endjudge") == 1) {
                     activity.setState(ActivityDefine.ACTIVITY_STATE_DONE);
@@ -1733,7 +1748,7 @@ public class ActivityProxy extends BasicProxy {
                     int rs = getActivityEffect(define, activity, reward);
                     if (rs < 0) {
                         builder.setRs(rs);
-                        return  builder.build();
+                        return builder.build();
                     }
                 }
             }
@@ -1748,7 +1763,7 @@ public class ActivityProxy extends BasicProxy {
         }
         pushActivityToChangeList(activity);
         builder.setRs(0);
-        return  builder.build();
+        return builder.build();
     }
 
     //写入日志
@@ -1832,10 +1847,10 @@ public class ActivityProxy extends BasicProxy {
             if (effectDefine.getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_CHARGE) {
                 //首冲奖励的话需要做点特殊处理
                 if (reward.addPowerMap.containsKey(PlayerPowerDefine.POWER_gold)) {
-                    int gold = (int) (reward.addPowerMap.get(PlayerPowerDefine.POWER_gold) + activity.getValuelist().get(effectDefine.getInt("sort")-1));
+                    int gold = (int) (reward.addPowerMap.get(PlayerPowerDefine.POWER_gold) + activity.getValuelist().get(effectDefine.getInt("sort") - 1));
                     reward.addPowerMap.put(PlayerPowerDefine.POWER_gold, gold);
                 } else {
-                    reward.addPowerMap.put(PlayerPowerDefine.POWER_gold, (int) ( activity.getValuelist().get(effectDefine.getInt("sort")-1)));
+                    reward.addPowerMap.put(PlayerPowerDefine.POWER_gold, (int) (activity.getValuelist().get(effectDefine.getInt("sort") - 1)));
                 }
             }
             rewardProxy.getRewardToPlayer(reward, LogDefine.GET_ACTIVITY_GET);
@@ -1929,26 +1944,28 @@ public class ActivityProxy extends BasicProxy {
         infos.add(info);
        }*/
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-       // addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, 0, playerProxy, 0);
-       // addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ONLINE_TIME, 0, playerProxy, 0);
+        // addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, 0, playerProxy, 0);
+        // addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ONLINE_TIME, 0, playerProxy, 0);
         long regTime = (long) playerProxy.getCreatePlayerTime() * 1000;
         int days = DateUtil.getDayIntwoTime(regTime, GameUtils.getServerDate().getTime());
         addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_AFTER_LONGIN, days, playerProxy, 0);
     }
+
     //在线礼包活动校验
     public int checkeolineActivity() {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        int time= (int)(GameUtils.getServerDate().getTime()/1000);
+        int time = (int) (GameUtils.getServerDate().getTime() / 1000);
         addolineActivity();
-        return playerProxy.getPlayer().getOnlinetime()+(time-playerProxy.getPlayer().getLoginTime());
+        return playerProxy.getPlayer().getOnlinetime() + (time - playerProxy.getPlayer().getLoginTime());
     }
+
     //添加在线礼包活动效果
     public void addolineActivity() {
-            PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-            int time= (int)(GameUtils.getServerDate().getTime()/1000);
-            int times=playerProxy.getPlayer().getOnlinetime()+(time-playerProxy.getPlayer().getLoginTime());
-            addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, times, playerProxy, 0);
-            addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ONLINE_TIME,times, playerProxy, 0);
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        int time = (int) (GameUtils.getServerDate().getTime() / 1000);
+        int times = playerProxy.getPlayer().getOnlinetime() + (time - playerProxy.getPlayer().getLoginTime());
+        addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_FIRST_ONLINETIME, times, playerProxy, 0);
+        addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ONLINE_TIME, times, playerProxy, 0);
     }
 
     //获取全服相应vip等级的玩家数量
@@ -2260,6 +2277,51 @@ public class ActivityProxy extends BasicProxy {
     }
 
 
+//    /**
+//     * 230006刷新活动信息
+//     * @return M23.LegionShareInfo
+//     */
+//    public M23.LegionShareInfo getLegionShareBoxInfos(){
+//        Activity activity = getPlayerYouFuTongXiangActivity();
+//        if (activity == null) {
+//            return null;
+//        }
+//        String legionShareStr = activity.getLegionShare();
+//        if (StringUtils.isBlank(legionShareStr)) {
+//            return null;
+//        }
+//        List<String[]> recordList = convertLegionShareStr2Arr(legionShareStr);
+//
+//        //格式：礼包id_分享人id_分享时间
+//        //  M23.ActivityInfo.Builder builder = M23.ActivityInfo.newBuilder();
+//        M23.LegionShareInfo.Builder legionBuilder=M23.LegionShareInfo.newBuilder();
+//        Iterator<String[]> recordIter = recordList.iterator();
+//        boolean isUpdate = false;
+//        while (recordIter.hasNext()) {
+//            String[] record = recordIter.next();//name_id_time
+//            int recordTime = Integer.parseInt(record[2]);
+//            //判断过期，如果过期移除，24小时
+//            int currentTime = GameUtils.getServerTime();
+//            int leftTime = LEGION_SHARE_LIMIT_TIME - (currentTime - recordTime);
+//            if (leftTime <= 0) {
+//                recordIter.remove();
+//                isUpdate = true;
+//                continue;
+//            }
+//            int id = Integer.parseInt(record[1]);
+//            String playerName = record[0];
+//            legionBuilder = M23.LegionShareInfo.newBuilder();
+//            legionBuilder.setId(id);
+//            legionBuilder.setPlayer(playerName);
+//            legionBuilder.setTimeLeft(leftTime);
+//        }
+//        if (isUpdate) {
+//            activity.setLegionShare(legionShareRecordList2String(recordList));
+//            activity.save();
+//        }
+//        return legionBuilder.build();
+//    }
+
     /**
      * 领取宝箱操作
      *
@@ -2322,66 +2384,66 @@ public class ActivityProxy extends BasicProxy {
             //通知这个活动已经结束，
            /* activity.setState(ActivityDefine.ACTIVITY_STATE_DONE);
             activity.save();*/
-           // futureDeleteActivity.add(activity.getActivityId());
+            // futureDeleteActivity.add(activity.getActivityId());
         }
         return builder.build();
     }
 
 
     /**
-     *  通过id列表获取活动info
+     * 通过id列表获取活动info
      *
      * @param ids
      */
-    public List<M23.ActivityShowInfo> getActivityInfoByIds(Set<Integer> ids){
+    public List<M23.ActivityShowInfo> getActivityInfoByIds(Set<Integer> ids) {
         List<M23.ActivityShowInfo> res = new ArrayList<>();
         //List<M23.ActivityInfo> re= new ArrayList<>();
-        for (Integer id : ids){
+        for (Integer id : ids) {
             Activity activity = getActivityByTypeId(id);
-            if (activity != null){
-                M23.ActivityShowInfo.Builder builder = M23.ActivityShowInfo.newBuilder();
+            if (activity != null) {
                 M23.ActivityInfo info = getActivityInfo(activity);
+                M23.ActivityShowInfo.Builder builder = M23.ActivityShowInfo.newBuilder();
                 //re.add(info);
                 builder.setActivityId(info.getActivityId());
                   /* builder.setArtIcon(info.getArtIcon());
                 builder.setUitype(info.getUitype());
                 builder.setSort(info.getSort());*/
-                List<M23.ButtonInfo> rb= new ArrayList<>();
-                  for(M23.ButtonInfo inf :info.getButtonsList()){
-                      M23.ButtonInfo.Builder buttonbuilder = M23.ButtonInfo.newBuilder();
-                      buttonbuilder.setType(inf.getType());
-                      buttonbuilder.setName(inf.getName());
-                      rb.add(buttonbuilder.build());
-                  }
+                List<M23.ButtonInfo> rb = new ArrayList<>();
+                for (M23.ButtonInfo inf : info.getButtonsList()) {
+                    M23.ButtonInfo.Builder buttonbuilder = M23.ButtonInfo.newBuilder();
+                    buttonbuilder.setType(inf.getType());
+                    buttonbuilder.setName(inf.getName());
+                    rb.add(buttonbuilder.build());
+                }
                 builder.addAllButtons(rb);
-                List<M23.ActivityEffectInfo> rf= new ArrayList<>();
-                  for(M23.ActivityEffectInfo inf :info.getEffectInfosList()){
-                      M23.ActivityEffectInfo.Builder effectbuilder = M23.ActivityEffectInfo.newBuilder();
-                      effectbuilder.setType(inf.getType());
-                      effectbuilder.setEffectId(inf.getEffectId());
-                      effectbuilder.setSort(inf.getSort());
-                      effectbuilder.setIscanget(inf.getIscanget());
-                      List<Common.RewardInfo> rewardInfos = new ArrayList<>();
-                      for(Common.RewardInfo rew:inf.getRewardsList()){
-                          Common.RewardInfo.Builder rewardbuiler = Common.RewardInfo.newBuilder();
-                          rewardbuiler.setNum(rew.getNum());
-                          rewardbuiler.setTypeid(rew.getTypeid());
-                          rewardbuiler.setPower(rew.getPower());
-                          rewardInfos.add(rewardbuiler.build());
-                      }
-                      effectbuilder.addAllRewards(rewardInfos);
-                      effectbuilder.setEffecttype(inf.getEffecttype());
-                      effectbuilder.setEffect(inf.getEffect());
-                      effectbuilder.setLimit(inf.getLimit());
-                      effectbuilder.setTotalLimit(inf.getTotalLimit());
-                      rf.add(effectbuilder.build());
-                   }
+                List<M23.ActivityEffectInfo> rf = new ArrayList<>();
+                for (M23.ActivityEffectInfo inf : info.getEffectInfosList()) {
+                    M23.ActivityEffectInfo.Builder effectbuilder = M23.ActivityEffectInfo.newBuilder();
+                    effectbuilder.setType(inf.getType());
+                    effectbuilder.setEffectId(inf.getEffectId());
+                    effectbuilder.setSort(inf.getSort());
+                    effectbuilder.setIscanget(inf.getIscanget());
+                    List<Common.RewardInfo> rewardInfos = new ArrayList<>();
+                    for (Common.RewardInfo rew : inf.getRewardsList()) {
+                        Common.RewardInfo.Builder rewardbuiler = Common.RewardInfo.newBuilder();
+                        rewardbuiler.setNum(rew.getNum());
+                        rewardbuiler.setTypeid(rew.getTypeid());
+                        rewardbuiler.setPower(rew.getPower());
+                        rewardInfos.add(rewardbuiler.build());
+                    }
+                    effectbuilder.addAllRewards(rewardInfos);
+                    effectbuilder.setEffecttype(inf.getEffecttype());
+                    effectbuilder.setEffect(inf.getEffect());
+                    effectbuilder.setLimit(inf.getLimit());
+                    effectbuilder.setTotalLimit(inf.getTotalLimit());
+                    rf.add(effectbuilder.build());
+                }
                 builder.addAllEffectInfos(rf);
                 /*builder.setStartTime(info.getStartTime());
                 builder.setEndTime(info.getEndTime());
-                builder.setBgIcon(info.getBgIcon());
+                builder.setBgIcon(info.getBgIcon());*/
                 builder.setAlready(info.getAlready());
-                builder.setTotal(info.getTotal());
+               /* builder.setTotal(info.getTotal());
                 builder.setConditiontype(info.getConditiontype());
                 builder.setShow(info.getShow());
                 builder.setEndjudge(info.getEndjudge());*/
@@ -2391,7 +2453,53 @@ public class ActivityProxy extends BasicProxy {
         return res;
     }
 
+    /**
+     * 根据活动Id获取活动信息
+     * @param activityId
+     * @return
+     */
+    public M23.ActivityShowInfo getRereshActivityById(int activityId) {
+        Activity activity = getActivityByTypeId(activityId);
+        M23.ActivityShowInfo.Builder builder = M23.ActivityShowInfo.newBuilder();
+        if (activity != null) {
+            M23.ActivityInfo info = getActivityInfo(activity);
+            builder.setActivityId(info.getActivityId());
+            List<M23.ButtonInfo> rb = new ArrayList<>();
+            for (M23.ButtonInfo inf : info.getButtonsList()) {
+                M23.ButtonInfo.Builder buttonbuilder = M23.ButtonInfo.newBuilder();
+                buttonbuilder.setType(inf.getType());
+                buttonbuilder.setName(inf.getName());
+                rb.add(buttonbuilder.build());
+            }
+            builder.addAllButtons(rb);
+            List<M23.ActivityEffectInfo> rf = new ArrayList<>();
+            for (M23.ActivityEffectInfo inf : info.getEffectInfosList()) {
+                M23.ActivityEffectInfo.Builder effectbuilder = M23.ActivityEffectInfo.newBuilder();
+                effectbuilder.setType(inf.getType());
+                effectbuilder.setEffectId(inf.getEffectId());
+                effectbuilder.setSort(inf.getSort());
+                effectbuilder.setIscanget(inf.getIscanget());
+                List<Common.RewardInfo> rewardInfos = new ArrayList<>();
+                for (Common.RewardInfo rew : inf.getRewardsList()) {
+                    Common.RewardInfo.Builder rewardbuiler = Common.RewardInfo.newBuilder();
+                    rewardbuiler.setNum(rew.getNum());
+                    rewardbuiler.setTypeid(rew.getTypeid());
+                    rewardbuiler.setPower(rew.getPower());
+                    rewardInfos.add(rewardbuiler.build());
+                }
+                effectbuilder.addAllRewards(rewardInfos);
+                effectbuilder.setEffecttype(inf.getEffecttype());
+                effectbuilder.setEffect(inf.getEffect());
+                effectbuilder.setLimit(inf.getLimit());
+                effectbuilder.setTotalLimit(inf.getTotalLimit());
+                rf.add(effectbuilder.build());
+            }
+            builder.addAllEffectInfos(rf);
+            builder.setAlready(info.getAlready());
 
+        }
+        return builder.build();
+    }
 
 
     //获得关于请客下次开始时间
@@ -2454,89 +2562,151 @@ public class ActivityProxy extends BasicProxy {
         M23.M230008.S2C.Builder deleteBuilder = M23.M230008.S2C.newBuilder();
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
         for (Activity activity : activitys) {
-            if (ids.contains(activity.getActivityId())) {
-                //有福同享特殊判断
-                JSONObject define = activityMap.get(activity.getActivityId());
-                if (define.getInt("uitype") == ActivityDefine.LIMIT_ACTION_LEGIONSHARE_ID && define.getInt("show") == 2) {
-                    if (!isEffect(define, playerProxy) && getLegionShareCangetCount(activity.getLegionShare()) <= 0) {
-                        //过期并且没有活动可以领取了
-                        deleteBuilder.addActivityIds(activity.getActivityId());
-                    }
-                } else {
-                    int endjudge = define.getInt("endjudge");
-                    if (endjudge == 0 && !isEffect(define, playerProxy)) {
-                        deleteBuilder.addActivityIds(activity.getActivityId());
-                    } else if (endjudge == 1 && activity.getState() == ActivityDefine.ACTIVITY_STATE_DONE) {
-                        deleteBuilder.addActivityIds(activity.getActivityId());
-                    }
+            //    if (ids.contains(activity.getActivityId())) {
+            //有福同享特殊判断
+            JSONObject define = activityMap.get(activity.getActivityId());
+            if (define.getInt("uitype") == ActivityDefine.LIMIT_ACTION_LEGIONSHARE_ID && define.getInt("show") == 2) {
+                if (!isEffect(define, playerProxy) && getLegionShareCangetCount(activity.getLegionShare()) <= 0) {
+                    //过期并且没有活动可以领取了
+                    deleteBuilder.addActivityIds(activity.getActivityId());
+                }
+            } else {
+                int endjudge = define.getInt("endjudge");
+                if (endjudge == 0 && !isEffect(define, playerProxy)) {
+                    deleteBuilder.addActivityIds(activity.getActivityId());
+                } else if ((endjudge == 1 && activity.getState() == ActivityDefine.ACTIVITY_STATE_DONE) || (endjudge == 1 && activity.getCanGetList().size() == 0 && !isEffect(define, playerProxy))) {
+                    deleteBuilder.addActivityIds(activity.getActivityId());
+                } else if (endjudge == 2 && activity.getCanGetList().size() == 0 && !isEffect(define, playerProxy)) {
+                    deleteBuilder.addActivityIds(activity.getActivityId());
                 }
             }
         }
+        //  }
         return deleteBuilder.build();
     }
 
 
     /**
      * 检测活动是否可以添加
+     *
      * @param activityId
      */
-    public M23.M230010.S2C checkNormalActivityIsOpen(int activityId){
+    public M23.M230010.S2C checkNormalActivityIsOpen(int activityId) {
         M23.M230010.S2C.Builder builder = M23.M230010.S2C.newBuilder();
         builder.setRs(0);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        Activity addActivity= getActivityByTypeId(activityId);
+        Activity addActivity = getActivityByTypeId(activityId);
         JSONObject activityDefine = activityMap.get(addActivity.getActivityId());
         long starTime = getActivityStarTime(activityDefine, playerProxy);//开启的时间
         //找出所有的活动，开启时间一样的
-        List<M23.ActivityInfo>openActivitys=new ArrayList<>();
+        List<M23.ActivityInfo> openActivitys = new ArrayList<>();
         for (Activity activity : activitys) {
             JSONObject define = activityMap.get(activity.getActivityId());
-            if(define.getInt("show") !=1)continue;
-            if(getActivityStarTime(define, playerProxy)==starTime){
+            if (define.getInt("show") != 1) continue;
+            if (getActivityStarTime(define, playerProxy) == starTime) {
                 //要开启的
                 openActivitys.add(getActivityInfo(activity));
             }
         }
-        if(openActivitys.size()>0){
+        if (openActivitys.size() > 0) {
             builder.setRs(1);
             builder.addAllActivityInfo(openActivitys);
         }
-        int[]nextOpenActivity=nextAddActivitStartTime(playerProxy,1);
+        int[] nextOpenActivity = nextAddActivitStartTime(playerProxy, 1);
         builder.setNextOpenTime(nextOpenActivity[0]);//下一个要开启的活动时间
         builder.setNextOpenId(nextOpenActivity[1]);//下一个要开启的活动Id
         return builder.build();
     }
 
 
+    //通过id获得活动信息
+    public M23.ActivityInfo getActivityInfobyid(int id) {
+        Activity activity = getActivityByTypeId(id);
+        if (activity == null || activity.getCanGetList().size() == 0) {
+            return null;
+        }
+        return getActivityInfo(activity);
+    }
+
+
     /**
      * 检测活动是否可以添加
+     *
      * @param activityId
      */
-    public M23.M230011.S2C checkLimitActivityIsOpen(int activityId){
+    public M23.M230011.S2C checkLimitActivityIsOpen(int activityId) {
         M23.M230011.S2C.Builder builder = M23.M230011.S2C.newBuilder();
         builder.setRs(0);
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        Activity addActivity= getActivityByTypeId(activityId);
+        Activity addActivity = getActivityByTypeId(activityId);
         JSONObject activityDefine = activityMap.get(addActivity.getActivityId());
         long starTime = getActivityStarTime(activityDefine, playerProxy);//开启的时间
         //找出所有的活动，开启时间一样的
-        List<M23.LimitActivityInfo>openActivitys=new ArrayList<>();
+        List<M23.LimitActivityInfo> openActivitys = new ArrayList<>();
         for (Activity activity : activitys) {
             JSONObject define = activityMap.get(activity.getActivityId());
-            if(define.getInt("show") !=2)continue;
-            if(getActivityStarTime(define, playerProxy)==starTime){
+            if (define.getInt("show") != 2) continue;
+            if (getActivityStarTime(define, playerProxy) == starTime) {
                 //要开启的
                 openActivitys.add(getLimitActivityInfo(activity));
             }
         }
-        if(openActivitys.size()>0){
+        if (openActivitys.size() > 0) {
             builder.setRs(1);
             builder.addAllActivityInfo(openActivitys);
         }
         return builder.build();
     }
 
+    public List<M23.ActivityRankInfo> getActivityRankinfos() {
+        List<M23.ActivityRankInfo> res = new ArrayList<>();
+        List<JSONObject> list = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE);
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        ArrayList<JSONObject> js;
+        for (JSONObject json : list) {
+            if (isEffect(json, playerProxy)) {
+                M23.ActivityRankInfo.Builder builder = M23.ActivityRankInfo.newBuilder();
+                js = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_EFFECT, "effectID", json.getInt("effectID"));
+                JSONObject son = js.get(0);
+                if (son.getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_CAPITY_RANK) {
+                    if (playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CAPACITY) == null) {
+                        builder.setRank(-1);
+                    } else {
+                        builder.setRank(playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CAPACITY));
+                    }
+                } else if (son.getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_GUANQIA_RANK) {
+                    if (playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CUSTOMS) == null) {
+                        builder.setRank(-1);
+                    } else {
+                        builder.setRank(playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_CUSTOMS));
+                    }
 
+                } else if (son.getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_HONOR_RANK) {
+                    if (playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_HONOR) == null) {
+                        builder.setRank(-1);
+                    } else {
+                        builder.setRank(playerProxy.rankmap.get(PowerRanksDefine.POWERRANK_TYPE_HONOR));
+                    }
+                } else if (son.getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_LEVEL_RANK) {
+                    if (playerProxy.getArmGrouId() > 0) {
+                        builder.setRank(ArmyGroupService.armymap().get(playerProxy.getArmGrouId()).getLevelrank());
+                    } else {
+                        builder.setRank(-1);
+                    }
+                } else //(son.getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_RANK_LEGION)
+                {
+                    if (playerProxy.getArmGrouId() > 0) {
+                        builder.setRank(ArmyGroupService.armymap().get(playerProxy.getArmGrouId()).getRank());
+                    } else {
+                        builder.setRank(-1);
+                    }
+                }
+                builder.setActivityid(json.getInt("ID"));
+                res.add(builder.build());
+            }
+        }
+        return res;
+    }
 
 
     /**
@@ -2546,7 +2716,6 @@ public class ActivityProxy extends BasicProxy {
     public void fixedTimeEventHandler() {
         System.err.println("++++++++++++++++++++++++++ActivityProxy 4 >>>>>>>>");
     }
-
 
 
 }

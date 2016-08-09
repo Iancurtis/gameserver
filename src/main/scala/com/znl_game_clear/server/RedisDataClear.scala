@@ -6,7 +6,8 @@ import java.util
 
 import akka.actor.ActorSystem
 import com.znl.base.{BaseDbPojo, BaseSetDbPojo}
-import com.znl.msg.GameMsg.{LoadDone, GMCommand, DelToMysql}
+import com.znl.define.ActorDefine
+import com.znl.msg.GameMsg.{GiveMeAPill, LoadDone, GMCommand, DelToMysql}
 import com.znl.pojo.db.Player
 import com.znl.pojo.db.set._
 import com.znl.proxy.DbProxy
@@ -81,6 +82,16 @@ object RedisDataClear extends App{
           }
           RedisDataClear.clearDbData(areaKey)
           RedisDataClear.clearSetData(areaKey)
+        }else if(str.startsWith("clearLegion")){
+          val ary : Array[String] = str.split("=")
+          val areaKey = ary(1)
+          var index = 10
+          while (index>0){
+            println("clearAll 即将清除掉 areaKey="+areaKey+"的数据，误操作请赶紧CTRL+C--------------"+index)
+            index = index-1
+            Thread.sleep(1000)
+          }
+
         }else if(str.startsWith("clear")){
           val ary : Array[String] = str.split("=")
           val id = ary(1).toLong
@@ -108,6 +119,20 @@ object RedisDataClear extends App{
           }
           val actor = system.actorSelection("akka.tcp://game@"+serverIp.get(areaId)+"/user/root/adminServer")
           actor ! GMCommand("stop")
+        }else if(str.startsWith("pillNode")){//pillNode=2=42=51
+          implicit val system = ActorSystem("Admin")
+          val ary : Array[String] = str.split("=")
+          val areaId:Int= ary(1).toInt
+          val x:Int = ary(2).toInt
+          val y:Int = ary(3).toInt
+          var index = 5
+          while (index>0){
+            println("fixClose 即将服务器节点 areaId="+areaId+",x="+x+",y="+y+"，误操作请赶紧CTRL+C--------------"+index)
+            index = index-1
+            Thread.sleep(1000)
+          }
+          val actor = system.actorSelection("akka.tcp://game@"+serverIp.get(areaId)+"/user/root/"+ActorDefine.AREA_SERVER_PRE_NAME+"1")
+          actor ! GiveMeAPill(x,y)
         }else if(str.startsWith("updateSetFromRedisToMysql")){//updateSetFromRedisToMysql=游戏服areaKey=数据库表id（GcolGame9992的9992）
           val ary : Array[String] = str.split("=")
           val areaKey:String= ary(1)
@@ -229,6 +254,18 @@ object RedisDataClear extends App{
       }
       if(conn != null){
         conn.close()
+      }
+    }
+  }
+
+  def clearLegionData(areaKey : String): Unit ={
+    val roleIdList = new util.HashSet[java.lang.Long]()
+    roleIdList.addAll(getSetDbPojo(classOf[AccountNameSetDb], areaKey).getAllValue)
+    val removeKeys = new util.ArrayList[String]
+    for(roleId : java.lang.Long <- roleIdList){
+      val player : Player = getWithoutlogAreaId(roleId,classOf[Player],areaKey)
+      if(player != null){
+
       }
     }
   }

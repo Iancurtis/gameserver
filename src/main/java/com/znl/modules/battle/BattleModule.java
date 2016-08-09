@@ -95,7 +95,6 @@ public class BattleModule extends BasicModule {
         if (rs < 0) { // 战斗出错
             pushNetMsg(ActorDefine.BATTLE_MODULE_ID, ProtocolModuleDefine.NET_M5_C50000, s2c.build());
         } else {
-
             battleBuilder.addAllRounds(battle._roundDataList);
             battleBuilder.setId(battle.id);
             battleBuilder.setType(battle.type);
@@ -121,7 +120,7 @@ public class BattleModule extends BasicModule {
             pushNetMsg(ActorDefine.BATTLE_MODULE_ID, ProtocolModuleDefine.NET_M5_C50000, mess);
             packMessToBattle(battle,packet.build());
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
         /**
          * tbllog_battle日志
          */
@@ -217,18 +216,18 @@ public class BattleModule extends BasicModule {
                     SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
                     sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007,
                             M2.M20007.S2C.newBuilder().addAllSoldierList(soldierProxy.getSoldierInfos()).build());
-                    sendPushNetMsgToClient();
+                    sendPushNetMsgToClient(0);
                 }else if (cmd == ProtocolModuleDefine.NET_M5_C50000) {
                     M5.M50000.S2C.Builder builder = M5.M50000.S2C.newBuilder();
                     builder.setRc(rs);
                     sendNetMsg(ActorDefine.BATTLE_MODULE_ID, ProtocolModuleDefine.NET_M5_C50000, builder.build());
-                    sendPushNetMsgToClient();
+                    sendPushNetMsgToClient(ProtocolModuleDefine.NET_M5_C50000);
                     return;
                 } else if (cmd == ProtocolModuleDefine.NET_M6_C60005) {
                     M6.M60005.S2C.Builder builder = M6.M60005.S2C.newBuilder();
                     builder.setRs(rs - ErrorCodeDefine.M60005_6);
                     pushNetMsg(ActorDefine.BATTLE_MODULE_ID, ProtocolModuleDefine.NET_M5_C50000, builder.build());
-                    sendPushNetMsgToClient();
+                    sendPushNetMsgToClient(ProtocolModuleDefine.NET_M6_C60005);
                     return;
                 }
             }
@@ -263,7 +262,7 @@ public class BattleModule extends BasicModule {
             M5.M50001.S2C.Builder builder = M5.M50001.S2C.newBuilder();
             builder.setRc(1);
             sendNetMsg(ActorDefine.BATTLE_MODULE_ID,ProtocolModuleDefine.NET_M5_C50001,builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M5_C50001);
             return;
         }
         GameMsg.ClientEndHandle message = new GameMsg.ClientEndHandle(battleId);
@@ -305,10 +304,10 @@ public class BattleModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 

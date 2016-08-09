@@ -55,7 +55,7 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
     val armGroupSetDb = BaseSetDbPojo.getSetDbPojo(classOf[ArmGroupSetDb], areaKey)
       val ids: util.List[java.lang.Long] =  armGroupSetDb.getAllValue //DbProxy.ask(GetAllArmygroupids(areaKey))
      initArmyMap(ids)
-    getActivityTimer()
+    //getActivityTimer()
     updateEachHourNotice()
   }
 
@@ -86,8 +86,8 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
       onAddMailBattleProto(reportTemplate,cmd)
     case getAllLegion(name:String,typeId:Int) =>
       sender() ! getAllLegionSucess(ArmyGroupService.armymap,name,typeId)
-    case ActivityRankTrigger(ids:util.List[java.lang.Integer]) =>
-      checkTimer()
+    //case ActivityRankTrigger(ids:util.List[java.lang.Integer]) =>
+     // checkTimer(ids)
     case checkArmy(id : Long) =>
       oncheckArmy(id)
    /* case CheckAndSendActivity(ActivityDefine.ACTIVITY_CONDITION_DONVATE_RANK,areakey:String) =>
@@ -138,6 +138,9 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
 
   def onArmyGroupByid(appId: Long, cmd: Int): Unit = {
     val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(ArmyGroupService.armymap.get(appId).getCommandid,areaKey)
+    if(simplePlayer == null){
+      println("获取军团团长失败，id="+appId+"，getCommandid="+ArmyGroupService.armymap.get(appId).getCommandid)
+    }
     sender() ! getArmyGroupByidSucess(ArmyGroupService.armymap.get(appId),simplePlayer.getIconId,simplePlayer.getPendant, cmd)
   }
 
@@ -229,7 +232,7 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
 
 
 
- def checkTimer() {
+ /*def checkTimer(ids:util.List[java.lang.Integer]) {
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE)
     val c: Calendar = Calendar.getInstance
     c.setTime(GameUtils.getServerDate)
@@ -240,16 +243,17 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
     val serverMinute: Int = c.get(Calendar.MINUTE)
     val serverSecond: Int = c.get(Calendar.SECOND)
     for (define <- list) {
-      val endTime: Long = getActivityEndTime(define)
-      val endCalender: Calendar = Calendar.getInstance
-      endCalender.setTimeInMillis(endTime)
-      if (endCalender.get(Calendar.YEAR) == serverYear
-        && endCalender.get(Calendar.MONTH) == serverMonth
-        && endCalender.get(Calendar.DAY_OF_MONTH) == serverDay
-        && endCalender.get(Calendar.HOUR_OF_DAY) == serverHour
-        && endCalender.get(Calendar.MINUTE) == serverMinute
-        && endCalender.get(Calendar.SECOND) == serverSecond) {
-        //年月日时分秒都一致就发吧
+      /*val endTime: Long = getActivityEndTime(define)
+       val endCalender: Calendar = Calendar.getInstance
+       endCalender.setTimeInMillis(endTime)
+       if (endCalender.get(Calendar.YEAR) == serverYear
+         && endCalender.get(Calendar.MONTH) == serverMonth
+         && endCalender.get(Calendar.DAY_OF_MONTH) == serverDay
+         && endCalender.get(Calendar.HOUR_OF_DAY) == serverHour
+         && endCalender.get(Calendar.MINUTE) == serverMinute
+         && endCalender.get(Calendar.SECOND) == serverSecond) {
+         //年月日时分秒都一致就发吧*/
+      if (ids.contains(define.getInt("ID"))) {
         val effectId = define.getInt("effectID")
         val effectDefineList: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_EFFECT, "effectID", effectId)
         if (effectDefineList.get(0).getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_LEVEL_RANK) {
@@ -260,11 +264,12 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
     getActivityTimer()
   }
 
-
+  val deleEven:util.List[TriggerEvent] =new util.ArrayList[TriggerEvent]()
   def getActivityTimer(): Unit = {
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE)
     val now = GameUtils.getServerDate().getTime
     var end = 0l
+    val ids : util.List[java.lang.Integer] =new util.ArrayList[java.lang.Integer]()
     for (define <- list) {
       val timeType = define.getInt("timetype")
       if (timeType == 2) {
@@ -276,11 +281,25 @@ class ArmyGroupService(areaKey: String) extends Actor with ActorLogging with Ser
         }
       }
     }
-    if (end > 0) {
-      val event = new TriggerEvent(self, ActivityRankTrigger(new util.ArrayList[java.lang.Integer]), TriggerType.COUNT_DOWN, (end / 1000 - now / 1000).toInt)
-      getTriggerService(context) ! AddTriggerEvent(event)
+    for (define <- list) {
+      val timeType = define.getInt("timetype")
+      if (timeType == 2) {
+        val endTime = getActivityEndTime(define)
+        if ( end ==endTime) {
+          ids.add(define.getInt("ID"))
+        }
+      }
     }
-  }
+    if (end > 0) {
+      for(del <-  deleEven){
+        getTriggerService(context) ! RemoveTriggerEvent(del)
+      }
+      deleEven.clear()
+      val event = new TriggerEvent(self, ActivityRankTrigger(ids), TriggerType.COUNT_DOWN, (end / 1000 - now / 1000).toInt)
+      getTriggerService(context) ! AddTriggerEvent(event)
+      deleEven.add(event)
+    }
+  }*/
 
   private def getActivityEndTime(define: JSONObject): Long = {
     val timeType: Int = define.getInt("timetype")

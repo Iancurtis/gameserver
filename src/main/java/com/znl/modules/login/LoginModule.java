@@ -23,6 +23,7 @@ import com.znl.proto.M2;
 import com.znl.proto.M3;
 import com.znl.proto.M8;
 import com.znl.proxy.*;
+import com.znl.service.PlayerService;
 import com.znl.utils.GameUtils;
 import org.json.JSONObject;
 
@@ -106,7 +107,8 @@ public class LoginModule extends BasicModule  {
         sendLog(eventLog);
 
         sendNetMsg(ProtocolModuleDefine.NET_M1, ProtocolModuleDefine.NET_M1_C10002, M1.M10002.S2C.newBuilder().setRs(0).build());
-        sendMsg();
+        sendMsg(ProtocolModuleDefine.NET_M1_C10002);
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M1_C10002);
     }
 
     //发送给客户端，登录成功
@@ -114,7 +116,7 @@ public class LoginModule extends BasicModule  {
         M1.M10000.S2C s2c = M1.M10000.S2C.newBuilder().setRs(rs).build();  //直接告诉客户端登录成功了，客户端做相应的逻辑，等服务器正在登陆成功后，主动推送20000协议
         pushNetMsg(ProtocolModuleDefine.NET_M1, ProtocolModuleDefine.NET_M1_C10000, s2c); //不要用send
       //  sendPushNetMsgToClient();
-        sendMsg();
+        sendMsg(0);
     }
 
 
@@ -191,11 +193,13 @@ public class LoginModule extends BasicModule  {
             sendClientLoginResult(rs);
         }else{
             //TODO 这里要做一层判断，是否被禁号了
-
+            if(PlayerService.isBanIp(ip)){
+                rs = ErrorCodeDefine.M10000_3;
+            }
             if(player.getBanAct() == 1){
                 if(player.getBanActDate() >= GameUtils.getServerTime()){
                     //还在被禁号
-                    rs = ErrorCodeDefine.M100001_2;
+                    rs = ErrorCodeDefine.M10000_2;
                 }else{
                     player.setBanAct(0);
                     player.setBanActDate(0);
@@ -217,7 +221,7 @@ public class LoginModule extends BasicModule  {
             }
         }
         sendClientLoginResult(rs);  //直接就先判断，快速通知客户端状态
-        if(rs >= ErrorCodeDefine.M100001_1) {  //登录成功
+        if(rs >= ErrorCodeDefine.M10000_1) {  //登录成功
             cache.setPlayerId(player.getId());
             isInit = true;
             tellLogin();
@@ -320,7 +324,7 @@ public class LoginModule extends BasicModule  {
 //        ResFunBuildProxy resFunBuildProxy=gameProxy.getProxy(ActorDefine.RESFUNBUILD_PROXY_NAME);
 //        resFunBuildProxy.initResFuBuild(new ArrayList<List<Integer>>());
         NewBuildProxy newBuildProxy = gameProxy.getProxy(ActorDefine.NEW_BUILD_PROXY_NAME);
-        newBuildProxy.initResFuBuild();
+        newBuildProxy.initResFuBuild(player);
         SoldierProxy soldierProxy = gameProxy.getProxy(ActorDefine.SOLDIER_PROXY_NAME);
         soldierProxy.initHighestCapacity();
         FormationProxy formationProxy = gameProxy.getProxy(ActorDefine.FORMATION_PROXY_NAME);
@@ -337,7 +341,7 @@ public class LoginModule extends BasicModule  {
         TaskProxy taskProxy=gameProxy.getProxy(ActorDefine.TASK_PROXY_NAME);
         taskProxy.initTask();
         context().parent().tell(new GameMsg.LoginSuccess(player,gameProxy), self());
-        player.setLoginTime(GameUtils.getServerTime());
+   //     player.setLoginTime(GameUtils.getServerTime());
         player.setLoginLevel(player.getLevel());
         playerProxy.loginDayNum();
 
@@ -437,10 +441,10 @@ public class LoginModule extends BasicModule  {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

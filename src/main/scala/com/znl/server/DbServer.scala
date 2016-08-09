@@ -70,41 +70,39 @@ object DbServer {
 
   def getDbPojo(id: Long, pojoClass: Class[_],pushDataMap : Boolean,areaId : Int) = {
     //val time = System.currentTimeMillis()
-    var res : Option[BaseDbPojo] = null
-    if(id==0){
-       res;
-    }
-    val dataKey = getDataKey(id, GameUtils.getClassName(pojoClass))
-    //先读内存缓存
-    if (dataMap.contains(dataKey)) {
-      res = dataMap.get(dataKey) //需要做下线释放掉对应的数据
-    }else if(saveDataMap.containsKey(dataKey)) {
-      res = saveDataMap.get(dataKey)
-    } else {
-      //再读redis
-      var pojo: Option[BaseDbPojo] = Some(pojoClass.newInstance().asInstanceOf[BaseDbPojo])
-      pojo.get.setId(id)
-      val key = pojo.get.getKey
-      val map = jc.hgetAll(key)
-      //val map=new ConcurrentHashMap[String,String]()
-      if (map.size() == 0) {
-        pojo = None
+    var res : Option[BaseDbPojo] = None
+    if(id>0){
+      val dataKey = getDataKey(id, GameUtils.getClassName(pojoClass))
+      //先读内存缓存
+      if (dataMap.contains(dataKey)) {
+        res = dataMap.get(dataKey) //需要做下线释放掉对应的数据
+      }else if(saveDataMap.containsKey(dataKey)) {
+        res = saveDataMap.get(dataKey)
       } else {
-        map.foreach(e => {
-          val key = e._1
-          val value = e._2
-          pojo.get.setter(key, value)
-        })
-        dataMap.put(dataKey, pojo)
-        if(pushDataMap == false){
-//          offlineDataMap.put(dataKey, pojo)
+        //再读redis
+        var pojo: Option[BaseDbPojo] = Some(pojoClass.newInstance().asInstanceOf[BaseDbPojo])
+        pojo.get.setId(id)
+        val key = pojo.get.getKey
+        val map = jc.hgetAll(key)
+        //val map=new ConcurrentHashMap[String,String]()
+        if (map.size() == 0) {
+          pojo = None
+        } else {
+          map.foreach(e => {
+            val key = e._1
+            val value = e._2
+            pojo.get.setter(key, value)
+          })
+          dataMap.put(dataKey, pojo)
+          if(pushDataMap == false){
+            //          offlineDataMap.put(dataKey, pojo)
+          }
         }
-      }
-     // System.err.println("getDbPojo耗时xx:" + dataKey + ":" + ( System.currentTimeMillis() - time ));
-      /**********************************读取mysql开始***********************************************/
-      //log.info("getDbPojo耗时xx:" + dataKey + ":" + ( System.currentTimeMillis() - time ) )
-       //可能再读mysql
-      if(map.size() == 0){
+        // System.err.println("getDbPojo耗时xx:" + dataKey + ":" + ( System.currentTimeMillis() - time ));
+        /**********************************读取mysql开始***********************************************/
+        //log.info("getDbPojo耗时xx:" + dataKey + ":" + ( System.currentTimeMillis() - time ) )
+        //可能再读mysql
+        if(map.size() == 0){
           pojo= getPojoObjectFormMysql(id,pojoClass,areaId);
           if(pojo!=None){
             dataMap.put(dataKey, pojo)
@@ -112,9 +110,10 @@ object DbServer {
             // jc.expireAt(key, (GameUtils.getServerDate().getTime+GameUtils.redisExpireTime))
             jc.expire(key, GameUtils.redisExpireTime)
           }
+        }
+        /**********************************读取mysql结束***********************************************/
+        res = pojo
       }
-      /**********************************读取mysql结束***********************************************/
-      res = pojo
     }
     res
   }
@@ -129,14 +128,10 @@ object DbServer {
       val result = resultList.get(0)
       val jsonObject = new JSONObject(result)
       jsonObject.keySet().foreach( key => {
-        val value2 = java.net.URLDecoder.decode(jsonObject.get(key).toString, "utf-8")
         val value = jsonObject.get(key).toString
-        val test: String = new String(jsonObject.get(key).toString.getBytes, "GBK")
-        if(key=="name"){
-          System.err.println(value)
-        }
         pojo.get.setter(key, value)
       })
+      pojo.get.setId(jsonObject.getLong("id"));
     }else{
       pojo = None
     }
@@ -495,13 +490,9 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
       //TODO 如果入库队列里面又出现相同的Key，则会出现问题
       //发送到别的进程，进行mysql数据备份 TODO
       val json = new JSONObject(saveToMysqlMap)
-      if(saveToMysqlMap.containsKey("name")){
-        System.err.println("+++++++++++++++保存名字:"+json.get("name"))
-      }
-
-      if(pojo.getClassName.equals("Player")){
+     // if(pojo.getClassName.equals("Player")){
 //        log.info("UpdateToMysql:[]" + pojo.getClassName + ":" + json.toString)
-      }
+      //}
       mysqlActor ! UpdateToMysql(pojo.getClassName, pojo.getId, json.toString,pojo.getLogAreaId)
     }
     log.info("saveDbPojo耗时:" + key + " " + ( System.currentTimeMillis() - time ) )

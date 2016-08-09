@@ -164,7 +164,7 @@ class GateServer extends Actor with ActorLogging{
     val moduleId = request.getModule
     val cmdId = request.getCmd
 
-    System.err.println("++++++++++++++++++++++++接收到cmdId="+cmdId);
+//    System.err.println("++++++++++++++++++++++++接收到cmdId="+cmdId);
     if(moduleId == ProtocolModuleDefine.NET_M1 && cmdId == ProtocolModuleDefine.NET_M1_C9999){
       val proto : M1.M9999.C2S = request.getValue()
       val loginType = proto.getType()

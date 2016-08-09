@@ -7,6 +7,7 @@ public class ErrorCodeDefine {
 
     public static final int M10000_1 = -1;//没有角色
     public static final int M10000_2 = -2;//被禁号了
+    public static final int M10000_3 = -3;//IP被禁了
 
     public static final int M9998_1 = 1; //被顶号了
     public static final int M9998_2 = 2; //被封号了

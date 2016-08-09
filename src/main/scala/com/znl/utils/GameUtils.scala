@@ -5,13 +5,15 @@ import java.net.InetSocketAddress
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.util
-import java.util.{Date, Calendar, Random}
+import java.util.{UUID, Date, Calendar, Random}
 
 import akka.actor.{ActorLogging, ActorSelection, ActorContext, ActorRef}
 import akka.event.LoggingAdapter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.znl.GameMainServer
 import com.znl.base.{BaseSetDbPojo, BaseDbPojo}
-import com.znl.core.{PlayerCache, PlayerTeam, PlayerTroop, SimplePlayer}
+import com.znl.core._
 import com.znl.define._
 import com.znl.framework.http.{HttpRequestMessage, HttpMessage}
 import com.znl.msg.GameMsg.{getTeamDate}
@@ -78,9 +80,9 @@ object GameUtils {
   }
   //TODO  java.util.ConcurrentModificationException
   def set2str[T](set: java.util.Set[T]) = {
-//    val newSet = new util.HashSet[T](set)//创建一个镜像避免出现遍历过程中被修改的异常
+    val newSet = new util.HashSet[T](set)//创建一个镜像避免出现遍历过程中被修改的异常
     val sb = StringBuilder.newBuilder
-    set.foreach(e => {
+    newSet.foreach(e => {
       sb.append(e + ",")
     })
 
@@ -103,8 +105,9 @@ object GameUtils {
   }
 
   def list2str[T](list: java.util.List[T]) = {
+    val temp = new util.ArrayList[T](list)
     val sb = StringBuilder.newBuilder
-    list.foreach(e => {
+    temp.foreach(e => {
       sb.append(e + ",")
     })
     sb.toString()
@@ -383,10 +386,15 @@ object GameUtils {
     var boomConfig: JSONObject = null
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigAllInfo(DataDefine.BOOMLEVEL)
     import scala.collection.JavaConversions._
+    var boomConfigtemp: JSONObject = null
     for (define <- list) {
       if (boom >= define.getInt("numneed") && boom <= define.getInt("nummax")) {
         boomConfig = define
       }
+      boomConfigtemp=define
+    }
+    if(boomConfig==null){
+      return boomConfigtemp
     }
     return boomConfig
   }
@@ -633,5 +641,160 @@ object GameUtils {
     calendar.set(Calendar.MILLISECOND, 0)
     return (calendar.getTimeInMillis / 1000).asInstanceOf[Int]
   }
+
+  val LONG_MAX_VALUE: Long = Math.pow(2, 63).toLong
+
+  /** 生成一个唯一id **/
+  def createOnlyRanId: Long = {
+    val uuid: UUID = UUID.randomUUID
+    uuid.getLeastSignificantBits + LONG_MAX_VALUE
+  }
+
+  //将对象转化为JSON格式的字符串
+  def objectToJsonStr(obj: Object): String ={
+    val gson :Gson = new Gson
+    gson.toJson(obj)
+  }
+
+  //将JSON格式的字符串转换为对象
+  def jsonStrToObject[T](str:String,trunClass:Class[T]): T ={
+    val gson :Gson = new Gson
+    gson.fromJson(str,new TypeToken[T](){}.getType())
+  }
+
+  def encodePlayerTeam(list: util.List[PlayerTeam],encodeType:Int): String ={
+    val sb =  new StringBuffer()
+
+    for (pt <- list ){
+      var powerMap = pt.basePowerMap
+      if(encodeType > 0){
+        powerMap = pt.powerMap
+      }
+      sb.append(encodePowerMapToString(powerMap))
+      sb.append("&&&")
+    }
+    sb.toString
+  }
+
+  def decodePlayerTeam(baseStr:java.lang.String,powerStr:java.lang.String,playerId : Long): util.List[PlayerTeam] ={
+    val list: util.List[PlayerTeam] = new util.ArrayList[PlayerTeam]()
+    val basicIndexMap  = new util.HashMap[Integer,util.HashMap[Integer, AnyRef]]()//[index,basicPowerMap]
+    val powerIndexMap  = new util.HashMap[Integer,util.HashMap[Integer, AnyRef]]()//[index,powerMap]
+    for (teamStr <- baseStr.split("&&&")){
+      val  basePowerMap : util.HashMap[Integer, AnyRef]  = new util.HashMap[Integer, AnyRef]
+      pushStrToMap(teamStr,basePowerMap)
+      val index = basePowerMap.get(SoldierDefine.NOR_POWER_INDEX).asInstanceOf[Integer]
+      basicIndexMap.put(index,basePowerMap)
+    }
+
+    for (teamStr <- powerStr.split("&&&")){
+      val  powerMap : util.HashMap[Integer, AnyRef]  = new util.HashMap[Integer, AnyRef]
+      pushStrToMap(teamStr,powerMap)
+      val index = powerMap.get(SoldierDefine.NOR_POWER_INDEX).asInstanceOf[Integer]
+      powerIndexMap.put(index,powerMap)
+    }
+
+    for (key <- basicIndexMap.keySet()){
+      val basePowerMap = basicIndexMap.get(key)
+      val pt = new PlayerTeam(basePowerMap,playerId)
+      pt.powerMap = powerIndexMap.get(key)
+      list.add(pt)
+    }
+    list
+  }
+
+  def pushStrToMap(teamStr:java.lang.String,map : util.HashMap[Integer, AnyRef]): Unit ={
+    for (powerStr <- teamStr.split(",")){
+      val tempAtt = powerStr.split("=")
+      val power = Integer.parseInt(tempAtt(0))
+      if(tempAtt.length > 1){
+        val value = powerStr.split("=")(1)
+        if (power == SoldierDefine.NOR_POWER_NAME){
+          map.put(power,value)
+        }else if(value.indexOf("_") >= 0){
+          val list = new util.ArrayList[java.lang.Integer]()
+          for (attStr <- value.split("_")){
+            val att : Integer = Integer.parseInt(attStr)
+            list.add(att)
+          }
+          map.put(power,list)
+        }else{
+          val valueInt:Integer = Integer.parseInt(value)
+          map.put(power,valueInt)
+        }
+      }else{
+        val list = new util.ArrayList[java.lang.Integer]()
+        map.put(power,list)
+      }
+    }
+  }
+
+  def encodePowerMapToString(powerMap : util.HashMap[Integer, AnyRef]): String ={
+    val sb =  new StringBuffer()
+    for (key : Integer <- powerMap.keySet()){
+      val value = powerMap.get(key)
+      if (value.isInstanceOf[Integer]
+        //          || value.isInstanceOf[java.lang.Long]
+        || value.isInstanceOf[java.lang.String]){
+        sb.append(key)
+        sb.append("=")
+        sb.append(value)
+        sb.append(",")
+      }else if(value.isInstanceOf[util.List[Integer]]){
+        val list: util.List[Integer] = value.asInstanceOf[util.List[Integer]]
+        sb.append(key)
+        sb.append("=")
+        for (id <- list){
+          sb.append(id)
+          sb.append("_")
+        }
+        sb.append(",")
+      }else{
+        println("！！！！！！！！解析的时候出现未知的类型"+key)
+      }
+    }
+    sb.toString
+  }
+
+
+  def encodeIntegerMapToString(powerMap : util.HashMap[Integer, Integer]): String ={
+    val sb =  new StringBuffer()
+    for (key : Integer <- powerMap.keySet()){
+      sb.append(key)
+      sb.append("=")
+      val value = powerMap.get(key)
+      sb.append(value)
+      sb.append(",")
+    }
+    sb.toString
+  }
+
+  def decodeStringToIntegerMap(teamStr:String): util.HashMap[Integer,Integer] ={
+    val map = new util.HashMap[Integer,Integer]()
+    if(teamStr.length <= 0){
+      return map
+    }
+    for (powerStr <- teamStr.split(",")){
+      val tempAtt = powerStr.split("=")
+      val power = Integer.parseInt(tempAtt(0))
+      val value = Integer.parseInt(tempAtt(1))
+      map.put(power,value)
+    }
+    map
+  }
+
+  def isNumeric(str: String): Boolean = {
+    var i: Int = 0
+    while (i < str.length) {
+      System.out.println(str.charAt(i))
+      if (!Character.isDigit(str.charAt(i))) {
+        return false
+      }
+      i += 1
+    }
+    return true
+  }
+
+
 
 }

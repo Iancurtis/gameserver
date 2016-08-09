@@ -390,7 +390,7 @@ public class DungeoProxy extends BasicProxy {
 //                }
                 builder.setStar(getEventIndexStar(i, dungeo));
                 JSONObject monsterGroup = getMonsterGroup(eventDefine.getInt("monstergroup"));
-             //   builder.setForce(monsterGroup.getInt("force"));
+                //   builder.setForce(monsterGroup.getInt("force"));
                 //获取6个槽位的怪物
                 for (int index = 1; index <= 6; index++) {
                     JSONArray pos = monsterGroup.getJSONArray("position" + index);
@@ -439,7 +439,7 @@ public class DungeoProxy extends BasicProxy {
         return getMonsterList(monsterGroupId);
     }
 
-     public List<PlayerTeam> getMonsterList(int groupId) {
+    public List<PlayerTeam> getMonsterList(int groupId) {
         List<PlayerTeam> monsters = new ArrayList<>();
         JSONObject monsterGroup = getMonsterGroup(groupId);
         //获取6个槽位的怪物
@@ -941,6 +941,9 @@ public class DungeoProxy extends BasicProxy {
                 soldierTypeAdd = 4.08;
                 break;
         }
+        if(soldier.capacityMap != null || soldier.capacityMap.size() == 0){
+            return 0;
+        }
         actC = ((double) soldier.capacityMap.get(SoldierDefine.POWER_atk)) * 0.5 * soldierTypeAdd;
         hpC = ((double) soldier.capacityMap.get(SoldierDefine.POWER_hp)) * 0.1;
         hitRateC = ((double) soldier.capacityMap.get(SoldierDefine.POWER_hitRate)) / 10000.0 * 100;
@@ -1074,6 +1077,19 @@ public class DungeoProxy extends BasicProxy {
         return res;
     }
 
+    //冒险副本最新次数4点请求
+    public List<M6.ristdungeoTimes> getRistDungeoInfoTimes() {
+        List<M6.ristdungeoTimes> infos = new ArrayList<M6.ristdungeoTimes>();
+        List<JSONObject> list = ConfigDataProxy.getConfigAllInfo(DataDefine.ADVENTURE);
+        for (JSONObject define : list) {
+            M6.ristdungeoTimes.Builder info = M6.ristdungeoTimes.newBuilder();
+            info.setTimes(getRistChangeTimes(define.getInt("type")));
+            info.setId(define.getInt("type"));
+            infos.add(info.build());
+        }
+        return infos;
+    }
+
 
     public M6.dungeonlist getdungeonlist() {
         M6.dungeonlist.Builder builder = M6.dungeonlist.newBuilder();
@@ -1144,17 +1160,17 @@ public class DungeoProxy extends BasicProxy {
      */
     public int openArmygroupDungeoBox(int dungeoId, PlayerReward reward) {
         PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
-        if(playerProxy.getPlayer().getGetbox().contains(dungeoId)){
+        if (playerProxy.getPlayer().getGetbox().contains(dungeoId)) {
             return ErrorCodeDefine.M270003_1;
-        }else{
-        JSONObject json =  ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent, dungeoId);
-        RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
-        rewardProxy.getPlayerRewardByFixReward(json.getInt("dropid"), reward);
-        rewardProxy.getRewardToPlayer(reward, LogDefine.GET_LEGION_DUNGEO);
-        List<Integer> boxlist =  playerProxy.getPlayer().getGetbox();
-        boxlist.add(dungeoId);
-        playerProxy.getPlayer().setGetbox(boxlist);
-        return 0;
+        } else {
+            JSONObject json = ConfigDataProxy.getConfigInfoFindById(DataDefine.LegionEvent, dungeoId);
+            RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
+            rewardProxy.getPlayerRewardByFixReward(json.getInt("dropid"), reward);
+            rewardProxy.getRewardToPlayer(reward, LogDefine.GET_LEGION_DUNGEO);
+            List<Integer> boxlist = playerProxy.getPlayer().getGetbox();
+            boxlist.add(dungeoId);
+            playerProxy.getPlayer().setGetbox(boxlist);
+            return 0;
         }
     }
 
@@ -1210,7 +1226,7 @@ public class DungeoProxy extends BasicProxy {
         playerProxy.reducePowerValue(PlayerPowerDefine.POWER_gold, needGold, LogDefine.LOST_RISK_TIMES);
         // timerdbProxy.addAdvanceTiems(id, DungeonDefine.ADVANCE_TIMES);
         //  timerdbProxy.addNum(TimerDefine.BUY_ADVANCE_TIMES, id, 0, 1);
-        addRistbuyTimes(id,1);
+        addRistbuyTimes(id, 1);
         addRistChangeTimes(id, DungeonDefine.ADVANCE_TIMES);
         sendFunctionLog(FunctionIdDefine.BUY_ADVANCE_TIMES_FUNCTION_ID, needGold, id, 0);
         return 0;
@@ -1249,7 +1265,7 @@ public class DungeoProxy extends BasicProxy {
         //   timerdbProxy.addTimer(TimerDefine.BUY_ADVANCE_TIMES, 0, 0, TimerDefine.TIMER_REFRESH_FOUR, id, 0, playerProxy);
         int resetTimes = vipProxy.getVipNum(ActorDefine.VIP_FITRESET);//可买次数
 
-        int resetedNum = getRistHasbuyTimes(id) ;// timerdbProxy.getTimerNum(TimerDefine.BUY_ADVANCE_TIMES, id, 0);//已买了次数
+        int resetedNum = getRistHasbuyTimes(id);// timerdbProxy.getTimerNum(TimerDefine.BUY_ADVANCE_TIMES, id, 0);//已买了次数
         int maxVIPLv = vipProxy.getMaxVIPLv();
         JSONObject info = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.VIPDATA, "level", maxVIPLv);
         int maxBuy = 0;
@@ -1509,7 +1525,9 @@ public class DungeoProxy extends BasicProxy {
             List<Integer[]> list = dungeoProxy.rewardtoList(reward);
             MailTemplate template = new MailTemplate("扫荡奖励邮件", "扫荡奖励邮件", 0, "系统邮件", ChatAndMailDefine.MAIL_TYPE_SYSTEM);
             template.setAttachments(list);
-            sendMailServiceMsg(new GameMsg.ReceiveMailNotice(template));
+            Set<Long> allid = new HashSet<>();
+            allid.add(playerProxy.getPlayerId());
+            sendMailServiceMsg( new GameMsg.SendMail(allid, template, "系统邮件", 0l));
             playerProxy.getPlayer().setDungeolimitmoptimes(0);
         }
         if (time <= 0) {
@@ -1580,24 +1598,24 @@ public class DungeoProxy extends BasicProxy {
         if (jsonObject == null) {
             return 0;
         }
-        int addtimes=0;
-        ActivityProxy activityProxy=getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
-        if(dungeoid==BattleDefine.ADVANTRUE_TYPE_EQUIP){
+        int addtimes = 0;
+        ActivityProxy activityProxy = getGameProxy().getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        if (dungeoid == BattleDefine.ADVANTRUE_TYPE_EQUIP) {
             addtimes = (activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_EUIP_ADVANCE_ADDTIMES));
-        }else if(dungeoid==BattleDefine.ADVANTRUE_TYPE_ORNDANCE){
+        } else if (dungeoid == BattleDefine.ADVANTRUE_TYPE_ORNDANCE) {
             addtimes = (activityProxy.getEffectBufferPowerByType(ActivityDefine.ACTIVITY_CONDITION_ORDANCE_ADVANCE_ADDTIMES));
         }
-      return jsonObject.getInt("time")+addtimes-dungeo.getChangetimes();
+        return jsonObject.getInt("time") + addtimes - dungeo.getChangetimes();
     }
 
     //增加冒险副本挑战次数
     public void addRistChangeTimes(int dungeoid, int times) {
         Dungeo dungeo = getRistDungeoById(dungeoid);
         if (dungeo == null) {
-            return ;
+            return;
         }
-       int hatimes=dungeo.getChangetimes();
-        dungeo.setChangetimes(hatimes-times);
+        int hatimes = dungeo.getChangetimes();
+        dungeo.setChangetimes(hatimes - times);
         pushDungeoToChangeList(dungeo);
     }
 
@@ -1605,10 +1623,10 @@ public class DungeoProxy extends BasicProxy {
     public void reduceRistChangeTimes(int dungeoid, int times) {
         Dungeo dungeo = getRistDungeoById(dungeoid);
         if (dungeo == null) {
-            return ;
+            return;
         }
-        int hatimes=dungeo.getChangetimes();
-        dungeo.setChangetimes(hatimes+times);
+        int hatimes = dungeo.getChangetimes();
+        dungeo.setChangetimes(hatimes + times);
         pushDungeoToChangeList(dungeo);
     }
 
@@ -1625,7 +1643,7 @@ public class DungeoProxy extends BasicProxy {
 
         VipProxy vipProxy = getGameProxy().getProxy(ActorDefine.VIP_PROXY_NAME);
         int resetTimes = vipProxy.getVipNum(ActorDefine.VIP_FITRESET);//可买次数
-        return resetTimes-dungeo.getBuytimes();
+        return resetTimes - dungeo.getBuytimes();
     }
 
 
@@ -1643,10 +1661,10 @@ public class DungeoProxy extends BasicProxy {
     public void addRistbuyTimes(int dungeoid, int times) {
         Dungeo dungeo = getRistDungeoById(dungeoid);
         if (dungeo == null) {
-            return ;
+            return;
         }
-       int oldtimes=dungeo.getBuytimes();
-        dungeo.setBuytimes(oldtimes+times);
+        int oldtimes = dungeo.getBuytimes();
+        dungeo.setBuytimes(oldtimes + times);
         pushDungeoToChangeList(dungeo);
     }
 

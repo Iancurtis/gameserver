@@ -33,7 +33,6 @@ public class ArenaModule extends BasicModule {
     }
 
 
-
     public ArenaModule(GameProxy gameProxy) {
         this.setGameProxy(gameProxy);
         this.setModuleId(ProtocolModuleDefine.NET_M20);
@@ -45,42 +44,42 @@ public class ArenaModule extends BasicModule {
 
         } else if (anyRef instanceof GameMsg.GetAllArenaInfosSucess) {
             M20.M200000.S2C.Builder builder = ((GameMsg.GetAllArenaInfosSucess) anyRef).build();
-            int rs=((GameMsg.GetAllArenaInfosSucess) anyRef).rs();
-           // TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
-           // int challangeTimes = timerdbProxy.getTimerNum(TimerDefine.ARENA_TIMES, 0, 0);
+            int rs = ((GameMsg.GetAllArenaInfosSucess) anyRef).rs();
+            // TimerdbProxy timerdbProxy = getProxy(ActorDefine.TIMERDB_PROXY_NAME);
+            // int challangeTimes = timerdbProxy.getTimerNum(TimerDefine.ARENA_TIMES, 0, 0);
             ArenaProxy arenaProxy = getProxy(ActorDefine.ARENA_PROXY_NAME);
-            int challangeTimes =arenaProxy.arean.getChallengetimes();//挑战次数
-            int buytimes =arenaProxy.arean.getBuytimes();//购买次数
+            int challangeTimes = arenaProxy.arean.getChallengetimes();//挑战次数
+            int buytimes = arenaProxy.arean.getBuytimes();//购买次数
             List<Integer> rivals = ((GameMsg.GetAllArenaInfosSucess) anyRef).rivals();
             PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
             playerProxy.rivalsCache = new ArrayList<Integer>();
             playerProxy.rivalsCache.addAll(rivals);
-            builder.setChallengetimes(ArenaDefine.FIGHTTIME-challangeTimes);
+            builder.setChallengetimes(ArenaDefine.FIGHTTIME - challangeTimes);
             Map<Long, Integer> ranks = ((GameMsg.GetAllArenaInfosSucess) anyRef).arenMap();
             List<SimplePlayer> simplePlayers = ((GameMsg.GetAllArenaInfosSucess) anyRef).simplePlayers();
             int state = arenaProxy.arean.getLastReward();//0不可领取 1可领取
             if (state == 0) {
-                if(builder.getLasttimes()==-1) {
+                if (builder.getLasttimes() == -1) {
                     builder.setLastReward(0);
-                }else{
+                } else {
                     builder.setLastReward(1);
                 }
             } else {
                 builder.setLastReward(2);
             }
             builder.setRs(rs);
-            if(rs>=0) {
+            if (rs >= 0) {
                 builder.addAllFightInfos(arenaProxy.getFightInfos(simplePlayers, ranks));
             }
             builder.setBuytimes(buytimes);
             builder.setRemainTime(arenaProxy.getRemainBattleTime());
             builder.setNextRefreshTime(arenaProxy.getNextFreshTime());//下去请求刷新的时间
             //builder.setNextRefreshTime(20);//下去请求刷新的时间
-           // System.err.println("++++++竞技场下次刷新时间="+builder.getNextRefreshTime());
+            // System.err.println("++++++竞技场下次刷新时间="+builder.getNextRefreshTime());
             JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ARENA_PRICE, "times", buytimes + 1);
             builder.setMoney(jsonObject.getInt("goldprice"));
             pushNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200000, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(0);
         } else if (anyRef instanceof GameMsg.GetPlayerSimpleInfoListSuccess) {
             List<SimplePlayer> simplePlayers = ((GameMsg.GetPlayerSimpleInfoListSuccess) anyRef).simplePlayer();
             String cmd = ((GameMsg.GetPlayerSimpleInfoListSuccess) anyRef).cmd();
@@ -100,54 +99,51 @@ public class ArenaModule extends BasicModule {
             int rs = arenaProxy.getLaskArenaReward(rank, reward);
             M20.M200005.S2C.Builder builder = M20.M200005.S2C.newBuilder();
             builder.setRs(rs);
-            if(rs==0){
+            if (rs == 0) {
                 RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
                 M2.M20007.S2C build20007 = rewardProxy.getRewardClientInfo(reward);
                 pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, build20007);
-                List<Integer> powerList=new ArrayList<Integer>();
-                for(int power:reward.addPowerMap.keySet()){
+                List<Integer> powerList = new ArrayList<Integer>();
+                for (int power : reward.addPowerMap.keySet()) {
                     powerList.add(power);
                 }
-                M2.M20002.S2C different = sendDifferent(powerList);
-                pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20002, different);
             }
             pushNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200005, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(0);
             send200000();
-        }else if (anyRef instanceof GameMsg.sendAreaInfo) {
-             send200000();
-        }else if(anyRef instanceof GameMsg.NewArenaReportNotify){
-          //  OnTriggerNet200100Event(null);
-        }else if(anyRef instanceof GameMsg.GetAllServerArenaReportBack){
+        } else if (anyRef instanceof GameMsg.sendAreaInfo) {
+            send200000();
+        } else if (anyRef instanceof GameMsg.NewArenaReportNotify) {
+            //  OnTriggerNet200100Event(null);
+        } else if (anyRef instanceof GameMsg.GetAllServerArenaReportBack) {
             List<Report> list = ((GameMsg.GetAllServerArenaReportBack) anyRef).reports();
-            int cmd= ((GameMsg.GetAllServerArenaReportBack) anyRef).cmd();
-            sendReportListToCilent(list,cmd);
-        }else if(anyRef instanceof GameMsg.GetOneServerArenaReportBack){
+            int cmd = ((GameMsg.GetAllServerArenaReportBack) anyRef).cmd();
+            sendReportListToCilent(list, cmd);
+        } else if (anyRef instanceof GameMsg.GetOneServerArenaReportBack) {
             Report report = ((GameMsg.GetOneServerArenaReportBack) anyRef).report();
             sendReportDetailInfoToCilent(report);
         } else if (anyRef instanceof GameMsg.addNewReport) {
-            long id=((GameMsg.addNewReport) anyRef).id();
+            long id = ((GameMsg.addNewReport) anyRef).id();
             sendReportAdd(id);
         }
     }
 
-    private void sendReportAdd(long id){
-        MailProxy mailProxy=getGameProxy().getProxy(ActorDefine.MAIL_PROXY_NAME);
-        M20.ShortInfos  info=mailProxy.getReportShinfoByid(id);
-        if(info!=null){
-            M20.M200104.S2C.Builder builder=M20.M200104.S2C.newBuilder();
+    private void sendReportAdd(long id) {
+        MailProxy mailProxy = getGameProxy().getProxy(ActorDefine.MAIL_PROXY_NAME);
+        M20.ShortInfos info = mailProxy.getReportShinfoByid(id);
+        if (info != null) {
+            M20.M200104.S2C.Builder builder = M20.M200104.S2C.newBuilder();
             builder.setPerInfos(info);
             pushNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200104, builder.build());
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
     }
 
 
-
-    private void sendReportListToCilent(List<Report> list,int cmd) {
-        if(cmd==ProtocolModuleDefine.NET_M20_C200100) {
+    private void sendReportListToCilent(List<Report> list, int cmd) {
+        if (cmd == ProtocolModuleDefine.NET_M20_C200100) {
             pushArenaReportToClient(list);
-        }else if(cmd==ProtocolModuleDefine.NET_M20_C200105){
+        } else if (cmd == ProtocolModuleDefine.NET_M20_C200105) {
             pushNewReportToClient(list);
         }
     }
@@ -181,11 +177,12 @@ public class ArenaModule extends BasicModule {
             int rs = arenaProxy.askFight(rivalSimple, mysimple);
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200001, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M20_C200001);
             if (rs == 0) {
-                GameMsg.GetSimplePlayerBysection msg = new GameMsg.GetSimplePlayerBysection(rivalSimple.getId(), playerProxy.getPlayerId(), ArenaDefine.CMD_ADD_PROTIME,new PlayerBattle());
+                GameMsg.GetSimplePlayerBysection msg = new GameMsg.GetSimplePlayerBysection(rivalSimple.getId(), playerProxy.getPlayerId(), ArenaDefine.CMD_ADD_PROTIME, new PlayerBattle());
                 sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME, msg);
             }
+
         }
     }
 
@@ -194,7 +191,7 @@ public class ArenaModule extends BasicModule {
     public void changePlayerProTime(List<SimplePlayer> simplePlayers) {
         ArenaProxy arenaProxy = getProxy(ActorDefine.ARENA_PROXY_NAME);
         for (SimplePlayer simplePlayer : simplePlayers) {
-            if(simplePlayer.getId()<0){
+            if (simplePlayer.getId() < 0) {
                 continue;
             }
             arenaProxy.setProTime(simplePlayer.getArenaTroop());
@@ -213,6 +210,7 @@ public class ArenaModule extends BasicModule {
 
     /**
      * 请求战斗
+     *
      * @param request
      */
     private void OnTriggerNet200001Event(Request request) {
@@ -241,23 +239,25 @@ public class ArenaModule extends BasicModule {
     }
 
     private void test() {
-     send200000();
+        send200000();
     }
 
     /**
      * 增加挑战次数
+     *
      * @param request
      */
     private void OnTriggerNet200003Event(Request request) {
         ArenaProxy arenaProxy = getProxy(ActorDefine.ARENA_PROXY_NAME);
         M20.M200003.S2C.Builder builder = M20.M200003.S2C.newBuilder();
         int rs = arenaProxy.addArenaFightTimes();
+        getRsMap().put(ProtocolModuleDefine.NET_M20_C200003, rs);
         builder.setRs(rs);
-        builder.setChallengetimes(ArenaDefine.FIGHTTIME-arenaProxy.arean.getChallengetimes());
+        builder.setChallengetimes(ArenaDefine.FIGHTTIME - arenaProxy.arean.getChallengetimes());
         JSONObject jsonObject = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ARENA_PRICE, "times", arenaProxy.arean.getBuytimes() + 1);
         builder.setMoney(jsonObject.getInt("goldprice"));
         sendNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200003, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M20_C200003);
         //send200000();
     }
 
@@ -268,6 +268,7 @@ public class ArenaModule extends BasicModule {
         M20.M200004.S2C.Builder builder = M20.M200004.S2C.newBuilder();
         PlayerReward reward = new PlayerReward();
         int rs = arenaProxy.arenaShopBuy(id, reward);
+        getRsMap().put(ProtocolModuleDefine.NET_M20_C200004, rs);
         builder.setRs(rs);
         builder.setId(id);
         sendNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200004, builder.build());
@@ -277,7 +278,7 @@ public class ArenaModule extends BasicModule {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, msg);
             sendFuntctionLog(FunctionIdDefine.ARENA_SHOP_BUY_FUNCTION_ID);
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M20_C200004);
     }
 
 
@@ -292,64 +293,64 @@ public class ArenaModule extends BasicModule {
     private void OnTriggerNet200006Event(Request request) {
         M20.M200006.S2C.Builder builder = M20.M200006.S2C.newBuilder();
         ArenaProxy arenaProxy = getProxy(ActorDefine.ARENA_PROXY_NAME);
-        int rs= arenaProxy.removefightTime();
+        int rs = arenaProxy.removefightTime();
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200006, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M20_C200006);
     }
 
-    private void pushArenaReportToClient(List<Report> list){
+    private void pushArenaReportToClient(List<Report> list) {
         M20.M200100.S2C.Builder builder = M20.M200100.S2C.newBuilder();
         MailProxy mailProxy = getProxy(ActorDefine.MAIL_PROXY_NAME);
         builder.addAllPerInfos(mailProxy.getAllArenaReoprtShortInfo());
         builder.addAllAllInfos(mailProxy.getServerArenaReportShortInfo(list));
         pushNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200100, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
     }
 
-    private void pushNewReportToClient(List<Report> list){
+    private void pushNewReportToClient(List<Report> list) {
         M20.M200105.S2C.Builder builder = M20.M200105.S2C.newBuilder();
         MailProxy mailProxy = getProxy(ActorDefine.MAIL_PROXY_NAME);
         builder.addAllAllInfos(mailProxy.getServerArenaReportShortInfoNew(list));
         pushNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200105, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
     }
-
 
 
     private void OnTriggerNet200100Event(Request request) {
-        sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME,new GameMsg.GetAllServerArenaReport(ProtocolModuleDefine.NET_M20_C200100));
+        sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME, new GameMsg.GetAllServerArenaReport(ProtocolModuleDefine.NET_M20_C200100));
     }
+
     private void OnTriggerNet200105Event(Request request) {
-        sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME,new GameMsg.GetAllServerArenaReport(ProtocolModuleDefine.NET_M20_C200105));
+        sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME, new GameMsg.GetAllServerArenaReport(ProtocolModuleDefine.NET_M20_C200105));
     }
 
     private void OnTriggerNet200101Event(Request request) {
         M20.M200101.C2S c2s = request.getValue();
         long id = c2s.getId();
         int type = c2s.getType();
-        if (type == 1){
+        if (type == 1) {
             //个人
             MailProxy mailProxy = getProxy(ActorDefine.MAIL_PROXY_NAME);
             boolean read = mailProxy.isReadReport(id);
             M20.PerDetailInfos detail = mailProxy.getArenaReoprtDetailInfoById(id);
             M20.M200101.S2C.Builder builder = M20.M200101.S2C.newBuilder();
-            if(detail!=null) {
+            if (detail != null) {
                 builder.setInfos(detail);
                 builder.setRs(0);
-            }else{
+            } else {
                 builder.setRs(ErrorCodeDefine.M200101_1);
             }
-           // builder.setId(id);
+            // builder.setId(id);
             sendNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200101, builder.build());
-            if (read == false){
+            if (read == false) {
                 //OnTriggerNet200100Event(null);
             }
             sendFuntctionLog(FunctionIdDefine.GET_ARENA_REPORT_DETAIL_INFO_FUNCTION_ID);
-        }else {
-            sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME,new GameMsg.GetOneServerArenaReport(id));
+        } else {
+            sendServiceMsg(ActorDefine.ARENA_SERVICE_NAME, new GameMsg.GetOneServerArenaReport(id));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M20_C200101);
     }
 
     private void sendReportDetailInfoToCilent(Report report) {
@@ -358,9 +359,10 @@ public class ArenaModule extends BasicModule {
         M20.PerDetailInfos.Builder detailInfo = M20.PerDetailInfos.newBuilder(mailProxy.getArenaReoprtDetailInfo(report));
         detailInfo.setType(3);
         builder.setInfos(detailInfo.build());
+        builder.setRs(0);
         //builder.setId(report.getId());
         pushNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200101, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
         sendFuntctionLog(FunctionIdDefine.GET_ARENA_REPORT_DETAIL_INFO_FUNCTION_ID);
     }
 
@@ -372,36 +374,38 @@ public class ArenaModule extends BasicModule {
         M20.M200102.S2C.Builder builder = M20.M200102.S2C.newBuilder();
         builder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200102, builder.build());
-       // OnTriggerNet200100Event(null);
-        sendPushNetMsgToClient();
+        // OnTriggerNet200100Event(null);
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M20_C200102);
     }
 
     /**
      * 0点或4点刷新
      * //刷新时间验证
+     *
      * @param request
      */
     private void OnTriggerNet200106Event(Request request) {
         M20.M200106.C2S c2s = request.getValue();
-        M20.M200106.S2C.Builder builder= M20.M200106.S2C.newBuilder();
-        int clientTime=c2s.getClientTime();
-        int betweenTime=GameUtils.getServerTime()-clientTime;
-        if(betweenTime>0){
+        M20.M200106.S2C.Builder builder = M20.M200106.S2C.newBuilder();
+        int clientTime = c2s.getClientTime();
+        int betweenTime = GameUtils.getServerTime() - clientTime;
+        if (betweenTime > 0) {
             builder.setRemainTime(betweenTime);
-        }else{
+        } else {
             builder.setRemainTime(0);
             send200000();
         }
         sendNetMsg(ProtocolModuleDefine.NET_M20, ProtocolModuleDefine.NET_M20_C200106, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M20_C200106);
     }
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     *
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

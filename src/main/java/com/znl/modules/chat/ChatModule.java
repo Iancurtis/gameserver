@@ -154,7 +154,7 @@ public class ChatModule extends BasicModule {
                 builder.setChatInfo(playerProxy.getChatInfo2Trumpe(playerId, mess));
             }
             pushNetMsg(ProtocolModuleDefine.NET_M14, ProtocolModuleDefine.NET_M14_C140008, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140008);
             sendFuntctionLog(FunctionIdDefine.TRUMPET_FUNCTION_ID);
         } else if (object instanceof GameMsg.sendAChat) {
             PlayerChat chat = ((GameMsg.sendAChat) object).chat();
@@ -178,7 +178,7 @@ public class ChatModule extends BasicModule {
         }
         builder.setRs(0);
         pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140006, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140006);
         sendFuntctionLog(FunctionIdDefine.GET_SHIELD_LISTS_FUNCTION_ID);
     }
 
@@ -195,7 +195,7 @@ public class ChatModule extends BasicModule {
         builder.setRs(0);
         builder.setChatInfo(playerProxy.getChatInfo(chat));
         pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140003, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140003);
         List<Long> laterlist = playerProxy.getlaterlist();
         laterlist.remove(chat.playerId);
         laterlist.remove(playerProxy.getPlayerId());
@@ -254,7 +254,7 @@ public class ChatModule extends BasicModule {
         builder.setRs(0);
         builder.setInfo(getSimplePlayerInfo(simplePlayer));
         pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140001, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140001);
     }
 
     private void getSimplePlayerHandle(SimplePlayer simplePlayer, String cmd) {
@@ -265,7 +265,7 @@ public class ChatModule extends BasicModule {
                 M14.M140001.S2C.Builder builder = M14.M140001.S2C.newBuilder();
                 builder.setRs(ErrorCodeDefine.M140001_1);
                 pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140001, builder.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140001);
 
                 return;
             }
@@ -283,12 +283,12 @@ public class ChatModule extends BasicModule {
             if (simplePlayer == null) {
                 builder.setRs(ErrorCodeDefine.M140002_1);
                 pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140002, builder.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140002);
             } else if (simplePlayer.online == false) {
                 //无法私聊不在线的玩家
                 builder.setRs(ErrorCodeDefine.M140002_3);
                 pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140002, builder.build());
-                sendPushNetMsgToClient();
+                sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140002);
             } else if (privateChatText == null) {
                 builder.setRs(ErrorCodeDefine.M140002_2);
             } else {
@@ -327,7 +327,7 @@ public class ChatModule extends BasicModule {
                 playerProxy.setLaterPlayer(str);
             }
             pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140002, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140002);
             privateChatText = null;
         } else if ("140004".equals(cmd)) {
             M14.M140004.S2C.Builder builder = M14.M140004.S2C.newBuilder();
@@ -341,7 +341,7 @@ public class ChatModule extends BasicModule {
                 sendFuntctionLog(FunctionIdDefine.PRIVATE_CHAT_ASK_FUNCTION_ID);
             }
             pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140004, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140004);
         }
     }
 
@@ -377,7 +377,7 @@ public class ChatModule extends BasicModule {
             builder.addChats(playerProxy.getChatInfo(chat));
         }
         pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140000, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
     }
 
     String lastChat = "";
@@ -456,7 +456,7 @@ public class ChatModule extends BasicModule {
             M14.M140002.S2C.Builder builder = M14.M140002.S2C.newBuilder();
             builder.setRs(ErrorCodeDefine.M140002_4);
             pushNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140002, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140002);
             return;
         }
         M14.M140002.C2S proto = request.getValue();
@@ -497,7 +497,7 @@ public class ChatModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140005, builder.build());
         sendFuntctionLog(FunctionIdDefine.ADD_SHIELD_PLAYER_FUNCTION_ID, id, type, 0);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140005);
     }
 
     private void OnTriggerNet140006Event(Request request) {
@@ -519,7 +519,7 @@ public class ChatModule extends BasicModule {
         builder.setRs(rs);
         sendNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140007, builder.build());
         sendFuntctionLog(FunctionIdDefine.REMOVE_SHIELD_LISTS_FUNCTION_ID, playerId, type, 0);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140007);
     }
 
     private void OnTriggerNet140009Event(Request request) {
@@ -527,7 +527,7 @@ public class ChatModule extends BasicModule {
         M14.M140009.S2C.Builder builder = M14.M140009.S2C.newBuilder();
         builder.setType(playerProxy.getPlayerType());
         sendNetMsg(ActorDefine.CHAT_MODULE_ID, ProtocolModuleDefine.NET_M14_C140009, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140009);
     }
 
     private M14.ShieldInfo getShieldInfoBySimplePlayer(SimplePlayer simplePlayer) {
@@ -813,7 +813,7 @@ public class ChatModule extends BasicModule {
             if (reward.soldierMap.size() > 0) {
                 sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.CountCapacity());
             }
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M14_C140000);
         } catch (Exception e) {
             e.printStackTrace();
             CustomerLogger.error("作弊逻辑的时候出现异常", e);
@@ -849,10 +849,11 @@ public class ChatModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
+
 }

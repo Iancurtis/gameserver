@@ -13,6 +13,7 @@ import com.znl.utils.RandomUtil;
 import com.znl.utils.SortUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import scala.Console;
 
 import java.util.*;
 
@@ -939,6 +940,10 @@ public class ArmyGroupProxy extends BasicProxy {
             legMen.setPendantId(armygroupMenber.getPendantId());
             legMen.setIconId(armygroupMenber.getIcon());
             SimplePlayer sp = PlayerService.getSimplePlayer(armygroupMenber.getPlayerId(), playerProxy.getAreaKey());
+            if(sp==null){
+             System.err.println("出现空的玩家了！！！");
+                continue;
+            }
             if (sp.online) {
                 legMen.setIsOnline(1);
             } else {

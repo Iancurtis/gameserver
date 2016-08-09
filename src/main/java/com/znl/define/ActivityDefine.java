@@ -1,5 +1,8 @@
 package com.znl.define;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by Administrator on 2016/1/16.
  */
@@ -110,5 +113,8 @@ public class ActivityDefine {
     public static final int LABA_TEN_LOTTER_TYPE=10;//拉霸抽奖类型（10连抽）
     public static final int LIMIT_ACTION_LEGIONSHARE_ID=12;//限时活动有福同享活动uitypeId
     public static final int LIMIT_ACTION_LABA_ID=11;//限时活动拉霸uitypeId
+
+
+    public final static List<Integer> rewardinEndTime = Arrays.asList(115,116,117,118,136,137,138);//时间到结算活动
 
 }

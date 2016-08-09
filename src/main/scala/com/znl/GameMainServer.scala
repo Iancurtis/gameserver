@@ -462,7 +462,7 @@ object GameMainServer extends App{
         val test = java.lang.Boolean.parseBoolean(ary(1))
         GameUtils.test = test
         println("当前的作弊指令是"+GameUtils.test)
-      }else if(str.indexOf("setServerDate") >= 0){//setServerDate=2016-04-21 03:59:30
+      }else if(str.indexOf("setServerDate") >= 0){//setServerDate=2016-05-14 03:59:30
         val ary : Array[String] = str.split("=")
         GameUtils.setServerDate(ary(1))
         println("设置时间成功当前时间为："+GameUtils.getServerDate())

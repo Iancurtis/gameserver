@@ -59,7 +59,7 @@ public class SkillModule extends BasicModule {
         s2c.addAllSkillInfos(skillProxy.getAllSkillInfo());
         s2c.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M12, ProtocolModuleDefine.NET_M12_C120000, s2c.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M12_C120000);
     }
 
     /**
@@ -89,7 +89,7 @@ public class SkillModule extends BasicModule {
            }
 
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M12_C120001);
     }
 
     /**
@@ -113,17 +113,17 @@ public class SkillModule extends BasicModule {
             BaseLog log = new SkillLog(0, 0, 0, 0, ActorDefine.MIN_RESET_SKILL);
             sendLog(log);
             sendFuntctionLog(FunctionIdDefine.SKILL_INITIALIZE_FUNCTION_ID);
-            sendPushNetMsgToClient();
+//            sendPushNetMsgToClient();
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M12_C120002);
     }
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

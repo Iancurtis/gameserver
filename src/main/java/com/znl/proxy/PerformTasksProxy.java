@@ -360,7 +360,7 @@ public class PerformTasksProxy extends BasicProxy {
                     removeList.add(task);
                     if (task.getType() == TaskDefine.PERFORM_TASK_DIGGING) {
                         //删除后向世界请求一次校验，如果是误删除的还要给他加回来
-                        sendMsgToWorldNode(task.getWorldTileX(), task.getWorldTileY(), new GameMsg.CheckDeleteDiggingTask(playerProxy.getPlayerId()), playerProxy);
+//                        sendMsgToWorldNode(task.getWorldTileX(), task.getWorldTileY(), new GameMsg.CheckDeleteDiggingTask(playerProxy.getPlayerId()), playerProxy);
                     }
                 }
             }

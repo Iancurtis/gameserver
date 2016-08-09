@@ -15,7 +15,7 @@ import java.util.Set;
 public class Player extends BaseDbPojo implements Serializable {
 
     private String accountName;
-    private Integer areaId;
+    private Integer areaId=0;
     private Integer level = 0;
     private String name = "";
     private Integer sex = 0;
@@ -49,9 +49,9 @@ public class Player extends BaseDbPojo implements Serializable {
     private Long buildingId = -1L;
     private Integer dungeoId;//当前最高副本id
     private Integer buildsize = 0;
-    private Integer worldResouceLevel;//攻打最高世界资源等级
+    private Integer worldResouceLevel=0;//攻打最高世界资源等级
     private Long arena = 0L;
-    private Integer loginTime;//登录时间
+    private Integer loginTime=0;//登录时间
     private Integer loginLevel;//登录等级
     private Integer totalCharge = 0;//累计充值
     private long firstChargeTime = 0l;//首次充值时间
@@ -106,6 +106,7 @@ public class Player extends BaseDbPojo implements Serializable {
     private int activitycontributerank;//活动贡献排名
     private long friendbleestimeId = 0l;//好友被祝福的定时器
     private Set<Long> advids = new HashSet<Long>();
+
     private Set<Long> productions = new HashSet<>();
     private int resetDataTime=0;//重置时间(4点)
     private long resourereftime=GameUtils.getServerDate().getTime();
@@ -148,6 +149,24 @@ public class Player extends BaseDbPojo implements Serializable {
     private int getbless;//每日可领取祝福奖励的次数
     private int taobaofree;//探宝免费
     private int onlinetime;//在线累计时长
+    private Set<Long> worldResPoint = new HashSet<>();//野外占领的据点id 以x*1000+y的形式
+
+    public Set<Long> getWorldResPoint() {
+        return worldResPoint;
+    }
+
+    public void setWorldResPoint(Set<Long> worldResPoint) {
+        this.worldResPoint = worldResPoint;
+    }
+
+    public void addtWorldResPoint(Long pointKey){
+        this.worldResPoint.add(pointKey);
+    }
+
+    public void removeWorldResPoint(Long pointKey){
+        this.worldResPoint.remove(pointKey);
+    }
+
     public int getTaobaofree() {
         return taobaofree;
     }
@@ -888,7 +907,9 @@ public class Player extends BaseDbPojo implements Serializable {
         return name;
     }
 
-    public void setName(String name) {this.name = name;}
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getSex() {
         return sex;

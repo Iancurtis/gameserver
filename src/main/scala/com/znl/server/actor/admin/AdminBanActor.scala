@@ -41,6 +41,8 @@ class AdminBanActor extends BasicAdminActor{
           sendMsgToService(context, server_id, ActorDefine.PLAYER_SERVICE_NAME, BanPlayerHandle(banType, dataList, status, banDate, reason))
         case "BanChatAct" =>
           sendMsgToService(context, server_id, ActorDefine.PLAYER_SERVICE_NAME, BanPlayerHandle(banType, dataList, status, banDate, reason))
+        case "BanIP" =>
+          sendMsgToService(context, server_id, ActorDefine.PLAYER_SERVICE_NAME, BanPlayerHandle(banType, dataList, status, banDate, reason))
         case _ =>
       }
 

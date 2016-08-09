@@ -158,7 +158,7 @@ public class PowerRanksModule extends BasicModule {
         PlayerProxy playerProxy=getProxy(ActorDefine.PLAYER_PROXY_NAME);
         builder.addAllRankListInfo(playerProxy.getRankInfos());
         sendNetMsg(ActorDefine.RANKS_MODULE_ID, ProtocolModuleDefine.NET_M21_C210000, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M21_C210000);
     }
 
     public void checkTimer() {
@@ -173,10 +173,10 @@ public class PowerRanksModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 }

@@ -503,17 +503,21 @@ public class LotterProxy extends BasicProxy {
             if (freetimes <= 0) {
                 if (itemProxy.getItemNum(itemId) < itemNum) {
                     return ErrorCodeDefine.M150002_2;
+                }else{
+                    itemProxy.reduceItemNum(itemId, itemNum, LogDefine.LOST_LOTTER_TAO);
+                    RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
+                    rewardProxy.addItemToReward(reward, itemId, itemNum);
                 }
             }
             if(freetimes>0){
                 PlayerProxy playerProxy=getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
                 playerProxy.getPlayer().setTaobaofree(playerProxy.getPlayer().getTaobaofree()+1);
             }
-            if (freetimes <= 0) {
-                itemProxy.reduceItemNum(itemId, itemNum, LogDefine.LOST_LOTTER_TAO);
-                RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
-                rewardProxy.addItemToReward(reward, itemId, itemNum);
-            }
+//            if (freetimes <= 0) {
+//                itemProxy.reduceItemNum(itemId, itemNum, LogDefine.LOST_LOTTER_TAO);
+//                RewardProxy rewardProxy = getGameProxy().getProxy(ActorDefine.REWARD_PROXY_NAME);
+//                rewardProxy.addItemToReward(reward, itemId, itemNum);
+//            }
         } else {
             if (itemProxy.getItemNum(itemId) < itemNum * num) {
                 return ErrorCodeDefine.M150002_2;

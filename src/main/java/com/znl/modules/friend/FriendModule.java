@@ -126,7 +126,7 @@ public class FriendModule extends BasicModule {
                 .addAllBlessInfos(blessInfoList).build();
 
         pushNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170000, s2c);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M17_C170000);
         sendFuntctionLog(FunctionIdDefine.GET_FRIENDS_INFOS_LIST_FUNCTION_ID);
     }
 
@@ -174,7 +174,7 @@ public class FriendModule extends BasicModule {
         }
 
         pushNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170001, s2cBuilder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M17_C170001);
         sendFuntctionLog(FunctionIdDefine.ADD_FRIENDS_FUNCTION_ID, simplePlayer.getId(), 0, 0);
 
     }
@@ -199,7 +199,7 @@ public class FriendModule extends BasicModule {
         }
 
         pushNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170002, s2cBuilder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M17_C170002);
     }
 
     //查看信息后，将被祝福的信息推送给客户端
@@ -212,7 +212,7 @@ public class FriendModule extends BasicModule {
         s2cBuilder.addBlessInfos(friendProxy.getBlessInfo(simplePlayer));
 
         pushNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170005, s2cBuilder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M17_C170005);
     }
 
 
@@ -268,7 +268,7 @@ public class FriendModule extends BasicModule {
             M17.M170001.S2C.Builder s2cBuilder = M17.M170001.S2C.newBuilder();
             s2cBuilder.setRs(rs);
             sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170001, s2cBuilder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M17_C170001);
         }
     }
 
@@ -307,7 +307,7 @@ public class FriendModule extends BasicModule {
         }
         s2cBuilder.setRs(rs);
         sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170003, s2cBuilder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M17_C170003);
     }
 
     //请求祝福
@@ -358,7 +358,7 @@ public class FriendModule extends BasicModule {
         sendFuntctionLog(FunctionIdDefine.ASK_WISH_FUNCTION_ID);
         //通知那些被祝福的玩家，在线的话就推送到具体模块，不在线的话，直接修改数据库数据
         sendServiceMsg(ActorDefine.FRIEND_SERVICE_NAME, new GameMsg.FriendBlessPlayers(playerProxy.getPlayerId(), ids));
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M17_C170004);
     }
 
     //请求领取祝福
@@ -409,7 +409,7 @@ public class FriendModule extends BasicModule {
         s2cBuilder.addAllPlayerIds(getIdList);
         sendNetMsg(ProtocolModuleDefine.NET_M17, ProtocolModuleDefine.NET_M17_C170006, s2cBuilder.build());
         sendFuntctionLog(FunctionIdDefine.ASK_GET_WISH_FUNCTION_ID);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M17_C170006);
     }
 
     private void blessRewardHandler(List<Integer> rewardId) {
@@ -439,10 +439,10 @@ public class FriendModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 

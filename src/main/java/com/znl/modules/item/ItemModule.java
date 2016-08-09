@@ -77,7 +77,7 @@ public class ItemModule extends BasicModule {
             }
             builder.setRs(rs);
             pushNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90004, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M9_C90004);
         } else if (object instanceof GameMsg.getAllLegionSucess) {
             String name = ((GameMsg.getAllLegionSucess) object).name();
             Map<Long, Armygroup> map = ((GameMsg.getAllLegionSucess) object).armymap();
@@ -96,7 +96,7 @@ public class ItemModule extends BasicModule {
                 updateMySimplePlayerData();
             }
             pushNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90004, builder.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M9_C90004);
         }
     }
 
@@ -156,14 +156,14 @@ public class ItemModule extends BasicModule {
             if(jsonObject.getInt("type")==ItemDefine.ITEM_REWARD_AVOID_WAR){
                updateMySimplePlayerData();
             }
-            int type = jsonObject.getInt("type");
-            if(type==ItemDefine.ITEM_REWARD_AVOID_WAR){
-                List<Integer> poweerlist=new ArrayList<Integer>();
-                poweerlist.add(PlayerPowerDefine.NOR_POWER_protect_date);
-                sendDifferent(poweerlist);
-            }
+//            int type = jsonObject.getInt("type");
+//            if(type==ItemDefine.ITEM_REWARD_AVOID_WAR){
+//                List<Integer> poweerlist=new ArrayList<Integer>();
+//                poweerlist.add(PlayerPowerDefine.NOR_POWER_protect_date);
+//                sendDifferent(poweerlist);
+//            }
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M9_C90001);
     }
 
     private void OnTriggerNet90007Event(Request request) {
@@ -186,7 +186,7 @@ public class ItemModule extends BasicModule {
             sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, build20007);
         }
         sendNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90007, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M9_C90007);
     }
 
     private void OnTriggerNet90003Event(Request request) {
@@ -251,7 +251,7 @@ public class ItemModule extends BasicModule {
             }
 
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M9_C90004);
     }
 
 
@@ -265,7 +265,7 @@ public class ItemModule extends BasicModule {
         }
          builder.setRs(0);
         sendNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90005, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M9_C90005);
     }
 
 
@@ -301,7 +301,7 @@ public class ItemModule extends BasicModule {
             chat.legionName = playerProxy.getLegionName();
             sendModuleMsg(ActorDefine.CHAT_MODULE_NAME,new GameMsg.sendAChat(chat));
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M9_C90006);
     }
 
 
@@ -333,7 +333,7 @@ public class ItemModule extends BasicModule {
         M2.M20201.S2C.Builder different = M2.M20201.S2C.newBuilder();
         different.setName(playerProxy.getPlayer().getLegionName());
         pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20201, different.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M2_C20201);
     }
 
 
@@ -356,17 +356,17 @@ public class ItemModule extends BasicModule {
             //刷新新的buffer
             pushNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90003, builder90003.build());
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M9_C90002);
     }
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
         //检测itemBuff是否过期
-        if(cmd==ProtocolModuleDefine.NET_M9_C90002){
+        if(request.getCmd()==ProtocolModuleDefine.NET_M9_C90002){
             //返回itemBuff列表
             OnTriggerNet90003Event(null);
         }

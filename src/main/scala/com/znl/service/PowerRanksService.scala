@@ -30,6 +30,7 @@ object PowerRanksService {
   def props(areaKey: String) = {
     Props(classOf[PowerRanksService], areaKey)
   }
+
   val rankPowerList: util.Map[Integer, util.List[PowerRanks]] = new util.concurrent.ConcurrentHashMap[Integer, util.List[PowerRanks]]
   val lastRankPowerList: util.Map[Integer, util.List[PowerRanks]] = new util.concurrent.ConcurrentHashMap[Integer, util.List[PowerRanks]]
 
@@ -37,11 +38,11 @@ object PowerRanksService {
   /**
     * 获取某个类型的排行榜
     */
-  def onGetRankByType(rankType: Int,playerId :Long,areaKey :String): M21.RankListInfo.Builder = {
+  def onGetRankByType(rankType: Int, playerId: Long, areaKey: String): M21.RankListInfo.Builder = {
     val rankList = PowerRanksService.lastRankPowerList.get(rankType)
     val infos: M21.RankListInfo.Builder = M21.RankListInfo.newBuilder()
-    if(rankList==null){
-      return  infos
+    if (rankList == null) {
+      return infos
     }
     SortUtil.anyProperSort(rankList, "getValue", false)
     var sizeNum = rankList.size()
@@ -51,27 +52,27 @@ object PowerRanksService {
       try {
         val info: M21.PowerRankInfo.Builder = M21.PowerRankInfo.newBuilder()
         val powerRank: PowerRanks = rankList.get(i)
-        val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(powerRank.getPlayerId,areaKey)
-          if (simplePlayer != null) {
-        info.setTypeId(rankType)
-        info.setRank(i + 1)
-        info.setPlayerId(rankList.get(i).getPlayerId())
-        info.setRankValue(rankList.get(i).getValue())
-        if (rankType == PowerRanksDefine.POWERRANK_TYPE_ATK_STRENGTHEN) {
-          info.setLevel(powerRank.getAtklv)
-        } else if (rankType == PowerRanksDefine.POWERRANK_TYPE_CRIT_STRENGTHEN) {
-          info.setLevel(powerRank.getCritlv)
-        } else if (rankType == PowerRanksDefine.POWERRANK_TYPE_DODGE_STRENGTHEN) {
-          info.setLevel(powerRank.getDogelv)
-        } else {
-          info.setLevel(powerRank.getSumLevel)
-        }
-        info.setName(powerRank.getName())
-        infos.addPowerRankInfo(info)
-         if(playerId==simplePlayer.getId){
-           myinfo = info
-           infos.setMyRank(myinfo)
-         }
+        val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(powerRank.getPlayerId, areaKey)
+        if (simplePlayer != null) {
+          info.setTypeId(rankType)
+          info.setRank(i + 1)
+          info.setPlayerId(rankList.get(i).getPlayerId())
+          info.setRankValue(rankList.get(i).getValue())
+          if (rankType == PowerRanksDefine.POWERRANK_TYPE_ATK_STRENGTHEN) {
+            info.setLevel(powerRank.getAtklv)
+          } else if (rankType == PowerRanksDefine.POWERRANK_TYPE_CRIT_STRENGTHEN) {
+            info.setLevel(powerRank.getCritlv)
+          } else if (rankType == PowerRanksDefine.POWERRANK_TYPE_DODGE_STRENGTHEN) {
+            info.setLevel(powerRank.getDogelv)
+          } else {
+            info.setLevel(powerRank.getSumLevel)
+          }
+          info.setName(powerRank.getName())
+          infos.addPowerRankInfo(info)
+          if (playerId == simplePlayer.getId) {
+            myinfo = info
+            infos.setMyRank(myinfo)
+          }
         }
         sizeNum -= 1
         i += 1
@@ -85,14 +86,12 @@ object PowerRanksService {
   }
 
 
-
-
-  def GetRanks(playerid :Long): util.Map[Integer,Integer] ={
-    val rankmap:util.Map[Integer,Integer]=new util.HashMap[Integer,Integer]()
-    var  retype:Int =1
-    while (retype<=PowerRanksDefine.POWERRANK_TYPE_LIMITCHANGE) {
-      val rankList =lastRankPowerList.get(retype)
-      if(rankList!=null) {
+  def GetRanks(playerid: Long): util.Map[Integer, Integer] = {
+    val rankmap: util.Map[Integer, Integer] = new util.HashMap[Integer, Integer]()
+    var retype: Int = 1
+    while (retype <= PowerRanksDefine.POWERRANK_TYPE_LIMITCHANGE) {
+      val rankList = lastRankPowerList.get(retype)
+      if (rankList != null) {
         SortUtil.anyProperSort(rankList, "getValue", false)
         rankmap.put(retype, 0)
         var rank: Int = 0
@@ -103,7 +102,7 @@ object PowerRanksService {
           }
         }
       }
-      retype=retype+1
+      retype = retype + 1
     }
     rankmap
   }
@@ -127,15 +126,15 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
       addlimitNearList(dungeoOrder, id, playerId)
     case saveDateBeforeStop() =>
       save()
-    case ActivityRankTrigger(ids:util.List[java.lang.Integer]) =>
+    case ActivityRankTrigger(ids: util.List[java.lang.Integer]) =>
       checkTimer(ids)
-    case getMyRanks(playerId:Long) =>
+    case getMyRanks(playerId: Long) =>
       logionGetRanks(playerId)
     case _ =>
       log.warning("未知消息")
   }
 
-  def checkTimer(ids:util.List[java.lang.Integer]) {
+  def checkTimer(ids: util.List[java.lang.Integer]) {
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE)
     val c: Calendar = Calendar.getInstance
     c.setTime(GameUtils.getServerDate)
@@ -146,23 +145,23 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     val serverMinute: Int = c.get(Calendar.MINUTE)
     val serverSecond: Int = c.get(Calendar.SECOND)
     for (define <- list) {
-    /*  val endTime: Long = getActivityEndTime(define)
-      val endCalender: Calendar = Calendar.getInstance
-      endCalender.setTimeInMillis(endTime)
-      val endserverYear: Int = endCalender.get(Calendar.YEAR)
-      val endserverMonth: Int =endCalender.get(Calendar.MONTH)
-      val endserverDay: Int = endCalender.get(Calendar.DAY_OF_MONTH)
-      val endserverHour: Int = endCalender.get(Calendar.HOUR_OF_DAY)
-      val endserverMinute: Int = endCalender.get(Calendar.MINUTE)
-      val endserverSecond: Int = endCalender.get(Calendar.SECOND)
-      if (endserverYear == serverYear
-        && endserverMonth == serverMonth
-        && endserverDay == serverDay
-        && endserverHour == serverHour
-        && endserverMinute == serverMinute
-        && endserverSecond == serverSecond) {*/
-        //年月日时分秒都一致就发吧
-        if(ids.contains(define.getInt("ID"))){
+      /*  val endTime: Long = getActivityEndTime(define)
+        val endCalender: Calendar = Calendar.getInstance
+        endCalender.setTimeInMillis(endTime)
+        val endserverYear: Int = endCalender.get(Calendar.YEAR)
+        val endserverMonth: Int =endCalender.get(Calendar.MONTH)
+        val endserverDay: Int = endCalender.get(Calendar.DAY_OF_MONTH)
+        val endserverHour: Int = endCalender.get(Calendar.HOUR_OF_DAY)
+        val endserverMinute: Int = endCalender.get(Calendar.MINUTE)
+        val endserverSecond: Int = endCalender.get(Calendar.SECOND)
+        if (endserverYear == serverYear
+          && endserverMonth == serverMonth
+          && endserverDay == serverDay
+          && endserverHour == serverHour
+          && endserverMinute == serverMinute
+          && endserverSecond == serverSecond) {*/
+      //年月日时分秒都一致就发吧
+      if (ids.contains(define.getInt("ID"))) {
         val effectId = define.getInt("effectID")
         val effectDefineList: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_EFFECT, "effectID", effectId)
         if (effectDefineList.get(0).getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_CAPITY_RANK) {
@@ -174,13 +173,59 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
         if (effectDefineList.get(0).getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_HONOR_RANK) {
           addActivity(ActivityDefine.ACTIVITY_CONDITION_TYPE_HONOR_RANK, PowerRanksDefine.POWERRANK_TYPE_HONOR)
         }
-        /*if (effectDefineList.get(0).getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_DONVATE_RANK) {
-          tellService(ActorDefine.ARMYGROUP_SERVICE_NAME, CheckAndSendActivity(ActivityDefine.ACTIVITY_CONDITION_DONVATE_RANK,areaKey))
-        }*/
+        if (effectDefineList.get(0).getInt("conditiontype") == ActivityDefine.ACTIVITY_CONDITION_TYPE_LEVEL_RANK) {
+          onRefLevelRank()
+        }
         onUpdateAllRankByType()
       }
     }
     getActivityTimer()
+  }
+
+  //添加军团等级活动
+  def onRefLevelRank(): Unit = {
+    refreshLevelRank()
+    val list: util.List[Armygroup] = new util.ArrayList[Armygroup]
+    for (army <- ArmyGroupService.armymap.values) {
+      list.add(army)
+    }
+    for (armygroup <- list) {
+      for (player <- armygroup.getMenbers) {
+        val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(player, areaKey)
+        if (simplePlayer != null) {
+          sendRankLog(simplePlayer.getId, armygroup.getLevelrank, ActivityDefine.ACTIVITY_CONDITION_TYPE_LEVEL_RANK)
+          if (simplePlayer.online == true) {
+            sendMsgToRoleModule(simplePlayer.getAccountName, addAtivity(ActivityDefine.ACTIVITY_CONDITION_TYPE_LEVEL_RANK, armygroup.getLevelrank, 0))
+          } else {
+            val newplayer = BaseDbPojo.getOfflineDbPojo(simplePlayer.getId, classOf[Player], areaKey)
+            val activityProxy: ActivityProxy = new ActivityProxy(newplayer.getActivitySet, areaKey)
+            val playerProxy: PlayerProxy = new PlayerProxy(newplayer, areaKey)
+            newplayer.save()
+            activityProxy.reloadDefineData(playerProxy)
+            activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_LEVEL_RANK, armygroup.getLevelrank, playerProxy, 0)
+            activityProxy.saveActivity()
+          }
+        }
+      }
+
+
+    }
+
+  }
+
+  //刷新军团等级排名
+  def refreshLevelRank(): Unit = {
+    val list: util.List[Armygroup] = new util.ArrayList[Armygroup]
+    for (army <- ArmyGroupService.armymap.values) {
+      list.add(army)
+    }
+    var rank = 1
+    SortUtil.anyProperSort(list, "getLevel", false)
+    for (armygroup <- list) {
+      armygroup.setLevelrank(rank)
+      rank = rank + 1
+    }
+
   }
 
   def addActivity(acType: Int, ranktype: Int): Unit = {
@@ -188,9 +233,9 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     var index: Int = 1
     for (rankInfo <- SortUtil.anyProperSort(powerlist, "getValue", false)) {
       if (index < PowerRanksDefine.MAX_SHOW_RANK_NUM) {
-        val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(rankInfo.getPlayerId,areaKey)
+        val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(rankInfo.getPlayerId, areaKey)
         if (simplePlayer != null) {
-         sendRankLog(simplePlayer.getId,index,ranktype)
+          sendRankLog(simplePlayer.getId, index, ranktype)
           if (simplePlayer.online == true) {
             sendMsgToRoleModule(simplePlayer.getAccountName, addAtivity(acType, index, 0))
           } else {
@@ -214,7 +259,9 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
       BaseSetDbPojo.getSetDbPojo(classOf[LimitDungeonNearSetDb], areaKey).addLimitDungeonSet(report.getDungeoId, report.getBattleId, report.getPlayerId, report.getTime)
     }
   }
-  val deleEven:util.List[TriggerEvent] =new util.ArrayList[TriggerEvent]()
+
+  val deleEven: util.List[TriggerEvent] = new util.ArrayList[TriggerEvent]()
+
   override def preStart() = {
     /*    BaseSetDbPojo.getSetDbPojo(classOf[LimitDungeonNearSetDb], areaKey).removeAllKey()
         BaseSetDbPojo.getSetDbPojo(classOf[LimitDungeonFastSetDb], areaKey).removeAllKey()*/
@@ -254,10 +301,10 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     val list: util.List[JSONObject] = ConfigDataProxy.getConfigInfoFilterByOneKey(DataDefine.ACTIVE_DESIGN, "uitype", ActivityDefine.POWER_RANK_UITYPE)
     val now = GameUtils.getServerDate().getTime
     var end = 0l
-    val ids : util.List[java.lang.Integer] =new util.ArrayList[java.lang.Integer]()
+    val ids: util.List[java.lang.Integer] = new util.ArrayList[java.lang.Integer]()
     for (define <- list) {
       val timeType = define.getInt("timetype")
-      if (timeType == 2) {
+      if (timeType == 2 || timeType==1) {
         val endTime = getActivityEndTime(define)
         if (endTime > 0 && endTime > now) {
           if (end == 0 || end > endTime) {
@@ -268,15 +315,15 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     }
     for (define <- list) {
       val timeType = define.getInt("timetype")
-      if (timeType == 2) {
+      if (timeType == 2 || timeType==1) {
         val endTime = getActivityEndTime(define)
-          if ( end ==endTime) {
-            ids.add(define.getInt("ID"))
-          }
+        if (end == endTime) {
+          ids.add(define.getInt("ID"))
+        }
       }
     }
     if (end > 0) {
-      for(del <-  deleEven){
+      for (del <- deleEven) {
         getTriggerService(context) ! RemoveTriggerEvent(del)
       }
       deleEven.clear()
@@ -284,8 +331,8 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
       getTriggerService(context) ! AddTriggerEvent(event)
       deleEven.add(event)
     }
-//    import context.dispatcher
-//    context.system.scheduler.schedule(1 seconds, 1 seconds, context.self, ActivityRankTrigger())
+    //    import context.dispatcher
+    //    context.system.scheduler.schedule(1 seconds, 1 seconds, context.self, ActivityRankTrigger())
   }
 
   private def getActivityEndTime(define: JSONObject): Long = {
@@ -293,16 +340,16 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     var endTime: Long = -1
     timeType match {
       case 1 => {
-        //        val openServerDate: Date = GameMainServer.getOpenServerDateByAreaKey(areaKey)
-        //        val calendar: Calendar = Calendar.getInstance
-        //        calendar.setTime(openServerDate)
-        //        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        //        calendar.set(Calendar.MINUTE, 0)
-        //        calendar.set(Calendar.SECOND, 0)
-        //        calendar.set(Calendar.MILLISECOND, 0)
-        //        calendar.add(Calendar.DAY_OF_YEAR, define.getInt("timeA"))
-        //        val starTime: Long = calendar.getTimeInMillis
-        //        endTime = starTime + (define.getInt("timeB") * 60 * 1000)
+        val openServerDate: Date = GameMainServer.getOpenServerDateByAreaKey(areaKey)
+        val calendar: Calendar = Calendar.getInstance
+        calendar.setTime(openServerDate)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        calendar.add(Calendar.DAY_OF_YEAR, define.getInt("timeA"))
+        val starTime: Long = calendar.getTimeInMillis
+        endTime = starTime + (define.getInt("timeB") * 60 * 1000)-1000
         CustomerLogger.error("排行榜居然出现时间类型为1的定时器！！！")
       }
       case 2 => {
@@ -344,7 +391,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
       val temp: Array[String] = rank.split("_")
       val playerId: Long = temp(0).toLong
       val values: Long = temp(1).toLong
-      val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(playerId,areaKey)
+      val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(playerId, areaKey)
       if (simplePlayer != null) {
         powerValue.setType(rankType)
         powerValue.setAreaKey(areaKey)
@@ -372,8 +419,8 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     powerValue.setAreaKey(areaKey)
     powerValue.setPlayerId(playerId)
     powerValue.setValue(rankValue)
-    val rankNewPlayer: SimplePlayer = PlayerService.getSimplePlayer(playerId,areaKey)
-    if("".equals(rankNewPlayer.getName)){
+    val rankNewPlayer: SimplePlayer = PlayerService.getSimplePlayer(playerId, areaKey)
+    if ("".equals(rankNewPlayer.getName)) {
       return
     }
     powerValue.setAtklv(rankNewPlayer.getAtklv)
@@ -408,7 +455,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
             flag = false
           } else if (playerList.get(len - i).getValue < rankValue && playerList.get(len - (i + 1)).getValue >= rankValue) {
             if (playerList.get(len - i).getValue == rankValue) {
-              val rankOldPlayer: SimplePlayer = PlayerService.getSimplePlayer(playerList.get(len - i).getPlayerId,areaKey)
+              val rankOldPlayer: SimplePlayer = PlayerService.getSimplePlayer(playerList.get(len - i).getPlayerId, areaKey)
               if (rankOldPlayer.getLevel < rankNewPlayer.getLevel) {
                 playerList.add(len - i, powerValue)
                 flag = false
@@ -421,8 +468,8 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
               flag = false
             }
           }
-          if(i >= len){
-             flag=false
+          if (i >= len) {
+            flag = false
           }
         }
         //保留前100名排名
@@ -470,8 +517,8 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
                   flag = false
                 } else if (playerList.get(len - i).getValue <= rankValue && playerList.get(len - (i + 1)).getValue >= rankValue) {
                   if (playerList.get(len - i).getValue == rankValue) {
-                    val rankOldPlayer: SimplePlayer = PlayerService.getSimplePlayer(playerList.get(len - i).getPlayerId,areaKey)
-                    val rankNewPlayer: SimplePlayer = PlayerService.getSimplePlayer(playerId,areaKey)
+                    val rankOldPlayer: SimplePlayer = PlayerService.getSimplePlayer(playerList.get(len - i).getPlayerId, areaKey)
+                    val rankNewPlayer: SimplePlayer = PlayerService.getSimplePlayer(playerId, areaKey)
                     if (rankOldPlayer.getLevel < rankNewPlayer.getLevel) {
                       playerList.add(len - i, powerValue)
                       flag = false
@@ -516,7 +563,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     * 更新排行榜
     */
   def onUpdateAllRankByType(): Unit = {
-  //  initCapityRank()
+    //  initCapityRank()
     PowerRanksService.lastRankPowerList.clear()
     var num: Int = 1
     while (num <= PowerRanksDefine.POWERRANK_TYPE_LIMITCHANGE) {
@@ -530,8 +577,8 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
       while (sizeNum > 0) {
         try {
           var simplePlayer: SimplePlayer = null
-          if(rankList.get(i)!=null){
-            simplePlayer =   PlayerService.getSimplePlayer(rankList.get(i).getPlayerId,areaKey)
+          if (rankList.get(i) != null) {
+            simplePlayer = PlayerService.getSimplePlayer(rankList.get(i).getPlayerId, areaKey)
           }
           val powerValue: PowerRanks = rankList.get(i)
           if (simplePlayer != null) {
@@ -548,13 +595,13 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
                info.setLevel(simplePlayer.getLevel())
                info.setName(simplePlayer.getName())
                message.addPowerRankInfo(info)*/
-            if(simplePlayer.online){
-               sendMsgToRoleModule(simplePlayer.getAccountName,changeRankBytype(num,i+1))
+            if (simplePlayer.online) {
+              sendMsgToRoleModule(simplePlayer.getAccountName, changeRankBytype(num, i + 1))
             }
             sizeNum -= 1
             i += 1
           }
-        }catch {
+        } catch {
           case e: Exception =>
             e.printStackTrace()
         }
@@ -567,12 +614,12 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
   }
 
   //登陆获得自己排行榜的排名
-  def logionGetRanks(playerid :Long): Unit ={
-   val rankmap:util.Map[Integer,Integer]=new util.HashMap[Integer,Integer]()
-    var  retype:Int =1
-    while (retype<=PowerRanksDefine.POWERRANK_TYPE_LIMITCHANGE) {
+  def logionGetRanks(playerid: Long): Unit = {
+    val rankmap: util.Map[Integer, Integer] = new util.HashMap[Integer, Integer]()
+    var retype: Int = 1
+    while (retype <= PowerRanksDefine.POWERRANK_TYPE_LIMITCHANGE) {
       val rankList = PowerRanksService.lastRankPowerList.get(retype)
-      if(rankList!=null) {
+      if (rankList != null) {
         SortUtil.anyProperSort(rankList, "getValue", false)
         rankmap.put(retype, 0)
         var rank: Int = 0
@@ -583,7 +630,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
           }
         }
       }
-      retype=retype+1
+      retype = retype + 1
     }
     sender() ! getMyRanksback(rankmap)
   }
@@ -594,7 +641,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     val checklist: util.List[PowerRanks] = new util.ArrayList[PowerRanks]()
     checklist.addAll(rankList)
     for (rank <- checklist) {
-      val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(rank.getPlayerId,areaKey)
+      val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(rank.getPlayerId, areaKey)
       onAddPlayerToPowerRank(simplePlayer.getId, simplePlayer.getCapacity, PowerRanksDefine.POWERRANK_TYPE_CAPACITY)
     }
   }
@@ -606,7 +653,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     var myindexInfo: M6.IndexInfo.Builder = null
     for (rank <- rankList) {
       if (index <= PowerRanksDefine.MAX_SHOW_RANK_NUM) {
-        val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(rank.getPlayerId,areaKey)
+        val simplePlayer: SimplePlayer = PlayerService.getSimplePlayer(rank.getPlayerId, areaKey)
         if (simplePlayer != null) {
           val indexInfo: M6.IndexInfo.Builder = M6.IndexInfo.newBuilder()
           indexInfo.setIndex(index)
@@ -621,7 +668,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
         }
       }
     }
-    val mysimplePlayer: SimplePlayer = PlayerService.getSimplePlayer(playerId,areaKey)
+    val mysimplePlayer: SimplePlayer = PlayerService.getSimplePlayer(playerId, areaKey)
     if (myindexInfo == null) {
       val indexInfo: M6.IndexInfo.Builder = M6.IndexInfo.newBuilder()
       indexInfo.setIndex(-1)
@@ -634,7 +681,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     //TODO 首次通关 最近通关
     val fastreport: LimitDungeoReport = BaseSetDbPojo.getSetDbPojo(classOf[LimitDungeonFastSetDb], areaKey).getLimitDungeonFastReport(duongId)
     if (fastreport != null) {
-      val fastsimplePlayer: SimplePlayer = PlayerService.getSimplePlayer(fastreport.getPlayerId,areaKey)
+      val fastsimplePlayer: SimplePlayer = PlayerService.getSimplePlayer(fastreport.getPlayerId, areaKey)
       val passinfo: M6.PassInfo.Builder = M6.PassInfo.newBuilder
       passinfo.setBattleId(fastreport.getBattleId)
       passinfo.setLv(fastsimplePlayer.getLevel)
@@ -645,7 +692,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     val list: util.List[LimitDungeoReport] = getlimitNearList(duongId)
     SortUtil.anyProperSort(list, "getTime", false)
     for (report <- list) {
-      val nearsimplePlayer: SimplePlayer = PlayerService.getSimplePlayer(report.getPlayerId,areaKey)
+      val nearsimplePlayer: SimplePlayer = PlayerService.getSimplePlayer(report.getPlayerId, areaKey)
       val passinfo: M6.PassInfo.Builder = M6.PassInfo.newBuilder
       passinfo.setBattleId(report.getBattleId)
       passinfo.setLv(nearsimplePlayer.getLevel)
@@ -698,10 +745,10 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     }
     if (infos.getPowerRankInfoBuilderList.size() > 0) {
       infos.setTypeId(rankType)
-      sender() ! GetAnRankMessageByType(message.build(),rankType)
+      sender() ! GetAnRankMessageByType(message.build(), rankType)
     } else {
       val messageno: M21.M210000.S2C.Builder = M21.M210000.S2C.newBuilder
-      sender() ! GetAnRankMessageByType(messageno.build(),rankType)
+      sender() ! GetAnRankMessageByType(messageno.build(), rankType)
     }
 
   }
@@ -714,7 +761,7 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
     val list: util.List[LimitDungeoReport] = new util.ArrayList[LimitDungeoReport]
     for (limit <- reportlist) {
       if (limit.getDungeoId == dungId) {
-        if(!isHasPlayerId(list,limit.getPlayerId)){
+        if (!isHasPlayerId(list, limit.getPlayerId)) {
           list.add(limit)
         }
       }
@@ -760,13 +807,14 @@ class PowerRanksService(areaKey: String) extends Actor with ActorLogging with Se
   def sendLog(log: BaseLog) = {
     tellService(ActorDefine.ADMIN_LOG_SERVICE_NAME, SendAdminLog(log, ActorDefine.ADMIN_LOG_ACTION_INSERT, "", 0))
   }
+
   //通知到service
   def tellService(serviceName: String, msg: AnyRef) = {
     context.actorSelection("../" + serviceName) ! msg
   }
 
-  def sendRankLog(playerId :Long,rank:Int, ranktype:Int): Unit ={
-    val log:tbllog_activityrank=new tbllog_activityrank(playerId,rank,ranktype)
+  def sendRankLog(playerId: Long, rank: Int, ranktype: Int): Unit = {
+    val log: tbllog_activityrank = new tbllog_activityrank(playerId, rank, ranktype)
     log.setLog_time(GameUtils.getServerTime())
     sendLog(log)
   }

@@ -60,6 +60,7 @@ public class TaskProxy extends BasicProxy {
         taskTimer = BaseDbPojo.get(player.getTaskTimerId(), TaskTimer.class, areaKey);
         if (taskTimer == null) {
             taskTimer = BaseDbPojo.create(TaskTimer.class, areaKey);
+            System.out.println("taskTimer==null is"+taskTimer==null);
             taskTimer.setPlayerId(player.getId());
             taskTimer.setActivyTastId(0);
             taskTimer.setRefdayState(0);

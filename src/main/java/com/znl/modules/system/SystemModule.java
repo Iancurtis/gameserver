@@ -72,7 +72,7 @@ public class SystemModule extends BasicModule {
             m9s2c.addAllItemBuffInfo(itemBuffProxy.sendItemBuffInfoToClient());
             m9s2c.setRs(0);
             pushNetMsg(ProtocolModuleDefine.NET_M9, ProtocolModuleDefine.NET_M9_C90003, m9s2c.build());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(0);
         }
     }
 
@@ -89,12 +89,6 @@ public class SystemModule extends BasicModule {
         GameMsg.ChargeToPlayerDone done = new GameMsg.ChargeToPlayerDone(message, res);
         sender().tell(done, self());
         autoSavePlayer();
-        //TODO 各种数值推送
-        List<Integer> powers = new ArrayList<>();
-        powers.add(PlayerPowerDefine.POWER_gold);
-        powers.add(PlayerPowerDefine.POWER_vipExp);
-        powers.add(PlayerPowerDefine.POWER_vipLevel);
-        pushNetMsg(ActorDefine.ROLE_MODULE_ID, ProtocolModuleDefine.NET_M2_C20002, sendDifferent(powers));
         //TODO 充值邮件发送
         if (res.indexOf("成功") > -1) {
             MailTemplate template = new MailTemplate("充值成功", "祝贺你已经成功充值！", 0, "系统邮件", ChatAndMailDefine.MAIL_TYPE_INBOX);
@@ -115,7 +109,7 @@ public class SystemModule extends BasicModule {
             M2.M20007.S2C rewardbuild = rewardProxy.getRewardClientInfo(reward);
             pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardbuild);
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
     }
 
     private void eachMiuteandle() {
@@ -123,7 +117,7 @@ public class SystemModule extends BasicModule {
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_ENERY_EVERYDAY, 0, playerProxy, 0);
         if(activityProxy.getNeddSendActivitySize() > 0){
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(0);
         }  
     }
 
@@ -350,7 +344,7 @@ public class SystemModule extends BasicModule {
         M8.M80016.S2C.Builder builder = M8.M80016.S2C.newBuilder();
         builder.setRs(0);
         pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80016, builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
     }
 
 
@@ -362,7 +356,7 @@ public class SystemModule extends BasicModule {
         Set<Long> ids = playerProxy.getClientCacheIds();
         M3.M30100.S2C s2c = systemProxy.getClientCacheInfos(ids);
         sendNetMsg(ActorDefine.SYSTEM_MODULE_ID, ProtocolModuleDefine.NET_M3_C30100, s2c);
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M3_C30100);
     }
 
     private void OnTriggerNet30101Event(Request request) {
@@ -371,7 +365,7 @@ public class SystemModule extends BasicModule {
         systemProxy.updateClientCache(c2s.getCacheInfo());
 
         sendNetMsg(ActorDefine.SYSTEM_MODULE_ID, ProtocolModuleDefine.NET_M3_C30101, M3.M30101.S2C.newBuilder().build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M3_C30101);
     }
 
     private void addTimeInfoToList(List<List<Object>> buillist, M3.TimeInfo ti) {
@@ -456,7 +450,7 @@ public class SystemModule extends BasicModule {
         M3.M30103.S2C.Builder buider =M3.M30103.S2C.newBuilder();
         buider.setBlessStateLog(hour);
         pushNetMsg(ProtocolModuleDefine.NET_M3,ProtocolModuleDefine.NET_M3_C30103,buider.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(0);
     }
 
     /**
@@ -496,10 +490,10 @@ public class SystemModule extends BasicModule {
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
+    public void repeatedProtocalHandler(Request request) {
 
     }
 

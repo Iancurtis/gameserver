@@ -26314,6 +26314,51 @@ public final class M28 {
        * </pre>
        */
       int getRs();
+
+      // repeated .Common.AttrDifInfo diffs = 2;
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      java.util.List<com.znl.proto.Common.AttrDifInfo> 
+          getDiffsList();
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      com.znl.proto.Common.AttrDifInfo getDiffs(int index);
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      int getDiffsCount();
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      java.util.List<? extends com.znl.proto.Common.AttrDifInfoOrBuilder> 
+          getDiffsOrBuilderList();
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      com.znl.proto.Common.AttrDifInfoOrBuilder getDiffsOrBuilder(
+          int index);
     }
     /**
      * Protobuf type {@code M28.M280015.S2C}
@@ -26371,6 +26416,14 @@ public final class M28 {
                 rs_ = input.readSInt32();
                 break;
               }
+              case 18: {
+                if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                  diffs_ = new java.util.ArrayList<com.znl.proto.Common.AttrDifInfo>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                diffs_.add(input.readMessage(com.znl.proto.Common.AttrDifInfo.PARSER, extensionRegistry));
+                break;
+              }
             }
           }
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -26379,6 +26432,9 @@ public final class M28 {
           throw new com.google.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
+          if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            diffs_ = java.util.Collections.unmodifiableList(diffs_);
+          }
           this.unknownFields = unknownFields.build();
           makeExtensionsImmutable();
         }
@@ -26435,8 +26491,65 @@ public final class M28 {
         return rs_;
       }
 
+      // repeated .Common.AttrDifInfo diffs = 2;
+      public static final int DIFFS_FIELD_NUMBER = 2;
+      private java.util.List<com.znl.proto.Common.AttrDifInfo> diffs_;
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      public java.util.List<com.znl.proto.Common.AttrDifInfo> getDiffsList() {
+        return diffs_;
+      }
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      public java.util.List<? extends com.znl.proto.Common.AttrDifInfoOrBuilder> 
+          getDiffsOrBuilderList() {
+        return diffs_;
+      }
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      public int getDiffsCount() {
+        return diffs_.size();
+      }
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      public com.znl.proto.Common.AttrDifInfo getDiffs(int index) {
+        return diffs_.get(index);
+      }
+      /**
+       * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+       *
+       * <pre>
+       *当前的资源
+       * </pre>
+       */
+      public com.znl.proto.Common.AttrDifInfoOrBuilder getDiffsOrBuilder(
+          int index) {
+        return diffs_.get(index);
+      }
+
       private void initFields() {
         rs_ = 0;
+        diffs_ = java.util.Collections.emptyList();
       }
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
@@ -26447,6 +26560,12 @@ public final class M28 {
           memoizedIsInitialized = 0;
           return false;
         }
+        for (int i = 0; i < getDiffsCount(); i++) {
+          if (!getDiffs(i).isInitialized()) {
+            memoizedIsInitialized = 0;
+            return false;
+          }
+        }
         memoizedIsInitialized = 1;
         return true;
       }
@@ -26456,6 +26575,9 @@ public final class M28 {
         getSerializedSize();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           output.writeSInt32(1, rs_);
+        }
+        for (int i = 0; i < diffs_.size(); i++) {
+          output.writeMessage(2, diffs_.get(i));
         }
         getUnknownFields().writeTo(output);
       }
@@ -26469,6 +26591,10 @@ public final class M28 {
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           size += com.google.protobuf.CodedOutputStream
             .computeSInt32Size(1, rs_);
+        }
+        for (int i = 0; i < diffs_.size(); i++) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, diffs_.get(i));
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
@@ -26578,6 +26704,7 @@ public final class M28 {
         }
         private void maybeForceBuilderInitialization() {
           if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+            getDiffsFieldBuilder();
           }
         }
         private static Builder create() {
@@ -26588,6 +26715,12 @@ public final class M28 {
           super.clear();
           rs_ = 0;
           bitField0_ = (bitField0_ & ~0x00000001);
+          if (diffsBuilder_ == null) {
+            diffs_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            diffsBuilder_.clear();
+          }
           return this;
         }
 
@@ -26620,6 +26753,15 @@ public final class M28 {
             to_bitField0_ |= 0x00000001;
           }
           result.rs_ = rs_;
+          if (diffsBuilder_ == null) {
+            if (((bitField0_ & 0x00000002) == 0x00000002)) {
+              diffs_ = java.util.Collections.unmodifiableList(diffs_);
+              bitField0_ = (bitField0_ & ~0x00000002);
+            }
+            result.diffs_ = diffs_;
+          } else {
+            result.diffs_ = diffsBuilder_.build();
+          }
           result.bitField0_ = to_bitField0_;
           onBuilt();
           return result;
@@ -26639,6 +26781,32 @@ public final class M28 {
           if (other.hasRs()) {
             setRs(other.getRs());
           }
+          if (diffsBuilder_ == null) {
+            if (!other.diffs_.isEmpty()) {
+              if (diffs_.isEmpty()) {
+                diffs_ = other.diffs_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+              } else {
+                ensureDiffsIsMutable();
+                diffs_.addAll(other.diffs_);
+              }
+              onChanged();
+            }
+          } else {
+            if (!other.diffs_.isEmpty()) {
+              if (diffsBuilder_.isEmpty()) {
+                diffsBuilder_.dispose();
+                diffsBuilder_ = null;
+                diffs_ = other.diffs_;
+                bitField0_ = (bitField0_ & ~0x00000002);
+                diffsBuilder_ = 
+                  com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                     getDiffsFieldBuilder() : null;
+              } else {
+                diffsBuilder_.addAllMessages(other.diffs_);
+              }
+            }
+          }
           this.mergeUnknownFields(other.getUnknownFields());
           return this;
         }
@@ -26647,6 +26815,12 @@ public final class M28 {
           if (!hasRs()) {
             
             return false;
+          }
+          for (int i = 0; i < getDiffsCount(); i++) {
+            if (!getDiffs(i).isInitialized()) {
+              
+              return false;
+            }
           }
           return true;
         }
@@ -26717,6 +26891,318 @@ public final class M28 {
           rs_ = 0;
           onChanged();
           return this;
+        }
+
+        // repeated .Common.AttrDifInfo diffs = 2;
+        private java.util.List<com.znl.proto.Common.AttrDifInfo> diffs_ =
+          java.util.Collections.emptyList();
+        private void ensureDiffsIsMutable() {
+          if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+            diffs_ = new java.util.ArrayList<com.znl.proto.Common.AttrDifInfo>(diffs_);
+            bitField0_ |= 0x00000002;
+           }
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.Common.AttrDifInfo, com.znl.proto.Common.AttrDifInfo.Builder, com.znl.proto.Common.AttrDifInfoOrBuilder> diffsBuilder_;
+
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public java.util.List<com.znl.proto.Common.AttrDifInfo> getDiffsList() {
+          if (diffsBuilder_ == null) {
+            return java.util.Collections.unmodifiableList(diffs_);
+          } else {
+            return diffsBuilder_.getMessageList();
+          }
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public int getDiffsCount() {
+          if (diffsBuilder_ == null) {
+            return diffs_.size();
+          } else {
+            return diffsBuilder_.getCount();
+          }
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public com.znl.proto.Common.AttrDifInfo getDiffs(int index) {
+          if (diffsBuilder_ == null) {
+            return diffs_.get(index);
+          } else {
+            return diffsBuilder_.getMessage(index);
+          }
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public Builder setDiffs(
+            int index, com.znl.proto.Common.AttrDifInfo value) {
+          if (diffsBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureDiffsIsMutable();
+            diffs_.set(index, value);
+            onChanged();
+          } else {
+            diffsBuilder_.setMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public Builder setDiffs(
+            int index, com.znl.proto.Common.AttrDifInfo.Builder builderForValue) {
+          if (diffsBuilder_ == null) {
+            ensureDiffsIsMutable();
+            diffs_.set(index, builderForValue.build());
+            onChanged();
+          } else {
+            diffsBuilder_.setMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public Builder addDiffs(com.znl.proto.Common.AttrDifInfo value) {
+          if (diffsBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureDiffsIsMutable();
+            diffs_.add(value);
+            onChanged();
+          } else {
+            diffsBuilder_.addMessage(value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public Builder addDiffs(
+            int index, com.znl.proto.Common.AttrDifInfo value) {
+          if (diffsBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureDiffsIsMutable();
+            diffs_.add(index, value);
+            onChanged();
+          } else {
+            diffsBuilder_.addMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public Builder addDiffs(
+            com.znl.proto.Common.AttrDifInfo.Builder builderForValue) {
+          if (diffsBuilder_ == null) {
+            ensureDiffsIsMutable();
+            diffs_.add(builderForValue.build());
+            onChanged();
+          } else {
+            diffsBuilder_.addMessage(builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public Builder addDiffs(
+            int index, com.znl.proto.Common.AttrDifInfo.Builder builderForValue) {
+          if (diffsBuilder_ == null) {
+            ensureDiffsIsMutable();
+            diffs_.add(index, builderForValue.build());
+            onChanged();
+          } else {
+            diffsBuilder_.addMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public Builder addAllDiffs(
+            java.lang.Iterable<? extends com.znl.proto.Common.AttrDifInfo> values) {
+          if (diffsBuilder_ == null) {
+            ensureDiffsIsMutable();
+            super.addAll(values, diffs_);
+            onChanged();
+          } else {
+            diffsBuilder_.addAllMessages(values);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public Builder clearDiffs() {
+          if (diffsBuilder_ == null) {
+            diffs_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000002);
+            onChanged();
+          } else {
+            diffsBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public Builder removeDiffs(int index) {
+          if (diffsBuilder_ == null) {
+            ensureDiffsIsMutable();
+            diffs_.remove(index);
+            onChanged();
+          } else {
+            diffsBuilder_.remove(index);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public com.znl.proto.Common.AttrDifInfo.Builder getDiffsBuilder(
+            int index) {
+          return getDiffsFieldBuilder().getBuilder(index);
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public com.znl.proto.Common.AttrDifInfoOrBuilder getDiffsOrBuilder(
+            int index) {
+          if (diffsBuilder_ == null) {
+            return diffs_.get(index);  } else {
+            return diffsBuilder_.getMessageOrBuilder(index);
+          }
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public java.util.List<? extends com.znl.proto.Common.AttrDifInfoOrBuilder> 
+             getDiffsOrBuilderList() {
+          if (diffsBuilder_ != null) {
+            return diffsBuilder_.getMessageOrBuilderList();
+          } else {
+            return java.util.Collections.unmodifiableList(diffs_);
+          }
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public com.znl.proto.Common.AttrDifInfo.Builder addDiffsBuilder() {
+          return getDiffsFieldBuilder().addBuilder(
+              com.znl.proto.Common.AttrDifInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public com.znl.proto.Common.AttrDifInfo.Builder addDiffsBuilder(
+            int index) {
+          return getDiffsFieldBuilder().addBuilder(
+              index, com.znl.proto.Common.AttrDifInfo.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .Common.AttrDifInfo diffs = 2;</code>
+         *
+         * <pre>
+         *当前的资源
+         * </pre>
+         */
+        public java.util.List<com.znl.proto.Common.AttrDifInfo.Builder> 
+             getDiffsBuilderList() {
+          return getDiffsFieldBuilder().getBuilderList();
+        }
+        private com.google.protobuf.RepeatedFieldBuilder<
+            com.znl.proto.Common.AttrDifInfo, com.znl.proto.Common.AttrDifInfo.Builder, com.znl.proto.Common.AttrDifInfoOrBuilder> 
+            getDiffsFieldBuilder() {
+          if (diffsBuilder_ == null) {
+            diffsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+                com.znl.proto.Common.AttrDifInfo, com.znl.proto.Common.AttrDifInfo.Builder, com.znl.proto.Common.AttrDifInfoOrBuilder>(
+                    diffs_,
+                    ((bitField0_ & 0x00000002) == 0x00000002),
+                    getParentForChildren(),
+                    isClean());
+            diffs_ = null;
+          }
+          return diffsBuilder_;
         }
 
         // @@protoc_insertion_point(builder_scope:M28.M280015.S2C)
@@ -27557,8 +28043,9 @@ public final class M28 {
       "s\030\001 \002(\021\022\014\n\004type\030\002 \002(\005\022\026\n\016autoRemainTime\030" +
       "\003 \001(\005\032\023\n\003C2S\022\014\n\004type\030\001 \002(\005\";\n\007M280014\032)\n" +
       "\003S2C\022\n\n\002rs\030\001 \002(\021\022\026\n\016autoRemainTime\030\002 \001(\005" +
-      "\032\005\n\003C2S\"#\n\007M280015\032\021\n\003S2C\022\n\n\002rs\030\001 \002(\021\032\005\n" +
-      "\003C2SB\024\n\rcom.znl.protoB\003M28"
+      "\032\005\n\003C2S\"G\n\007M280015\0325\n\003S2C\022\n\n\002rs\030\001 \002(\021\022\"\n" +
+      "\005diffs\030\002 \003(\0132\023.Common.AttrDifInfo\032\005\n\003C2S" +
+      "B\024\n\rcom.znl.protoB\003M28"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -27840,7 +28327,7 @@ public final class M28 {
           internal_static_M28_M280015_S2C_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_M28_M280015_S2C_descriptor,
-              new java.lang.String[] { "Rs", });
+              new java.lang.String[] { "Rs", "Diffs", });
           internal_static_M28_M280015_C2S_descriptor =
             internal_static_M28_M280015_descriptor.getNestedTypes().get(1);
           internal_static_M28_M280015_C2S_fieldAccessorTable = new

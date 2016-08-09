@@ -2,6 +2,7 @@ package com.znl.proxy;
 
 
 import com.znl.GameMainServer;
+import com.znl.base.BaseDbPojo;
 import com.znl.base.BaseSetDbPojo;
 import com.znl.base.BasicProxy;
 import com.znl.core.*;
@@ -9,10 +10,12 @@ import com.znl.define.*;
 import com.znl.log.*;
 import com.znl.log.admin.*;
 import com.znl.msg.GameMsg;
+import com.znl.pojo.db.Arena;
 import com.znl.pojo.db.Player;
 import com.znl.pojo.db.Report;
 import com.znl.pojo.db.set.BillOrderSetDb;
 import com.znl.proto.*;
+import com.znl.server.DbServer;
 import com.znl.service.ArenaService;
 import com.znl.service.PlayerService;
 import com.znl.service.PowerRanksService;
@@ -189,6 +192,7 @@ public class PlayerProxy extends BasicProxy {
 
 
     public void setArmgroupId(Long armgroupId) {
+        addPowerToChangePower(PlayerPowerDefine.POWER_armygroupId); 
         player.setArmygroupId(armgroupId);
     }
 
@@ -201,7 +205,10 @@ public class PlayerProxy extends BasicProxy {
         return player.getLegionName();
     }
 
-
+    public void setLegionLevel(int level){
+        addPowerToChangePower(PlayerPowerDefine.POWER_legionLevel);
+        player.setLegionLevel(level);
+    }
     public Set<Long> getColSets() {
         return player.getColsets();
     }
@@ -592,7 +599,7 @@ public class PlayerProxy extends BasicProxy {
         return player.getOutLevelTime();
     }
 
-    public long getPowerValue(int power) {
+    public  long getPowerValue(int power) {
         String powerName = PlayerPowerDefine.NameMap.get(power);
         if (powerName == null) {
             //从扩展属性拿取
@@ -609,7 +616,7 @@ public class PlayerProxy extends BasicProxy {
     }
 
 
-    public void setPowerValue(int power, Long value) {
+    public synchronized void setPowerValue(int power, Long value) {
         String powerName = PlayerPowerDefine.NameMap.get(power);
         if (powerName == null) {
             CustomerLogger.info("出现未知的power值了！！！" + power);
@@ -621,7 +628,7 @@ public class PlayerProxy extends BasicProxy {
         player.setter(powerName, value.toString());
     }
 
-    public void addOffLinePowerValue(HashMap<Integer, Integer> rewardMap) {
+    public synchronized void addOffLinePowerValue(HashMap<Integer, Integer> rewardMap) {
         PlayerCache cache = new PlayerCache();
         cache.setAreId(player.getAreaId());
         this.setPlayerCache(cache);
@@ -633,7 +640,7 @@ public class PlayerProxy extends BasicProxy {
         }
     }
 
-    public void reduceOffLinePowerValue(HashMap<Integer, Integer> rewardMap) {
+    public synchronized void reduceOffLinePowerValue(HashMap<Integer, Integer> rewardMap) {
         PlayerCache cache = new PlayerCache();
         cache.setAreId(player.getAreaId());
         this.setPlayerCache(cache);
@@ -651,9 +658,14 @@ public class PlayerProxy extends BasicProxy {
         return res;
     }
 
+    //通过某个power去掉推送
+    public void removeChangetPowerBytypeid(int power){
+     changePower.remove(power);
+    }
+
     private Set<Integer> changePower = new ConcurrentHashSet<>();
 
-    public void addPowerToChangePower(Integer power) {
+    public synchronized void addPowerToChangePower(Integer power) {
         changePower.addAll(getRealEffectPower(power));
         if (power >= 57 && power <= 61) {
             //产量相关的要触发刷新一下任务
@@ -726,7 +738,7 @@ public class PlayerProxy extends BasicProxy {
         return powers;
     }
 
-    public void addPowerValue(int power, int add, int logType) {
+    public synchronized void addPowerValue(int power, int add, int logType) {
         long value = getPowerValue(power);
         if (add < 0) {
             add = 0;
@@ -820,7 +832,7 @@ public class PlayerProxy extends BasicProxy {
         return myValue >= value;
     }
 
-    public void reducePowerValue(int power, int reduce, int logtype) {
+    public synchronized void reducePowerValue(int power, int reduce, int logtype) {
         long value = getPowerValue(power);
         if (power == PlayerPowerDefine.POWER_energy && value == ActorDefine.MAX_ENERGY) {
                 setEnergyRefTime(GameUtils.getServerDate().getTime());
@@ -903,7 +915,7 @@ public class PlayerProxy extends BasicProxy {
     }
 
     //经验值升级
-    private long addExpHandle(int add, int logtype) {
+    private synchronized long addExpHandle(int add, int logtype) {
         //增加经验逻辑，返回加经验后的正确经验值
         long level = getPowerValue(PlayerPowerDefine.POWER_level);
         JSONObject info = ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.COMMANDER, "leve", level);
@@ -983,6 +995,10 @@ public class PlayerProxy extends BasicProxy {
     }
 
     public void setCapacity(long capacity) {
+        PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        if(capacity!=player.getCapacity()){
+         playerProxy.addPowerToChangePower(PlayerPowerDefine.NOR_POWER_highestCapacity);
+        }
         player.setCapacity(capacity);
     }
 
@@ -2836,6 +2852,11 @@ public class PlayerProxy extends BasicProxy {
             return 0;
         }
         return DungeonDefine.DEOGEO_LIMIT_REST - getPlayer().getDungeolimitrest();
+    }
+
+    //设置登录时间
+    public void setLoginTime(){
+        player.setLoginTime(GameUtils.getServerTime());
     }
 
 }

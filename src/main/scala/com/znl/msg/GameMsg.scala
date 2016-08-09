@@ -114,46 +114,17 @@ object GameMsg {
   final case class Watchmagnifyingback(list : java.util.List[WorldTile],x : Int, y : Int)   //放大镜查看返回
 
   final case class CollectBack(collinfo : M8.CollectInfo , ower :Int,rs : Int)
-  final case class FightBuild(x : Int, y : Int,attackTeams : util.List[PlayerTeam],attackX : Int,attackY : Int,attIcon : Int,attLevel : Int,attName : String,legionId : Long,powerMap: util.Map[Integer, java.lang.Long] )//请求一场世界战斗
-  final case class FightBuildErrorBack(time : Int,attackTeams : util.List[PlayerTeam],rs:Int)//世界战斗请求返回
-  final case class PushWorldFightToNode(attackTeams : util.List[PlayerTeam],attackX : Int,attackY : Int,fightTime : Long,attackSort : Int ,powerMap: util.Map[Integer, java.lang.Long])
-  final case class FightBuildResult(attackTeams : util.List[PlayerTeam],boomAdd : Int,honner:Int,result:Boolean)//返回出战队列给玩家模块计算伤兵
+  final case class FightBuild(teamData:WorldTeamData,powerMap: util.Map[Integer, java.lang.Integer] )//请求一场世界战斗
+  final case class FightBuildResult(attackTeams : util.List[PlayerTeam],boomAdd : Int,honner:Int,result:Boolean,attackTeamId : Long,playerReward: PlayerReward)//返回出战队列给玩家模块计算伤兵
   final case class DefendBuildResult(defendTeams : util.List[PlayerTeam],rewardMap : util.HashMap[Integer,Integer],boomReduce : Int,honner : Int)//返回防守队列
+  final case class Tohelp(teamData:WorldTeamData,powerMap: util.Map[Integer, java.lang.Integer])
   final case class BuildPointNotify(id : Long,x :Int,y : Int)//推送坐标通知
-  final case class BuildBattleResult(result : TileBattleResult)
-  final case class FightTeamBack(attackTeams : util.List[PlayerTeam],getBackTime:Long,targetX : Int,targetY:Int,targetSortId:Int,result : TileBattleResult)//战斗结束队伍返回
-  final case class BuildBattleEndBack(result : TileBattleResult)//世界请求一次战斗的所有逻辑结束返回
-  final case class DigTeamBackNotice(result : TileBattleResult)
-  final case class DigTeamCallBack(targetX : Int,targetY:Int,targetSortId:Int)
   final case class DetectBuild(targetX : Int,targetY:Int,detectType:Int,playerId:Long) //侦查坐标
   final case class DetectPriceBack(targetX : Int,targetY:Int,price : Int,id:Long)//返回坐标的侦查价格
   final case class DetectResultBack(rs : Int)
-  final case class AskNodeResourceGet()
-  final case class AskNodeDefendGet()
-  final case class GetReportInfo(report: ReportTemplate)
-  final case class DefendResourceFight(x : Int, y : Int,teams : util.List[PlayerTeam],iswin: Boolean,load :Long)
-  final case class BeAttackedNotify(teamNotice : TeamNotice)  //被攻击提示
-  final case class RemoveBeAttackedNotify(x : Int, y : Int,time :Long)
-  final case class RemoveBeAttackedNotifyBytime(time :Long)
-  final case class RemoveBeAttackedNotifyByXY(x : Int, y : Int)
-  final case class PushHelpToNode(attackTeams : util.List[PlayerTeam],attackX : Int,attackY : Int,fightTime : Long,attackSort : Int,powerMap: util.Map[Integer, java.lang.Long])
-  final case class Delhelper(helpId : Long)
-  final case class Deltohelp(helpId : Long)
-  final case class changeformTask(x :Int ,y :Int ,time :Long)
-  final case class tellHasArried(time :Long)
-  final case class DelformTask(targetX : Int,targetY: Int,time : Long)
-  final case class changefightTeam(timeer: Long, teams: util.List[PlayerTeam])
-  final case class finishResouceTask(lv: Int)
-  final case class SendTeamTaskInfo()
-  final case class DeleteDiggingTask(x :Int ,y :Int)
-  final case class CheckDeleteDiggingTask(playerId : Long)
+  final case class finishResouceTask(lv: Int)//任务的资源点条件刷新
 
-  final case class CreateAttackTask(x : Int, y : Int,attackTeams: util.List[PlayerTeam],time : Long,defendName : String,level:Int,tileType:TileType,starX:Int ,starY :Int)
-  final case class CreateDiggingTask(x : Int, y : Int,attackTeams: util.List[PlayerTeam],time : Long,defendName : String,level:Int,product : Int,beginTime : Long ,starX:Int ,starY :Int)
-  final case class CreateReturnTask(x : Int, y : Int,attackTeams: util.List[PlayerTeam],time : Long,defendName : String,level:Int ,starX:Int ,starY :Int)
-  final case class RefTaskListNotify()
-
-  final case class CallBackTask(x : Int, y : Int,playerId : Long ,time : Long,taskType : Int,product :Long)
+  final case class CallBackTask(teamId : Long)
   final case class CallBackTaskBack()
   final case class StopNodeTeamBack(teams : util.List[PlayerTeam],rewardMap : util.HashMap[Integer,Integer])
   final case class StopAllNode()
@@ -164,14 +135,13 @@ object GameMsg {
   final case class MoveRandomWorldBuild(playerId: Long, myX: Int, myY: Int)//随机迁城令
   final case class MoveRandomWorldBuildBack(x: Int, y: Int)
   final case class GetRandomEmpty()
-  final case class GetHelpDefendTime(myX : Int,myY : Int,targetX : Int,targetY :Int,legionId : Long,powerMap: util.Map[Integer, java.lang.Long])
-  final case class Tohelp(myX : Int,myY : Int,targetX : Int,targetY :Int,legionId : Long,fightteam: util.List[PlayerTeam],myId:Long,powerMap: util.Map[Integer, java.lang.Long])
-  final case class HelpDefendError(rs : Int)
-  final case class tohelpError(rs : Int)
-  final case class HelpDefend(myX : Int,myY : Int,targetX : Int,targetY :Int,attackTeams: util.List[PlayerTeam])
-  final case class HelpDefendback(myX : Int,myY : Int,targetX : Int,targetY :Int,time:Long)
-  final case class tohelpbackSucess(x : Int, y : Int,attackTeams: util.List[PlayerTeam],time : Long,defendName : String,level:Int ,teamId : Long ,starX:Int ,starY :Int)
-  final case class tellforhelp(x : Int, y : Int,attackTeams: util.List[PlayerTeam],time : Long,defendName : String,level:Int,teamId : Long,icon  :Int ,starX:Int ,starY :Int,powerMap: util.Map[Integer, java.lang.Long])
+
+  final case class DefendFightResult(defendList : util.List[PlayerTeam])  //有部队产生了战斗，结算伤兵吧
+  final case class TeamDataChange(teamId:Long)  //队伍状态改变
+  final case class TeamDataDelete(team:WorldTeamData)    //队伍删除
+  final case class TeamDataAdd(teamId : Long) //和自己有关的队伍通知
+
+  final case class TeamBack(teamData:WorldTeamData)//返回队列到达，结算奖励，佣兵等
 
   final case class GiveMeAPill(x : Int, y : Int)
 
@@ -196,9 +166,10 @@ object GameMsg {
   /////////////////net/////////////////
   final case class ReceiveNetMsg(request: Request) //player actor接受到网络数据
   final case class SendNetMsgToClient(response: Response) //player actor发送网络消息直接到客户端
-  final case class PushtNetMsgToClient()//推送协议到客户端
+  final case class PushtNetMsgToClient(cmd:Int)//推送协议到客户端
   final case class SendNetMsg(response: Response) //模块发送消息结构体到playerActor
   final case class MulticastNetToClient() //将缓存在playerActor上的协议消息体一起发送到客户端
+  final case class RepeatedProtocalHandler(cmd :Int)
   ////////////////////////////////////////////////
 
   ////////////////charge/////////////////////////////

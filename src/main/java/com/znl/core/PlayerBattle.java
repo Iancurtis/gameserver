@@ -36,9 +36,12 @@ public class PlayerBattle {
     public int y =0;
     public long attackId;
     public long defendId;
+    public long attackTeamId;
+    public long defendTeamId;
     public String attackName;
     public String defendName;
     public GeneratedMessage message;
     public int bgIcon = 0;
     public Map<Integer, Long> powerMap=new HashMap<Integer, java.lang.Long>(){{put(PlayerPowerDefine.NOR_POWER_speedRate,0l);put(PlayerPowerDefine.NOR_POWER_resexprate,0l);put(PlayerPowerDefine.NOR_POWER_rescollectrate,0l);put(PlayerPowerDefine.NOR_POWER_loadRate,0l);}};
+    public Map<Integer, Integer> addMap=new HashMap<Integer, Integer>();
 }

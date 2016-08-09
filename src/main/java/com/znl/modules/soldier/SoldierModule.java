@@ -22,6 +22,8 @@ import java.util.List;
  */
 public class SoldierModule  extends BasicModule {
 
+    List<Common.SoldierInfo> soldierInfostemp = new ArrayList<>();//缓存40002重复协议处理
+
     public static Props props(final GameProxy gameProxy){
         return Props.create(new Creator<SoldierModule>(){
             private static final long serialVersionUID = 1L;
@@ -41,7 +43,7 @@ public class SoldierModule  extends BasicModule {
     public void onReceiveOtherMsg(Object object){
         if(object instanceof GameMsg.FixSoldierList){
             pushNetMsg(ActorDefine.SOLDIER_MODULE_ID,ProtocolModuleDefine.NET_M4_C40001,getFixList());
-            sendPushNetMsgToClient();
+            sendPushNetMsgToClient(ProtocolModuleDefine.NET_M4_C40001);
         }
     }
 
@@ -76,26 +78,38 @@ public class SoldierModule  extends BasicModule {
         }
         sendNetMsg(ActorDefine.SOLDIER_MODULE_ID,ProtocolModuleDefine.NET_M4_C40002,builder.build());
         if(rs >=0 && soldierInfos.size() > 0){
+            soldierInfostemp.addAll(soldierInfos);
             sendRefuceSoldierInfo(soldierInfos);
             //阵型
             sendModuleMsg(ActorDefine.TROOP_MODULE_NAME,new GameMsg.CheckBaseDefendFormation());
         }
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M4_C40002);
     }
 
     private void sendRefuceSoldierInfo(List<Common.SoldierInfo> soldierInfos){
         M2.M20007.S2C.Builder builder = M2.M20007.S2C.newBuilder();
         builder.addAllSoldierList(soldierInfos);
         sendNetMsg(ProtocolModuleDefine.NET_M2,ProtocolModuleDefine.NET_M2_C20007,builder.build());
-        sendPushNetMsgToClient();
+        sendPushNetMsgToClient(ProtocolModuleDefine.NET_M4_C40002);
     }
 
     /**
      * 重复协议请求处理
-     * @param cmd
+     * @param request
      */
     @Override
-    public void repeatedProtocalHandler(int cmd) {
-
+    public void repeatedProtocalHandler(Request request) {
+      switch (request.getCmd()){
+          case ProtocolModuleDefine.NET_M4_C40001:{
+              sendNetMsg(ActorDefine.SOLDIER_MODULE_ID,ProtocolModuleDefine.NET_M4_C40001,getFixList());
+              sendFuntctionLog(FunctionIdDefine.LOST_SOLDIER_LIST_FUNCIION_ID);
+          }
+          case ProtocolModuleDefine.NET_M4_C40002:{
+              sendRefuceSoldierInfo(soldierInfostemp);
+          }
+          default:{
+              System.err.println("该协议没做重复处理！！！");
+          }
+      }
     }
 }
