@@ -56,28 +56,34 @@ public class TaskProxy extends BasicProxy {
 
 
     public TaskProxy(Player player, String areaKey) {
-        this.areaKey = areaKey;
-        taskTimer = BaseDbPojo.get(player.getTaskTimerId(), TaskTimer.class, areaKey);
-        if (taskTimer == null) {
-            taskTimer = BaseDbPojo.create(TaskTimer.class, areaKey);
-            System.out.println("taskTimer==null is"+taskTimer==null);
-            taskTimer.setPlayerId(player.getId());
-            taskTimer.setActivyTastId(0);
-            taskTimer.setRefdayState(0);
-            taskTimer.setRefactivityState(0);
-            taskTimer.setRestTimes(0);
-            taskTimer.setDaytaskNum(0);
-            player.setTaskTimerId(taskTimer.getId());
-        }
-        for (Long id : player.getTaskSet()) {
-            Task task = BaseDbPojo.get(id, Task.class, areaKey);
-            if (task == null) {
-                System.out.print("任务出现空值");
-            } else {
-                tasks.add(task);
+
+        try{
+            this.areaKey = areaKey;
+            taskTimer = BaseDbPojo.get(player.getTaskTimerId(), TaskTimer.class, areaKey);
+            if (taskTimer == null) {
+                taskTimer = BaseDbPojo.create(TaskTimer.class, areaKey);
+                System.out.println("taskTimer==null is"+taskTimer==null);
+                taskTimer.setPlayerId(player.getId());
+                taskTimer.setActivyTastId(0);
+                taskTimer.setRefdayState(0);
+                taskTimer.setRefactivityState(0);
+                taskTimer.setRestTimes(0);
+                taskTimer.setDaytaskNum(0);
+                player.setTaskTimerId(taskTimer.getId());
             }
+            for (Long id : player.getTaskSet()) {
+                Task task = BaseDbPojo.get(id, Task.class, areaKey);
+                if (task == null) {
+                    System.out.print("任务出现空值");
+                } else {
+                    tasks.add(task);
+                }
+            }
+            init();
+        }catch (Exception e){
+            System.err.println(6666);
         }
-        init();
+
 
     }
 

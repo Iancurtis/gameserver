@@ -9,15 +9,15 @@ import java.util.Date;
  * Created by Administrator on 2015/11/16.
  */
 public class ResFunBuilding extends BaseDbPojo {
-    private Long playerId;
+    private Long playerId = 0l;
     private int bigType = 0;//建筑大类
     private int smallType = 0;//建筑类型
-    private int index=0;//建筑位置
-    private int level=0;
-    private long nextLevelTime;//下一级升级完成时间
-    private long lastblanceTime;//上次结算时间
-    private int state;//0功能未开启
-   private long lvneedTime;//升级所需时间 只做排序
+    private int index = 0;//建筑位置
+    private int level = 0;
+    private long nextLevelTime = 0l;//下一级升级完成时间
+    private long lastblanceTime = 0l;//上次结算时间
+    private int state = 0;//0功能未开启
+    private long lvneedTime = 0l;//升级所需时间 只做排序
 
     public long getLvneedTime() {
         return lvneedTime;

@@ -76,16 +76,21 @@ public class DungeoProxy extends BasicProxy {
 
 
     public DungeoProxy(Set<Long> dungeoIds, String areaKey) {
-        this.areaKey = areaKey;
-        for (Long id : dungeoIds) {
-            Dungeo dungeo = BaseDbPojo.get(id, Dungeo.class, areaKey);
-            if (dungeo.getDungeoId() >= ActorDefine.MIN_DUNGEO_ID) {
-                dungeos.add(dungeo);
-            } else {
-                ristDungeos.add(dungeo);
-            }
+        try{
+            this.areaKey = areaKey;
+            for (Long id : dungeoIds) {
+                Dungeo dungeo = BaseDbPojo.get(id, Dungeo.class, areaKey);
+                if (dungeo.getDungeoId() >= ActorDefine.MIN_DUNGEO_ID) {
+                    dungeos.add(dungeo);
+                } else {
+                    ristDungeos.add(dungeo);
+                }
 
+            }
+        }catch (Exception e){
+            System.err.println(33333322);
         }
+
     }
 
 
@@ -941,7 +946,7 @@ public class DungeoProxy extends BasicProxy {
                 soldierTypeAdd = 4.08;
                 break;
         }
-        if(soldier.capacityMap != null || soldier.capacityMap.size() == 0){
+        if(soldier.capacityMap == null || soldier.capacityMap.size() == 0){
             return 0;
         }
         actC = ((double) soldier.capacityMap.get(SoldierDefine.POWER_atk)) * 0.5 * soldierTypeAdd;

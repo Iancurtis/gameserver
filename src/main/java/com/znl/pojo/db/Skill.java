@@ -6,10 +6,10 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2015/11/26.
  */
 public class Skill extends BaseDbPojo {
-    private long playerId;
-    private int skillId;
-    private int level;
-    private int soldierType;
+    private long playerId=0l;
+    private int skillId=0;
+    private int level=0;
+    private int soldierType=0;
 
     public long getPlayerId() {
         return playerId;

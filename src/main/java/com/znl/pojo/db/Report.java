@@ -10,59 +10,59 @@ import java.util.List;
  * Created by Administrator on 2015/12/15.
  */
 public class Report extends BaseDbPojo implements Serializable {
-    private long playerId;
-    private long attackerId;
-    private String attackerName;
-    private long defendId;
-    private String defendName;
-    private long messageId;
-    private int reportType;
-    private int level;
-    private String name ;
-    private int result; //进攻0赢1输
-    private int x;
-    private int y;
+    private long playerId = 0l;
+    private long attackerId = 0l;
+    private String attackerName = "";
+    private long defendId = 0l;
+    private String defendName = "";
+    private long messageId = 0l;
+    private int reportType = 0;
+    private int level = 0;
+    private String name = "";
+    private int result = 0; //进攻0赢1输
+    private int x = -1;
+    private int y = -1;
     private String garrisonName = "";//驻防部队
-    private int honner;
+    private int honner = 0;
     private List<Integer> posResource = new ArrayList<>();
-    private int resourceMapId;
-    private int totalResourceNum;
+    private int resourceMapId = 0;
+    private int totalResourceNum = 0;
     private List<Integer> defendSoldierTypeIds = new ArrayList<>();
     private List<Integer> defendSoldierNums = new ArrayList<>();
-    private int attackVip;
-    private int defendVip;
-    private String defendLegion;
-    private String attackLegion;
-    private int attackExp;
-    private int defendExp;
+    private int attackVip = 0;
+    private int defendVip = 0;
+    private String defendLegion = "";
+    private String attackLegion = "";
+    private int attackExp = 0;
+    private int defendExp = 0;
     private List<Integer> attackSoldierTypeIds = new ArrayList<>();
     private List<Integer> attackSoldierNums = new ArrayList<>();
-    private int defendAdviserIcondId;
-    private int defendAdviserSkillId;
-    private String defendAdviserName;
-    private String defendAdviserSkillName;
-    private int attackAdviserIcondId;
-    private int attackAdviserSkillId;
-    private String attackAdviserName;
-    private String attackAdviserSkillName;
-    private int resourceGet;//已经采集
-    private int firstHand;//先手
-    private int attackCityIcon;//攻击方的图标
-    private int attackAddBoom;//攻击方的繁荣度加成,可能为负值
-    private int attackTotalBoom;//攻击方的总繁荣度
-    private int attackCurrBoom;//攻击方当前繁荣度
-    private int defentAddBoom;//防守方的繁荣度加成,可能为负值
-    private int defentTotalBoom;//防守方的总繁荣度
-    private int defentCurrBoom;//防守方当前繁荣度
-    private int defentIcon;//防守方的图标
+    private int defendAdviserIcondId = 0;
+    private int defendAdviserSkillId = 0;
+    private String defendAdviserName = "";
+    private String defendAdviserSkillName = "";
+    private int attackAdviserIcondId = 0;
+    private int attackAdviserSkillId = 0;
+    private String attackAdviserName = "";
+    private String attackAdviserSkillName = "";
+    private int resourceGet = 0;//已经采集
+    private int firstHand = 0;//先手
+    private int attackCityIcon = 0;//攻击方的图标
+    private int attackAddBoom = 0;//攻击方的繁荣度加成,可能为负值
+    private int attackTotalBoom = 0;//攻击方的总繁荣度
+    private int attackCurrBoom = 0;//攻击方当前繁荣度
+    private int defentAddBoom = 0;//防守方的繁荣度加成,可能为负值
+    private int defentTotalBoom = 0;//防守方的总繁荣度
+    private int defentCurrBoom = 0;//防守方当前繁荣度
+    private int defentIcon = 0;//防守方的图标
     private String reward = "";//奖励的打包字符串
     private long createTime = 0l;
-    private String aim="";
-    private long garrisonId=0l;
-    private int defendLevel;
+    private String aim = "";
+    private long garrisonId = 0l;
+    private int defendLevel = 0;
     private int read = 2;//是否已读（竞技场使用）
-    public int defendX;
-    public int defendY;
+    public int defendX = -1;
+    public int defendY = -1;
 
 
     public int getDefendX() {

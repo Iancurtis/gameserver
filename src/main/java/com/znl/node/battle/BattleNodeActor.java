@@ -77,7 +77,6 @@ public class BattleNodeActor extends UntypedActor{
     @Override
     public void postStop() throws Exception {
         super.postStop();
-        CustomerLogger.info("parent postStop :" + getSelf().path());
     }
 
     @Override

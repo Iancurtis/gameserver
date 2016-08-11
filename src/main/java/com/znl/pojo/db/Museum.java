@@ -6,8 +6,8 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2015/11/16.
  */
 public class Museum extends BaseDbPojo {
-    private Long playerId;
-    private int type= 0;
+    private Long playerId = 0l;
+    private int type = 0;
     private int level = 0;
 
     public Long getPlayerId() {

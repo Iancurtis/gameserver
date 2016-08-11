@@ -39,7 +39,7 @@ public class ServerHandler extends IoHandlerAdapter {
             List<Request> requestList = (List<Request>)message;
             for(Request request : requestList){
                 request.setSession(session);
-                System.out.println("===============接受到数据包=== " + session.getRemoteAddress() + " 模块ID：" + request.getModule() + "命令id：" + request.getCmd());
+//                System.out.println("===============接受到数据包=== " + session.getRemoteAddress() + " 模块ID：" + request.getModule() + "命令id：" + request.getCmd());
                 ActorSystem system = GameMainServer.system();
                 ActorSelection gateServer = system.actorSelection(ActorDefine.GATE_SERVER_PATH);
                 gateServer.tell(new GameMsg.SessionMessageReceived(session,  request), ActorRef.noSender()); //TODO 如果里面有相同协议的，对该协议进行批量处理，比如自动升级

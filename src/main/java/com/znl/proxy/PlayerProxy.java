@@ -733,7 +733,6 @@ public class PlayerProxy extends BasicProxy {
             case PlayerPowerDefine.NOR_POWER_depotprotectrate:
                 powers.add(PlayerPowerDefine.NOR_POWER_depotprotect);
                 break;
-
         }
         return powers;
     }

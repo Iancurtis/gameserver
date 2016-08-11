@@ -196,7 +196,9 @@ public class DamageAction extends SkillAction{
 		double ratio = getRatio(caster, target);
 		double extra = getExtra(caster, target);
 		
-		Map<String, Object> damageResult = getDamage(caster, target);
+		Map<String, Object> damageResult = getDamage(caster, target,ratio);
+
+
 		HurtType hurtType = (HurtType) damageResult.get("hurtType");
 		double damageBase = (double) damageResult.get("damageBase");
 		
@@ -236,7 +238,7 @@ public class DamageAction extends SkillAction{
 //		}
 //	}
 	
-	private Map<String, Object> getDamage(PuppetEntity caster, PuppetEntity target)
+	private Map<String, Object> getDamage(PuppetEntity caster, PuppetEntity target,double ratio)
 	{
 		HurtType hurtType = HurtType.NormalHurt;
 		double damageBase = 0.0f;
@@ -245,11 +247,14 @@ public class DamageAction extends SkillAction{
 		boolean isCri = _formula.metic(criFormula, caster, target);
 		
 		int damFormula = 0;
-		
+
 		if(isCri == true){
 			damFormula = skill.skillDefine.getInt("cirdam");
 			hurtType = HurtType.CritHurt;
 			addCount(SoldierDefine.NOR_POWER_TYPE_CIRT_COUNT,caster);
+		}else if(ratio > 1){//判断克制类型
+			hurtType = HurtType.RefrainHurt;
+			damFormula = skill.skillDefine.getInt("normaldam");
 		}else{
 			damFormula = skill.skillDefine.getInt("normaldam");
 		}

@@ -38,6 +38,9 @@ public class ArmyGroupModule extends BasicModule {
 
     private String areaKey;
 
+    //是否第一次发送
+    private  boolean isfirst=true;
+
     public ArmyGroupModule(GameProxy gameProxy) {
         this.setGameProxy(gameProxy);
         this.setModuleId(ProtocolModuleDefine.NET_M22);
@@ -54,6 +57,7 @@ public class ArmyGroupModule extends BasicModule {
             GameMsg.changeMenberLevel groupmsg = new GameMsg.changeMenberLevel(playerProxy.getPlayerId(), playerProxy.getLevel());
             tellMsgToArmygroupNode(groupmsg, playerProxy.getArmGrouId());
         }
+        isfirst=false;
     }
 
     @Override
@@ -794,6 +798,11 @@ public class ArmyGroupModule extends BasicModule {
         if (groupId > 0 && ArmygroupNode.techExpandPowerMap().get(groupId) != null) {
             Map<Integer, Long> techExpandPower = ArmygroupNode.techExpandPowerMap().get(groupId);
             refLegionTechnologyPowerMap(techExpandPower);
+            if(isfirst==false) {
+                sendPushNetMsgToClient(0);
+            }else {
+                playerProxy.getChangePower();
+            }
         }
     }
 
@@ -817,7 +826,6 @@ public class ArmyGroupModule extends BasicModule {
         ArmyGroupProxy armyGroupProxy = getProxy(ActorDefine.ARMYGROUP_PROXY_NAME);
         armyGroupProxy.addTechPlayerPower(techExpandPower);
 //        checkPlayerPowerValues(powerMap);
-        sendPushNetMsgToClient(0);
 //        multicastNetToClient();
     }
 
@@ -905,7 +913,7 @@ public class ArmyGroupModule extends BasicModule {
         SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
         if (playerProxy.getArmGrouId() > 0) {
             M22.M220102.S2C.Builder builder = M22.M220102.S2C.newBuilder();
-            builder.setRs(ErrorCodeDefine.M220108_8);
+            builder.setRs(ErrorCodeDefine.M220102_8);
             builder.setId(id);
             builder.setType(type);
             sendNetMsg(ProtocolModuleDefine.NET_M22, ProtocolModuleDefine.NET_M22_C220102, builder.build());

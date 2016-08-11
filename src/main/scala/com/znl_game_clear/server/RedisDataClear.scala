@@ -308,7 +308,7 @@ object RedisDataClear extends App{
     if (removeKeys.size() > 0){
       for (key <- removeKeys){
         println(key)
-        jc.del(key)
+       // jc.del(key)
       }
     }
   }
@@ -318,7 +318,7 @@ object RedisDataClear extends App{
     val classSet : util.Set[Class[_]] = GetClassUtil.getClasses("com.znl.pojo.db.set")
     for (classValue <- classSet) {
       try{
-        removeAllDataByClass(classValue.asSubclass(classOf[BaseSetDbPojo]),areaKey)
+      //  removeAllDataByClass(classValue.asSubclass(classOf[BaseSetDbPojo]),areaKey)
       }catch {
         case e : Exception=>
           println(classValue.getSimpleName+" "+e)

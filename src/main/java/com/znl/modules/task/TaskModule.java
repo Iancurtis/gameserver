@@ -50,6 +50,8 @@ public class TaskModule extends BasicModule {
         TaskProxy taskProxy=getProxy(ActorDefine.TASK_PROXY_NAME);
         M19.M190000.S2C.Builder builder19 = taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_WINRESOURCE_LV, 0, reward);
         sendModuleMsg(ActorDefine.TASK_MODULE_NAME, new GameMsg.RefeshTaskUpdate(builder19, reward));*/
+        TaskProxy taskProxy=getProxy(ActorDefine.TASK_PROXY_NAME);
+        taskProxy.getNeedPushTasks();
     }
 
     @Override

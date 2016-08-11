@@ -66,7 +66,9 @@ public class MapModule extends BasicModule {
             addLostSoldiers(mess);
         }else if (object instanceof  GameMsg.DefendFightResult){
             List<PlayerTeam> teams = ((GameMsg.DefendFightResult) object).defendList();
-            addDefendLostSoldiers(teams);
+            long defendId=((GameMsg.DefendFightResult)object).defendTeamId();
+            int honor=((GameMsg.DefendFightResult)object).honor();
+            addDefendLostSoldiers(teams,defendId,honor);
         } else if (object instanceof GameMsg.DefendBuildResult) {
             GameMsg.DefendBuildResult mess = (GameMsg.DefendBuildResult) object;
             reduceDefendSoldier(mess);
@@ -229,7 +231,6 @@ public class MapModule extends BasicModule {
         M8.M80016.S2C.Builder builder = M8.M80016.S2C.newBuilder();
         builder.setRs(0);
         pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80016, builder.build());
-        sendPushNetMsgToClient(0);
     }
 
     /******
@@ -416,7 +417,13 @@ public class MapModule extends BasicModule {
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         //扣除繁荣度
         if (boomReduce > 0) {
+            long boomLevel = playerProxy.getPowerValue(PlayerPowerDefine.POWER_boomLevel);
             playerProxy.reducePowerValue(PlayerPowerDefine.POWER_boom, boomReduce, LogDefine.LOST_WORLD_BE_ATTACK);
+            long nowBoomLevel = playerProxy.getPowerValue(PlayerPowerDefine.POWER_boomLevel);
+            if(boomLevel != nowBoomLevel){
+                //推送前端刷新当前界面
+                sendRrfrshProtect();
+            }
         }
         if (honner > 0) {
             playerProxy.addPowerValue(PlayerPowerDefine.POWER_honour, honner, LogDefine.GET_WORLD);
@@ -463,15 +470,26 @@ public class MapModule extends BasicModule {
         }
         playerProxy.allTakeSoldierNum();
         pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20500, playerProxy.getBommTimeInfo());
+
         sendPushNetMsgToClient(0);
     }
 
     //驻守队伍或者挖掘队伍被攻击的伤兵返还逻辑
-    private void addDefendLostSoldiers(List<PlayerTeam> teams) {
+    private void addDefendLostSoldiers(List<PlayerTeam> teams,long defendId,int honor) {
         //伤兵返还
         DungeoProxy dungeoProxy = getProxy(ActorDefine.DUNGEO_PROXY_NAME);
         SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
+        PlayerProxy playerProxy=getProxy(ActorDefine.PLAYER_PROXY_NAME);
         HashMap<Integer, Integer> deathMap = new HashMap<>();
+        if (honor > 0) {
+            playerProxy.addPowerValue(PlayerPowerDefine.POWER_honour, honor, LogDefine.GET_WORLD);
+        } else {
+            honor = -honor;
+            if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_honour) < honor) {
+                honor = (int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_honour);
+            }
+            playerProxy.reducePowerValue(PlayerPowerDefine.POWER_honour, honor, LogDefine.LOST_WORLD_FIGHT);
+        }
         List<Integer> ids = dungeoProxy.reduceDeadSoldier(teams, BattleDefine.BATTLE_TYPE_WORLD, deathMap, soldierProxy);
         GameMsg.FixSoldierList msg = new GameMsg.FixSoldierList();
         sendModuleMsg(ActorDefine.SOLDIER_MODULE_NAME, msg);
@@ -481,6 +499,7 @@ public class MapModule extends BasicModule {
         //给玩家添加资源、剩下的佣兵
         List<PlayerTeam> teams = GameUtils.decodePlayerTeam(teamData.getBasePowerMap(),teamData.getPowerMap(),teamData.getPlayerId());
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        BuildingProxy buildingProxy = getProxy(ActorDefine.BUILDING_PROXY_NAME);
         if(teamData.getPlayerId() != playerProxy.getPlayerId()){
             System.err.println("返回玩家的部队居然不是玩家自己的！！！");
             //TODO 写入错误日志
@@ -490,6 +509,33 @@ public class MapModule extends BasicModule {
         PlayerReward playerReward = new PlayerReward();
         HashMap<Integer,Integer> reward = GameUtils.decodeStringToIntegerMap(teamData.getRewardMap());
         //获得资源奖励
+        JSONObject jsonObject=ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ACTIVE_EFFECT, "conditiontype",ActivityDefine.ACTIVITY_CONDITION_TYPE_RESOUCE_GETNUM);
+        JSONObject json=ConfigDataProxy.getConfigInfoFindByOneKey(DataDefine.ACTIVE_DESIGN, "effectID",jsonObject.getInt("effectID"));
+        ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+        if(activityProxy.checkActivityIsOpenbyId(json.getInt("ID"))){
+            boolean falg= buildingProxy.checkPiontType(teamData.getStartX(),teamData.getStartY());
+            if(falg){
+                for(Integer in:reward.keySet()){
+                    if(in == PlayerPowerDefine.POWER_tael){
+                        activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_RESOUCE_GETNUM,PlayerPowerDefine.POWER_tael,playerProxy,reward.get(in));
+                    }
+                    if(in == PlayerPowerDefine.POWER_iron){
+                        activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_RESOUCE_GETNUM,PlayerPowerDefine.POWER_iron,playerProxy,reward.get(in));
+                    }
+                    if(in == PlayerPowerDefine.POWER_wood){
+                        activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_RESOUCE_GETNUM,PlayerPowerDefine.POWER_wood,playerProxy,reward.get(in));
+                    }
+                    if(in == PlayerPowerDefine.POWER_stones){
+                        activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_RESOUCE_GETNUM,PlayerPowerDefine.POWER_stones,playerProxy,reward.get(in));
+                    }
+                    if(in == PlayerPowerDefine.POWER_food){
+                        activityProxy.addActivityConditionValue(ActivityDefine.ACTIVITY_CONDITION_TYPE_RESOUCE_GETNUM,PlayerPowerDefine.POWER_food,playerProxy,reward.get(in));
+                    }
+                }
+
+            }
+
+        }
         RewardProxy rewardProxy = getProxy(ActorDefine.REWARD_PROXY_NAME);
         playerReward.addPowerMap.putAll(reward);
         rewardProxy.getRewardToPlayer(playerReward,LogDefine.GET_WORLD_FIGHT_TEAM_RETURN);
@@ -519,6 +565,9 @@ public class MapModule extends BasicModule {
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         playerProxy.addPowerValue(PlayerPowerDefine.POWER_boom, boom, LogDefine.GET_WORLD_FIGHT_TEAM_RETURN);
         if (honner > 0) {
+            if (playerProxy.getPowerValue(PlayerPowerDefine.POWER_honour) < honner) {
+                honner = (int) playerProxy.getPowerValue(PlayerPowerDefine.POWER_honour);
+            }
             playerProxy.addPowerValue(PlayerPowerDefine.POWER_honour, honner, LogDefine.GET_WORLD);
         } else {
             honner = -honner;
@@ -554,6 +603,9 @@ public class MapModule extends BasicModule {
                 pushNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, rewardProxy.getRewardClientInfo(reward));
             }
 //            deleteTaskNotify(mess.attackTeamId());
+        }else{
+            //推送前端刷新当前界面
+            sendRrfrshProtect();
         }
         if (deathMap.size() > 0) {
             sendModuleMsg(ActorDefine.CAPACITY_MODULE_NAME, new GameMsg.CountCapacity());
@@ -639,8 +691,7 @@ public class MapModule extends BasicModule {
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         List<Common.FightElementInfo> list = c2s.getTeamList();
         BattleProxy battleProxy = getProxy(ActorDefine.BATTLE_PROXY_NAME);
-        int rs = battleProxy.checkFightMember(list);
-        PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
+        int rs =0;
         List<JSONObject> openObject = ConfigDataProxy.getConfigInfoFilterById(DataDefine.FUNCTION_OPEN, ActorDefine.OPEN_MAP_ID);
         for (JSONObject ls : openObject) {
             if (!(playerProxy.getLevel() >= ls.getInt("openlevel"))) {
@@ -649,7 +700,7 @@ public class MapModule extends BasicModule {
             }
         }
         BuildingProxy buildingProxy = getProxy(ActorDefine.BUILDING_PROXY_NAME);
-        rs = buildingProxy.fightWorld(x,y);
+        rs = buildingProxy.fightWorld(x,y,list);
         Tuple2<Integer, Integer> point = buildingProxy.getWorldTilePoint();
 
         M8.M80001.S2C.Builder builder = M8.M80001.S2C.newBuilder();
@@ -657,67 +708,77 @@ public class MapModule extends BasicModule {
         sendNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80001, builder.build());
         sendFuntctionLog(FunctionIdDefine.GET_WORLD_TILE_INFO_FUNCTION_ID);
         // playerProxy.reducePowerValue(PlayerPowerDefine.POWER_energy, 1, LogDefine.LOST_WORLD_FIGHT);
-        List<PlayerTeam> teams = battleProxy.createFightTeamList(list);
-        ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
-        Map<Integer, Integer> powerMap = new HashMap<>();
-        powerMap.put(PlayerPowerDefine.NOR_POWER_resexprate, (int) playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_resexprate));
-        powerMap.put(PlayerPowerDefine.NOR_POWER_rescollectrate, (int) playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_rescollectrate));
-        powerMap.put(PlayerPowerDefine.NOR_POWER_speedRate, (int) playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_speedRate));
-        powerMap.put(PlayerPowerDefine.NOR_POWER_loadRate, (int) playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_loadRate));
-        powerMap.put(ActivityDefine.ACTIVITY_CONDITION_FIGHT_WORLD_REWARD_RATE, (int) activityProxy.getExpandPowerValue(ActivityDefine.ACTIVITY_CONDITION_FIGHT_WORLD_REWARD_RATE));
-        WorldTeamData worldTeamData = buildingProxy.createTeamData(x,y,teams,TaskDefine.PERFORM_TASK_ATTACK, (HashMap<Integer, Integer>) powerMap);
+        if(rs>=0) {
+            List<PlayerTeam> teams = battleProxy.createFightTeamList(list);
+            ActivityProxy activityProxy = getProxy(ActorDefine.ACTIVITY_PROXY_NAME);
+            Map<Integer, Integer> powerMap = new HashMap<>();
+            powerMap.put(PlayerPowerDefine.NOR_POWER_resexprate, (int) playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_resexprate));
+            powerMap.put(PlayerPowerDefine.NOR_POWER_rescollectrate, (int) playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_rescollectrate));
+            powerMap.put(PlayerPowerDefine.NOR_POWER_speedRate, (int) playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_speedRate));
+            powerMap.put(PlayerPowerDefine.NOR_POWER_loadRate, (int) playerProxy.getPowerValue(PlayerPowerDefine.NOR_POWER_loadRate));
+            powerMap.put(ActivityDefine.ACTIVITY_CONDITION_FIGHT_WORLD_REWARD_RATE, (int) activityProxy.getExpandPowerValue(ActivityDefine.ACTIVITY_CONDITION_FIGHT_WORLD_REWARD_RATE));
+            WorldTeamData worldTeamData = buildingProxy.createTeamData(x, y, teams, TaskDefine.PERFORM_TASK_ATTACK, (HashMap<Integer, Integer>) powerMap);
 
-        WorldNodeData targetNode = WorldService.getWorldNode(playerProxy.getAreaKey(),x,y);
-        targetNode.getFightList().add(worldTeamData.getId());
+            WorldNodeData targetNode = WorldService.getWorldNode(playerProxy.getAreaKey(), x, y);
+            targetNode.getFightList().add(worldTeamData.getId());
 
-        GameMsg.FightBuild mess = new GameMsg.FightBuild(worldTeamData, powerMap);
-        WorldService.addTeamData(playerProxy.getAreaKey(),worldTeamData);
+            GameMsg.FightBuild mess = new GameMsg.FightBuild(worldTeamData, powerMap);
+            WorldService.addTeamData(playerProxy.getAreaKey(), worldTeamData);
 
-        WorldTile targetTile = WorldService.getWorldTitleByPoint(x,y,playerProxy.getAreaKey());
-        if(targetTile.tileType() == TileType.Building()){
-            //通知其他玩家被攻击了
-            SimplePlayer targetSimplePlayer = PlayerService.getSimplePlayer(targetTile.building().getPlayerId(),playerProxy.getAreaKey());
-            GameMsg.TeamDataAdd teamDataAdd = new GameMsg.TeamDataAdd(worldTeamData.getId());
-            if(targetSimplePlayer.online){
-                sendMsgToOtherPlayerModule(ActorDefine.MAP_MODULE_NAME,targetSimplePlayer.getAccountName(),teamDataAdd);
+            if (targetNode.getOccupyPlayerId() > 0) {
+                //通知其他玩家被攻击了
+                SimplePlayer targetSimplePlayer = PlayerService.getSimplePlayer(targetNode.getOccupyPlayerId(), playerProxy.getAreaKey());
+                GameMsg.TeamDataAdd teamDataAdd = new GameMsg.TeamDataAdd(worldTeamData.getId());
+                if (targetSimplePlayer.online) {
+                    sendMsgToOtherPlayerModule(ActorDefine.MAP_MODULE_NAME, targetSimplePlayer.getAccountName(), teamDataAdd);
+                }
+
+                //自己如果有保护罩，要清空保护罩
+                if (playerProxy.getProtectOverDate() > GameUtils.getServerDate().getTime()) {
+                    playerProxy.setProtectOverDate(0);
+                    ItemBuffProxy itemBuffProxy = getProxy(ActorDefine.ITEMBUFF_PROXY_NAME);
+                    itemBuffProxy.delBuffer(PlayerPowerDefine.NOR_POWER_protect_date);
+                    playerProxy.getSimplePlayer();
+                    sendRrfrshProtect();
+                }
             }
-        }
-        //发送到世界服务
-        sendServiceMsg(ActorDefine.WORLD_SERVICE_NAME, mess);
+            //发送到世界服务
+            sendServiceMsg(ActorDefine.WORLD_SERVICE_NAME, mess);
 
 
-        //扣除出战的佣兵
-        SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
-        HashMap<Integer, Integer> reduceMap = new HashMap<>(6);
-        for (Common.FightElementInfo info : list) {
-            if (reduceMap.containsKey(info.getTypeid())) {
-                int num = reduceMap.get(info.getTypeid()) + info.getNum();
-                reduceMap.put(info.getTypeid(), num);
-            } else {
-                reduceMap.put(info.getTypeid(), info.getNum());
+            //扣除出战的佣兵
+            SoldierProxy soldierProxy = getProxy(ActorDefine.SOLDIER_PROXY_NAME);
+            HashMap<Integer, Integer> reduceMap = new HashMap<>(6);
+            for (Common.FightElementInfo info : list) {
+                if (reduceMap.containsKey(info.getTypeid())) {
+                    int num = reduceMap.get(info.getTypeid()) + info.getNum();
+                    reduceMap.put(info.getTypeid(), num);
+                } else {
+                    reduceMap.put(info.getTypeid(), info.getNum());
+                }
             }
-        }
-        List<Common.SoldierInfo> infos = new ArrayList<>(6);
-        for (Integer id : reduceMap.keySet()) {
-            soldierProxy.reduceSoldierNumWithoutBaseNum(id, reduceMap.get(id), LogDefine.LOST_WORLD_ATTACK);
-            infos.add(soldierProxy.getSoldierInfo(id));
-        }
-        M2.M20007.S2C.Builder refSoldiers = M2.M20007.S2C.newBuilder();
-        refSoldiers.addAllSoldierList(infos);
-        sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, refSoldiers.build());
-        FormationProxy formationProxy = getProxy(ActorDefine.FORMATION_PROXY_NAME);
-        boolean refurce = formationProxy.checkDefendTroop(soldierProxy, ActorDefine.SETTING_AUTO_ADD_DEFEND_TEAM_ON, null, null);
-        if (refurce) {
-            //刷新防守队伍的playerTeam
-            sendModuleMsg(ActorDefine.TROOP_MODULE_NAME, new GameMsg.SendFormationToClient());
-        }
-        TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
-        PlayerReward reward = new PlayerReward();
-        taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_CREATESODIER_NUM, 0);
-        sendFuntctionLog(FunctionIdDefine.FIGHT_WORLD_MAP_FUNCTION_ID, x, y, 0);
+            List<Common.SoldierInfo> infos = new ArrayList<>(6);
+            for (Integer id : reduceMap.keySet()) {
+                soldierProxy.reduceSoldierNumWithoutBaseNum(id, reduceMap.get(id), LogDefine.LOST_WORLD_ATTACK);
+                infos.add(soldierProxy.getSoldierInfo(id));
+            }
+            M2.M20007.S2C.Builder refSoldiers = M2.M20007.S2C.newBuilder();
+            refSoldiers.addAllSoldierList(infos);
+            sendNetMsg(ProtocolModuleDefine.NET_M2, ProtocolModuleDefine.NET_M2_C20007, refSoldiers.build());
+            FormationProxy formationProxy = getProxy(ActorDefine.FORMATION_PROXY_NAME);
+            boolean refurce = formationProxy.checkDefendTroop(soldierProxy, ActorDefine.SETTING_AUTO_ADD_DEFEND_TEAM_ON, null, null);
+            if (refurce) {
+                //刷新防守队伍的playerTeam
+                sendModuleMsg(ActorDefine.TROOP_MODULE_NAME, new GameMsg.SendFormationToClient());
+            }
+            TaskProxy taskProxy = getProxy(ActorDefine.TASK_PROXY_NAME);
+            PlayerReward reward = new PlayerReward();
+            taskProxy.getTaskUpdate(TaskDefine.TASK_TYPE_CREATESODIER_NUM, 0);
+            sendFuntctionLog(FunctionIdDefine.FIGHT_WORLD_MAP_FUNCTION_ID, x, y, 0);
 
-        // 通知玩家增加了进攻队列
-        updateTaskNotify(worldTeamData.getId());
+            // 通知玩家增加了进攻队列
+            updateTaskNotify(worldTeamData.getId());
+        }
         sendPushNetMsgToClient(ProtocolModuleDefine.NET_M8_C80001);
     }
 
@@ -809,16 +870,16 @@ public class MapModule extends BasicModule {
         int num = itemProxy.getItemNum(ItemDefine.MOVE_ITEM_ID);
         PlayerProxy playerProxy = getProxy(ActorDefine.PLAYER_PROXY_NAME);
         PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
+        BuildingProxy buildingProxy=getGameProxy().getProxy(ActorDefine.BUILDING_PROXY_NAME);
         if (num <= 0 && playerProxy.getPowerValue(PlayerPowerDefine.POWER_gold) < ActorDefine.MOVE_PRICE) {
             M8.M80005.S2C.Builder builder = M8.M80005.S2C.newBuilder();
             builder.setRs(ErrorCodeDefine.M80005_1);
             sendNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80005, builder.build());
-        } else if (performTasksProxy.getTaskNum() > 0) {
+        } else if (buildingProxy.getTaskNum() > 0) {
             M8.M80005.S2C.Builder builder = M8.M80005.S2C.newBuilder();
             builder.setRs(ErrorCodeDefine.M80005_3);
             sendNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80005, builder.build());
         } else {
-            BuildingProxy buildingProxy = getProxy(ActorDefine.BUILDING_PROXY_NAME);
             Tuple2<Integer, Integer> point = buildingProxy.getWorldTilePoint();
             sendServiceMsg(ActorDefine.WORLD_SERVICE_NAME, new GameMsg.MoveWorldBuild(x, y, point._1(), point._2()));
         }
@@ -948,10 +1009,9 @@ public class MapModule extends BasicModule {
         List<Common.FightElementInfo> list = c2S.getTeamList();
         BuildingProxy buildingProxy = getProxy(ActorDefine.BUILDING_PROXY_NAME);
         int rs = buildingProxy.helpDefendBuilding(x,y,list);
-
+        M8.M80013.S2C.Builder builder = M8.M80013.S2C.newBuilder();
+        builder.setRs(rs);
         if (rs < 0) {
-            M8.M80013.S2C.Builder builder = M8.M80013.S2C.newBuilder();
-            builder.setRs(rs);
             sendNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80013, builder.build());
             sendPushNetMsgToClient(ProtocolModuleDefine.NET_M8_C80013);
             return;
@@ -973,6 +1033,8 @@ public class MapModule extends BasicModule {
         sendServiceMsg(ActorDefine.WORLD_SERVICE_NAME, new GameMsg.Tohelp(teamData, powerMap));
         //通知其他玩家增加驻防队列
         WorldTile targetTile = WorldService.getWorldTitleByPoint(x,y,playerProxy.getAreaKey());
+        WorldNodeData worldNodeData= WorldService.getWorldNode(playerProxy.getAreaKey(),x,y);
+        worldNodeData.getHelplist().add(teamData.getId());
         if(targetTile.tileType() == TileType.Building()){
             //通知其他玩家被驻防了
             SimplePlayer targetSimplePlayer = PlayerService.getSimplePlayer(targetTile.building().getPlayerId(),playerProxy.getAreaKey());
@@ -983,6 +1045,7 @@ public class MapModule extends BasicModule {
         }
         //通知玩家增加了驻防队列
         updateTaskNotify(teamData.getId());
+        sendNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80013, builder.build());
         sendPushNetMsgToClient(ProtocolModuleDefine.NET_M8_C80013);
     }
 
@@ -1022,23 +1085,23 @@ public class MapModule extends BasicModule {
         sendPushNetMsgToClient(ProtocolModuleDefine.NET_M8_C80103);
     }
 
-    private void pushAddTaskInfo(long taskId) {
-        PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
-        M8.M80104.S2C.Builder builder = M8.M80104.S2C.newBuilder();
-        builder.setRs(0);
-        M8.TaskTeamInfo taskTeamInfo = performTasksProxy.getTaskTeamInfoById(taskId);
-        builder.setTaskTeamInfo(taskTeamInfo);
-        pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80104, builder.build());
-        sendPushNetMsgToClient(0);
-    }
+//    private void pushAddTaskInfo(long taskId) {
+//        PerformTasksProxy performTasksProxy = getProxy(ActorDefine.PERFORMTASKS_PROXY_NAME);
+//        M8.M80104.S2C.Builder builder = M8.M80104.S2C.newBuilder();
+//        builder.setRs(0);
+//        M8.TaskTeamInfo taskTeamInfo = performTasksProxy.getTaskTeamInfoById(taskId);
+//        builder.setTaskTeamInfo(taskTeamInfo);
+//        pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80104, builder.build());
+//        sendPushNetMsgToClient(0);
+//    }
 
-    private void pushTaskInfo(long taskId) {
-        M8.M80103.S2C.Builder builder80103 = M8.M80103.S2C.newBuilder();
-        builder80103.setRs(0);
-        builder80103.setId(taskId);
-        pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80103, builder80103.build());
-        sendPushNetMsgToClient(0);
-    }
+//    private void pushTaskInfo(long taskId) {
+//        M8.M80103.S2C.Builder builder80103 = M8.M80103.S2C.newBuilder();
+//        builder80103.setRs(0);
+//        builder80103.setId(taskId);
+//        pushNetMsg(ProtocolModuleDefine.NET_M8, ProtocolModuleDefine.NET_M8_C80103, builder80103.build());
+//        sendPushNetMsgToClient(0);
+//    }
 
     private void OnTriggerNet80107Event(Request request) {
         M8.M80107.S2C.Builder builder = M8.M80107.S2C.newBuilder();

@@ -119,6 +119,20 @@ object DbServer {
   }
 
 
+  val batchSize = 400
+  val dbQueue = new util.LinkedList[DbAction]()
+
+  def isDbQueueEmpty() = {
+    //    var isEmpty = true
+    var size = 0
+    dbQueue.synchronized {
+      //isEmpty = dbQueue.size() <= 0
+      size = dbQueue.size()
+    }
+
+    size
+  }
+
   def getPojoObjectFormMysql(id: Long, pojoClass: Class[_],logAreaId:Int) ={
     val time = System.currentTimeMillis()//记录读取时间
     var pojo: Option[BaseDbPojo] = Some(pojoClass.newInstance().asInstanceOf[BaseDbPojo])
@@ -135,7 +149,6 @@ object DbServer {
     }else{
       pojo = None
     }
-    System.err.println("getMysql耗时xx:" + sql + " 用时=" + ( System.currentTimeMillis() - time )+"毫秒");
     pojo
   }
 
@@ -273,7 +286,7 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
       val pojo = getDbPojo(id, pojoClass)
       sender().tell(pojo, self)
     case IsDbQueueEmpty() =>
-      sender() ! isDbQueueEmpty()
+      DbServer.isDbQueueEmpty()
 //    case  InitSetDbPojo(setDbPojo: BaseSetDbPojo) =>
 //      sender() ! onInitSetDbPojo(setDbPojo)
     case UpdateSetDbPojoElement(setDbPojo: BaseSetDbPojo, key : String, value : Long) =>
@@ -394,28 +407,14 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
 
   }
 
-  val batchSize = 400
-  val dbQueue = new util.LinkedList[DbAction]()
-
-  def isDbQueueEmpty() = {
-//    var isEmpty = true
-    var size = 0
-    dbQueue.synchronized {
-//      isEmpty = dbQueue.size() <= 0
-      size = dbQueue.size()
-    }
-
-    size
-  }
-
   def onTriggerDBAction() = {
-    dbQueue.synchronized {
-      val size = dbQueue.size()
+    DbServer.dbQueue.synchronized {
+      val size = DbServer.dbQueue.size()
       if (size > 0) {
-        for (i <- 0 until batchSize) {
-          val size = dbQueue.size()
+        for (i <- 0 until DbServer.batchSize) {
+          val size = DbServer.dbQueue.size()
           if (size > 0) {
-            val action = dbQueue.poll()
+            val action = DbServer.dbQueue.poll()
             if (action.getType.equals(DbActionType.SAVE)) {
               val time = System.currentTimeMillis()
               //保存行为
@@ -485,7 +484,7 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
       action.setExpire(pojo.getExpire)
 
       //log.info("==dbQueue.push:=key:%s=====newValue:%s==========".format(key, map))
-      dbQueue.offer(action) //TODO 入不了就写日志 警报
+      DbServer.dbQueue.offer(action) //TODO 入不了就写日志 警报
 
       //TODO 如果入库队列里面又出现相同的Key，则会出现问题
       //发送到别的进程，进行mysql数据备份 TODO
@@ -509,7 +508,7 @@ class DbServer(redisIp: String, redisPort: Int, mysql_ip: String, mysql_db: Stri
     action.setType(DbActionType.DEL)
     action.setKey(key)
 
-    dbQueue.offer(action)
+    DbServer.dbQueue.offer(action)
 
 
     mysqlActor ! DelToMysql(pojo.getClassName, pojo.getId, pojo.getLogAreaId)

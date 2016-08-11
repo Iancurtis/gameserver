@@ -7,12 +7,12 @@ import com.znl.base.BaseDbPojo;
  * Created by Administrator on 2015/11/16.
  */
 public class Adviser extends BaseDbPojo {
-    private Long playerId;
+    private Long playerId = 0l;
     private int typeId = 0;
     private int num = 0;
-    private int fightnum=0;//出战数量
-    private int quilty;//品质
-    private int sort;//用来排序会变动
+    private int fightnum = 0;//出战数量
+    private int quilty = 0;//品质
+    private int sort = 0;//用来排序会变动
 
     public int getSort() {
         return sort;

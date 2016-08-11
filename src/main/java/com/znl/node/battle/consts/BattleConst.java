@@ -69,7 +69,8 @@ public class BattleConst {
 		DodgeHurt(4),
 		AddHpHurt(5),
 		ImmuneHurt(6),
-		OtherHurt(7);
+		RefrainHurt(7),
+		OtherHurt(8);
 		
 		private int value = 0;
 		

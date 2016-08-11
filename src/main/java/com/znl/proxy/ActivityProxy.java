@@ -1383,6 +1383,16 @@ public class ActivityProxy extends BasicProxy {
 
     }
 
+    //判断一个活动是否开启（通过活动ID）
+    public boolean checkActivityIsOpenbyId(int id){
+        boolean fa =false;
+        JSONObject define = activityMap.get(id);
+        PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);
+        if(isEffect(define,playerProxy)){
+            fa =true;
+        }
+        return fa;
+    }
 
     private long getActivityStarTime(JSONObject define, PlayerProxy playerProxy) {
         //  PlayerProxy playerProxy = getGameProxy().getProxy(ActorDefine.PLAYER_PROXY_NAME);

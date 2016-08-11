@@ -124,5 +124,6 @@
     <orderEntry type="library" name="Maven: com.gexin.platform:gexin-rp-sdk-base:4.0.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-all:1.8.5" level="project" />
     <orderEntry type="library" name="Maven: com.gexin.platform:gexin-rp-sdk-template:4.0.0.5" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.11" level="project" />
   </component>
 </module>

@@ -111,7 +111,7 @@ abstract class BasicModule extends Actor with ActorLogging {
   }
 
   override def preStart() = {
-    log.info("----模块启动--------:" + this.toString())
+//    log.info("----模块启动--------:" + this.toString())
     //    registerAllNetEvent()
   }
 
@@ -292,7 +292,6 @@ abstract class BasicModule extends Actor with ActorLogging {
       val powerMap: util.Map[java.lang.Integer, java.lang.Long] = getPlayerPowerValues()
       request.setPowerMap(powerMap)
       val method = this.getClass.getDeclaredMethod("OnTriggerNet" + cmd + "Event", request.getClass)
-      println("OnTriggerNet" + cmd + "Event")
       method.setAccessible(true)
       method.invoke(this, request) //反射，性能很大的消耗
 

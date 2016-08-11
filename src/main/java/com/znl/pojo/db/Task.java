@@ -7,13 +7,13 @@ import com.znl.define.TaskDefine;
  * Created by Administrator on 2015/11/16.
  */
 public class Task extends BaseDbPojo {
-    private Long playerId;
-    private int tableType ;//任务表类型1主线任务 2日常任务 3日常活跃
-    private int taskType;//任务类型
-    private int tastId;//任务表的Id
-    private long num ;//达成度
-    private int state;//任务状态 0未接受，1接受
-    private int isget;//领取状态 0未达到要求，1达到要求了，2领取了
+    private Long playerId = 0l;
+    private int tableType = 0;//任务表类型1主线任务 2日常任务 3日常活跃
+    private int taskType = 0;//任务类型
+    private int tastId = 0;//任务表的Id
+    private long num = 0l;//达成度
+    private int state = 0;//任务状态 0未接受，1接受
+    private int isget = 0;//领取状态 0未达到要求，1达到要求了，2领取了
 
     public Long getPlayerId() {
         return playerId;

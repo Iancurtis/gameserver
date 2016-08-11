@@ -491,13 +491,15 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
     if (tile.tileType == TileType.Resource) {
       val pointConfig = ConfigDataProxy.getConfigInfoFindById(DataDefine.RESOURCE_POINT, tile.resPointId)
       targetName = pointConfig.getString("name")
-      defendId = tile.defendPlayerId
+      defendId = nodeData.getOccupyPlayerId
       if (defendId > 0) {
         //有人防守的资源点
         val sp: SimplePlayer = PlayerService.getSimplePlayer(defendId, areaKey)
         defendName = sp.getName
-        defendTypeIdList = dungeoProxy.getSoldierTypeIdListFormPlayerTeam(tile.defendTeams)
-        defendNumList = dungeoProxy.getSoldierNumListFormPlayerTeam(tile.defendTeams)
+        val teamData = WorldService.getTeamData(nodeData.getDigingTeamId)
+        val defendList = GameUtils.decodePlayerTeam(teamData.getBasePowerMap,teamData.getPowerMap,defendId)
+        defendTypeIdList = dungeoProxy.getSoldierTypeIdListFormPlayerTeam(defendList)
+        defendNumList = dungeoProxy.getSoldierNumListFormPlayerTeam(defendList)
         report.setDefendLegion(sp.getLegionName)
         report.setAim(sp.getName)
         report.setDefendVip(sp.getVipLevel)
@@ -525,6 +527,9 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
             add = 1 + (powerMap.get(NOR_POWER_rescollectrate) / 100)
           }
           alreadyGet = (alreadyGet * add).toInt
+          if(alreadyGet>=nodeData.getOccupyLoads()){
+            alreadyGet=nodeData.getOccupyLoads
+          }
           report.setResourceGet(alreadyGet.toInt)
         }
       }
@@ -552,6 +557,8 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
         if(sp.getHelpId > 0){
           val helpTeam = WorldService.getTeamData(sp.getHelpId)
           if(helpTeam != null){
+            val helpsimple:SimplePlayer=PlayerService.getSimplePlayer(helpTeam.getPlayerId,areaKey)
+            report.setGarrisonName(helpsimple.getName)
             val list = GameUtils.decodePlayerTeam(helpTeam.getBasePowerMap,helpTeam.getPowerMap,helpTeam.getPlayerId)
             defendTypeIdList = dungeoProxy.getSoldierTypeIdListFormPlayerTeam(list)
             defendNumList = dungeoProxy.getSoldierNumListFormPlayerTeam(list)
@@ -913,8 +920,9 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
             if (worldTile.building != null) {
               buildingPlayerList.add(worldTile.building.getPlayerId)
             } else {
-              if (worldTile.defendPlayerId > 0) {
-                buildingPlayerList.add(worldTile.defendPlayerId)
+              val nodeData = WorldService.getWorldNode(areaKey,i,j)
+              if (nodeData.getOccupyPlayerId > 0) {
+                buildingPlayerList.add(nodeData.getOccupyPlayerId)
               }
             }
           }
@@ -926,6 +934,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       //去查看数据
       val simplePlayerList: util.List[SimplePlayer] = PlayerService.onGetPlayerSimpleInfoList(buildingPlayerList, areaKey)
       worldTileList.foreach(worldTile => {
+        val nodeData = WorldService.getWorldNode(areaKey,worldTile.x,worldTile.y)
         if (worldTile.building != null) {
           simplePlayerList.foreach(simplePlayer => {
             if(simplePlayer == null){
@@ -958,7 +967,7 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
           simplePlayerList.foreach(simplePlayer => {
             if(simplePlayer == null){
               println("simplePlayer出现空")
-            }else if (simplePlayer.getId == worldTile.defendPlayerId) {
+            }else if (simplePlayer.getId == nodeData.getOccupyPlayerId) {
               worldTile.legionName_(simplePlayer.getLegionName)
               falg = false
             }
@@ -1012,6 +1021,10 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
       val targetTile: WorldTile = askWorldBlockActor(actor, GetRandomEmpty())
       if (targetTile != null) {
         //执行迁城逻辑
+        val myNodeData = WorldService.getWorldNode(areaKey,myX,myY)
+        val targetNodeData = WorldService.getWorldNode(areaKey,targetTile.x,targetTile.y)
+        targetNodeData.setOccupyPlayerId(myNodeData.getOccupyPlayerId)
+        myNodeData.setOccupyPlayerId(0)
         val myTile = WorldService.getWorldTitleByPoint(myX, myY,areaKey)
         val building: WorldBuilding = myTile.building
         building.setWorldTileX(targetTile.x)
@@ -1158,6 +1171,9 @@ class WorldService(areaKey: String) extends Actor with ActorLogging with Service
           }
           if(worldBuilding != null){
             nodeData.setOccupyPlayerId(worldBuilding.getPlayerId)
+            if(tile.x==221&&tile.y==432){
+              println("特殊"+worldBuilding.getPlayerId)
+            }
           }else{
             println("worldBuilding == nulll  "+tile.x+"_"+tile.y)
           }

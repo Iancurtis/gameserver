@@ -2,19 +2,20 @@ package com.znl.pojo.db;
 
 import com.znl.base.BaseDbPojo;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by Administrator on 2015/11/16.
  */
 public class Collect extends BaseDbPojo {
-    private String name="";
-    private int icon;
-    private int level;
-    private int pointx;
-    private int pointy;
-    private int ower;
-    private Set<Integer> typelist;
+    private String name = "";
+    private int icon = 0;
+    private int level = 0;
+    private int pointx = 0;
+    private int pointy = 0;
+    private int ower = 0;
+    private Set<Integer> typelist = new HashSet<>();
 
 
     public int getOwer() {

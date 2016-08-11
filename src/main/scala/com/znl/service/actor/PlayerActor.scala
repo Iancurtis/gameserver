@@ -265,7 +265,7 @@ class PlayerActor(accountName : String, areaId : Int, var ioSession: IoSession) 
       val detaTime = curTime - lastHeartbeat
       if(detaTime > 180 * 1000){
         val accoutName = ioSession.getAttribute(ActorDefine.PLAYER_ACTOR_NAME_KEY)
-        log.warning("！！！警告！！！已经超过2分钟没有 心跳了 " + accoutName)
+//        log.warning("！！！警告！！！已经超过3分钟没有 心跳了 " + accoutName)
         ioSession.close(true)
       }
 //      heartIndex = 0

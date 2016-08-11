@@ -262,12 +262,19 @@ public class NewBuildProxy extends BasicProxy {
                 playerProxy.setAutoBuildStateendtime(0l);
                 playerProxy.setAutoBuildState(TimerDefine.BUILDAUTOLEVEL_OFF);
             }
-
-        } else {
+            int size = getBuildLevelNum();
+            System.out.println("剩下建筑队列长度" + size);
+        } /*else {
             for (ResFunBuilding rfb : rfbs) {
                 if (rfb.getSmallType() > 0 && rfb.getNextLevelTime() > 0 && rfb.getNextLevelTime() < now) {
                     doBuildLevelUp(rfb.getSmallType(), rfb.getIndex());
                 }
+            }
+        }*/
+        //自动升级最后校验是否有可升级建筑
+        for (ResFunBuilding rfb : rfbs) {
+            if (rfb.getSmallType() > 0 && rfb.getNextLevelTime() > 0 && rfb.getNextLevelTime() < now) {
+                doBuildLevelUp(rfb.getSmallType(), rfb.getIndex());
             }
         }
 

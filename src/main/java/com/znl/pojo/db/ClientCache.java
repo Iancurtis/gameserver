@@ -6,10 +6,10 @@ import com.znl.base.BaseDbPojo;
  * 客户端保存到服务器的缓存
  * Created by Administrator on 2016/1/4.
  */
-public class ClientCache extends BaseDbPojo{
+public class ClientCache extends BaseDbPojo {
     private Integer msgType = 0;
 
-    private byte[] msg;
+    private byte[] msg = null;
 
     public Integer getMsgType() {
         return msgType;

@@ -37,6 +37,15 @@ object GameUtils {
 
 
   /**
+   * redis areaid,
+   */
+  var areaServer3:Array[String] =null;
+
+  def getAreaServer3:Array[String]={
+    return areaServer3
+  }
+
+  /**
    * mysql数据库
    */
   var mysqlDbName=""
@@ -300,7 +309,7 @@ object GameUtils {
     import scala.collection.JavaConversions._
     var value = 0
     for (team : PlayerTeam <- teams) {
-      value = value + team.basePowerMap.get(SoldierDefine.POWER_initiative).asInstanceOf[Int]
+      value = value + team.powerMap.get(SoldierDefine.POWER_initiative).asInstanceOf[Int]
     }
     value
   }

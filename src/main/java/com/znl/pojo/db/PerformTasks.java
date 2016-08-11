@@ -9,19 +9,19 @@ import java.util.Set;
  * Created by Administrator on 2015/11/27.
  */
 public class PerformTasks extends BaseDbPojo {
-    private long playerId;
-    private int type; //执行任务类型。人，矿，人的矿
-    private String name;
-    private int level;
-    private int state;
+    private long playerId = 0l;
+    private int type = 0; //执行任务类型。人，矿，人的矿
+    private String name = "";
+    private int level = 0;
+    private int state = 0;
     private int worldTileX = -1; //世界X坐标
     private int worldTileY = -1; //世界Y坐标
-    private long timeer;//到期时间
-    private long beginTime;//开始时间
-    private long capacity;
-    private long load;
-    private int product;
-    private int icon;
+    private long timeer = 0l;//到期时间
+    private long beginTime = 0l;//开始时间
+    private long capacity = 0l;
+    private long load = 0l;
+    private int product = 0;
+    private int icon = 0;
     private int startX = -1; //世界X坐标
     private int startY = -1; //世界Y坐标
     private long maxSoilderNum = 0; //带兵总量

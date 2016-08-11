@@ -136,7 +136,7 @@ object GameMsg {
   final case class MoveRandomWorldBuildBack(x: Int, y: Int)
   final case class GetRandomEmpty()
 
-  final case class DefendFightResult(defendList : util.List[PlayerTeam])  //有部队产生了战斗，结算伤兵吧
+  final case class DefendFightResult(defendList : util.List[PlayerTeam],defendTeamId: Long, honor: Int)  //有部队产生了战斗，结算伤兵吧
   final case class TeamDataChange(teamId:Long)  //队伍状态改变
   final case class TeamDataDelete(team:WorldTeamData)    //队伍删除
   final case class TeamDataAdd(teamId : Long) //和自己有关的队伍通知
